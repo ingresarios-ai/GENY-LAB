@@ -2,191 +2,166 @@
 
 /* ============================================
    TRADER MAPP — Design System
-   Premium dark fintech + gamified aesthetics
+   Matching V2 Reto 2k a 20k aesthetic
    ============================================ */
 
-:root {
-  /* Core palette */
-  --bg-primary: #020B1A;
-  --bg-secondary: #0A1628;
-  --bg-card: #0F1D32;
-  --bg-card-hover: #142640;
-  
-  /* Accent colors */
-  --green-primary: #00E676;
-  --green-glow: #00E67640;
-  --green-dark: #00C853;
-  --cyan-accent: #00D1FF;
-  --cyan-glow: #00D1FF30;
-  --gold-primary: #F2C500;
-  --gold-glow: #F2C50040;
-  
-  /* Text */
-  --text-primary: #FFFFFF;
-  --text-secondary: #94A3B8;
-  --text-muted: #475569;
-  
-  /* Borders */
-  --border-subtle: #1E293B;
-  --border-active: #00E67660;
-  
-  /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow-green: 0 0 20px rgba(0, 230, 118, 0.3);
-  --shadow-glow-gold: 0 0 30px rgba(242, 197, 0, 0.4);
-  --shadow-glow-cyan: 0 0 20px rgba(0, 209, 255, 0.2);
-  
-  /* Fonts */
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  
-  /* Transitions */
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Global reset */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: var(--font-body);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100dvh;
-  overflow-x: hidden;
-}
-
-#root {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-base: #000000;
+  --color-brand-green: #00E676;
+  --color-brand-yellow: #FEDD04;
+  --color-brand-orange: #FF6321;
+  --color-brand-red-pastel: #FF6B6B;
+  --color-brand-red: #fe0443;
+  --color-brand-emerald: #01E47E;
+  --color-brand-blue: #00D1FF;
+  --color-brand-gold: #F2C500;
+  --color-brand-text-muted: #D0D3D6;
+  --color-surface: rgba(255, 255, 255, 0.03);
 }
 
 /* ============================================
-   Typography
+   Base
    ============================================ */
 
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.2;
+@layer base {
+  html {
+    overflow-x: hidden;
+  }
+  body {
+    @apply text-white font-sans antialiased min-h-screen;
+    overflow-x: hidden;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(0, 209, 255, 0.18), transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(0, 255, 136, 0.12), transparent 45%),
+      linear-gradient(180deg, #000000 0%, #000000 100%);
+    background-attachment: fixed;
+  }
 }
 
-h1 { font-size: 2rem; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
-h4 { font-size: 1.1rem; }
-
-p { line-height: 1.6; color: var(--text-secondary); }
-
 /* ============================================
-   Glassmorphism card
+   Glassmorphism Cards
    ============================================ */
 
 .glass-card {
-  background: linear-gradient(135deg, rgba(15, 29, 50, 0.8), rgba(10, 22, 40, 0.6));
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  box-shadow: var(--shadow-card);
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-2xl;
 }
 
 .glass-card-hover:hover {
-  border-color: var(--border-active);
-  box-shadow: var(--shadow-glow-green);
+  @apply border-brand-green/20;
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.12);
   transform: translateY(-2px);
-  transition: all 0.3s var(--ease-smooth);
+  transition: all 0.3s ease;
 }
 
 /* ============================================
-   Buttons
+   Input Fields
+   ============================================ */
+
+.input-field {
+  @apply w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-green/50 transition-colors text-white placeholder:text-white/20;
+}
+
+/* ============================================
+   Gradient Text
+   ============================================ */
+
+.gradient-text {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-brand-emerald;
+}
+
+.title-highlight {
+  color: #00E676;
+  text-shadow: 0 0 4px rgba(0, 255, 136, 0.25);
+}
+
+/* ============================================
+   Buttons (exact V2 match)
    ============================================ */
 
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 28px;
-  background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
-  color: #000;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1rem;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease-smooth);
-  box-shadow: var(--shadow-glow-green);
-  width: 100%;
-  max-width: 400px;
+  @apply transition-all duration-200 border-none flex items-center justify-center font-bold text-base rounded-xl px-7 py-3.5 cursor-pointer;
+  background: linear-gradient(90deg, #00E676, #00C853);
+  color: #03120A;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.25),
+    0 0 6px rgba(0,255,136,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+  font-family: var(--font-sans);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(0, 230, 118, 0.5);
+  @apply brightness-[1.06] -translate-y-[1px];
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.3),
+    0 0 8px rgba(0,255,136,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  @apply translate-y-0 scale-[0.98];
+  background: linear-gradient(90deg, #00C853, #00A844);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .btn-primary:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  @apply opacity-40 cursor-not-allowed;
   transform: none;
   box-shadow: none;
 }
 
 .btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background: transparent;
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s var(--ease-smooth);
+  @apply transition-all duration-200 border border-[#00FF88]/40 bg-transparent flex items-center justify-center font-semibold text-sm rounded-xl px-6 py-3 cursor-pointer;
+  color: #00E676;
 }
 
 .btn-secondary:hover {
-  border-color: var(--cyan-accent);
-  background: rgba(0, 209, 255, 0.08);
+  @apply bg-[#00FF88]/[0.06];
+}
+
+.btn-utility {
+  @apply transition-all duration-200 border border-[#00D1FF]/35 bg-[#00D1FF]/[0.08] flex items-center justify-center text-[#00D1FF] font-semibold text-sm rounded-xl px-6 py-3 cursor-pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.btn-utility:hover {
+  @apply bg-[#00D1FF]/[0.12] -translate-y-[1px];
+  box-shadow: 0 0 8px rgba(0, 209, 255, 0.2);
+}
+
+.btn-premium-gold {
+  @apply transition-all duration-200 flex items-center justify-center font-bold text-base rounded-xl px-7 py-3.5 cursor-pointer;
+  background: linear-gradient(90deg, #F2C500, #D9A800);
+  color: #04110C;
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.btn-premium-gold:hover {
+  @apply brightness-[1.03] -translate-y-[1px];
+  box-shadow: 0 10px 24px rgba(0,0,0,0.32);
 }
 
 /* ============================================
-   Progress bar
+   Progress Bar
    ============================================ */
 
 .progress-bar {
-  width: 100%;
+  @apply w-full rounded-full overflow-hidden;
   height: 8px;
-  background: var(--bg-card);
-  border-radius: 999px;
-  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--green-primary), var(--cyan-accent));
+  background: linear-gradient(90deg, #00E676, #00D1FF);
   border-radius: 999px;
-  transition: width 0.6s var(--ease-bounce);
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ============================================
@@ -202,9 +177,9 @@ p { line-height: 1.6; color: var(--text-secondary); }
   justify-content: space-around;
   align-items: center;
   padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
-  background: rgba(2, 11, 26, 0.95);
+  background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   z-index: 100;
 }
 
@@ -216,8 +191,8 @@ p { line-height: 1.6; color: var(--text-secondary); }
   padding: 6px 16px;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s var(--ease-smooth);
-  color: var(--text-muted);
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.3);
   font-size: 0.7rem;
   font-weight: 600;
   text-decoration: none;
@@ -226,7 +201,7 @@ p { line-height: 1.6; color: var(--text-secondary); }
 }
 
 .tab-bar-item.active {
-  color: var(--green-primary);
+  color: #00E676;
 }
 
 .tab-bar-item svg {
@@ -239,8 +214,8 @@ p { line-height: 1.6; color: var(--text-secondary); }
    ============================================ */
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 12px var(--gold-glow); }
-  50% { box-shadow: 0 0 24px var(--gold-glow), 0 0 48px rgba(242, 197, 0, 0.15); }
+  0%, 100% { box-shadow: 0 0 12px rgba(242, 197, 0, 0.25); }
+  50% { box-shadow: 0 0 24px rgba(242, 197, 0, 0.4), 0 0 48px rgba(242, 197, 0, 0.12); }
 }
 
 @keyframes float {
@@ -253,14 +228,9 @@ p { line-height: 1.6; color: var(--text-secondary); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-.animate-float { animation: float 3s ease-in-out infinite; }
-.animate-fade-in-up { animation: fade-in-up 0.5s var(--ease-smooth) both; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-fade-in-up { animation: fade-in-up 0.5s ease both; }
 
 /* ============================================
    Scrollbar
@@ -268,8 +238,13 @@ p { line-height: 1.6; color: var(--text-secondary); }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.15); }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
 
 /* ============================================
    Utility — safe area padding for mobile
@@ -277,4 +252,32 @@ p { line-height: 1.6; color: var(--text-secondary); }
 
 .pb-tab-bar {
   padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+/* ============================================
+   Phone input styles
+   ============================================ */
+
+.phone-input-custom {
+  @apply flex items-center gap-2;
+}
+
+.phone-input-custom .PhoneInputCountry {
+  @apply bg-white/[0.03] border border-white/10 rounded-lg px-2 py-3 flex items-center justify-center min-w-[60px] cursor-pointer hover:bg-white/[0.05] transition-colors;
+}
+
+.phone-input-custom .PhoneInputCountrySelect {
+  @apply absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer;
+}
+
+.phone-input-custom .PhoneInputCountryIcon {
+  @apply w-6 h-auto shadow-sm;
+}
+
+.phone-input-custom .PhoneInputCountrySelectArrow {
+  @apply ml-1 text-white/40;
+}
+
+.phone-input-custom input {
+  @apply w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-green/50 transition-colors text-white placeholder:text-white/20;
 }

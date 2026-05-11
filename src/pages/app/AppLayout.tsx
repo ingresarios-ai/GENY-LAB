@@ -5,9 +5,9 @@ import { Map, Trophy, MessageCircle } from 'lucide-react';
 
 export default function AppLayout() {
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+    <div className="min-h-dvh flex flex-col">
       {/* Page content */}
-      <main style={{ flex: 1 }}>
+      <main className="flex-1">
         <Outlet />
       </main>
 

@@ -16,54 +16,45 @@ export default function PathMap() {
   const allDone = isAllCompleted();
 
   const handleNodeClick = (lesson: Lesson) => {
-    const unlocked = isLessonUnlocked(lesson.order);
-    if (!unlocked) return;
+    if (!isLessonUnlocked(lesson.order)) return;
     navigate(`/app/leccion/${lesson.id}`);
   };
 
   return (
-    <div className="pb-tab-bar" style={{ padding: '0 20px' }}>
+    <div className="pb-tab-bar px-5">
       {/* Header — Level + XP + Streak */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 0', position: 'sticky', top: 0,
-          background: 'var(--bg-primary)', zIndex: 10,
-        }}
+        className="flex items-center justify-between py-4 sticky top-0 z-10"
+        style={{ background: 'inherit' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '1.3rem' }}>{level.emoji}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xl">{level.emoji}</span>
           <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+            <div className="text-[0.65rem] text-brand-text-muted font-semibold">
               Nivel {level.id}
             </div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 700, color: level.color }}>
+            <div className="text-sm font-bold" style={{ color: level.color }}>
               {level.name}
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className="flex items-center gap-4">
           {/* XP bar */}
-          <div style={{ width: 100 }}>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textAlign: 'right', marginBottom: 2 }}>
+          <div className="w-24">
+            <div className="text-[0.6rem] text-brand-text-muted text-right mb-0.5">
               {progress.totalXp} XP
             </div>
-            <div className="progress-bar" style={{ height: 6 }}>
+            <div className="progress-bar" style={{ height: 5 }}>
               <div className="progress-bar-fill" style={{ width: `${xpInLevel.percent}%` }} />
             </div>
           </div>
 
           {/* Streak */}
           {progress.streak > 0 && (
-            <div style={{ 
-              display: 'flex', alignItems: 'center', gap: 4,
-              background: 'rgba(242, 197, 0, 0.15)', padding: '4px 10px',
-              borderRadius: 20, fontSize: '0.85rem', fontWeight: 700,
-              color: 'var(--gold-primary)',
-            }}>
+            <div className="flex items-center gap-1 bg-brand-gold/15 px-2.5 py-1 rounded-full text-sm font-bold text-brand-gold">
               🔥 {progress.streak}
             </div>
           )}
@@ -71,41 +62,31 @@ export default function PathMap() {
       </motion.div>
 
       {/* Progress counter */}
-      <div style={{
-        textAlign: 'center', marginBottom: 24, fontSize: '0.8rem',
-        color: 'var(--text-secondary)',
-      }}>
+      <div className="text-center mb-6 text-xs text-brand-text-muted">
         {completedCount} de {LESSONS.length} lecciones completadas
       </div>
 
       {/* Path nodes */}
-      <div style={{ 
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        gap: 0, position: 'relative', paddingBottom: 24,
-      }}>
+      <div className="flex flex-col items-center pb-6 relative">
         {LESSONS.map((lesson, i) => {
           const unlocked = isLessonUnlocked(lesson.order);
           const completed = isLessonCompleted(lesson.id);
           const isCurrent = unlocked && !completed;
-          const isLeft = i % 2 === 0;
 
           // Phase divider
           const showPhaseDivider = i === 0 || LESSONS[i - 1]?.phase !== lesson.phase;
 
           return (
-            <div key={lesson.id} style={{ width: '100%', maxWidth: 340 }}>
+            <div key={lesson.id} className="w-full max-w-[340px]">
               {/* Phase divider */}
               {showPhaseDivider && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: i * 0.05 }}
-                  style={{
-                    textAlign: 'center', margin: i === 0 ? '0 0 20px' : '12px 0 20px',
-                    fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                    color: completed || unlocked ? 'var(--cyan-accent)' : 'var(--text-muted)',
-                  }}
+                  className={`text-center text-[0.65rem] font-bold tracking-wider uppercase ${
+                    i === 0 ? 'mb-5' : 'mt-3 mb-5'
+                  } ${completed || unlocked ? 'text-brand-blue' : 'text-brand-text-muted/50'}`}
                 >
                   {PHASE_LABELS[lesson.phase]}
                 </motion.div>
@@ -113,13 +94,11 @@ export default function PathMap() {
 
               {/* Connector line */}
               {i > 0 && (
-                <div style={{
-                  width: 3, height: 32, margin: '0 auto',
-                  background: completed || unlocked 
-                    ? 'linear-gradient(180deg, var(--green-primary), var(--cyan-accent))' 
-                    : 'var(--border-subtle)',
-                  borderRadius: 99,
-                }} />
+                <div className={`w-[3px] h-8 mx-auto rounded-full ${
+                  completed || unlocked 
+                    ? 'bg-gradient-to-b from-brand-green to-brand-blue' 
+                    : 'bg-white/[0.06]'
+                }`} />
               )}
 
               {/* Node */}
@@ -128,74 +107,54 @@ export default function PathMap() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.08, type: 'spring', stiffness: 200 }}
                 onClick={() => handleNodeClick(lesson)}
-                className={isCurrent ? 'animate-pulse-glow' : ''}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 14,
-                  width: '100%', padding: '14px 18px',
-                  background: completed 
-                    ? 'linear-gradient(135deg, rgba(0,230,118,0.12), rgba(0,209,255,0.08))'
+                className={`
+                  flex items-center gap-3.5 w-full p-3.5 rounded-2xl text-left transition-all duration-300 cursor-pointer
+                  ${isCurrent ? 'animate-pulse-glow' : ''}
+                  ${completed 
+                    ? 'bg-brand-green/[0.08] border-2 border-brand-green/60' 
                     : isCurrent 
-                      ? 'linear-gradient(135deg, rgba(242,197,0,0.12), rgba(242,197,0,0.05))'
-                      : 'var(--bg-card)',
-                  border: `2px solid ${
-                    completed ? 'var(--green-primary)' 
-                    : isCurrent ? 'var(--gold-primary)' 
-                    : 'var(--border-subtle)'
-                  }`,
-                  borderRadius: 16,
-                  cursor: unlocked ? 'pointer' : 'not-allowed',
-                  opacity: unlocked ? 1 : 0.45,
-                  flexDirection: isLeft ? 'row' : 'row',
-                  textAlign: 'left',
-                  fontFamily: 'var(--font-body)',
-                  color: 'var(--text-primary)',
-                  transition: 'all 0.3s var(--ease-smooth)',
-                }}
+                      ? 'bg-brand-gold/[0.08] border-2 border-brand-gold' 
+                      : 'bg-white/[0.03] border-2 border-white/[0.06]'
+                  }
+                  ${unlocked ? '' : 'opacity-40 cursor-not-allowed'}
+                `}
               >
                 {/* Icon circle */}
-                <div style={{
-                  width: 50, height: 50, borderRadius: '50%',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.5rem', flexShrink: 0,
-                  background: completed 
-                    ? 'rgba(0,230,118,0.2)' 
+                <div className={`
+                  w-12 h-12 rounded-full flex items-center justify-center text-2xl shrink-0
+                  ${completed 
+                    ? 'bg-brand-green/20' 
                     : isCurrent 
-                      ? 'rgba(242,197,0,0.2)' 
-                      : 'rgba(71,85,105,0.2)',
-                }}>
+                      ? 'bg-brand-gold/20' 
+                      : 'bg-white/[0.05]'
+                  }
+                `}>
                   {completed ? (
-                    <Check size={24} color="var(--green-primary)" strokeWidth={3} />
+                    <Check size={22} className="text-brand-green" strokeWidth={3} />
                   ) : unlocked ? (
                     <span>{lesson.emoji}</span>
                   ) : (
-                    <Lock size={20} color="var(--text-muted)" />
+                    <Lock size={18} className="text-white/30" />
                   )}
                 </div>
 
                 {/* Text */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ 
-                    fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600,
-                    marginBottom: 2,
-                  }}>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[0.6rem] text-brand-text-muted/60 font-semibold mb-0.5">
                     Lección {lesson.order}
                   </div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: 2 }}>
+                  <div className="text-[0.95rem] font-bold text-white mb-0.5">
                     {lesson.title}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                  <div className="text-xs text-brand-text-muted">
                     {lesson.subtitle}
                   </div>
                 </div>
 
                 {/* Action indicator */}
                 {isCurrent && (
-                  <div style={{
-                    width: 36, height: 36, borderRadius: '50%',
-                    background: 'var(--gold-primary)', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                  }}>
-                    <Play size={18} color="#000" fill="#000" />
+                  <div className="w-9 h-9 rounded-full bg-brand-gold flex items-center justify-center shrink-0">
+                    <Play size={16} color="#000" fill="#000" />
                   </div>
                 )}
               </motion.button>
@@ -204,56 +163,45 @@ export default function PathMap() {
         })}
 
         {/* Final reward card */}
-        <div style={{
-          width: 3, height: 32, margin: '0 auto',
-          background: allDone 
-            ? 'linear-gradient(180deg, var(--green-primary), var(--gold-primary))' 
-            : 'var(--border-subtle)',
-          borderRadius: 99,
-        }} />
+        <div className={`w-[3px] h-8 mx-auto rounded-full ${
+          allDone 
+            ? 'bg-gradient-to-b from-brand-green to-brand-gold' 
+            : 'bg-white/[0.06]'
+        }`} />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className={allDone ? 'glass-card animate-pulse-glow' : 'glass-card'}
-          style={{
-            width: '100%', maxWidth: 340, padding: '20px',
-            textAlign: 'center', position: 'relative', overflow: 'hidden',
-            border: allDone ? '2px solid var(--gold-primary)' : '2px solid var(--border-subtle)',
-          }}
+          className={`
+            glass-card w-full max-w-[340px] p-5 text-center relative overflow-hidden
+            ${allDone 
+              ? 'animate-pulse-glow border-2 !border-brand-gold' 
+              : 'border-2 !border-white/[0.08]'
+            }
+          `}
         >
           {!allDone && (
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'rgba(2, 11, 26, 0.5)',
-              backdropFilter: 'blur(2px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              zIndex: 2,
-            }}>
-              <Lock size={28} color="var(--text-muted)" />
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10">
+              <Lock size={28} className="text-white/25" />
             </div>
           )}
-          <div style={{ fontSize: '2rem', marginBottom: 8 }}>🎯</div>
-          <div style={{ 
-            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem',
-            color: allDone ? 'var(--gold-primary)' : 'var(--text-secondary)',
-            marginBottom: 4,
-          }}>
+          <div className="text-3xl mb-2">🎯</div>
+          <div className={`font-display font-bold text-sm ${
+            allDone ? 'text-brand-gold' : 'text-brand-text-muted'
+          }`}>
             {allDone ? '¡DESBLOQUEADO!' : 'RECOMPENSA'}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          <div className="text-sm text-brand-text-muted mt-1">
             Sesión Diagnóstico 1 a 1
           </div>
           {allDone && (
-            <button className="btn-primary" style={{ marginTop: 16, maxWidth: '100%' }}>
+            <button className="btn-premium-gold rounded-xl py-3 w-full mt-4 text-sm">
               Agendar Mi Diagnóstico →
             </button>
           )}
           {!allDone && (
-            <div style={{ 
-              fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 8,
-            }}>
+            <div className="text-[0.65rem] text-brand-text-muted/50 mt-2">
               Completa las {LESSONS.length} lecciones para desbloquear
             </div>
           )}
