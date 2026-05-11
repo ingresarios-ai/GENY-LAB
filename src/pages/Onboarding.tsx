@@ -33,7 +33,7 @@ export default function Onboarding() {
           transition={{ delay: 0.2 }}
           className="mb-10"
         >
-          <h1 className="font-display text-3xl sm:text-4xl font-bold mb-2 gradient-text leading-tight">
+          <h1 className=" text-3xl sm:text-4xl font-bold mb-2 gradient-text leading-tight">
             ¡Bienvenido a<br/>Trader Mapp!
           </h1>
           <p className="text-sm text-brand-text-muted">
@@ -53,7 +53,7 @@ export default function Onboarding() {
               <div className="flex items-start gap-3.5">
                 {/* Step number + line */}
                 <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-full border-2 border-brand-green flex items-center justify-center text-brand-green font-extrabold font-display text-sm">
+                  <div className="w-10 h-10 rounded-full border-2 border-brand-green flex items-center justify-center text-brand-green font-extrabold  text-sm">
                     {i + 1}
                   </div>
                   {i < steps.length - 1 && (

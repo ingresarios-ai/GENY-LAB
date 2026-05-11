@@ -102,7 +102,7 @@ export default function LessonScreen() {
         className="mb-6"
       >
         <div className="text-3xl mb-1">{lesson.emoji}</div>
-        <h1 className="text-2xl font-bold mb-2 font-display">{lesson.title}</h1>
+        <h1 className="text-2xl font-bold mb-2 ">{lesson.title}</h1>
         <p className="text-sm text-brand-text-muted leading-relaxed">{lesson.description}</p>
       </motion.div>
 
@@ -113,7 +113,7 @@ export default function LessonScreen() {
             initial={{ opacity: 0, y: 20, scale: 0.8 }}
             animate={{ opacity: 1, y: -20, scale: 1 }}
             exit={{ opacity: 0, y: -50 }}
-            className="fixed top-[20%] left-1/2 -translate-x-1/2 bg-brand-gold text-black px-5 py-2 rounded-full font-extrabold text-lg z-[200] font-display"
+            className="fixed top-[20%] left-1/2 -translate-x-1/2 bg-brand-gold text-black px-5 py-2 rounded-full font-extrabold text-lg z-[200] "
           >
             +{xpAnimation} XP ✨
           </motion.div>
@@ -255,7 +255,7 @@ export default function LessonScreen() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-4xl font-display font-bold text-brand-gold text-center"
+              className="text-4xl  font-bold text-brand-gold text-center"
             >
               ¡NIVEL UP!
             </motion.h1>

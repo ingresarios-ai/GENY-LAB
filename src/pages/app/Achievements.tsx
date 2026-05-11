@@ -17,7 +17,7 @@ export default function Achievements() {
       <motion.h1 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-display font-bold mb-6"
+        className="text-2xl  font-bold mb-6"
       >
         Mis Logros
       </motion.h1>
@@ -38,7 +38,7 @@ export default function Achievements() {
             className="glass-card p-4 text-center"
           >
             <div className="mb-1.5" style={{ color: stat.color }}>{stat.icon}</div>
-            <div className="text-xl font-extrabold font-display" style={{ color: stat.color }}>{stat.value}</div>
+            <div className="text-xl font-extrabold " style={{ color: stat.color }}>{stat.value}</div>
             <div className="text-[0.65rem] text-brand-text-muted/60 font-semibold mt-0.5">{stat.label}</div>
           </motion.div>
         ))}

@@ -187,7 +187,7 @@ export default function PathMap() {
             </div>
           )}
           <div className="text-3xl mb-2">🎯</div>
-          <div className={`font-display font-bold text-sm ${
+          <div className={` font-bold text-sm ${
             allDone ? 'text-brand-gold' : 'text-brand-text-muted'
           }`}>
             {allDone ? '¡DESBLOQUEADO!' : 'RECOMPENSA'}
