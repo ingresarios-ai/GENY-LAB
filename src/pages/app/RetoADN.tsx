@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, RotateCcw, Share2, Copy, Check, MessageCircle, ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import confetti from "canvas-confetti";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../../lib/supabase";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DNA CANVAS ANIMATION
