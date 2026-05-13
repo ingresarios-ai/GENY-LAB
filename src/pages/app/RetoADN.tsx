@@ -116,12 +116,14 @@ export default function RetoADN() {
       );
       const clean = reply.replace("[ANÁLISIS_LISTO]", "").trim();
       setMessages([
-        { role: "assistant", content: greeting + "\n\nEmpecemos. " + clean }
+        { role: "assistant", content: greeting },
+        { role: "assistant", content: "Empecemos. " + clean }
       ]);
     } catch (e) {
       console.error(e);
       setMessages([
-        { role: "assistant", content: greeting + "\n\nEmpecemos. ¿Cuál es tu mayor desafío con el dinero en este momento?" }
+        { role: "assistant", content: greeting },
+        { role: "assistant", content: "Empecemos. Cuéntame, ¿cuál es el mayor desafío que enfrentas hoy con el dinero?" }
       ]);
     }
     setScreen("chat");
