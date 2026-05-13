@@ -176,10 +176,7 @@ export default function PathMap() {
           SISTEMA - EJECUCIÓN - RESULTADOS
         </div>
 
-        {/* Description */}
-        <p className="relative z-10 text-white/60 font-medium text-sm md:text-base max-w-2xl mx-auto">
-          La central de inteligencia y herramientas avanzadas para dominar el mercado.
-        </p>
+
       </div>
 
       {/* Horizontal Carousel */}
