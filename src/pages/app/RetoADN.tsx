@@ -145,7 +145,7 @@ export default function RetoADN() {
       setMessages(finalMsgs);
       setLoading(false);
 
-      if (isDone || newTurns >= 8) {
+      if (isDone || newTurns >= 11) {
         setAnalyzing(true);
         setTimeout(async () => {
           try {
@@ -345,7 +345,7 @@ export default function RetoADN() {
             <div className="text-xs text-brand-text-muted">Analista de ADN Financiero · INGRESARIOS</div>
           </div>
           <div className="text-[10px] font-black uppercase tracking-widest text-brand-text-muted bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-            {Math.min(turns, 7)} / 7
+            {Math.min(turns, 10)} / 10
           </div>
         </div>
 
