@@ -89,7 +89,7 @@ export default function RetoADN() {
   // Focus input
   useEffect(() => {
     if (screen === 'chat' && !loading && !analyzing) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+      setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 100);
     }
   }, [screen, loading, analyzing]);
 
