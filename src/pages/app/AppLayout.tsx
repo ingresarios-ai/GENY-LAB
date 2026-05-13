@@ -8,15 +8,14 @@ export default function AppLayout() {
     { to: "/app/logros", icon: Trophy, label: "Logros" },
   ];
 
-  return (
     <div className="min-h-dvh flex">
       {/* Global Logo */}
-      <div className="fixed top-4 md:top-6 left-4 md:left-8 z-[60]">
-        <Link to="/app">
+      <div className="fixed top-6 md:top-20 left-1/2 -translate-x-1/2 z-[40] pointer-events-none">
+        <Link to="/app" className="pointer-events-auto">
           <img 
-            src="/images/logo.png" 
-            alt="Geny Lab" 
-            className="h-8 md:h-10 object-contain drop-shadow-[0_0_15px_rgba(0,209,255,0.2)] hover:drop-shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all" 
+            src="/images/logo_sistema.png" 
+            alt="Geny Lab Sistema" 
+            className="h-6 md:h-8 object-contain drop-shadow-[0_0_15px_rgba(0,209,255,0.2)] hover:drop-shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all" 
           />
         </Link>
       </div>
