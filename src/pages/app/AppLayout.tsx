@@ -8,19 +8,9 @@ export default function AppLayout() {
     { to: "/app/logros", icon: Trophy, label: "Logros" },
   ];
 
+
   return (
     <div className="min-h-dvh flex">
-      {/* Global Logo */}
-      <div className="fixed top-6 md:top-20 left-1/2 -translate-x-1/2 z-[40] pointer-events-none">
-        <Link to="/app" className="pointer-events-auto">
-          <img 
-            src="/images/logo_sistema.png" 
-            alt="Geny Lab Sistema" 
-            className="h-6 md:h-8 object-contain drop-shadow-[0_0_15px_rgba(0,209,255,0.2)] hover:drop-shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all" 
-          />
-        </Link>
-      </div>
-
       {/* Desktop Top Navigation */}
       <header className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 glass-panel rounded-full px-4 py-2 items-center justify-center border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
         <nav className="flex items-center gap-2">
