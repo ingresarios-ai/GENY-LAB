@@ -70,7 +70,7 @@ const PROFILE_COLORS: Record<string, string> = {
 export default function RetoADN() {
   const navigate = useNavigate();
 
-  const [screen, setScreen] = useState<"welcome" | "chat" | "result">("welcome");
+  const [screen, setScreen] = useState<"welcome" | "loading-ai" | "chat" | "result">("welcome");
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -107,8 +107,7 @@ export default function RetoADN() {
 
   const startInterview = async () => {
     window.scrollTo(0, 0);
-    setScreen("chat");
-    setLoading(true);
+    setScreen("loading-ai");
     try {
       const reply = await callEdgeFunction(
         [{ role: "user", content: "Comienza la entrevista" }],
@@ -120,7 +119,7 @@ export default function RetoADN() {
       console.error(e);
       setMessages([{ role: "assistant", content: "Hola. Cuéntame: ¿cuál es tu mayor desafío con el dinero en este momento?" }]);
     }
-    setLoading(false);
+    setScreen("chat");
   };
 
   const sendMessage = async () => {
@@ -282,6 +281,40 @@ export default function RetoADN() {
             <DNASpinner />
           </div>
         </div>
+      </div>
+    );
+  }
+
+  /* ═══ LOADING AI ═══ */
+  if (screen === "loading-ai") {
+    return (
+      <div className="fixed inset-x-0 top-0 md:top-16 bottom-0 z-[45] bg-[#080c14] flex flex-col items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center gap-6 text-center px-6"
+        >
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            className="text-6xl md:text-7xl"
+          >
+            🤖
+          </motion.div>
+          <div className="space-y-3">
+            <motion.p
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="text-lg md:text-xl font-black uppercase tracking-[0.2em] text-brand-blue"
+            >
+              Iniciando AI
+            </motion.p>
+            <p className="text-sm text-brand-text-muted font-medium">
+              Conectando con la red neuronal de GENY...
+            </p>
+          </div>
+          <DNASpinner />
+        </motion.div>
       </div>
     );
   }
