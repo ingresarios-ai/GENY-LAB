@@ -11,17 +11,6 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-dvh flex">
-      {/* Global Logo Text */}
-      <div className="fixed top-14 md:top-16 left-1/2 -translate-x-1/2 z-[40] pointer-events-none flex flex-col items-center text-center w-full max-w-[200px]">
-        <Link to="/app" className="pointer-events-auto flex flex-col items-center hover:opacity-80 transition-opacity">
-          <div className="text-xl md:text-2xl font-black uppercase tracking-tight text-white leading-none mb-1 drop-shadow-[0_0_15px_rgba(0,209,255,0.6)]">
-            GENY<br/>LAB
-          </div>
-          <div className="text-[#00D1FF] font-bold text-[8px] md:text-[9px] tracking-[0.2em] md:tracking-[0.3em] uppercase opacity-90 drop-shadow-[0_0_8px_rgba(0,209,255,0.6)] whitespace-nowrap mt-0.5">
-            Sistema - Ejecución - Resultados
-          </div>
-        </Link>
-      </div>
       {/* Desktop Top Navigation */}
       <header className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 glass-panel rounded-full px-4 py-2 items-center justify-center border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
         <nav className="flex items-center gap-2">
