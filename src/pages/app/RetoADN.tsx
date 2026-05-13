@@ -146,11 +146,17 @@ export default function RetoADN() {
       setLoading(false);
 
       if (isDone || newTurns >= 11) {
-        setAnalyzing(true);
+        // Add transition message so it doesn't feel abrupt
+        const transitionMsg = "Perfecto. Ya tengo toda la información que necesito. Voy a activar el análisis profundo de tu ADN Financiero — dame unos segundos para procesar tus patrones, contradicciones y fortalezas.";
+        setTimeout(() => {
+          setMessages(prev => [...prev, { role: "assistant", content: transitionMsg }]);
+        }, 800);
+
+        // Wait for the user to read the message, then start analysis
         setTimeout(async () => {
+          setAnalyzing(true);
           try {
             const diagText = await callEdgeFunction(apiMsgs, 'diagnose');
-            // Intentar parsear el JSON de la respuesta
             let jsonStr = diagText;
             const match = diagText.match(/```json([\s\S]*?)```/);
             if (match) jsonStr = match[1];
@@ -162,7 +168,6 @@ export default function RetoADN() {
             setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.5 }, colors: ['#00D1FF', '#00E676', '#FEDD04', '#f59e0b'] }), 300);
           } catch (e) {
             console.error("Diagnosis Error:", e);
-            // Fallback en caso de error
             setDiagnosis({
               adn: "Estratega", emoji: "📊", titulo: "El Buscador de Certezas",
               lecturaCore: "Tu relación con el dinero está profundamente marcada por la necesidad de control. No es codicia — es arquitectura defensiva.",
@@ -176,7 +181,7 @@ export default function RetoADN() {
             setTimeout(() => confetti({ particleCount: 100, spread: 70 }), 300);
           }
           setAnalyzing(false);
-        }, 500);
+        }, 3500);
       }
     } catch (e) {
       console.error(e);
