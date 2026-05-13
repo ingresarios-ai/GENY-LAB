@@ -100,7 +100,7 @@ export default function PathMap() {
                   ¡Bienvenido a<br />GENY LAB!
                 </h1>
                 <p className="text-white/80 text-sm md:text-base font-medium leading-relaxed">
-                  Esta es tu ruta interactiva hacia la libertad financiera. Cada módulo está diseñado como un nivel que debes superar. 
+                  Esta es tu ruta interactiva hacia la tranquilidad financiera. Cada módulo está diseñado como un nivel que debes superar. 
                 </p>
                 <ul className="mt-4 space-y-3 text-sm text-white/70">
                   <li className="flex gap-3 items-start">
