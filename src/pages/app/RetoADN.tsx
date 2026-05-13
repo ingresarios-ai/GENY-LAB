@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronRight, RotateCcw, Share2, Copy, Check, MessageCircle, ArrowLeft } from "lucide-react";
+import { ChevronRight, RotateCcw, Share2, Copy, Check, MessageCircle, ArrowLeft, Download } from "lucide-react";
+import jsPDF from "jspdf";
 import { useNavigate, Link } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { supabase } from "../../lib/supabase";
@@ -425,10 +426,139 @@ export default function RetoADN() {
     );
   }
 
+  /* ═══ PDF GENERATOR ═══ */
+  const generatePDF = () => {
+    if (!diagnosis) return;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const w = doc.internal.pageSize.getWidth();
+    const h = doc.internal.pageSize.getHeight();
+    const profColor = PROFILE_COLORS[diagnosis.adn] || "#00D4FF";
+    const hexToRgb = (hex: string) => {
+      const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      return [r,g,b] as [number,number,number];
+    };
+    const rgb = hexToRgb(profColor);
+    const margin = 20;
+    const contentW = w - margin * 2;
+    let y = 0;
+
+    // Background
+    doc.setFillColor(8, 12, 20);
+    doc.rect(0, 0, w, h, 'F');
+
+    // Top accent bar
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+    doc.rect(0, 0, w, 3, 'F');
+    y = 20;
+
+    // Header
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(0, 209, 255);
+    doc.text('DIAGNÓSTICO ADN FINANCIERO', margin, y);
+    doc.setFontSize(9);
+    doc.setTextColor(150, 160, 180);
+    doc.text('GENY LAB · INGRESARIOS', w - margin, y, { align: 'right' });
+    y += 4;
+    doc.setDrawColor(255, 255, 255, 15);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, w - margin, y);
+    y += 15;
+
+    // Profile section
+    doc.setFontSize(36);
+    doc.setTextColor(255, 255, 255);
+    doc.text('ADN', w / 2, y, { align: 'center' });
+    y += 14;
+    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
+    doc.text(diagnosis.adn.toUpperCase(), w / 2, y, { align: 'center' });
+    y += 10;
+    doc.setFontSize(12);
+    doc.setTextColor(255, 215, 0);
+    doc.text(diagnosis.titulo, w / 2, y, { align: 'center' });
+    y += 12;
+    doc.setDrawColor(rgb[0], rgb[1], rgb[2]);
+    doc.setLineWidth(1);
+    doc.line(w/2 - 15, y, w/2 + 15, y);
+    y += 15;
+
+    // Helper to draw a section
+    const drawSection = (title: string, content: string, titleColor: [number,number,number], borderColor?: [number,number,number]) => {
+      const lines = doc.splitTextToSize(content, contentW - 16);
+      const blockH = 10 + lines.length * 5.5 + 8;
+      
+      if (y + blockH > h - 20) {
+        doc.addPage();
+        doc.setFillColor(8, 12, 20);
+        doc.rect(0, 0, w, h, 'F');
+        y = 20;
+      }
+
+      // Card background
+      doc.setFillColor(15, 20, 30);
+      doc.roundedRect(margin, y, contentW, blockH, 3, 3, 'F');
+      if (borderColor) {
+        doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
+        doc.setLineWidth(0.4);
+        doc.roundedRect(margin, y, contentW, blockH, 3, 3, 'S');
+      }
+
+      // Title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(titleColor[0], titleColor[1], titleColor[2]);
+      doc.text(title.toUpperCase(), margin + 8, y + 8);
+
+      // Content
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(200, 210, 220);
+      doc.text(lines, margin + 8, y + 16);
+      y += blockH + 6;
+    };
+
+    drawSection('Lectura de tu perfil', diagnosis.lecturaCore, [0,209,255]);
+    drawSection('Tu sombra financiera', diagnosis.sombra, [255,215,0], [180,140,0]);
+    if (diagnosis.contradiccion && diagnosis.contradiccion.toLowerCase() !== 'vacío') {
+      drawSection('Contradicción detectada', diagnosis.contradiccion, [0,209,255], [0,130,200]);
+    }
+    drawSection('Tu fortaleza real', diagnosis.fortaleza, [0,209,255]);
+    drawSection('Patrón de sabotaje', diagnosis.patron, [255,215,0], [180,140,0]);
+
+    // Activation phrase - special
+    const actLines = doc.splitTextToSize('"' + diagnosis.activacion + '"', contentW - 20);
+    const actH = 14 + actLines.length * 6 + 10;
+    if (y + actH > h - 20) {
+      doc.addPage();
+      doc.setFillColor(8, 12, 20);
+      doc.rect(0, 0, w, h, 'F');
+      y = 20;
+    }
+    doc.setFillColor(0, 25, 50);
+    doc.roundedRect(margin, y, contentW, actH, 3, 3, 'F');
+    doc.setDrawColor(0, 209, 255);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(margin, y, contentW, actH, 3, 3, 'S');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(0, 209, 255);
+    doc.text('TU FRASE DE ACTIVACIÓN', w / 2, y + 10, { align: 'center' });
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(13);
+    doc.setTextColor(255, 255, 255);
+    doc.text(actLines, w / 2, y + 20, { align: 'center' });
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(80, 90, 100);
+    doc.text('GENY LAB · Sistema · Ejecución · Resultados', w / 2, h - 10, { align: 'center' });
+
+    doc.save(`ADN-Financiero-${diagnosis.adn}.pdf`);
+  };
+
   /* ═══ RESULT ═══ */
   if (screen === "result" && diagnosis) {
     const profColor = PROFILE_COLORS[diagnosis.adn] || "#00D4FF";
-    
     return (
       <div className="max-w-6xl mx-auto pb-12">
         {/* Completion CTA Header */}
@@ -460,9 +590,9 @@ export default function RetoADN() {
             >
               <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse at top, ${profColor}15, transparent 70%)` }} />
               <div className="relative z-10 space-y-5">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">Tu resultado</p>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Tu resultado</p>
                 <div className="text-7xl md:text-8xl leading-none">{diagnosis.emoji}</div>
-                <p className="text-xs font-black uppercase tracking-widest text-[#FFD700]">{diagnosis.titulo}</p>
+                <p className="text-sm font-black uppercase tracking-widest text-[#FFD700]">{diagnosis.titulo}</p>
                 <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight">
                   ADN <br/><span style={{ color: profColor }}>{diagnosis.adn}</span>
                 </h1>
@@ -474,50 +604,54 @@ export default function RetoADN() {
           {/* Right Column: Insights */}
           <div className="lg:col-span-7 space-y-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="glass-card p-7 space-y-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">Lectura de tu perfil</p>
-              <p className="text-[15px] text-slate-300 leading-relaxed">{diagnosis.lecturaCore}</p>
+              className="glass-card p-7 space-y-4">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Lectura de tu perfil</p>
+              <p className="text-base md:text-lg text-slate-300 leading-relaxed">{diagnosis.lecturaCore}</p>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="glass-card p-7 space-y-3 border border-amber-500/20 bg-amber-500/5">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#FFD700]">Tu sombra financiera</p>
-              <p className="text-[15px] text-slate-300 leading-relaxed">{diagnosis.sombra}</p>
+              className="glass-card p-7 space-y-4 border border-amber-500/20 bg-amber-500/5">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#FFD700]">Tu sombra financiera</p>
+              <p className="text-base md:text-lg text-slate-300 leading-relaxed">{diagnosis.sombra}</p>
             </motion.div>
 
             {diagnosis.contradiccion && diagnosis.contradiccion.toLowerCase() !== "vacío" && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                className="glass-card p-7 space-y-3 border border-brand-blue/20">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">Contradicción detectada</p>
-                <p className="text-[15px] text-slate-300 leading-relaxed">{diagnosis.contradiccion}</p>
+                className="glass-card p-7 space-y-4 border border-brand-blue/20">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Contradicción detectada</p>
+                <p className="text-base md:text-lg text-slate-300 leading-relaxed">{diagnosis.contradiccion}</p>
               </motion.div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                className="glass-card p-6 space-y-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">Tu fortaleza real</p>
-                <p className="text-sm text-slate-300 leading-relaxed">{diagnosis.fortaleza}</p>
+                className="glass-card p-6 space-y-4">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Tu fortaleza real</p>
+                <p className="text-base text-slate-300 leading-relaxed">{diagnosis.fortaleza}</p>
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-                className="glass-card p-6 space-y-3 border border-amber-500/10">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#FFD700]">Patrón de sabotaje</p>
-                <p className="text-sm text-slate-300 leading-relaxed">{diagnosis.patron}</p>
+                className="glass-card p-6 space-y-4 border border-amber-500/10">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#FFD700]">Patrón de sabotaje</p>
+                <p className="text-base text-slate-300 leading-relaxed">{diagnosis.patron}</p>
               </motion.div>
             </div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
               className="rounded-2xl p-8 text-center bg-brand-blue/10 border border-brand-blue/20">
-              <p className="text-[10px] font-black uppercase tracking-widest text-brand-blue mb-4">Tu frase de activación</p>
-              <p className="text-lg md:text-xl text-white font-medium italic leading-relaxed">
+              <p className="text-xs font-black uppercase tracking-widest text-brand-blue mb-4">Tu frase de activación</p>
+              <p className="text-xl md:text-2xl text-white font-medium italic leading-relaxed">
                 "{diagnosis.activacion}"
               </p>
             </motion.div>
 
-            <div className="text-center pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <button onClick={generatePDF}
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-brand-blue/10 border border-brand-blue/30 text-brand-blue hover:bg-brand-blue/20 hover:scale-105 transition-all">
+                <Download className="w-4 h-4" /> Descargar PDF
+              </button>
               <button onClick={reset}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white/5 border border-white/10 text-brand-text-muted hover:text-white hover:bg-white/10 transition-all">
-                <RotateCcw className="w-4 h-4" /> Repetir el diagnóstico
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-white/5 border border-white/10 text-brand-text-muted hover:text-white hover:bg-white/10 transition-all">
+                <RotateCcw className="w-4 h-4" /> Repetir diagnóstico
               </button>
             </div>
           </div>
