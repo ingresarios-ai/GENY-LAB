@@ -277,10 +277,18 @@ export default function LessonScreen() {
               </p>
 
               {activityDone ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="w-full rounded-full py-4 font-black tracking-widest text-sm flex items-center justify-center gap-2 bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald cursor-default shadow-[0_0_20px_rgba(1,228,126,0.15)]">
                     <Check size={20} /> ACTIVIDAD COMPLETADA
                   </div>
+                  {lesson.activityRoute && (
+                    <button
+                      onClick={() => navigate(lesson.activityRoute)}
+                      className="w-full rounded-full py-3 font-bold tracking-widest text-xs cursor-pointer transition-all duration-300 bg-brand-blue/15 border border-brand-blue/40 text-brand-blue hover:bg-brand-blue/25 hover:shadow-[0_0_20px_rgba(0,209,255,0.2)] uppercase"
+                    >
+                      Ver mis resultados
+                    </button>
+                  )}
                   <button
                     onClick={() => setShowRepeatAlert(true)}
                     className="w-full rounded-full py-3 font-bold tracking-widest text-xs cursor-pointer transition-all duration-300 bg-transparent border border-white/10 text-white/50 hover:bg-white/5 hover:text-white/80 uppercase"
