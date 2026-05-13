@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, RotateCcw, Share2, Copy, Check, MessageCircle, ArrowLeft, Download } from "lucide-react";
 import jsPDF from "jspdf";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { supabase } from "../../lib/supabase";
 
@@ -70,6 +70,7 @@ const PROFILE_COLORS: Record<string, string> = {
 
 export default function RetoADN() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [screen, setScreen] = useState<"welcome" | "loading-ai" | "chat" | "result">("welcome");
   const [messages, setMessages] = useState<any[]>([]);
@@ -82,6 +83,21 @@ export default function RetoADN() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Load saved results if coming from "Ver mis resultados"
+  useEffect(() => {
+    if (searchParams.get('view') === 'results') {
+      try {
+        const saved = localStorage.getItem('adn-diagnosis');
+        if (saved) {
+          setDiagnosis(JSON.parse(saved));
+          setScreen('result');
+        }
+      } catch (e) {
+        console.error('Error loading saved diagnosis:', e);
+      }
+    }
+  }, []);
 
   // Scroll chat container to bottom (not the page)
   useEffect(() => {
@@ -171,6 +187,7 @@ export default function RetoADN() {
             
             const parsed = JSON.parse(jsonStr.trim());
             setDiagnosis(parsed);
+            localStorage.setItem('adn-diagnosis', JSON.stringify(parsed));
             
             setScreen("result");
             setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.5 }, colors: ['#00D1FF', '#00E676', '#FEDD04', '#f59e0b'] }), 300);

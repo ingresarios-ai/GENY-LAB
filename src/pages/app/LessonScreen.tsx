@@ -283,7 +283,7 @@ export default function LessonScreen() {
                   </div>
                   {lesson.activityRoute && (
                     <button
-                      onClick={() => navigate(lesson.activityRoute)}
+                      onClick={() => navigate(lesson.activityRoute + '?view=results')}
                       className="w-full rounded-full py-3 font-bold tracking-widest text-xs cursor-pointer transition-all duration-300 bg-brand-blue/15 border border-brand-blue/40 text-brand-blue hover:bg-brand-blue/25 hover:shadow-[0_0_20px_rgba(0,209,255,0.2)] uppercase"
                     >
                       Ver mis resultados
