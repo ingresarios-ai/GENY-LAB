@@ -103,6 +103,7 @@ export default function RetoADN() {
   };
 
   const startInterview = async () => {
+    window.scrollTo(0, 0);
     setScreen("chat");
     setLoading(true);
     try {
@@ -285,8 +286,16 @@ export default function RetoADN() {
   /* ═══ CHAT ═══ */
   if (screen === "chat") {
     return (
-      <div className="max-w-3xl mx-auto h-[80vh] flex flex-col glass-card relative overflow-hidden">
-        {/* Chat Header */}
+      <div className="max-w-3xl mx-auto space-y-4">
+        <button
+          onClick={reset}
+          className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]"
+        >
+          <ArrowLeft className="w-4 h-4" /> Volver a Actividades
+        </button>
+
+        <div className="h-[calc(100vh-140px)] min-h-[500px] flex flex-col glass-card relative overflow-hidden">
+          {/* Chat Header */}
         <div className="px-5 py-4 border-b border-white/10 flex items-center gap-4 bg-white/5 shrink-0 z-10">
           <div className="w-10 h-10 rounded-full bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-xl shrink-0">
             🧬

@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, Link } from 'react-router-dom';
 import { Map, Trophy, MessageCircle } from 'lucide-react';
 import { Footer } from '../../components/Footer';
 
@@ -10,6 +10,17 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-dvh flex">
+      {/* Global Logo */}
+      <div className="fixed top-4 md:top-6 left-4 md:left-8 z-[60]">
+        <Link to="/app">
+          <img 
+            src="/images/logo.png" 
+            alt="Geny Lab" 
+            className="h-8 md:h-10 object-contain drop-shadow-[0_0_15px_rgba(0,209,255,0.2)] hover:drop-shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all" 
+          />
+        </Link>
+      </div>
+
       {/* Desktop Top Navigation */}
       <header className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 glass-panel rounded-full px-4 py-2 items-center justify-center border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
         <nav className="flex items-center gap-2">
