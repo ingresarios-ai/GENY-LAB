@@ -1,4 +1,4 @@
-// Trader Mapp — Lesson definitions & gamification config
+// Ingresarios Lab — Lesson definitions & gamification config
 
 export interface Lesson {
   id: string;
@@ -58,7 +58,7 @@ export const LESSONS: Lesson[] = [
     id: 'adn',
     order: 1,
     emoji: '🧬',
-    title: 'Tu ADN Financiero',
+    title: 'Tu ADN\nFinanciero',
     subtitle: 'Descubre qué tipo de inversionista eres',
     description: 'Cada persona tiene un perfil financiero único. Este test revela el tuyo para que tomes decisiones alineadas con tu naturaleza.',
     videoUrl: '', // To be filled
@@ -72,7 +72,7 @@ export const LESSONS: Lesson[] = [
     id: 'gastos',
     order: 2,
     emoji: '🐜',
-    title: 'Gastos Hormiga',
+    title: 'Gastos\nHormiga',
     subtitle: 'Las fugas invisibles que devoran tu capital',
     description: 'Descubre cuánto dinero pierdes al año en gastos que ni sabías que tenías. El resultado te va a sorprender.',
     videoUrl: '',
@@ -86,7 +86,7 @@ export const LESSONS: Lesson[] = [
     id: 'termostato',
     order: 3,
     emoji: '🌡️',
-    title: 'Termostato Financiero',
+    title: 'Termostato\nFinanciero',
     subtitle: 'Tu techo invisible de riqueza',
     description: 'Todos tenemos un "termostato" que limita cuánto dinero podemos ganar y conservar. Descubre dónde está el tuyo.',
     videoUrl: '',
@@ -100,7 +100,7 @@ export const LESSONS: Lesson[] = [
     id: 'trampas',
     order: 4,
     emoji: '🧠',
-    title: 'Trampas del Dinero',
+    title: 'Trampas\ndel Dinero',
     subtitle: '5 sesgos cognitivos que te cuestan dinero',
     description: 'Tu cerebro te engaña con el dinero. Identifica los sesgos que sabotean tus decisiones financieras.',
     videoUrl: '',
@@ -114,7 +114,7 @@ export const LESSONS: Lesson[] = [
     id: 'pedem',
     order: 5,
     emoji: '📋',
-    title: 'Mi Primer PEDEM',
+    title: 'Mi Primer\nPEDEM',
     subtitle: 'El método que separa al 5% del 95%',
     description: 'PEDEM es el framework de planificación que usan los traders consistentes. Construye el tuyo paso a paso.',
     videoUrl: '',
@@ -128,7 +128,7 @@ export const LESSONS: Lesson[] = [
     id: 'sombra',
     order: 6,
     emoji: '🤯',
-    title: 'Mis Emociones',
+    title: 'Mis\nEmociones',
     subtitle: 'Tu saboteador interior: detectarlo y desactivarlo',
     description: 'El mayor obstáculo entre tú y la consistencia no es la estrategia — son tus emociones. Es hora de enfrentarlas.',
     videoUrl: '',
@@ -142,7 +142,7 @@ export const LESSONS: Lesson[] = [
     id: 'flow',
     order: 7,
     emoji: '⚡',
-    title: 'Reto del Flow',
+    title: 'Reto del\nFlow',
     subtitle: 'El estado de máximo rendimiento financiero',
     description: 'El Flow es el estado mental donde todo fluye. Aprende a activarlo cada vez que operas.',
     videoUrl: '',

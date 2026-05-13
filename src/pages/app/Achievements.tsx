@@ -1,4 +1,4 @@
-// Trader Mapp — Achievements / Results Page
+// Ingresarios Lab — Achievements / Results Page
 
 import { useMemo } from 'react';
 import { motion } from 'motion/react';
@@ -17,7 +17,7 @@ export default function Achievements() {
       <motion.h1 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl  font-bold mb-6"
+        className="text-3xl md:text-4xl font-black uppercase tracking-tight mb-6"
       >
         Mis Logros
       </motion.h1>
@@ -35,18 +35,19 @@ export default function Achievements() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
-            className="glass-card p-4 text-center"
+            className="glass-panel p-4 text-center rounded-2xl relative overflow-hidden"
           >
-            <div className="mb-1.5" style={{ color: stat.color }}>{stat.icon}</div>
-            <div className="text-xl font-extrabold " style={{ color: stat.color }}>{stat.value}</div>
-            <div className="text-[0.65rem] text-brand-text-muted/60 font-semibold mt-0.5">{stat.label}</div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+            <div className="mb-2 flex justify-center" style={{ color: stat.color }}>{stat.icon}</div>
+            <div className="text-2xl font-extrabold" style={{ color: stat.color }}>{stat.value}</div>
+            <div className="text-[0.65rem] text-brand-text-muted/60 font-semibold mt-1 uppercase tracking-widest">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
       {/* Level progression */}
-      <h3 className="text-sm text-brand-text-muted mb-3 font-semibold">Niveles</h3>
-      <div className="flex flex-col gap-2 mb-7">
+      <h3 className="text-sm text-brand-text-muted mb-3 font-semibold uppercase tracking-wider">Niveles</h3>
+      <div className="flex flex-col gap-3 mb-7">
         {LEVELS.map((lvl, i) => {
           const isCurrentLevel = lvl.id === level.id;
           const isPast = lvl.id < level.id;
@@ -57,14 +58,14 @@ export default function Achievements() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.06 }}
               className={`
-                flex items-center gap-3 py-3 px-4 rounded-xl border transition-all
+                flex items-center gap-4 py-3.5 px-5 rounded-2xl border transition-all duration-300
                 ${isCurrentLevel 
-                  ? 'bg-white/[0.04] border-white/10' 
-                  : 'bg-white/[0.02] border-white/[0.04]'
+                  ? 'glass-panel shadow-[0_0_20px_rgba(0,255,255,0.05)]' 
+                  : 'bg-[#0f172a]/40 border-white/[0.04]'
                 }
-                ${isPast || isCurrentLevel ? '' : 'opacity-35'}
+                ${isPast || isCurrentLevel ? '' : 'opacity-30'}
               `}
-              style={isCurrentLevel ? { borderColor: `${lvl.color}40` } : {}}
+              style={isCurrentLevel ? { borderColor: `${lvl.color}50` } : {}}
             >
               <span className="text-xl">{lvl.emoji}</span>
               <div className="flex-1">
@@ -89,8 +90,8 @@ export default function Achievements() {
       </div>
 
       {/* Completed lessons */}
-      <h3 className="text-sm text-brand-text-muted mb-3 font-semibold">Lecciones</h3>
-      <div className="flex flex-col gap-1.5">
+      <h3 className="text-sm text-brand-text-muted mb-3 font-semibold uppercase tracking-wider">Lecciones</h3>
+      <div className="flex flex-col gap-2.5">
         {LESSONS.map((lesson, i) => {
           const completed = isLessonCompleted(lesson.id);
           return (
@@ -100,19 +101,19 @@ export default function Achievements() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + i * 0.05 }}
               className={`
-                flex items-center gap-2.5 py-2.5 px-3.5 rounded-xl border
+                flex items-center gap-3 py-3 px-4 rounded-2xl border transition-colors duration-300
                 ${completed 
-                  ? 'bg-brand-green/[0.05] border-brand-green/20' 
-                  : 'bg-white/[0.02] border-white/[0.04]'
+                  ? 'glass-panel border-brand-emerald/20' 
+                  : 'bg-[#0f172a]/40 border-white/[0.04]'
                 }
               `}
             >
-              <span className="text-lg">{lesson.emoji}</span>
+              <span className="text-xl">{lesson.emoji}</span>
               <div className="flex-1">
                 <div className="text-sm font-semibold">{lesson.title}</div>
               </div>
               {completed && (
-                <span className="text-brand-green text-[0.7rem] font-bold">
+                <span className="text-brand-emerald text-[0.7rem] font-bold bg-brand-emerald/10 px-2 py-1 rounded-md">
                   ✓ +{lesson.xpVideo + lesson.xpActivity + lesson.xpBonus} XP
                 </span>
               )}

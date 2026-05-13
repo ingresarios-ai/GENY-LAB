@@ -16,16 +16,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-motion': ['motion/react'],
-            'vendor-supabase': ['@supabase/supabase-js'],
-            'vendor-ui': ['react-hot-toast', 'canvas-confetti', 'lucide-react'],
-          }
-        }
-      }
+      chunkSizeWarningLimit: 1000,
     },
     server: {
       port: 3001,

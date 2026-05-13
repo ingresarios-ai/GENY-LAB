@@ -1,4 +1,4 @@
-// Trader Mapp — User progress store (localStorage for now, Supabase later)
+// GENY LAB — User progress store (localStorage for now, Supabase later)
 
 import { LESSONS, getLevelForXp, type Lesson } from './lessons';
 
@@ -16,7 +16,7 @@ export interface UserProgress {
   lastActivityDate?: string;
 }
 
-const STORAGE_KEY = 'trader_mapp_progress';
+const STORAGE_KEY = 'geny_lab_progress';
 
 const defaultProgress: UserProgress = {
   lessonProgress: {},
