@@ -8,6 +8,7 @@ export default function AppLayout() {
     { to: "/app/logros", icon: Trophy, label: "Logros" },
   ];
 
+  return (
     <div className="min-h-dvh flex">
       {/* Global Logo */}
       <div className="fixed top-6 md:top-20 left-1/2 -translate-x-1/2 z-[40] pointer-events-none">
