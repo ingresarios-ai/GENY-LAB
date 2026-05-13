@@ -80,10 +80,13 @@ export default function RetoADN() {
   
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom
+  // Scroll chat container to bottom (not the page)
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages, loading]);
 
   // Focus input
@@ -286,15 +289,19 @@ export default function RetoADN() {
   /* ═══ CHAT ═══ */
   if (screen === "chat") {
     return (
-      <div className="max-w-3xl mx-auto space-y-4">
-        <button
-          onClick={reset}
-          className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]"
-        >
-          <ArrowLeft className="w-4 h-4" /> Volver a Actividades
-        </button>
+      <div className="fixed inset-0 z-[60] bg-[#080c14] flex flex-col">
+        {/* Top bar */}
+        <div className="max-w-3xl w-full mx-auto px-4 pt-4 pb-2">
+          <button
+            onClick={reset}
+            className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]"
+          >
+            <ArrowLeft className="w-4 h-4" /> Volver a Actividades
+          </button>
+        </div>
 
-        <div className="h-[calc(100vh-140px)] min-h-[500px] flex flex-col glass-card relative overflow-hidden">
+        <div className="flex-1 max-w-3xl w-full mx-auto px-4 pb-4 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col glass-card relative overflow-hidden min-h-0">
           {/* Chat Header */}
         <div className="px-5 py-4 border-b border-white/10 flex items-center gap-4 bg-white/5 shrink-0 z-10">
           <div className="w-10 h-10 rounded-full bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-xl shrink-0">
@@ -310,7 +317,7 @@ export default function RetoADN() {
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-5 space-y-5">
           <AnimatePresence>
             {messages.map((m, i) => (
               <motion.div 
@@ -366,6 +373,7 @@ export default function RetoADN() {
           >
             <ChevronRight className="w-5 h-5" />
           </button>
+        </div>
         </div>
         </div>
       </div>
