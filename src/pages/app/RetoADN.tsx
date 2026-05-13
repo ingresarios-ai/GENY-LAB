@@ -198,7 +198,7 @@ export default function RetoADN() {
   /* ═══ WELCOME ═══ */
   if (screen === "welcome") {
     return (
-      <div className="max-w-5xl mx-auto pb-12">
+      <div className="max-w-5xl mx-auto space-y-10 pb-12">
         <Link
           to="/app/actividades"
           className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em] mb-2"
@@ -212,38 +212,48 @@ export default function RetoADN() {
             className="grid md:grid-cols-2 gap-12 items-center"
           >
             {/* Left side */}
-            <div className="space-y-6 text-center md:text-left">
+            <div className="space-y-8 text-left">
               <DNACanvas size={160} />
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue mb-2">GENY LAB</p>
+              <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none">
                   Diagnóstico <br className="hidden md:block" />
-                  <span className="title-highlight">ADN</span> Financiero
+                  <span className="title-highlight">ADN Financiero</span>
                 </h1>
+                <p className="text-brand-text-muted font-medium text-lg md:text-xl leading-relaxed max-w-md">
+                  No es un quiz tradicional. Es una conversación inmersiva con GENY que cambiará cómo ves tu dinero.
+                </p>
               </div>
-              <p className="text-brand-text-muted text-base md:text-lg leading-relaxed max-w-sm mx-auto md:mx-0">
-                No es un quiz tradicional. Es una conversación inmersiva con GENY que cambiará cómo ves tu dinero.
+
+              <button
+                onClick={startInterview}
+                className="btn-primary w-full md:w-auto px-8 py-5 rounded-2xl text-sm font-black uppercase tracking-[0.15em] flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(0,209,255,0.3)] hover:shadow-[0_0_40px_rgba(0,209,255,0.5)] transition-all bg-gradient-to-r from-brand-blue to-cyan-500 text-white"
+              >
+                INICIAR ENTREVISTA
+                <ChevronRight className="w-5 h-5" />
+              </button>
+
+              <p className="text-white/20 text-xs font-black uppercase tracking-widest">
+                Psicología Jungiana · Diagnóstico único para ti
               </p>
             </div>
 
             {/* Right side */}
-            <div className="glass-card p-10 text-center space-y-8 flex flex-col justify-center h-full border-t-2 border-t-brand-blue/40 relative overflow-hidden">
+            <div className="glass-card p-8 text-left space-y-8 h-full flex flex-col justify-center border-t-2 border-t-brand-blue/40 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/8 via-transparent to-brand-green/5 pointer-events-none" />
-              <div className="relative z-10 space-y-6">
-                <p className="text-brand-text-muted/80 text-sm font-medium">
-                  7 preguntas · Psicología Jungiana · Diagnóstico único para ti
-                </p>
-                
-                <div className="pt-4">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={startInterview}
-                    className="w-full px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-sm bg-gradient-to-r from-brand-blue to-cyan-500 text-white shadow-[0_0_25px_rgba(0,209,255,0.3)] hover:shadow-[0_0_40px_rgba(0,209,255,0.5)] transition-all"
-                  >
-                    INICIAR ENTREVISTA →
-                  </motion.button>
-                </div>
+              <div className="relative z-10 space-y-8">
+                {[
+                  { num: '01', color: 'text-brand-blue', t: 'Chat Inmersivo', s: 'Conversa con la red neuronal de GENY.' },
+                  { num: '02', color: 'text-cyan-400', t: 'Análisis Jungiano', s: 'Descubre tus patrones, sombras y bloqueos ocultos.' },
+                  { num: '03', color: 'text-[#FEDD04]', t: 'Tu Activación', s: 'Recibe una frase única para reprogramar tu mente.' },
+                ].map((r, i) => (
+                  <div key={i} className="flex gap-5 items-start">
+                    <span className={`${r.color} font-black text-3xl min-w-[40px] opacity-80 pt-1`}>{r.num}</span>
+                    <div>
+                      <div className="font-black uppercase tracking-tight text-lg">{r.t}</div>
+                      <div className="text-brand-text-muted text-sm font-medium mt-1">{r.s}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>

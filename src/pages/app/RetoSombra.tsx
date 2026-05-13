@@ -210,16 +210,51 @@ export default function MisEmociones() {
                     MIS EMOCIONES
                   </span>
                 </h1>
-                <p className="text-xs text-brand-text-muted uppercase tracking-[0.3em] font-bold">
-                  OPERACIÓN SABOTEADOR · 10 DÍAS
+                <p className="text-brand-text-muted font-medium text-lg md:text-xl leading-relaxed max-w-md">
+                  Carl Jung descubrió que dentro de cada persona vive una segunda personalidad inconsciente. Para los traders, esto significa que en tu silla hay DOS operadores — y solo uno tiene un plan.
                 </p>
               </div>
 
-              <div className="glass-card relative overflow-hidden border-t-2 border-t-red-500/40 p-8 text-left">
+              {/* ── CTA Button ── */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => { setDiagStep(0); setDiagAns([]); setView("diag"); }}
+                className="w-full md:w-auto cursor-pointer rounded-2xl px-8 py-5 transition-all group relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 40%, #991b1b 100%)',
+                  boxShadow: '0 0 30px rgba(239,68,68,0.35), 0 0 60px rgba(239,68,68,0.15), 0 8px 24px rgba(0,0,0,0.4)',
+                }}
+              >
+                {/* Animated shine sweep */}
+                <div
+                  className="absolute inset-0 skew-x-[-20deg] pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%)',
+                    animation: 'diag-shine 3s ease-in-out infinite',
+                  }}
+                />
+                <style>{`@keyframes diag-shine { 0%, 100% { transform: translateX(-150%) skewX(-20deg); } 50% { transform: translateX(150%) skewX(-20deg); } }`}</style>
+                <div className="relative z-10 flex flex-col items-center justify-center">
+                  <span className="text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3">
+                    DIAGNOSTICAR SABOTEADOR
+                    <ChevronRight className="w-5 h-5" />
+                  </span>
+                </div>
+              </motion.button>
+              
+              <p className="text-white/20 text-xs font-black uppercase tracking-widest">
+                4 preguntas · Operación Saboteador 10 Días
+              </p>
+            </div>
+
+            {/* Right Column: Symptoms & Info */}
+            <div className="space-y-8 flex flex-col justify-center h-full">
+              <div className="glass-card p-8 space-y-8 relative overflow-hidden flex-grow flex flex-col justify-center border-t-2 border-t-red-500/40">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500/8 via-transparent to-amber-500/5 pointer-events-none" />
                 <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-red-500/10 blur-[60px] pointer-events-none" />
 
-                <div className="relative z-10 space-y-6">
+                <div className="relative z-10 space-y-8">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0">
                       <AlertTriangle className="w-5 h-5 text-red-500" />
@@ -231,78 +266,36 @@ export default function MisEmociones() {
                   </div>
 
                   <blockquote className="border-l-4 border-red-500/40 pl-5 py-1">
-                    <p className="text-base md:text-lg text-white font-medium leading-relaxed">
+                    <p className="text-sm md:text-base text-white font-medium leading-relaxed">
                       ¿Por qué pierdes cuando <span className="text-red-500 font-black">SABES</span> que vas a ganar?
-                      <br />
-                      ¿Por qué mueves el stop cuando <span className="text-amber-500 font-black">SABES</span> que estaba bien?
                       <br />
                       ¿Por qué ignoras tu plan cuando lo <span className="text-emerald-500 font-black">DISEÑASTE</span> tú?
                     </p>
                   </blockquote>
-                </div>
-              </div>
-            </div>
 
-            {/* Right Column: Symptoms & CTA */}
-            <div className="space-y-8 flex flex-col justify-center h-full">
-              <div className="glass-card p-10 space-y-8 relative overflow-hidden flex-grow flex flex-col justify-center">
-                <p className="text-slate-300 text-sm md:text-base leading-relaxed text-center md:text-left">
-                  <span className="text-red-400 font-black">Carl Jung lo descubrió hace 100 años:</span> dentro de cada persona vive una segunda personalidad inconsciente.
-                  Para traders como tú, eso significa que <span className="text-white font-bold">en tu silla hay DOS operadores</span> — y solo uno tiene un plan.
-                </p>
-
-                {/* ── Symptoms Grid ── */}
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
-                    <span className="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] whitespace-nowrap text-center">Señales del Saboteador</span>
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
-                  </div>
-                  <div className="grid grid-cols-1 gap-3">
-                    {symptoms.map((s, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + i * 0.1 }}
-                        className="bg-white/5 p-4 rounded-xl flex items-center gap-4 border-l-4 border-l-red-500/30"
-                      >
-                        <span className="text-2xl shrink-0">{s.icon}</span>
-                        <span className="text-slate-300 text-sm font-medium">{s.text}</span>
-                      </motion.div>
-                    ))}
+                  {/* ── Symptoms Grid ── */}
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+                      <span className="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] whitespace-nowrap text-center">Señales del Saboteador</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
+                      {symptoms.map((s, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.3 + i * 0.1 }}
+                          className="bg-white/5 p-3 rounded-xl flex items-center gap-4 border-l-4 border-l-red-500/30"
+                        >
+                          <span className="text-xl shrink-0">{s.icon}</span>
+                          <span className="text-slate-300 text-sm font-medium">{s.text}</span>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-
-                {/* ── CTA Button ── */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => { setDiagStep(0); setDiagAns([]); setView("diag"); }}
-                  className="w-full cursor-pointer rounded-2xl px-6 py-6 text-center transition-all group relative overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 40%, #991b1b 100%)',
-                    boxShadow: '0 0 30px rgba(239,68,68,0.35), 0 0 60px rgba(239,68,68,0.15), 0 8px 24px rgba(0,0,0,0.4)',
-                  }}
-                >
-                  {/* Animated shine sweep */}
-                  <div
-                    className="absolute inset-0 skew-x-[-20deg] pointer-events-none"
-                    style={{
-                      background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%)',
-                      animation: 'diag-shine 3s ease-in-out infinite',
-                    }}
-                  />
-                  <style>{`@keyframes diag-shine { 0%, 100% { transform: translateX(-150%) skewX(-20deg); } 50% { transform: translateX(150%) skewX(-20deg); } }`}</style>
-                  {/* Pulsing ring */}
-                  <div className="absolute -inset-1 rounded-2xl border border-red-500/40 animate-ping opacity-20 pointer-events-none" style={{ animationDuration: '2.5s' }} />
-                  <div className="relative z-10">
-                    <p className="text-white font-black text-base md:text-lg uppercase tracking-wider drop-shadow-md flex items-center justify-center gap-2">
-                      🎯 DIAGNOSTICAR MI SABOTEADOR
-                    </p>
-                    <p className="text-red-100/70 text-xs mt-2 font-medium tracking-widest uppercase">4 preguntas · 2 minutos</p>
-                  </div>
-                </motion.button>
               </div>
             </div>
           </motion.div>

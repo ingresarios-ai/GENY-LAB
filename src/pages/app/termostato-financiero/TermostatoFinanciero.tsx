@@ -197,6 +197,10 @@ const TermostatoFinanciero = () => {
                     Comenzar diagnóstico
                     <ChevronRight className="w-5 h-5" />
                   </button>
+                  
+                  <p className="text-white/20 text-xs font-black uppercase tracking-widest">
+                    Mide tu nivel actual · Reto de 10 días
+                  </p>
                 </div>
 
                 <div className="glass-card p-8 text-left space-y-8 h-full flex flex-col justify-center">
