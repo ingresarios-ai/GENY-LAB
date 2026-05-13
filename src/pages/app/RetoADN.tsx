@@ -324,7 +324,7 @@ export default function RetoADN() {
     return (
       <div className="fixed inset-x-0 top-0 md:top-16 bottom-0 z-[45] bg-[#080c14] flex flex-col">
         {/* Top bar */}
-        <div className="max-w-3xl w-full mx-auto px-4 pt-4 pb-2">
+        <div className="max-w-3xl w-full mx-auto px-4 pt-8 pb-2">
           <button
             onClick={reset}
             className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]"
