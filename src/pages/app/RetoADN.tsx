@@ -108,16 +108,23 @@ export default function RetoADN() {
   const startInterview = async () => {
     window.scrollTo(0, 0);
     setScreen("loading-ai");
+    const greeting = "Hola. Soy GENY, tu analista de ADN Financiero. En los próximos minutos vamos a tener una conversación que va a revelar patrones sobre tu relación con el dinero que probablemente nunca habías visto. No hay respuestas correctas ni incorrectas — solo honestidad. ¿Empezamos?";
     try {
       const reply = await callEdgeFunction(
         [{ role: "user", content: "Comienza la entrevista" }],
         'interview'
       );
       const clean = reply.replace("[ANÁLISIS_LISTO]", "").trim();
-      setMessages([{ role: "assistant", content: clean }]);
+      setMessages([
+        { role: "assistant", content: greeting },
+        { role: "assistant", content: clean }
+      ]);
     } catch (e) {
       console.error(e);
-      setMessages([{ role: "assistant", content: "Hola. Cuéntame: ¿cuál es tu mayor desafío con el dinero en este momento?" }]);
+      setMessages([
+        { role: "assistant", content: greeting },
+        { role: "assistant", content: "Cuéntame: ¿cuál es tu mayor desafío con el dinero en este momento?" }
+      ]);
     }
     setScreen("chat");
   };
