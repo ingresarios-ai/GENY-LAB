@@ -193,7 +193,7 @@ export default function RetoADN() {
             setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.5 }, colors: ['#00D1FF', '#00E676', '#FEDD04', '#f59e0b'] }), 300);
           } catch (e) {
             console.error("Diagnosis Error:", e);
-            setDiagnosis({
+            const fallback = {
               adn: "Estratega", emoji: "📊", titulo: "El Buscador de Certezas",
               lecturaCore: "Tu relación con el dinero está profundamente marcada por la necesidad de control. No es codicia — es arquitectura defensiva.",
               sombra: "Tu sombra financiera es la parálisis por análisis: usas la preparación como escudo para no actuar.",
@@ -201,7 +201,9 @@ export default function RetoADN() {
               fortaleza: "Capacidad analítica excepcional y disciplina en la documentación de tus procesos.",
               patron: "Investigas, planeas, casi ejecutas — y en el último momento encuentras una razón para esperar un poco más.",
               activacion: "El sistema perfecto que nunca se ejecuta vale menos que el imperfecto que sí lo hace."
-            });
+            };
+            setDiagnosis(fallback);
+            localStorage.setItem('adn-diagnosis', JSON.stringify(fallback));
             setScreen("result");
             setTimeout(() => confetti({ particleCount: 100, spread: 70 }), 300);
           }
@@ -233,10 +235,10 @@ export default function RetoADN() {
     return (
       <div className="max-w-5xl mx-auto space-y-10 pb-12">
         <Link
-          to="/app/actividades"
+          to="/app/leccion/adn"
           className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em] mb-2"
         >
-          <ArrowLeft className="w-4 h-4" /> Volver a Actividades
+          <ArrowLeft className="w-4 h-4" /> Regresar
         </Link>
         <div className="min-h-[70vh] flex flex-col justify-center">
           <motion.div
