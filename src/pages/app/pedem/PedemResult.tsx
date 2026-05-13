@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Share2, Copy, Check } from 'lucide-react';
+import { ChevronLeft, Share2, Copy, Check, ChevronRight } from 'lucide-react';
 
 import type { PedemPath } from './constants';
 import { SHADOW_MAP, DIRECTION_MAP, PATH_LABELS } from './constants';

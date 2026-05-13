@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft, CheckCircle, Share2,    Copy, Check,
-  Lock, Unlock, Zap, Brain, AlertTriangle, ArrowRight
+  Lock, Unlock, Zap, Brain, AlertTriangle, ArrowRight, ChevronRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

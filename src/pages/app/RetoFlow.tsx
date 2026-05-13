@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft, CheckCircle, Share2,    Copy, Check,
-  Lock, Unlock, Zap, Brain, BookOpen, Search
+  Lock, Unlock, Zap, Brain, BookOpen, Search, ChevronRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
