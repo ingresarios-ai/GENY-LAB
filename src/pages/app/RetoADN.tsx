@@ -6,6 +6,9 @@ import jsPDF from "jspdf";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { supabase } from "../../lib/supabase";
+import ShareModule from "../../components/ShareModule";
+import ResultActions from "../../components/ResultActions";
+import CompletionBanner from "../../components/CompletionBanner";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DNA CANVAS ANIMATION
@@ -134,13 +137,13 @@ export default function RetoADN() {
       const clean = reply.replace("[ANÁLISIS_LISTO]", "").trim();
       setMessages([
         { role: "assistant", content: greeting },
-        { role: "assistant", content: "Empecemos. " + clean }
+        { role: "assistant", content: clean }
       ]);
     } catch (e) {
       console.error(e);
       setMessages([
         { role: "assistant", content: greeting },
-        { role: "assistant", content: "Empecemos. Cuéntame, ¿cuál es el mayor desafío que enfrentas hoy con el dinero?" }
+        { role: "assistant", content: "Para empezar, cuéntame: ¿cuál es el mayor desafío que enfrentas hoy con el dinero?" }
       ]);
     }
     setScreen("chat");
@@ -580,23 +583,14 @@ export default function RetoADN() {
     const profColor = PROFILE_COLORS[diagnosis.adn] || "#00D4FF";
     return (
       <div className="max-w-6xl mx-auto pb-12">
-        {/* Completion CTA Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-brand-green/10 border border-brand-green/20 p-6 rounded-2xl relative overflow-hidden mb-8">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-green/10 to-transparent -translate-x-full animate-shimmer" />
-          <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white relative z-10 text-center md:text-left">
-            Diagnóstico Finalizado
-          </h2>
-          <button
-            onClick={() => navigate('/app/leccion/adn?action=complete')}
-            className="btn-primary w-full md:w-auto px-8 py-4 rounded-xl text-sm md:text-base font-black uppercase tracking-[0.15em] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(1,228,126,0.4)] hover:shadow-[0_0_40px_rgba(1,228,126,0.6)] hover:scale-105 transition-all relative z-10 group overflow-hidden"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              Completar Actividad
-              <ChevronRight className="w-5 h-5" />
-            </span>
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shimmer" />
-          </button>
-        </div>
+        <CompletionBanner lessonId="adn" />
+
+        <ResultActions 
+          onDownloadPDF={async () => {
+            generatePDF();
+          }} 
+          onReset={reset} 
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Profile Card */}
@@ -663,15 +657,8 @@ export default function RetoADN() {
               </p>
             </motion.div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <button onClick={generatePDF}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-brand-blue/10 border border-brand-blue/30 text-brand-blue hover:bg-brand-blue/20 hover:scale-105 transition-all">
-                <Download className="w-4 h-4" /> Descargar PDF
-              </button>
-              <button onClick={reset}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-white/5 border border-white/10 text-brand-text-muted hover:text-white hover:bg-white/10 transition-all">
-                <RotateCcw className="w-4 h-4" /> Repetir diagnóstico
-              </button>
+            <div className="pt-4">
+              <ShareModule activity="adn" title="ADN Financiero" resultData={diagnosis} />
             </div>
           </div>
         </div>

@@ -6,7 +6,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Category, Currency, Projection } from './gastos-hormiga/types';
 import { CATEGORIES, CURRENCIES, ANNUAL_RATE, getRecommendation } from './gastos-hormiga/constants';
 import Confetti from '../../components/Confetti';
-
+import ShareModule from '../../components/ShareModule';
+import ResultActions from '../../components/ResultActions';
+import CompletionBanner from '../../components/CompletionBanner';
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
 
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -40,6 +44,55 @@ export const GastosHormiga = () => {
     () => Object.values(amounts).reduce((s: number, v) => s + (parseFloat(v as string) || 0), 0),
     [amounts]
   );
+
+  const chartRef = React.useRef<HTMLDivElement>(null);
+
+  const generatePDF = async () => {
+    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,M=18; let y=20;
+    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
+    doc.setFillColor(0,212,255); doc.rect(0,0,W,3,'F');
+    
+    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
+    doc.setTextColor(100); doc.text('GASTOS HORMIGA',W-M,y,{align:'right'}); y+=16;
+    
+    doc.setTextColor(250,204,21); doc.setFontSize(42); doc.text(fmt(total, currency),M,y);
+    doc.setFontSize(14); doc.setTextColor(255); doc.text('Total Mensual',M,y+10); y+=26;
+    
+    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('PROYECCIÓN DE RIQUEZA (7% Anual)',M,y); y+=8;
+    proj.forEach((p) => {
+      doc.setTextColor(255); doc.setFontSize(12); doc.text(`${p.years} años: ${fmt(p.val, currency)}`,M,y); y+=6;
+    });
+    y+=6;
+
+    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('RECOMENDACIÓN',M,y); y+=8;
+    doc.setTextColor(255); doc.setFontSize(14); doc.text(rec.title,M,y); y+=8;
+    doc.setTextColor(200); doc.setFontSize(11);
+    const recLines = doc.splitTextToSize(rec.desc, W-2*M);
+    doc.text(recLines, M, y); y+=recLines.length*6+6;
+    doc.setTextColor(250,204,21); doc.setFontSize(11); doc.setFont('helvetica', 'italic');
+    const highLines = doc.splitTextToSize(`"${rec.highlight}"`, W-2*M);
+    doc.text(highLines, M, y); y+=highLines.length*6+10;
+
+    if (chartRef.current) {
+      try {
+        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#080c14' });
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = W - 2*M;
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        if (y + pdfHeight > 280) {
+          doc.addPage();
+          doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
+          y = 20;
+        }
+        doc.addImage(imgData, 'PNG', M, y, pdfWidth, pdfHeight);
+      } catch (e) {
+        console.error('Error capturing chart', e);
+      }
+    }
+    doc.save('gastos-hormiga.pdf');
+  };
 
   const barData = useMemo(
     () => CATEGORIES
@@ -335,54 +388,35 @@ export const GastosHormiga = () => {
         animate={{ scale: 1, opacity: 1 }}
         className="space-y-8"
       >
-        {/* Top nav */}
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => setStep(1)}
-            className="flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]"
-          >
-            <ArrowLeft className="w-4 h-4" /> Editar respuestas
-          </button>
-          <div className="flex items-center gap-2">
-            {CURRENCIES.map(c => (
-              <button
-                key={c.id}
-                onClick={() => setCurrency(c)}
-                className={`px-2 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all border ${
-                  currency.id === c.id
-                    ? 'bg-brand-blue/10 border-brand-blue/30 text-brand-blue'
-                    : 'bg-white/5 border-white/5 text-white/30 hover:text-white/60'
-                }`}
-              >
-                {c.flag}
-              </button>
-            ))}
-          </div>
-        </div>
 
-        {/* Results Title & Main CTA */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-brand-green/10 border border-brand-green/20 p-6 rounded-2xl relative overflow-hidden mb-8">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-green/10 to-transparent -translate-x-full animate-shimmer" />
-          <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white relative z-10 text-center md:text-left">
-            Resultados Gastos Hormiga
-          </h2>
-          <button
-            onClick={() => navigate('/app/leccion/gastos?action=complete')}
-            className="btn-primary w-full md:w-auto px-8 py-4 rounded-xl text-sm md:text-base font-black uppercase tracking-[0.15em] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(1,228,126,0.4)] hover:shadow-[0_0_40px_rgba(1,228,126,0.6)] hover:scale-105 transition-all relative z-10 group overflow-hidden"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              Completar Actividad
-              <ChevronRight className="w-5 h-5" />
-            </span>
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shimmer" />
-          </button>
-        </div>
+
+        <CompletionBanner lessonId="gastos" />
+
+        <ResultActions 
+          onDownloadPDF={generatePDF} 
+          onReset={handleReset} 
+        />
 
         {/* Main 2-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Column: Total & Breakdown */}
           <div className="lg:col-span-5 space-y-8">
+            <div className="flex items-center justify-end gap-2 mb-2">
+              {CURRENCIES.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => setCurrency(c)}
+                  className={`px-2 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all border ${
+                    currency.id === c.id
+                      ? 'bg-brand-blue/10 border-brand-blue/30 text-brand-blue'
+                      : 'bg-white/5 border-white/5 text-white/30 hover:text-white/60'
+                  }`}
+                >
+                  {c.flag}
+                </button>
+              ))}
+            </div>
             {/* Hero total */}
             <div className="glass-card p-8 md:p-10 text-center relative overflow-hidden group border-brand-yellow/30 shadow-[0_0_40px_rgba(250,204,21,0.1)]">
               <div className="absolute inset-0 bg-gradient-to-br from-brand-yellow/10 to-brand-blue/10 opacity-50 group-hover:opacity-70 transition-opacity" />
@@ -408,7 +442,7 @@ export const GastosHormiga = () => {
 
             {/* Bar chart breakdown */}
             {barData.length > 0 && (
-              <div className="glass-card p-6 md:p-8 space-y-5">
+              <div className="glass-card p-6 md:p-8 space-y-5" ref={chartRef}>
                 <h3 className="text-sm font-black text-brand-blue uppercase tracking-widest flex items-center gap-2">
                   <Wallet className="w-4 h-4" /> Desglose
                 </h3>
@@ -510,65 +544,17 @@ export const GastosHormiga = () => {
 
 
 
-        {/* Unified Share Section */}
-        <div className="glass-card p-6 md:p-8 space-y-6 border-brand-green/10">
-          <div className="flex items-center gap-4">
-            <Share2 className="w-6 h-6 text-brand-green" />
-            <div>
-              <div className="font-black uppercase tracking-tight text-base">Comparte tu resultado</div>
-              <div className="text-brand-text-muted text-sm font-medium mt-1">Reta a tus amigos a calcular el suyo</div>
-            </div>
-          </div>
-
-          <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-center">
-            <p className="text-white/80 text-sm md:text-base leading-relaxed font-medium italic">
-              "Hice el diagnóstico de <span className="text-brand-yellow font-black">Gastos Hormiga</span> de GENY LAB y descubrí que gasto{' '}
-              <span className="text-brand-yellow font-black">{fmt(total, currency)}/mes</span> en pequeñeces.{' '}
-              Si los invirtiera, en 10 años tendría <span className="text-brand-green font-black">{fmt(proj[3].val, currency)}</span>.{' '}
-              ¡Hazlo tú también! 🐜"
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <button onClick={() => handleShare('whatsapp')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all text-sm font-black text-white/80 hover:text-white">
-              <MessageCircle className="w-5 h-5 text-[#25D366]" />
-              WhatsApp
-            </button>
-            <button onClick={() => handleShare('facebook')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1877F2]/10 border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition-all text-sm font-black text-white/80 hover:text-white">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#1877F2]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073c0 6.028 4.388 11.024 10.125 11.927v-8.437H7.078v-3.49h3.047V9.42c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.929-1.956 1.883v2.263h3.328l-.532 3.49h-2.796v8.437C19.612 23.097 24 18.1 24 12.073z"/></svg>
-              
-            </button>
-            <button onClick={() => handleShare('linkedin')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0A66C2]/10 border border-[#0A66C2]/20 hover:bg-[#0A66C2]/20 transition-all text-sm font-black text-white/80 hover:text-white">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#0A66C2]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              LinkedIn
-            </button>
-            <button onClick={() => handleShare('twitter')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm font-black text-white/80 hover:text-white">
-              <XIcon className="w-5 h-5 text-white/70" />
-              X
-            </button>
-          </div>
-
-          <button
-            onClick={handleCopyLink}
-            className={`w-full flex items-center justify-center gap-3 p-3.5 rounded-xl border transition-all font-black uppercase tracking-widest text-xs ${
-              copied
-                ? 'bg-brand-green/10 border-brand-green/30 text-brand-green'
-                : 'bg-white/5 border-white/10 text-brand-text-muted hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            {copied ? (<><Check className="w-5 h-5" /> ¡Link Copiado!</>) : (<><Copy className="w-5 h-5" /> Copiar Link</>)}
-          </button>
-        </div>
-
-        {/* Reset */}
-        <div className="flex justify-center">
-          <button
-            onClick={handleReset}
-            className="flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em] py-4"
-          >
-            <RefreshCcw className="w-4 h-4" />
-            Hacer el diagnóstico de nuevo
-          </button>
+        <div className="mb-6">
+          <ShareModule 
+            activity="gastos" 
+            title="Gastos Hormiga" 
+            resultData={{
+              gastos: [{ desc: rec.desc, highlight: rec.highlight }],
+              total,
+              proyeccion: proj[3].val
+            }}
+            shareMessage={`Hice el diagnóstico de Gastos Hormiga de GENY LAB y descubrí que gasto ${fmt(total, currency)}/mes en pequeñeces. Si los invirtiera, en 10 años tendría ${fmt(proj[3].val, currency)}. ¡Hazlo tú también! 🐜`}
+          />
         </div>
       </motion.div>
     </div>

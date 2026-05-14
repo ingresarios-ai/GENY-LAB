@@ -1,0 +1,12 @@
+src/pages/app/GastosHormiga.tsx(72,68): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string'.
+src/pages/app/RetoFlow.tsx(815,27): error TS2339: Property 'ejercicios' does not exist on type 'FlowDay'.
+src/pages/app/RetoFlow.tsx(815,47): error TS7006: Parameter 'ex' implicitly has an 'any' type.
+src/pages/app/RetoFlow.tsx(815,51): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/pages/app/RetoFlow.tsx(822,77): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string'.
+src/pages/app/RetoFlow.tsx(825,33): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string'.
+src/pages/app/RetoSombra.tsx(424,44): error TS2339: Property 'q' does not exist on type 'string'.
+src/pages/app/RetoSombra.tsx(426,63): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string'.
+src/pages/app/RetoSombra.tsx(429,19): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string'.
+src/pages/app/TrampasDinero.tsx(174,5): error TS2686: 'confetti' refers to a UMD global, but the current file is a module. Consider adding an import instead.
+src/pages/app/TrampasDinero.tsx(241,63): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string'.
+src/pages/app/TrampasDinero.tsx(244,19): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string'.

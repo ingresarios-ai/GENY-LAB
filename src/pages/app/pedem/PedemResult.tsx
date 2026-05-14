@@ -5,6 +5,10 @@ import { ChevronLeft, Share2, Copy, Check, ChevronRight } from 'lucide-react';
 
 import type { PedemPath } from './constants';
 import { SHADOW_MAP, DIRECTION_MAP, PATH_LABELS } from './constants';
+import ShareModule from '../../../components/ShareModule';
+import ResultActions from '../../../components/ResultActions';
+import CompletionBanner from '../../../components/CompletionBanner';
+import jsPDF from 'jspdf';
 
 interface Props {
   path: PedemPath;
@@ -116,30 +120,68 @@ export function PedemResult({ path, data, onRestart }: Props) {
     window.open(links[platform], '_blank');
   };
 
+  const generatePDF = async () => {
+    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,M=18; let y=20;
+    
+    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
+    doc.setFillColor(1,228,126); doc.rect(0,0,W,3,'F'); // brand-green
+    
+    doc.setTextColor(1,228,126); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
+    doc.setTextColor(100); doc.text('BITÁCORA PEDEM',W-M,y,{align:'right'}); y+=16;
+    
+    doc.setTextColor(255); doc.setFontSize(28); 
+    doc.text(PATH_LABELS[path].toUpperCase(),M,y); y+=12;
+
+    doc.setTextColor(200); doc.setFontSize(11);
+    const introLines = doc.splitTextToSize(closingMessages[path], W-2*M);
+    doc.text(introLines, M, y); y+=introLines.length*6 + 10;
+    
+    const rows: {label: string, value: string}[] = [];
+    if (path === 'novice') {
+      rows.push({label: 'RUTINA MAÑANA', value: data.nov_morning || ''});
+      rows.push({label: 'RUTINA TARDE', value: data.nov_afternoon || ''});
+      rows.push({label: 'RUTINA NOCHE', value: data.nov_night || ''});
+      rows.push({label: 'MI OBJETIVO', value: data.nov_goal || ''});
+      rows.push({label: 'MI MÉTRICA DE ÉXITO', value: data.nov_metric || ''});
+      rows.push({label: 'MI VISIÓN', value: data.nov_vision || ''});
+    } else if (path === 'routine') {
+      rows.push({label: 'PREP. FÍSICA', value: data.rou_body || ''});
+      rows.push({label: 'PREP. TÉCNICA', value: data.rou_analysis || ''});
+      rows.push({label: 'INTENCIÓN', value: data.rou_intention || ''});
+      rows.push({label: 'MEJORA HOY', value: data.rou_improvement || ''});
+    } else if (path === 'trade') {
+      rows.push({label: 'ACTIVO', value: data.tra_asset || ''});
+      rows.push({label: 'DIRECCIÓN', value: DIRECTION_MAP[data.tra_direction] || data.tra_direction || ''});
+      rows.push({label: 'SETUP', value: data.tra_setup || ''});
+      rows.push({label: 'ENTRADA', value: data.tra_entry || ''});
+      rows.push({label: 'STOP LOSS', value: data.tra_stop || ''});
+      rows.push({label: 'TARGET', value: data.tra_target || ''});
+      if (rr) rows.push({label: 'RISK:REWARD', value: `1:${rr}`});
+      rows.push({label: 'HIPÓTESIS', value: data.tra_hypothesis || ''});
+    }
+
+    rows.forEach(r => {
+      if (y > 270) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y=20; }
+      doc.setTextColor(1,228,126); doc.setFontSize(9); 
+      doc.text(r.label, M, y); y+=6;
+      doc.setTextColor(255); doc.setFontSize(11);
+      const valLines = doc.splitTextToSize(String(r.value), W-2*M);
+      doc.text(valLines, M, y); y+=valLines.length*6+4;
+    });
+
+    doc.save(`pedem-${path}.pdf`);
+  };
+
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="pb-16 space-y-8 w-full">
-      <Link to="/app/actividades"
-        className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]">
-        <ChevronLeft className="w-4 h-4" /> Volver a Actividades
-      </Link>
+      <CompletionBanner lessonId="pedem" />
 
-      {/* Results Title & Main CTA */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-brand-green/10 border border-brand-green/20 p-6 rounded-2xl relative overflow-hidden mb-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-green/10 to-transparent -translate-x-full animate-shimmer" />
-        <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white relative z-10 text-center md:text-left">
-          Resultados Bitácora PEDEM
-        </h2>
-        <button
-          onClick={() => navigate('/app/leccion/pedem?action=complete')}
-          className="btn-primary w-full md:w-auto px-8 py-4 rounded-xl text-sm md:text-base font-black uppercase tracking-[0.15em] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(1,228,126,0.4)] hover:shadow-[0_0_40px_rgba(1,228,126,0.6)] hover:scale-105 transition-all relative z-10 group overflow-hidden"
-        >
-          <span className="relative z-10 flex items-center gap-2">
-            Completar Actividad
-            <ChevronRight className="w-5 h-5" />
-          </span>
-          <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shimmer" />
-        </button>
-      </div>
+      <ResultActions 
+        onDownloadPDF={generatePDF} 
+        onReset={onRestart} 
+        resetLabel="Cambiar ruta PEDEM"
+      />
 
       <div className="glass-card p-8 md:p-12 border-t-2 border-t-brand-green relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-green/10 to-transparent pointer-events-none" />
@@ -208,66 +250,16 @@ export function PedemResult({ path, data, onRestart }: Props) {
             {/* Review */}
             <div className="w-full flex flex-col gap-3 max-w-md">
               {/* Removed Marcar Actividad como Completada (Moved to Top) */}
-              <button onClick={onRestart}
-                className="px-6 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm text-brand-text-muted hover:bg-white/10 hover:text-white transition-all font-bold cursor-pointer">
-                ↻ Hacer otro PEDEM
-              </button>
+
             </div>
 
             {/* ── Share Section (same as TrampasDinero / RetoADN) ── */}
             <div className="pt-8 border-t border-white/5 space-y-4 text-center">
-              <div className="flex items-center justify-center gap-3">
-                <Share2 className="w-5 h-5 text-brand-green" />
-                <span className="font-black uppercase tracking-tight text-sm">
-                  Comparte tu logro
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-lg mx-auto">
-                <button
-                  onClick={() => handleSocialShare('whatsapp')}
-                  className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all text-sm font-black text-white/80 hover:text-white cursor-pointer"
-                >
-                  <Share2 className="w-4 h-4 text-[#25D366]" /> WhatsApp
-                </button>
-                <button
-                  onClick={() => handleSocialShare('twitter')}
-                  className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm font-black text-white/80 hover:text-white cursor-pointer"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-white/70" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X
-                </button>
-                <button
-                  onClick={() => handleSocialShare('facebook')}
-                  className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1877F2]/10 border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition-all text-sm font-black text-white/80 hover:text-white cursor-pointer"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#1877F2]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073c0 6.028 4.388 11.024 10.125 11.927v-8.437H7.078v-3.49h3.047V9.42c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.929-1.956 1.883v2.263h3.328l-.532 3.49h-2.796v8.437C19.612 23.097 24 18.1 24 12.073z"/></svg> 
-                </button>
-                <button
-                  onClick={() => handleSocialShare('linkedin')}
-                  className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0A66C2]/10 border border-[#0A66C2]/20 hover:bg-[#0A66C2]/20 transition-all text-sm font-black text-white/80 hover:text-white cursor-pointer"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#0A66C2]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                </button>
-              </div>
-
-              <button
-                onClick={handleCopyLink}
-                className={`mx-auto flex items-center justify-center gap-3 px-6 py-3 rounded-xl border transition-all font-black uppercase tracking-widest text-xs cursor-pointer ${
-                  copiedLink
-                    ? 'bg-brand-green/10 border-brand-green/30 text-brand-green'
-                    : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                {copiedLink ? (
-                  <>
-                    <Check className="w-5 h-5" /> ¡LINK COPIADO!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-5 h-5" /> COPIAR LINK
-                  </>
-                )}
-              </button>
+              <ShareModule 
+                activity="pedem" 
+                title="Mi Primer PEDEM" 
+                resultData={{ path, data }} 
+              />
             </div>
           </div>
         </div>

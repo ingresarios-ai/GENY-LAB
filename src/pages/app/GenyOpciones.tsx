@@ -12,6 +12,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, R
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import confetti from "canvas-confetti";
+import CompletionBanner from '../../components/CompletionBanner';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BLACK-SCHOLES ENGINE
@@ -495,23 +496,7 @@ export default function GenyOpciones() {
         )}
       </AnimatePresence>
 
-      {/* Results Title & Main CTA */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-brand-green/10 border border-brand-green/20 p-6 rounded-2xl relative overflow-hidden mb-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-green/10 to-transparent -translate-x-full animate-shimmer" />
-        <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white relative z-10 text-center md:text-left">
-          Resultados GENY Opciones
-        </h2>
-        <button
-          onClick={() => navigate('/app/leccion/geny?action=complete')}
-          className="btn-primary w-full md:w-auto px-8 py-4 rounded-xl text-sm md:text-base font-black uppercase tracking-[0.15em] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(1,228,126,0.4)] hover:shadow-[0_0_40px_rgba(1,228,126,0.6)] hover:scale-105 transition-all relative z-10 group overflow-hidden"
-        >
-          <span className="relative z-10 flex items-center gap-2">
-            Completar Actividad
-            <ChevronRight className="w-5 h-5" />
-          </span>
-          <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shimmer" />
-        </button>
-      </div>
+      <CompletionBanner lessonId="geny" />
 
       {/* ── HEADER ── */}
       <div className="glass-card p-5 relative overflow-hidden border-t-2 border-t-brand-blue/40">

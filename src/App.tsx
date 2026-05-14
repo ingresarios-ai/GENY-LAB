@@ -2,10 +2,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Onboarding from './pages/Onboarding';
+import Login from './pages/Login';
 import AppLayout from './pages/app/AppLayout';
 import PathMap from './pages/app/PathMap';
 import LessonScreen from './pages/app/LessonScreen';
 import Achievements from './pages/app/Achievements';
+import AuthGuard from './components/AuthGuard';
+import SharedResult from './pages/public/SharedResult';
 
 import { GastosHormiga } from './pages/app/GastosHormiga';
 import RetoADN from './pages/app/RetoADN';
@@ -17,8 +20,6 @@ import MiPrimerPedem from './pages/app/pedem/MiPrimerPedem';
 import TermostatoFinanciero from './pages/app/termostato-financiero/TermostatoFinanciero';
 
 function App() {
-  const isOnboarded = localStorage.getItem('geny_lab_onboarded') === 'true';
-
   return (
     <BrowserRouter>
       <Toaster
@@ -33,15 +34,13 @@ function App() {
         }}
       />
       <Routes>
-        {/* Onboarding — shown once */}
-        <Route
-          path="/"
-          element={isOnboarded ? <Navigate to="/app" replace /> : <Onboarding />}
-        />
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/compartir/:shareCode" element={<SharedResult />} />
 
-        {/* Main App — gamified experience */}
-        <Route path="/app" element={<AppLayout />}>
+        {/* Protected App — requires auth */}
+        <Route path="/app" element={<AuthGuard><AppLayout /></AuthGuard>}>
           <Route index element={<PathMap />} />
           <Route path="leccion/:lessonId" element={<LessonScreen />} />
           <Route path="logros" element={<Achievements />} />
@@ -57,8 +56,9 @@ function App() {
           <Route path="geny-opciones" element={<GenyOpciones />} />
         </Route>
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Root — redirect to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

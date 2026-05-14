@@ -8,6 +8,10 @@ import jsPDF from 'jspdf';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { Thermometer3D, getTempLevel, CAT_LABELS, RADAR_KEYS, TEMP_LEVELS } from './helpers';
+import ShareModule from '../../../components/ShareModule';
+import ResultActions from '../../../components/ResultActions';
+import CompletionBanner from '../../../components/CompletionBanner';
+import html2canvas from 'html2canvas-pro';
 
 function Spinner() {
   return (<div className="flex items-center gap-1.5 py-1">{[0,1,2].map(i=>(<motion.div key={i} className="w-2 h-2 rounded-full bg-cyan-400" animate={{scale:[.8,1,.8],opacity:[.3,1,.3]}} transition={{repeat:Infinity,duration:1.2,delay:i*.2,ease:"easeInOut"}}/>))}</div>);
@@ -25,6 +29,7 @@ export default function TermostatoFinanciero() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (searchParams.get('view') === 'results') {
@@ -48,13 +53,12 @@ export default function TermostatoFinanciero() {
   const startInterview = async () => {
     window.scrollTo(0,0);
     setScreen('loading-ai');
-    const greeting = 'Hola. Soy GENY, tu analista de Termóstato Financiero. Vamos a tener una conversación que revelará cómo tu mente regula tu relación con el dinero — tu "punto de ajuste" interno. No hay respuestas correctas ni incorrectas.';
     try {
       const reply = await callEdge([{role:'user',content:'Comienza la evaluación del termostato financiero'}],'interview');
       const clean = reply.replace('[ANÁLISIS_LISTO]','').trim();
-      setMessages([{role:'assistant',content:greeting},{role:'assistant',content:'Empecemos. '+clean}]);
+      setMessages([{role:'assistant',content:clean}]);
     } catch(e) {
-      setMessages([{role:'assistant',content:greeting},{role:'assistant',content:'Empecemos. Cuéntame, ¿qué es lo primero que aprendiste sobre el dinero en tu casa cuando eras niño?'}]);
+      setMessages([{role:'assistant',content:'Hola. Soy GENY, tu analista de Termóstato Financiero. Cuéntame, ¿qué es lo primero que aprendiste sobre el dinero en tu casa cuando eras niño?'}]);
     }
     setScreen('chat');
   };
@@ -104,7 +108,7 @@ export default function TermostatoFinanciero() {
 
   const reset = () => { setScreen('welcome'); setMessages([]); setInput(''); setLoading(false); setAnalyzing(false); setDiagnosis(null); setTurns(0); };
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
     if (!diagnosis) return;
     const d = diagnosis, tl = getTempLevel(d.puntaje_global);
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -121,8 +125,33 @@ export default function TermostatoFinanciero() {
     doc.setTextColor(200); doc.setFontSize(11);
     const lines = doc.splitTextToSize(d.diagnostico_breve,W-2*M);
     doc.text(lines,M,y); y+=lines.length*6+8;
+    
+    // Attempt to capture the radar chart
+    if (chartRef.current) {
+      try {
+        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#080c14' });
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = W - 2*M;
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        // If it goes too far down, add a page
+        if (y + pdfHeight > 280) {
+          doc.addPage();
+          doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
+          y = 20;
+        }
+        doc.addImage(imgData, 'PNG', M, y, pdfWidth, pdfHeight);
+        y += pdfHeight + 10;
+      } catch (e) {
+        console.error('Error capturing chart', e);
+      }
+    }
+
+    // If dimensions text overflows, maybe add page
+    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
+
     doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('DIMENSIONES',M,y); y+=7;
-    Object.entries(d.categorias).forEach(([k,v])=>{
+    Object.entries(d.categorias||{}).forEach(([k,v])=>{
       doc.setTextColor(150); doc.setFontSize(9); doc.text(CAT_LABELS[k]||k,M,y);
       doc.text(`${v}°`,W-M,y,{align:'right'});
       doc.setFillColor(30,30,40); doc.rect(M,y+2,W-2*M,3,'F');
@@ -130,12 +159,21 @@ export default function TermostatoFinanciero() {
       y+=10;
     });
     y+=4;
+
+    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
+
     doc.setTextColor(16,185,129); doc.setFontSize(9); doc.text('FORTALEZAS',M,y); y+=6;
-    d.fortalezas.forEach((f:string,i:number)=>{doc.setTextColor(200);doc.setFontSize(10);doc.text(`${i+1}. ${f}`,M,y);y+=6;});
+    (d.fortalezas||[]).forEach((f:string,i:number)=>{doc.setTextColor(200);doc.setFontSize(10);doc.text(`${i+1}. ${f}`,M,y);y+=6;});
     y+=4;
+
+    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
+
     doc.setTextColor(239,68,68); doc.setFontSize(9); doc.text('SOMBRAS A INTEGRAR',M,y); y+=6;
-    d.sombras.forEach((s:string,i:number)=>{doc.setTextColor(200);doc.setFontSize(10);doc.text(`${i+1}. ${s}`,M,y);y+=6;});
+    (d.sombras||[]).forEach((s:string,i:number)=>{doc.setTextColor(200);doc.setFontSize(10);doc.text(`${i+1}. ${s}`,M,y);y+=6;});
     y+=6;
+
+    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
+
     doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('PRIMER PASO ESTA SEMANA',M,y); y+=6;
     doc.setTextColor(255); doc.setFontSize(11);
     const pasoLines = doc.splitTextToSize(d.primer_paso,W-2*M);
@@ -272,16 +310,17 @@ export default function TermostatoFinanciero() {
   // ═══ RESULTS ═══
   if (screen==='result'&&diagnosis) {
     const d = diagnosis, tl = getTempLevel(d.puntaje_global);
-    const radarData = RADAR_KEYS.map(k=>({axis:CAT_LABELS[k]||k,value:d.categorias[k]||0}));
+    const radarData = RADAR_KEYS.map(k=>({axis:CAT_LABELS[k]||k,value:(d.categorias||{})[k]||0}));
     return (
       <div className="max-w-5xl mx-auto px-4 pb-20">
-        <div className="flex items-center justify-between py-6 border-b border-white/10 mb-10">
-          <div className="flex items-center gap-2"><ThermIcon className="w-4 h-4 text-cyan-400"/><span className="text-[10px] font-black text-cyan-400 tracking-widest uppercase">TERMÓSTATO · DIAGNÓSTICO</span></div>
-          <div className="flex gap-3">
-            <button onClick={generatePDF} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider hover:bg-cyan-500/20 transition-all"><Download className="w-4 h-4"/>PDF</button>
-            <button onClick={reset} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/50 text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-all"><RotateCcw className="w-4 h-4"/>Repetir</button>
-          </div>
-        </div>
+
+
+        <CompletionBanner lessonId="termostato" />
+
+        <ResultActions 
+          onDownloadPDF={generatePDF} 
+          onReset={reset} 
+        />
         {/* Hero */}
         <div className="grid md:grid-cols-[auto_1fr] gap-12 items-center mb-16">
           <div className="flex justify-center"><Thermometer3D score={d.puntaje_global} color={tl.color} height={320}/></div>
@@ -302,7 +341,7 @@ export default function TermostatoFinanciero() {
             <h2 className="text-3xl font-black text-[#FFD700] mb-3">{d.arquetipo}</h2>
             <p className="text-white/70 text-base leading-relaxed">{d.arquetipo_desc}</p>
           </div>
-          <div className="glass-card p-6">
+          <div className="glass-card p-6" ref={chartRef}>
             <p className="text-xs font-mono text-cyan-400 tracking-widest mb-2 uppercase">↓ Radar de Dimensiones</p>
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -315,7 +354,7 @@ export default function TermostatoFinanciero() {
         <div className="glass-card p-8 mb-12">
           <p className="text-xs font-mono text-cyan-400 tracking-widest mb-6 uppercase">↓ Desglose por Dimensión</p>
           <div className="grid md:grid-cols-2 gap-x-10 gap-y-5">
-            {RADAR_KEYS.map(k=>{const v=d.categorias[k]||0;const c=getTempLevel(v).color;return(
+            {RADAR_KEYS.map(k=>{const v=(d.categorias||{})[k]||0;const c=getTempLevel(v).color;return(
               <div key={k}>
                 <div className="flex justify-between mb-1.5"><span className="text-xs font-mono text-white/50 uppercase tracking-wider">{CAT_LABELS[k]}</span><span className="text-sm font-mono text-white font-semibold">{v}°</span></div>
                 <div className="h-1.5 bg-white/5 rounded-full overflow-hidden"><div className="h-full rounded-full transition-all duration-1000" style={{width:`${v}%`,background:c,boxShadow:`0 0 8px ${c}80`}}/></div>
@@ -327,11 +366,11 @@ export default function TermostatoFinanciero() {
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="glass-card p-8 border-t-2 border-t-emerald-500/40">
             <p className="text-xs font-mono text-emerald-400 tracking-widest mb-5 uppercase">↑ Fortalezas</p>
-            {d.fortalezas.map((f:string,i:number)=>(<div key={i} className="flex gap-4 mb-4"><span className="text-sm font-mono text-emerald-400">0{i+1}</span><span className="text-base text-white/80 leading-relaxed">{f}</span></div>))}
+            {(d.fortalezas||[]).map((f:string,i:number)=>(<div key={i} className="flex gap-4 mb-4"><span className="text-sm font-mono text-emerald-400">0{i+1}</span><span className="text-base text-white/80 leading-relaxed">{f}</span></div>))}
           </div>
           <div className="glass-card p-8 border-t-2 border-t-red-500/40">
             <p className="text-xs font-mono text-red-400 tracking-widest mb-5 uppercase">↓ Sombras a Integrar</p>
-            {d.sombras.map((s:string,i:number)=>(<div key={i} className="flex gap-4 mb-4"><span className="text-sm font-mono text-red-400">0{i+1}</span><span className="text-base text-white/80 leading-relaxed">{s}</span></div>))}
+            {(d.sombras||[]).map((s:string,i:number)=>(<div key={i} className="flex gap-4 mb-4"><span className="text-sm font-mono text-red-400">0{i+1}</span><span className="text-base text-white/80 leading-relaxed">{s}</span></div>))}
           </div>
         </div>
         {/* Primer paso */}
@@ -339,6 +378,11 @@ export default function TermostatoFinanciero() {
           <p className="text-xs font-mono text-cyan-400 tracking-widest mb-4 uppercase">→ Primer Paso esta Semana</p>
           <p className="text-xl md:text-2xl font-semibold text-white leading-relaxed">{d.primer_paso}</p>
         </div>
+
+        <div className="mb-12">
+          <ShareModule activity="termostato" title="Termóstato Financiero" resultData={diagnosis} />
+        </div>
+
         <div className="text-center"><p className="text-[9px] font-mono text-white/20 tracking-widest uppercase">INGRESARIOS · GENY LAB · TERMÓSTATO FINANCIERO<br/>T. HARV EKER · CARL JUNG · RIZZOLATTI · BRICKMAN & CAMPBELL · SCHULTZ</p></div>
       </div>
     );
