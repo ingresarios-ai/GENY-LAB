@@ -183,12 +183,31 @@ export default function TermostatoFinanciero() {
   // ═══ LOADING AI ═══
   if (screen==='loading-ai') {
     return (
-      <div className="fixed inset-0 bg-brand-bg z-50 flex items-center justify-center">
-        <motion.div initial={{opacity:0,scale:0.9}} animate={{opacity:1,scale:1}} className="text-center space-y-6">
-          <div className="text-5xl animate-pulse">🌡️</div>
-          <div className="space-y-2"><p className="text-white font-black text-lg uppercase tracking-widest">Iniciando IA</p><p className="text-brand-text-muted text-sm">Conectando con la red neuronal de GENY...</p></div>
+      <div className="fixed inset-x-0 top-0 md:top-16 bottom-0 z-[45] bg-[#080c14] flex flex-col items-center justify-center">
+        <motion.div initial={{opacity:0,scale:0.9}} animate={{opacity:1,scale:1}} className="flex flex-col items-center gap-6 text-center px-6">
+          <motion.div animate={{y:[0,-8,0]}} transition={{repeat:Infinity,duration:2,ease:"easeInOut"}} className="text-6xl md:text-7xl">🌡️</motion.div>
+          <div className="space-y-3">
+            <motion.p animate={{opacity:[0.5,1,0.5]}} transition={{repeat:Infinity,duration:2,ease:"easeInOut"}} className="text-lg md:text-xl font-black uppercase tracking-[0.2em] text-brand-blue">Iniciando AI</motion.p>
+            <p className="text-sm text-brand-text-muted font-medium">Conectando con la red neuronal de GENY...</p>
+          </div>
           <Spinner/>
         </motion.div>
+      </div>
+    );
+  }
+
+  // ═══ ANALYZING ═══
+  if (analyzing) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] py-20">
+        <div className="text-center space-y-6">
+          <div className="flex justify-center"><Thermometer3D idle={true} animated={false} color="#00D4FF" height={120}/></div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-brand-blue mb-3">Procesando tu Termóstato</p>
+            <p className="text-sm md:text-base text-brand-text-muted max-w-sm leading-relaxed mb-6">Analizando patrones, dimensiones y la arquitectura emocional de tus respuestas...</p>
+          </div>
+          <div className="flex justify-center"><Spinner/></div>
+        </div>
       </div>
     );
   }
@@ -196,32 +215,56 @@ export default function TermostatoFinanciero() {
   // ═══ CHAT ═══
   if (screen==='chat') {
     return (
-      <div className="fixed inset-0 bg-brand-bg z-40 flex flex-col">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-brand-bg/90 backdrop-blur-md">
-          <div className="flex items-center gap-2"><ThermIcon className="w-4 h-4 text-cyan-400"/><span className="text-[10px] font-black text-cyan-400 tracking-widest uppercase">TERMÓSTATO · DIAGNÓSTICO</span></div>
-          <div className="text-[10px] font-mono text-white/40">{turns}/11</div>
+      <div className="fixed inset-x-0 top-0 md:top-16 bottom-0 z-[45] bg-[#080c14] flex flex-col">
+        {/* Top bar */}
+        <div className="max-w-3xl w-full mx-auto px-4 pt-8 pb-2">
+          <button onClick={reset} className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]">
+            <ArrowLeft className="w-4 h-4"/> Volver a Actividades
+          </button>
         </div>
-        <div ref={chatRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-          {messages.map((m,i)=>(
-            <motion.div key={i} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}>
-              <div className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed ${m.role==='user'?'bg-cyan-500/15 border border-cyan-500/30 text-white':'bg-white/5 border border-white/10 text-white/90'}`}>
-                {m.role==='assistant'&&<div className="text-[10px] font-black text-cyan-400 tracking-widest mb-1.5 uppercase">GENY</div>}
-                {m.content}
-              </div>
-            </motion.div>
-          ))}
-          {loading&&<div className="flex justify-start"><div className="bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5"><div className="text-[10px] font-black text-cyan-400 tracking-widest mb-1.5">GENY</div><Spinner/></div></div>}
-          {analyzing&&<motion.div initial={{opacity:0}} animate={{opacity:1}} className="flex justify-center py-8"><div className="text-center space-y-4"><div className="text-4xl animate-pulse">🌡️</div><p className="text-white font-black text-sm uppercase tracking-widest">Analizando termostato...</p><p className="text-brand-text-muted text-xs">Procesando patrones financieros</p><Spinner/></div></motion.div>}
-          <div ref={bottomRef}/>
-        </div>
-        {!analyzing&&(
-          <div className="border-t border-white/10 bg-brand-bg/90 backdrop-blur-md px-4 py-3">
-            <div className="max-w-3xl mx-auto flex gap-3">
-              <textarea ref={inputRef} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}} placeholder="Escribe tu respuesta..." rows={1} disabled={loading} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-[15px] placeholder-white/30 resize-none focus:outline-none focus:border-cyan-500/50"/>
-              <button onClick={sendMessage} disabled={!input.trim()||loading} className="bg-cyan-500 hover:bg-cyan-400 disabled:bg-white/10 disabled:text-white/30 text-black font-bold px-5 rounded-xl transition-all text-sm">Enviar</button>
+
+        <div className="flex-1 max-w-3xl w-full mx-auto px-4 pb-4 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col glass-card relative overflow-hidden min-h-0">
+          {/* Chat Header */}
+          <div className="px-5 py-4 border-b border-white/10 flex items-center gap-4 bg-white/5 shrink-0 z-10">
+            <div className="w-10 h-10 rounded-full bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-xl shrink-0">🌡️</div>
+            <div className="flex-1">
+              <div className="text-sm font-bold text-white">GENY</div>
+              <div className="text-xs text-brand-text-muted">Analista de Termóstato Financiero · INGRESARIOS</div>
+            </div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-brand-text-muted bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+              {Math.min(turns, 10)} / 10
             </div>
           </div>
-        )}
+
+          {/* Chat Messages */}
+          <div ref={chatRef} className="flex-1 overflow-y-auto p-5 space-y-5">
+            {messages.map((m,i)=>(
+              <motion.div key={i} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}>
+                <div className={`max-w-[85%] px-5 py-3.5 text-[15px] leading-relaxed ${m.role==='user'?'bg-brand-blue/15 border border-brand-blue/30 rounded-2xl rounded-tr-sm text-white':'bg-[#0d1117] border border-white/10 rounded-2xl rounded-tl-sm text-slate-200'}`}>
+                  {m.content}
+                </div>
+              </motion.div>
+            ))}
+            {loading&&(
+              <motion.div initial={{opacity:0}} animate={{opacity:1}} className="flex justify-start">
+                <div className="bg-[#0d1117] border border-white/10 rounded-2xl rounded-tl-sm px-5 py-4"><Spinner/></div>
+              </motion.div>
+            )}
+            <div ref={bottomRef} className="h-2"/>
+          </div>
+
+          {/* Input Area */}
+          {!analyzing&&(
+            <div className="p-4 border-t border-white/10 bg-[#0d1117] shrink-0 z-10 flex gap-3 items-end">
+              <textarea ref={inputRef} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}} placeholder="Escribe tu respuesta aquí..." disabled={loading||analyzing} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-[15px] text-white resize-none outline-none focus:border-brand-blue/50 focus:bg-brand-blue/5 transition-all disabled:opacity-50 min-h-[52px] max-h-[120px]" rows={1}/>
+              <button onClick={sendMessage} disabled={!input.trim()||loading||analyzing} className={`p-3.5 rounded-xl flex items-center justify-center transition-all shrink-0 h-[52px] w-[52px] ${(!input.trim()||loading)?'bg-white/5 text-brand-text-muted cursor-not-allowed':'bg-brand-blue text-white shadow-[0_0_15px_rgba(0,209,255,0.3)] hover:scale-105'}`}>
+                <ChevronRight className="w-5 h-5"/>
+              </button>
+            </div>
+          )}
+        </div>
+        </div>
       </div>
     );
   }
