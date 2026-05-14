@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { TrendingUp, ChevronRight, ArrowLeft, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -10,7 +10,8 @@ import ShareModule from '../../components/ShareModule';
 import ResultActions from '../../components/ResultActions';
 import CompletionBanner from '../../components/CompletionBanner';
 import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
+import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -49,43 +50,42 @@ export const GastosHormiga = () => {
 
   const generatePDF = async () => {
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const W=210,M=18; let y=20;
-    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-    doc.setFillColor(0,212,255); doc.rect(0,0,W,3,'F');
-    
-    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
-    doc.setTextColor(100); doc.text('GASTOS HORMIGA',W-M,y,{align:'right'}); y+=16;
-    
-    doc.setTextColor(250,204,21); doc.setFontSize(42); doc.text(fmt(total, currency),M,y);
-    doc.setFontSize(14); doc.setTextColor(255); doc.text('Total Mensual',M,y+10); y+=26;
-    
-    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('PROYECCIÓN DE RIQUEZA (7% Anual)',M,y); y+=8;
-    proj.forEach((p) => {
-      doc.setTextColor(255); doc.setFontSize(12); doc.text(`${p.years} años: ${fmt(p.val, currency)}`,M,y); y+=6;
-    });
-    y+=6;
+    let y = initPdfWithHeader(doc, 'Gastos Hormiga');
+    const W = 210, M = 18;
 
-    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('RECOMENDACIÓN',M,y); y+=8;
-    doc.setTextColor(255); doc.setFontSize(14); doc.text(rec.title,M,y); y+=8;
-    doc.setTextColor(200); doc.setFontSize(11);
-    const recLines = doc.splitTextToSize(rec.desc, W-2*M);
-    doc.text(recLines, M, y); y+=recLines.length*6+6;
-    doc.setTextColor(250,204,21); doc.setFontSize(11); doc.setFont('helvetica', 'italic');
-    const highLines = doc.splitTextToSize(`"${rec.highlight}"`, W-2*M);
-    doc.text(highLines, M, y); y+=highLines.length*6+10;
+    doc.setTextColor(250, 204, 21); // brand-yellow
+    doc.setFontSize(36); 
+    doc.setFont('helvetica', 'bold');
+    doc.text(fmt(total, currency), M, y);
+    y += 10;
+    y = addPdfText(doc, 'Total Mensual', y, { fontSize: 12, color: [100, 116, 139] });
+    y += 10;
+    
+    y = addPdfText(doc, 'PROYECCIÓN DE RIQUEZA (7% Anual)', y, { fontSize: 10, color: [0, 212, 255], fontStyle: 'bold' });
+    y += 4;
+    proj.forEach((p) => {
+      y = addPdfText(doc, `${p.years} años: ${fmt(p.val, currency)}`, y, { fontSize: 12, color: [51, 65, 85] });
+    });
+    y += 6;
+
+    y = addPdfText(doc, 'RECOMENDACIÓN', y, { fontSize: 10, color: [0, 212, 255], fontStyle: 'bold' });
+    y += 4;
+    y = addPdfText(doc, rec.title, y, { fontSize: 14, color: [15, 23, 42], fontStyle: 'bold' });
+    y += 4;
+    y = addPdfText(doc, rec.desc, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
+    y += 4;
+    y = addPdfText(doc, `"${rec.highlight}"`, y, { fontSize: 11, color: [217, 119, 6], fontStyle: 'italic', lineHeight: 6 });
+    y += 8;
 
     if (chartRef.current) {
       try {
-        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#080c14' });
+        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#ffffff' });
         const imgData = canvas.toDataURL('image/png');
         const imgProps = doc.getImageProperties(imgData);
         const pdfWidth = W - 2*M;
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        if (y + pdfHeight > 280) {
-          doc.addPage();
-          doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-          y = 20;
-        }
+        
+        y = checkPageBreak(doc, y, pdfHeight + 10);
         doc.addImage(imgData, 'PNG', M, y, pdfWidth, pdfHeight);
       } catch (e) {
         console.error('Error capturing chart', e);
@@ -107,40 +107,46 @@ export const GastosHormiga = () => {
 
   // ── Load saved progress ──────────────────────────────────────────────────
   useEffect(() => {
-    if (!user?.id) { setLoading(false); return; }
-    const load = async () => {
-      const progress: any = null;
-      if (progress?.data) {
-        const r = progress.data;
+    try {
+      const saved = localStorage.getItem('gastos-hormiga-progress');
+      if (saved) {
+        const r = JSON.parse(saved);
         if (r.amounts) setAmounts(r.amounts);
         if (r.currencyId) {
           const found = CURRENCIES.find(c => c.id === r.currencyId);
           if (found) setCurrency(found);
         }
-        if ((progress.completed ? 'completed' : 'in_progress') === 'completed') setStep(2);
+        if (r.completed) setStep(2);
       }
-      setLoading(false);
-    };
-    load();
-  }, [user?.id]);
+    } catch (e) {
+      console.error('Error loading gastos progress:', e);
+    }
+    setLoading(false);
+  }, []);
 
   // ── Save progress ────────────────────────────────────────────────────────
   const handleComplete = async () => {
     setStep(2);
     setShowConfetti(true);
-    
+    try {
+      localStorage.setItem('gastos-hormiga-progress', JSON.stringify({
+        amounts,
+        currencyId: currency.id,
+        completed: true,
+      }));
+    } catch (e) {
+      console.error('Error saving gastos progress:', e);
+    }
   };
 
   const handleStartQuestionnaire = () => {
     setStep(1);
-    if (user?.id) {
-      /* markActivityStarted */
-    }
   };
 
   const handleReset = () => {
     setAmounts(Object.fromEntries(CATEGORIES.map(c => [c.id, ''])));
     setStep(0);
+    localStorage.removeItem('gastos-hormiga-progress');
   };
 
   // ── Share ────────────────────────────────────────────────────────────────

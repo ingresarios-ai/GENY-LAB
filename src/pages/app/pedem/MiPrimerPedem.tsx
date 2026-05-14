@@ -24,8 +24,24 @@ export default function MiPrimerPedem() {
   const [history, setHistory] = useState<Screen[]>(['choose']);
   const [loading, setLoading] = useState(true);
 
-  // Restore completed PEDEM from Supabase on mount
-  useEffect(() => { setLoading(false); }, []);
+  // Restore completed PEDEM from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('pedem-progress');
+      if (saved) {
+        const r = JSON.parse(saved);
+        if (r.path) setPath(r.path);
+        if (r.data) setData(r.data);
+        if (r.completed) {
+          setScreen('result');
+          setHistory(['choose', 'result']);
+        }
+      }
+    } catch (e) {
+      console.error('Error loading PEDEM progress:', e);
+    }
+    setLoading(false);
+  }, []);
 
   const navigate = useCallback((s: Screen) => {
     setHistory(prev => [...prev, s]);
@@ -50,7 +66,15 @@ export default function MiPrimerPedem() {
   const finish = useCallback(async (p: PedemPath) => {
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#00E676', '#00D1FF', '#FF6321', '#FEDD04'] });
     navigate('result');
-    // local persistence
+    try {
+      localStorage.setItem('pedem-progress', JSON.stringify({
+        path: p,
+        data,
+        completed: true,
+      }));
+    } catch (e) {
+      console.error('Error saving PEDEM progress:', e);
+    }
   }, [data, navigate]);
 
   if (loading) {
@@ -98,7 +122,7 @@ export default function MiPrimerPedem() {
         {screen === 'novice' && <PedemNovice key="nov" data={data} onChange={onChange} onFinish={() => finish('novice')} onBack={goBack} />}
         {screen === 'routine' && <PedemRoutine key="rou" data={data} onChange={onChange} onFinish={() => finish('routine')} onBack={goBack} />}
         {screen === 'trade' && <PedemTrade key="tra" data={data} onChange={onChange} onFinish={() => finish('trade')} onBack={goBack} />}
-        {screen === 'result' && path && <PedemResult key="res" path={path} data={data} onRestart={() => { setData({}); setPath(null); setHistory(['choose']); setScreen('choose'); }} />}
+        {screen === 'result' && path && <PedemResult key="res" path={path} data={data} onRestart={() => { setData({}); setPath(null); setHistory(['choose']); setScreen('choose'); localStorage.removeItem('pedem-progress'); }} />}
       </AnimatePresence>
     </div>
   );

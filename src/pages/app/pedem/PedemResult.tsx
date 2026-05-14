@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { motion } from 'motion/react';
-import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Share2, Copy, Check, ChevronRight } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../../utils/pdfUtils';
 
 import type { PedemPath } from './constants';
 import { SHADOW_MAP, DIRECTION_MAP, PATH_LABELS } from './constants';
 import ShareModule from '../../../components/ShareModule';
 import ResultActions from '../../../components/ResultActions';
 import CompletionBanner from '../../../components/CompletionBanner';
-import jsPDF from 'jspdf';
 
 interface Props {
   path: PedemPath;
@@ -122,20 +123,17 @@ export function PedemResult({ path, data, onRestart }: Props) {
 
   const generatePDF = async () => {
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const W=210,M=18; let y=20;
+    let y = initPdfWithHeader(doc, 'Bitácora PEDEM');
+    const W=210,M=18;
     
-    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-    doc.setFillColor(1,228,126); doc.rect(0,0,W,3,'F'); // brand-green
-    
-    doc.setTextColor(1,228,126); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
-    doc.setTextColor(100); doc.text('BITÁCORA PEDEM',W-M,y,{align:'right'}); y+=16;
-    
-    doc.setTextColor(255); doc.setFontSize(28); 
-    doc.text(PATH_LABELS[path].toUpperCase(),M,y); y+=12;
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setFontSize(28); 
+    doc.setFont('helvetica', 'bold');
+    doc.text(PATH_LABELS[path].toUpperCase(), M, y); 
+    y += 12;
 
-    doc.setTextColor(200); doc.setFontSize(11);
-    const introLines = doc.splitTextToSize(closingMessages[path], W-2*M);
-    doc.text(introLines, M, y); y+=introLines.length*6 + 10;
+    y = addPdfText(doc, closingMessages[path], y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
+    y += 10;
     
     const rows: {label: string, value: string}[] = [];
     if (path === 'novice') {
@@ -162,12 +160,13 @@ export function PedemResult({ path, data, onRestart }: Props) {
     }
 
     rows.forEach(r => {
-      if (y > 270) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y=20; }
-      doc.setTextColor(1,228,126); doc.setFontSize(9); 
-      doc.text(r.label, M, y); y+=6;
-      doc.setTextColor(255); doc.setFontSize(11);
-      const valLines = doc.splitTextToSize(String(r.value), W-2*M);
-      doc.text(valLines, M, y); y+=valLines.length*6+4;
+      y = checkPageBreak(doc, y, 20);
+      
+      y = addPdfText(doc, r.label, y, { fontSize: 9, color: [16, 185, 129], fontStyle: 'bold' });
+      y += 4;
+      
+      y = addPdfText(doc, String(r.value), y, { fontSize: 11, color: [15, 23, 42], fontStyle: 'bold', lineHeight: 6 });
+      y += 6;
     });
 
     doc.save(`pedem-${path}.pdf`);

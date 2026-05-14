@@ -1,8 +1,9 @@
 // @ts-nocheck
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, RotateCcw, Share2, Copy, Check, MessageCircle, ArrowLeft, Download } from "lucide-react";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
+import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { supabase } from "../../lib/supabase";
@@ -452,128 +453,79 @@ export default function RetoADN() {
   const generatePDF = () => {
     if (!diagnosis) return;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const w = doc.internal.pageSize.getWidth();
-    const h = doc.internal.pageSize.getHeight();
+    let y = initPdfWithHeader(doc, 'ADN Financiero');
+    const w = 210, margin = 18;
+    const contentW = w - margin * 2;
+
     const profColor = PROFILE_COLORS[diagnosis.adn] || "#00D4FF";
     const hexToRgb = (hex: string) => {
       const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
       return [r,g,b] as [number,number,number];
     };
     const rgb = hexToRgb(profColor);
-    const margin = 20;
-    const contentW = w - margin * 2;
-    let y = 0;
-
-    // Background
-    doc.setFillColor(8, 12, 20);
-    doc.rect(0, 0, w, h, 'F');
-
-    // Top accent bar
-    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
-    doc.rect(0, 0, w, 3, 'F');
-    y = 20;
-
-    // Header
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.setTextColor(0, 209, 255);
-    doc.text('DIAGNÓSTICO ADN FINANCIERO', margin, y);
-    doc.setFontSize(9);
-    doc.setTextColor(150, 160, 180);
-    doc.text('GENY LAB · INGRESARIOS', w - margin, y, { align: 'right' });
-    y += 4;
-    doc.setDrawColor(255, 255, 255, 15);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y, w - margin, y);
-    y += 15;
 
     // Profile section
     doc.setFontSize(36);
-    doc.setTextColor(255, 255, 255);
-    doc.text('ADN', w / 2, y, { align: 'center' });
-    y += 14;
-    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
-    doc.text(diagnosis.adn.toUpperCase(), w / 2, y, { align: 'center' });
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setFont('helvetica', 'bold');
+    doc.text('ADN ' + diagnosis.adn.toUpperCase(), w / 2, y, { align: 'center' });
     y += 10;
-    doc.setFontSize(12);
-    doc.setTextColor(255, 215, 0);
+    doc.setFontSize(14);
+    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
     doc.text(diagnosis.titulo, w / 2, y, { align: 'center' });
     y += 12;
-    doc.setDrawColor(rgb[0], rgb[1], rgb[2]);
-    doc.setLineWidth(1);
-    doc.line(w/2 - 15, y, w/2 + 15, y);
-    y += 15;
 
     // Helper to draw a section
-    const drawSection = (title: string, content: string, titleColor: [number,number,number], borderColor?: [number,number,number]) => {
-      const lines = doc.splitTextToSize(content, contentW - 16);
-      const blockH = 10 + lines.length * 5.5 + 8;
+    const drawSection = (title: string, content: string, titleColor: [number,number,number]) => {
+      const lines = doc.splitTextToSize(content, contentW);
+      const blockH = 10 + lines.length * 6 + 6;
       
-      if (y + blockH > h - 20) {
-        doc.addPage();
-        doc.setFillColor(8, 12, 20);
-        doc.rect(0, 0, w, h, 'F');
-        y = 20;
-      }
-
-      // Card background
-      doc.setFillColor(15, 20, 30);
-      doc.roundedRect(margin, y, contentW, blockH, 3, 3, 'F');
-      if (borderColor) {
-        doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
-        doc.setLineWidth(0.4);
-        doc.roundedRect(margin, y, contentW, blockH, 3, 3, 'S');
-      }
+      y = checkPageBreak(doc, y, blockH);
 
       // Title
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(10);
       doc.setTextColor(titleColor[0], titleColor[1], titleColor[2]);
-      doc.text(title.toUpperCase(), margin + 8, y + 8);
+      doc.text(title.toUpperCase(), margin, y);
+      y += 6;
 
       // Content
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
-      doc.setTextColor(200, 210, 220);
-      doc.text(lines, margin + 8, y + 16);
-      y += blockH + 6;
+      doc.setTextColor(51, 65, 85); // slate-700
+      doc.text(lines, margin, y);
+      y += lines.length * 6 + 6;
     };
 
-    drawSection('Lectura de tu perfil', diagnosis.lecturaCore, [0,209,255]);
-    drawSection('Tu sombra financiera', diagnosis.sombra, [255,215,0], [180,140,0]);
+    drawSection('Lectura de tu perfil', diagnosis.lecturaCore, rgb);
+    drawSection('Tu sombra financiera', diagnosis.sombra, [217, 119, 6]); // amber-600
     if (diagnosis.contradiccion && diagnosis.contradiccion.toLowerCase() !== 'vacío') {
-      drawSection('Contradicción detectada', diagnosis.contradiccion, [0,209,255], [0,130,200]);
+      drawSection('Contradicción detectada', diagnosis.contradiccion, rgb);
     }
-    drawSection('Tu fortaleza real', diagnosis.fortaleza, [0,209,255]);
-    drawSection('Patrón de sabotaje', diagnosis.patron, [255,215,0], [180,140,0]);
+    drawSection('Tu fortaleza real', diagnosis.fortaleza, rgb);
+    drawSection('Patrón de sabotaje', diagnosis.patron, [217, 119, 6]); // amber-600
 
     // Activation phrase - special
-    const actLines = doc.splitTextToSize('"' + diagnosis.activacion + '"', contentW - 20);
-    const actH = 14 + actLines.length * 6 + 10;
-    if (y + actH > h - 20) {
-      doc.addPage();
-      doc.setFillColor(8, 12, 20);
-      doc.rect(0, 0, w, h, 'F');
-      y = 20;
-    }
-    doc.setFillColor(0, 25, 50);
+    const actLines = doc.splitTextToSize('"' + diagnosis.activacion + '"', contentW - 10);
+    const actH = 14 + actLines.length * 7 + 10;
+    
+    y = checkPageBreak(doc, y, actH);
+    
+    doc.setFillColor(241, 245, 249); // slate-100
     doc.roundedRect(margin, y, contentW, actH, 3, 3, 'F');
-    doc.setDrawColor(0, 209, 255);
+    doc.setDrawColor(rgb[0], rgb[1], rgb[2]);
     doc.setLineWidth(0.4);
     doc.roundedRect(margin, y, contentW, actH, 3, 3, 'S');
+    
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(0, 209, 255);
+    doc.setFontSize(10);
+    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
     doc.text('TU FRASE DE ACTIVACIÓN', w / 2, y + 10, { align: 'center' });
+    
     doc.setFont('helvetica', 'italic');
-    doc.setFontSize(13);
-    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setTextColor(15, 23, 42); // slate-900
     doc.text(actLines, w / 2, y + 20, { align: 'center' });
-
-    // Footer
-    doc.setFontSize(8);
-    doc.setTextColor(80, 90, 100);
-    doc.text('GENY LAB · Sistema · Ejecución · Resultados', w / 2, h - 10, { align: 'center' });
 
     doc.save(`ADN-Financiero-${diagnosis.adn}.pdf`);
   };

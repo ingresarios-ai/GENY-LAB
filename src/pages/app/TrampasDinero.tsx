@@ -6,12 +6,13 @@ import {
   Share2, Copy, Check,   
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { jsPDF } from 'jspdf';
+import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 
 import ShareModule from "../../components/ShareModule";
 import ResultActions from "../../components/ResultActions";
 import CompletionBanner from '../../components/CompletionBanner';
 import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
 import confetti from "canvas-confetti";
 
 // ── Question Data ──────────────────────────────────────────────────────────
@@ -161,11 +162,20 @@ export default function TrampasDinero() {
   const progress = (answered / TOTAL_QUESTIONS) * 100;
   const allAnswered = answered === TOTAL_QUESTIONS;
 
-  // ── Load from Supabase ──
-  useEffect(() => { setLoading(false); }, []);
-
-  // ── Auto-save on response changes (debounced) ──
-  // Auto-save logic removed for V3
+  // ── Load saved progress ──
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('trampas-dinero-progress');
+      if (saved) {
+        const r = JSON.parse(saved);
+        if (r.responses) setResponses(r.responses);
+        if (r.completed) setView('completed');
+      }
+    } catch (e) {
+      console.error('Error loading trampas progress:', e);
+    }
+    setLoading(false);
+  }, []);
 
   const update = (i: number, v: string) =>
     setResponses((prev) => ({ ...prev, [i]: v }));
@@ -176,6 +186,14 @@ export default function TrampasDinero() {
     setView("completed");
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ["#FF3EB0", "#00FF94", "#FFD93D", "#00D2FF"] });
     setTimeout(() => contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }), 100);
+    try {
+      localStorage.setItem('trampas-dinero-progress', JSON.stringify({
+        responses,
+        completed: true,
+      }));
+    } catch (e) {
+      console.error('Error saving trampas progress:', e);
+    }
   };
 
   // ── Share ──
@@ -214,37 +232,35 @@ export default function TrampasDinero() {
   const reset = () => {
     setResponses({});
     setView("questions");
+    localStorage.removeItem('trampas-dinero-progress');
   };
 
   const generatePDF = async () => {
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const W=210,M=18; let y=20;
+    let y = initPdfWithHeader(doc, 'Trampas del Dinero');
+    const W=210,M=18;
     
-    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-    doc.setFillColor(255,62,176); doc.rect(0,0,W,3,'F'); // #FF3EB0
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setFontSize(28); 
+    doc.setFont('helvetica', 'bold');
+    doc.text('LAS TRAMPAS YA TIENEN NOMBRE', M, y); 
+    y += 12;
     
-    doc.setTextColor(255,62,176); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
-    doc.setTextColor(100); doc.text('TRAMPAS DEL DINERO',W-M,y,{align:'right'}); y+=16;
-    
-    doc.setTextColor(255); doc.setFontSize(28); 
-    doc.text('LAS TRAMPAS YA TIENEN NOMBRE',M,y); y+=12;
-    
-    doc.setTextColor(200); doc.setFontSize(11);
     const intro = "Conocer la trampa no la elimina — la hace visible. Cada vez que aparezcan ahora, vas a poder decir: 'Te vi. No hoy.'";
-    const introLines = doc.splitTextToSize(intro, W-2*M);
-    doc.text(introLines, M, y); y+=introLines.length*6 + 10;
+    y = addPdfText(doc, intro, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
+    y += 4;
     
     RETO.questions.forEach((q, i) => {
-      if (y > 270) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y=20; }
-      doc.setTextColor(255,62,176); doc.setFontSize(9); 
-      doc.text(`PREGUNTA ${i+1} (${q.type.toUpperCase()})`, M, y); y+=6;
-      doc.setTextColor(255); doc.setFontSize(11);
-      const qLines = doc.splitTextToSize(q.question, W-2*M);
-      doc.text(qLines, M, y); y+=qLines.length*6+2;
-      doc.setTextColor(200); doc.setFontSize(10); doc.setFont('helvetica', 'italic');
-      const ansLines = doc.splitTextToSize(String(responses[i] || 'No respondida'), W-2*M);
-      doc.text(ansLines, M, y); y+=ansLines.length*6+6;
-      doc.setFont('helvetica', 'normal');
+      y = checkPageBreak(doc, y, 20);
+      
+      y = addPdfText(doc, `PREGUNTA ${i+1} (${q.type.toUpperCase()})`, y, { fontSize: 10, color: [255, 62, 176], fontStyle: 'bold' });
+      y += 4;
+      
+      y = addPdfText(doc, q.question, y, { fontSize: 11, color: [15, 23, 42], fontStyle: 'bold', lineHeight: 6 });
+      y += 4;
+      
+      y = addPdfText(doc, String(responses[i] || 'No respondida'), y, { fontSize: 10, color: [100, 116, 139], fontStyle: 'italic', lineHeight: 6 });
+      y += 6;
     });
     
     doc.save('trampas-del-dinero.pdf');

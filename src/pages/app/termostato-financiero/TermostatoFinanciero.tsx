@@ -1,17 +1,18 @@
 // @ts-nocheck
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, ChevronRight, RotateCcw, Download, Thermometer as ThermIcon } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import confetti from 'canvas-confetti';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { Thermometer3D, getTempLevel, CAT_LABELS, RADAR_KEYS, TEMP_LEVELS } from './helpers';
 import ShareModule from '../../../components/ShareModule';
 import ResultActions from '../../../components/ResultActions';
 import CompletionBanner from '../../../components/CompletionBanner';
-import html2canvas from 'html2canvas-pro';
+import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../../utils/pdfUtils';
 
 function Spinner() {
   return (<div className="flex items-center gap-1.5 py-1">{[0,1,2].map(i=>(<motion.div key={i} className="w-2 h-2 rounded-full bg-cyan-400" animate={{scale:[.8,1,.8],opacity:[.3,1,.3]}} transition={{repeat:Infinity,duration:1.2,delay:i*.2,ease:"easeInOut"}}/>))}</div>);
@@ -110,36 +111,39 @@ export default function TermostatoFinanciero() {
 
   const generatePDF = async () => {
     if (!diagnosis) return;
-    const d = diagnosis, tl = getTempLevel(d.puntaje_global);
+    const d = diagnosis;
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const W=210,M=18; let y=20;
-    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-    doc.setFillColor(0,212,255); doc.rect(0,0,W,3,'F');
-    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
-    doc.setTextColor(100); doc.text('TERMÓSTATO FINANCIERO',W-M,y,{align:'right'}); y+=16;
-    doc.setTextColor(255); doc.setFontSize(42); doc.text(`${d.puntaje_global}°`,M,y);
-    doc.setFontSize(18); doc.text(d.temperatura_label,M+40,y); y+=10;
-    doc.setFontSize(10); doc.setTextColor(150); doc.text(`Arquetipo: ${d.arquetipo}`,M,y); y+=6;
-    doc.text(d.arquetipo_desc||'',M,y,{maxWidth:W-2*M}); y+=14;
-    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('DIAGNÓSTICO',M,y); y+=6;
-    doc.setTextColor(200); doc.setFontSize(11);
-    const lines = doc.splitTextToSize(d.diagnostico_breve,W-2*M);
-    doc.text(lines,M,y); y+=lines.length*6+8;
+    let y = initPdfWithHeader(doc, 'Termóstato Financiero');
+    const W=210,M=18;
+
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setFontSize(42); 
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${d.puntaje_global}°`, M, y);
+    doc.setFontSize(18); 
+    doc.text(d.temperatura_label, M + 40, y); 
+    y += 10;
+    
+    y = addPdfText(doc, `Arquetipo: ${d.arquetipo}`, y, { fontSize: 10, color: [100, 116, 139] });
+    y += 2;
+    y = addPdfText(doc, d.arquetipo_desc || '', y, { fontSize: 10, color: [51, 65, 85], lineHeight: 6 });
+    y += 8;
+
+    y = addPdfText(doc, 'DIAGNÓSTICO', y, { fontSize: 10, color: [0, 212, 255], fontStyle: 'bold' });
+    y += 4;
+    y = addPdfText(doc, d.diagnostico_breve, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
+    y += 8;
     
     // Attempt to capture the radar chart
     if (chartRef.current) {
       try {
-        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#080c14' });
+        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#ffffff' });
         const imgData = canvas.toDataURL('image/png');
         const imgProps = doc.getImageProperties(imgData);
         const pdfWidth = W - 2*M;
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        // If it goes too far down, add a page
-        if (y + pdfHeight > 280) {
-          doc.addPage();
-          doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-          y = 20;
-        }
+        
+        y = checkPageBreak(doc, y, pdfHeight + 10);
         doc.addImage(imgData, 'PNG', M, y, pdfWidth, pdfHeight);
         y += pdfHeight + 10;
       } catch (e) {
@@ -147,37 +151,38 @@ export default function TermostatoFinanciero() {
       }
     }
 
-    // If dimensions text overflows, maybe add page
-    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
-
-    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('DIMENSIONES',M,y); y+=7;
+    y = addPdfText(doc, 'DIMENSIONES', y, { fontSize: 10, color: [0, 212, 255], fontStyle: 'bold' });
+    y += 4;
+    
     Object.entries(d.categorias||{}).forEach(([k,v])=>{
-      doc.setTextColor(150); doc.setFontSize(9); doc.text(CAT_LABELS[k]||k,M,y);
-      doc.text(`${v}°`,W-M,y,{align:'right'});
-      doc.setFillColor(30,30,40); doc.rect(M,y+2,W-2*M,3,'F');
-      doc.setFillColor(0,212,255); doc.rect(M,y+2,(W-2*M)*(v as number)/100,3,'F');
-      y+=10;
+      y = checkPageBreak(doc, y, 10);
+      doc.setTextColor(100, 116, 139); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+      doc.text(CAT_LABELS[k]||k, M, y);
+      doc.text(`${v}°`, W-M, y, {align:'right'});
+      doc.setFillColor(226, 232, 240); doc.rect(M, y+2, W-2*M, 3, 'F'); // slate-200 background
+      doc.setFillColor(0, 212, 255); doc.rect(M, y+2, (W-2*M)*(v as number)/100, 3, 'F');
+      y += 10;
     });
-    y+=4;
+    y += 6;
 
-    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
+    y = addPdfText(doc, 'FORTALEZAS', y, { fontSize: 10, color: [16, 185, 129], fontStyle: 'bold' });
+    y += 4;
+    (d.fortalezas||[]).forEach((f:string,i:number)=>{
+      y = addPdfText(doc, `${i+1}. ${f}`, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 6 });
+    });
+    y += 6;
 
-    doc.setTextColor(16,185,129); doc.setFontSize(9); doc.text('FORTALEZAS',M,y); y+=6;
-    (d.fortalezas||[]).forEach((f:string,i:number)=>{doc.setTextColor(200);doc.setFontSize(10);doc.text(`${i+1}. ${f}`,M,y);y+=6;});
-    y+=4;
+    y = addPdfText(doc, 'SOMBRAS A INTEGRAR', y, { fontSize: 10, color: [239, 68, 68], fontStyle: 'bold' });
+    y += 4;
+    (d.sombras||[]).forEach((s:string,i:number)=>{
+      y = addPdfText(doc, `${i+1}. ${s}`, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 6 });
+    });
+    y += 6;
 
-    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
-
-    doc.setTextColor(239,68,68); doc.setFontSize(9); doc.text('SOMBRAS A INTEGRAR',M,y); y+=6;
-    (d.sombras||[]).forEach((s:string,i:number)=>{doc.setTextColor(200);doc.setFontSize(10);doc.text(`${i+1}. ${s}`,M,y);y+=6;});
-    y+=6;
-
-    if (y > 240) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y = 20; }
-
-    doc.setTextColor(0,212,255); doc.setFontSize(9); doc.text('PRIMER PASO ESTA SEMANA',M,y); y+=6;
-    doc.setTextColor(255); doc.setFontSize(11);
-    const pasoLines = doc.splitTextToSize(d.primer_paso,W-2*M);
-    doc.text(pasoLines,M,y);
+    y = addPdfText(doc, 'PRIMER PASO ESTA SEMANA', y, { fontSize: 10, color: [0, 212, 255], fontStyle: 'bold' });
+    y += 4;
+    y = addPdfText(doc, d.primer_paso, y, { fontSize: 11, color: [15, 23, 42], lineHeight: 6, fontStyle: 'bold' });
+    
     doc.save('termostato-financiero.pdf');
   };
 

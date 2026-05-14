@@ -256,12 +256,42 @@ export default function GenyOpciones() {
   const SD = SYMBOLS[sym];
   const saveTimeout = useRef<any>(null);
 
-  // ── Load from Supabase ──
-  useEffect(() => { setLoading(false); }, []);
+  // ── Load saved progress ──
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('geny-opciones-progress');
+      if (saved) {
+        const r = JSON.parse(saved);
+        if (r.done) setDone(new Set(r.done));
+        if (r.xp != null) setXp(r.xp);
+        if (r.cash != null) setCash(r.cash);
+        if (r.positions) setPositions(r.positions);
+        if (r.trades) setTrades(r.trades);
+        if (r.dia != null) setDia(r.dia);
+        if (r.dte != null) setDte(r.dte);
+      }
+    } catch (e) {
+      console.error('Error loading opciones progress:', e);
+    }
+    setLoading(false);
+  }, []);
 
-  // ── Persist to Supabase (debounced) ──
+  // ── Persist to localStorage (debounced) ──
   const saveState = (overrides: any = {}) => {
-    // Local persistence only in V3
+    try {
+      const current = {
+        done: Array.from(done),
+        xp, cash, positions, trades, dia, dte,
+        ...overrides,
+      };
+      // Convert Set if passed as override
+      if (overrides.done instanceof Set) {
+        current.done = Array.from(overrides.done);
+      }
+      localStorage.setItem('geny-opciones-progress', JSON.stringify(current));
+    } catch (e) {
+      console.error('Error saving opciones progress:', e);
+    }
   };
 
   // ── Symbol change ──

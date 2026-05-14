@@ -55,23 +55,45 @@ export default function RetoFlow() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [glosarioQuery, setGlosarioQuery] = useState("");
 
-  // ── Load from Supabase ─────────────────────────────────────────────────
-  useEffect(() => { setLoading(false); }, []);
+  // ── Load saved progress ─────────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('reto-flow-progress');
+      if (saved) {
+        const r = JSON.parse(saved);
+        if (r.route) setRoute(r.route);
+        if (r.arquetipo) setArquetipo(r.arquetipo);
+        if (r.tasksDone) setTasksDone(r.tasksDone);
+        if (r.completedDays) setCompletedDays(r.completedDays);
+        if (r.emociones) setEmociones(r.emociones);
+        if (r.view) setView(r.view);
+      }
+    } catch (e) {
+      console.error('Error loading flow progress:', e);
+    }
+    setLoading(false);
+  }, []);
 
-  // ── Persist to Supabase ────────────────────────────────────────────────
+  // ── Persist to localStorage ────────────────────────────────────────────
   const saveState = async (
     newRoute = route,
     newArq = arquetipo,
     newTasks = tasksDone,
     newDays = completedDays,
     newEmo = emociones,
+    newView?: string,
   ) => {
-    if (!user?.id) return;
-    const completed = Object.values(newDays).filter(Boolean).length;
-    const status = completed >= 10 ? "completed" : "in_progress";
-    // Local persistence only in V3
-    if (completed >= 10) {
-      // markActivityCompleted(...)
+    try {
+      localStorage.setItem('reto-flow-progress', JSON.stringify({
+        route: newRoute,
+        arquetipo: newArq,
+        tasksDone: newTasks,
+        completedDays: newDays,
+        emociones: newEmo,
+        view: newView || (newRoute ? 'home' : undefined),
+      }));
+    } catch (e) {
+      console.error('Error saving flow progress:', e);
     }
   };
 

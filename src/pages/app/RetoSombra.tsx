@@ -6,6 +6,8 @@ import {
   Lock, Unlock, Zap, Brain, AlertTriangle, ArrowRight, ChevronRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 
 import confetti from "canvas-confetti";
 import {
@@ -16,7 +18,6 @@ import ShareModule from "../../components/ShareModule";
 import ResultActions from "../../components/ResultActions";
 import CompletionBanner from '../../components/CompletionBanner';
 import html2canvas from 'html2canvas-pro';
-import jsPDF from "jspdf";
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function cx(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
@@ -55,22 +56,45 @@ export default function MisEmociones() {
     : "alMando";
   const diagResult = DIAG_R[diagLevel];
 
-  // ── Load from Supabase ────────────────────────────────────────────────
-  useEffect(() => { setLoading(false); }, []);
+  // ── Load saved progress ────────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('reto-sombra-progress');
+      if (saved) {
+        const r = JSON.parse(saved);
+        if (r.route) setRoute(r.route);
+        if (r.tasksDone) setTasksDone(r.tasksDone);
+        if (r.completedDays) setCompletedDays(r.completedDays);
+        if (r.diagAns) {
+          setDiagAns(r.diagAns);
+          if (r.diagAns.length >= 4) setView('result');
+        }
+        if (r.view === 'home') setView('home');
+      }
+    } catch (e) {
+      console.error('Error loading sombra progress:', e);
+    }
+    setLoading(false);
+  }, []);
 
-  // ── Persist to Supabase ───────────────────────────────────────────────
+  // ── Persist to localStorage ───────────────────────────────────────────
   const saveState = async (
     newRoute = route,
     newTasks = tasksDone,
     newDays = completedDays,
     newDiagAns = diagAns,
+    newView?: string,
   ) => {
-    if (!user?.id) return;
-    const completed = Object.values(newDays).filter(Boolean).length;
-    const status = completed >= 10 ? "completed" : newRoute ? "in_progress" : "not_started";
-    // Local persistence only in V3
-    if (completed >= 10) {
-      // markActivityCompleted(...)
+    try {
+      localStorage.setItem('reto-sombra-progress', JSON.stringify({
+        route: newRoute,
+        tasksDone: newTasks,
+        completedDays: newDays,
+        diagAns: newDiagAns,
+        view: newView || (newRoute ? 'home' : undefined),
+      }));
+    } catch (e) {
+      console.error('Error saving sombra progress:', e);
     }
   };
 
@@ -398,37 +422,35 @@ export default function MisEmociones() {
   const resetDiag = () => { setDiagAns([]); setDiagStep(0); setView("hero"); };
   const generatePDF = async () => {
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const W=210,M=18; let y=20;
+    let y = initPdfWithHeader(doc, 'Reto Sombra');
+    const W=210,M=18;
     
-    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-    doc.setFillColor(239,68,68); doc.rect(0,0,W,3,'F'); // #ef4444
-    
-    doc.setTextColor(239,68,68); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
-    doc.setTextColor(100); doc.text('RETO SOMBRA',W-M,y,{align:'right'}); y+=16;
-    
-    doc.setTextColor(255); doc.setFontSize(28); 
-    doc.text(diagResult?.title?.toUpperCase() || 'DIAGNÓSTICO',M,y); y+=12;
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setFontSize(28); 
+    doc.setFont('helvetica', 'bold');
+    doc.text(diagResult?.title?.toUpperCase() || 'DIAGNÓSTICO', M, y); 
+    y += 12;
 
-    doc.setTextColor(239,68,68); doc.setFontSize(14);
-    doc.text(`${diagScore}% NIVEL DE SABOTAJE`, M, y); y+=10;
+    y = addPdfText(doc, `${diagScore}% NIVEL DE SABOTAJE`, y, { fontSize: 14, color: [239, 68, 68], fontStyle: 'bold' });
+    y += 4;
 
-    doc.setTextColor(200); doc.setFontSize(11);
-    const introLines = doc.splitTextToSize(diagResult?.message || '', W-2*M);
-    doc.text(introLines, M, y); y+=introLines.length*6 + 10;
+    y = addPdfText(doc, diagResult?.message || '', y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
+    y += 8;
     
-    doc.setTextColor(255); doc.setFontSize(14);
-    doc.text('TUS RESPUESTAS', M, y); y+=10;
+    y = addPdfText(doc, 'TUS RESPUESTAS', y, { fontSize: 14, color: [15, 23, 42], fontStyle: 'bold' });
+    y += 6;
 
     DIAG_Q.forEach((q, i) => {
-      doc.setTextColor(239,68,68); doc.setFontSize(9); 
-      doc.text(`PREGUNTA ${i+1}`, M, y); y+=6;
-      doc.setTextColor(255); doc.setFontSize(11);
-      const qLines = doc.splitTextToSize(q, W-2*M);
-      doc.text(qLines, M, y); y+=qLines.length*6+2;
-      doc.setTextColor(200); doc.setFontSize(10); doc.setFont('helvetica', 'italic');
-      const ansLines = doc.splitTextToSize(diagAns[i] === 'si' ? 'Sí' : 'No', W-2*M);
-      doc.text(ansLines, M, y); y+=ansLines.length*6+6;
-      doc.setFont('helvetica', 'normal');
+      y = checkPageBreak(doc, y, 20);
+      
+      y = addPdfText(doc, `PREGUNTA ${i+1}`, y, { fontSize: 9, color: [239, 68, 68], fontStyle: 'bold' });
+      y += 4;
+      
+      y = addPdfText(doc, q, y, { fontSize: 11, color: [15, 23, 42], fontStyle: 'bold', lineHeight: 6 });
+      y += 4;
+      
+      y = addPdfText(doc, diagAns[i] === 'si' ? 'Sí' : 'No', y, { fontSize: 10, color: [100, 116, 139], fontStyle: 'italic', lineHeight: 6 });
+      y += 6;
     });
 
     doc.save('reto-sombra.pdf');
