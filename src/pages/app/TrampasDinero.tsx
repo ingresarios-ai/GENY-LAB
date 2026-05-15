@@ -30,7 +30,7 @@ const RETO = {
   name: "TRAMPAS DEL DINERO",
   liveTitle: "Tu cerebro está diseñado para hacerte perder dinero",
   intro:
-    "Acabas de ver el LIVE. Las 5 trampas cognitivas que sabotean cada decisión financiera están identificadas. Ahora toca bajarlas a tu realidad. Responde honesto — no es examen, es espejo.",
+    "Acabas de conocer las 5 trampas cognitivas que sabotean cada decisión financiera están identificadas. Ahora toca bajarlas a tu realidad. Responde honesto — no es examen, es espejo.",
   questions: [
     {
       type: "comprensión" as const,
@@ -289,10 +289,10 @@ export default function TrampasDinero() {
     return (
       <div className="max-w-5xl mx-auto pb-12">
         <Link
-          to="/app/actividades"
+          to="/app/leccion/trampas"
           className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em] mb-4"
         >
-          <ChevronLeft className="w-4 h-4" /> Volver a Actividades
+          <ChevronLeft className="w-4 h-4" /> Volver a la Lección
         </Link>
         
         <div className="min-h-[70vh] flex flex-col justify-center">

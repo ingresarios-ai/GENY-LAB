@@ -17,9 +17,9 @@ export default function Achievements() {
       <motion.h1 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-3xl md:text-4xl font-black uppercase tracking-tight mb-6"
+        className="text-2xl md:text-3xl font-bold uppercase tracking-tight mb-6"
       >
-        Mis Logros
+        Mis <span className="text-[#00D1FF] font-light">Logros</span>
       </motion.h1>
 
       {/* Stats grid */}
@@ -35,18 +35,17 @@ export default function Achievements() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
-            className="glass-panel p-4 text-center rounded-2xl relative overflow-hidden"
+            className="glass-panel p-4 text-center rounded-xl relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
             <div className="mb-2 flex justify-center" style={{ color: stat.color }}>{stat.icon}</div>
-            <div className="text-2xl font-extrabold" style={{ color: stat.color }}>{stat.value}</div>
-            <div className="text-[0.65rem] text-brand-text-muted/60 font-semibold mt-1 uppercase tracking-widest">{stat.label}</div>
+            <div className="text-2xl font-bold font-mono" style={{ color: stat.color }}>{stat.value}</div>
+            <div className="text-[0.65rem] text-brand-text-muted/60 font-mono mt-1 uppercase tracking-widest">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
       {/* Level progression */}
-      <h3 className="text-sm text-brand-text-muted mb-3 font-semibold uppercase tracking-wider">Niveles</h3>
+      <h3 className="text-sm text-brand-text-muted mb-3 font-mono uppercase tracking-wider">Niveles</h3>
       <div className="flex flex-col gap-3 mb-7">
         {LEVELS.map((lvl, i) => {
           const isCurrentLevel = lvl.id === level.id;
@@ -58,10 +57,10 @@ export default function Achievements() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.06 }}
               className={`
-                flex items-center gap-4 py-3.5 px-5 rounded-2xl border transition-all duration-300
+                flex items-center gap-4 py-3.5 px-5 rounded-xl border transition-all duration-300
                 ${isCurrentLevel 
                   ? 'glass-panel shadow-[0_0_20px_rgba(0,255,255,0.05)]' 
-                  : 'bg-[#0f172a]/40 border-white/[0.04]'
+                  : 'bg-[#0A0B10] border-white/[0.04]'
                 }
                 ${isPast || isCurrentLevel ? '' : 'opacity-30'}
               `}
@@ -90,7 +89,7 @@ export default function Achievements() {
       </div>
 
       {/* Completed lessons */}
-      <h3 className="text-sm text-brand-text-muted mb-3 font-semibold uppercase tracking-wider">Lecciones</h3>
+      <h3 className="text-sm text-brand-text-muted mb-3 font-mono uppercase tracking-wider">Lecciones</h3>
       <div className="flex flex-col gap-2.5">
         {LESSONS.map((lesson, i) => {
           const completed = isLessonCompleted(lesson.id);
@@ -101,10 +100,10 @@ export default function Achievements() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + i * 0.05 }}
               className={`
-                flex items-center gap-3 py-3 px-4 rounded-2xl border transition-colors duration-300
+                flex items-center gap-3 py-3 px-4 rounded-xl border transition-colors duration-300
                 ${completed 
                   ? 'glass-panel border-brand-emerald/20' 
-                  : 'bg-[#0f172a]/40 border-white/[0.04]'
+                  : 'bg-[#0A0B10] border-white/[0.04]'
                 }
               `}
             >
@@ -113,7 +112,7 @@ export default function Achievements() {
                 <div className="text-sm font-semibold">{lesson.title}</div>
               </div>
               {completed && (
-                <span className="text-brand-emerald text-[0.7rem] font-bold bg-brand-emerald/10 px-2 py-1 rounded-md">
+                <span className="text-brand-emerald text-[0.7rem] font-mono bg-brand-emerald/10 px-2 py-1 rounded-md">
                   ✓ +{lesson.xpVideo + lesson.xpActivity + lesson.xpBonus} XP
                 </span>
               )}

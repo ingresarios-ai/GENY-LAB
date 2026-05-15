@@ -200,10 +200,10 @@ export default function RetoFlow() {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
         <Link
-          to="/app/actividades"
+          to="/app/leccion/flow"
           className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]"
         >
-          <ChevronLeft className="w-4 h-4" /> Volver a Actividades
+          <ChevronLeft className="w-4 h-4" /> Volver a la Lección
         </Link>
         <div className="text-center space-y-4 pt-4">
           <div className="text-7xl mb-2">⚡</div>

@@ -91,9 +91,9 @@ export default function MiPrimerPedem() {
   return (
     <div className="max-w-5xl mx-auto pb-16">
       {screen !== 'result' && (
-        <Link to="/app/actividades"
+        <Link to="/app/leccion/pedem"
           className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em] mb-6">
-          <ChevronLeft className="w-4 h-4" /> Volver a Actividades
+          <ChevronLeft className="w-4 h-4" /> Volver a la Lección
         </Link>
       )}
 

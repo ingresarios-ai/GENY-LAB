@@ -45,7 +45,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
               placeholder="tu@email.com"
               required
             />
@@ -56,7 +56,7 @@ export default function Login() {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
               placeholder="••••••••"
               required
             />
@@ -71,7 +71,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm bg-gradient-to-r from-brand-blue to-cyan-500 text-white shadow-[0_0_20px_rgba(0,209,255,0.3)] hover:shadow-[0_0_35px_rgba(0,209,255,0.5)] transition-all disabled:opacity-50"
+            className="w-full py-4 rounded-lg font-mono uppercase tracking-widest text-sm bg-brand-blue/10 border border-brand-blue/40 text-brand-blue shadow-[0_0_20px_rgba(0,209,255,0.15)] hover:bg-brand-blue/20 hover:shadow-[0_0_35px_rgba(0,209,255,0.3)] transition-all disabled:opacity-50"
           >
             {loading ? 'Ingresando...' : 'Ingresar'}
           </button>

@@ -226,7 +226,7 @@ export default function TermostatoFinanciero() {
   // ═══ LOADING AI ═══
   if (screen==='loading-ai') {
     return (
-      <div className="fixed inset-x-0 top-0 md:top-16 bottom-0 z-[45] bg-[#080c14] flex flex-col items-center justify-center">
+      <div className="fixed inset-x-0 top-0 md:top-16 bottom-[72px] md:bottom-0 z-[45] bg-[#080c14] flex flex-col items-center justify-center">
         <motion.div initial={{opacity:0,scale:0.9}} animate={{opacity:1,scale:1}} className="flex flex-col items-center gap-6 text-center px-6">
           <motion.div animate={{y:[0,-8,0]}} transition={{repeat:Infinity,duration:2,ease:"easeInOut"}} className="text-6xl md:text-7xl">🌡️</motion.div>
           <div className="space-y-3">
@@ -258,7 +258,7 @@ export default function TermostatoFinanciero() {
   // ═══ CHAT ═══
   if (screen==='chat') {
     return (
-      <div className="fixed inset-x-0 top-0 md:top-16 bottom-0 z-[45] bg-[#080c14] flex flex-col">
+      <div className="fixed inset-x-0 top-0 md:top-16 bottom-[72px] md:bottom-0 z-[45] bg-[#080c14] flex flex-col">
         {/* Top bar */}
         <div className="max-w-3xl w-full mx-auto px-4 pt-8 pb-2">
           <button onClick={reset} className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]">

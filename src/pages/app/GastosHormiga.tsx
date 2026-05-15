@@ -221,10 +221,10 @@ export const GastosHormiga = () => {
   if (step === 0) return (
     <div className="max-w-5xl mx-auto space-y-10 pb-12">
       <Link
-        to="/app/actividades"
+        to="/app/leccion/gastos"
         className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em] mb-2"
       >
-        <ArrowLeft className="w-4 h-4" /> Volver a Actividades
+        <ArrowLeft className="w-4 h-4" /> Volver a la Lección
       </Link>
 
       {/* Hero */}

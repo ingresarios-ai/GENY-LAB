@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Play, Check, Lock, Sparkles, ChevronRight } from 'lucide-react';
-import confetti from 'canvas-confetti';
+// Removed confetti import
 import { LESSONS, getLevelForXp, TOTAL_LESSONS } from '../../lib/lessons';
 import { 
   getProgress, isLessonUnlocked,
@@ -99,13 +99,10 @@ export default function LessonScreen() {
           setTimeout(() => setXpAnimation(null), 1500);
         }
 
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#01E47E', '#00D1FF', '#ffffff'] });
-
         if (result.leveledUp) {
           setTimeout(() => {
             setLevelUpData({ name: result.newLevel.name, emoji: result.newLevel.emoji });
             setShowLevelUp(true);
-            confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, zIndex: 400 });
           }, 800);
         } else {
           // If they didn't level up, but they just unlocked the next module
@@ -113,7 +110,6 @@ export default function LessonScreen() {
           if (nextLesson) {
             setTimeout(() => {
               setShowModuleUnlocked(true);
-              confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, zIndex: 400 });
             }, 800);
           }
         }
@@ -137,20 +133,16 @@ export default function LessonScreen() {
         setTimeout(() => setXpAnimation(null), 1500);
       }
 
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#01E47E', '#00D1FF', '#ffffff'] });
-
       if (result.leveledUp) {
         setTimeout(() => {
           setLevelUpData({ name: result.newLevel.name, emoji: result.newLevel.emoji });
           setShowLevelUp(true);
-          confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, zIndex: 400 });
         }, 800);
       } else {
         const nextL = LESSONS.find(l => l.order === lesson.order + 1);
         if (nextL) {
           setTimeout(() => {
             setShowModuleUnlocked(true);
-            confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, zIndex: 400 });
           }, 800);
         }
       }
@@ -207,11 +199,9 @@ export default function LessonScreen() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
             className="relative"
           >
-            {/* Cinematic Glow Behind Video */}
-            <div className="absolute -inset-10 bg-[#00D1FF]/10 blur-[100px] rounded-full pointer-events-none"></div>
-            
-            <div className="glass-panel p-2 md:p-3 rounded-3xl relative overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/10">
-              <div className="aspect-video bg-black rounded-2xl relative overflow-hidden flex items-center justify-center">
+            {/* Clean tech border instead of massive blur */}
+            <div className="glass-panel p-2 md:p-3 rounded-xl relative overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/10">
+              <div className="aspect-video bg-black rounded-lg relative overflow-hidden flex items-center justify-center">
                 {lesson.videoUrl ? (
                   <iframe
                     src={lesson.videoUrl}
@@ -240,15 +230,15 @@ export default function LessonScreen() {
               onClick={handleMarkVideo}
               disabled={videoMarked}
               className={`
-                w-full lg:w-auto px-8 py-4 rounded-full font-black tracking-widest text-xs md:text-sm flex items-center justify-center gap-3 transition-all duration-300 border
+                w-full lg:w-auto px-8 py-4 rounded-lg font-mono tracking-widest text-xs flex items-center justify-center gap-3 transition-all duration-300 border
                 ${videoMarked 
                   ? 'bg-brand-emerald/[0.1] text-brand-emerald border-brand-emerald/40 cursor-default' 
                   : 'bg-brand-cyan/10 text-brand-cyan border-brand-cyan/30 hover:bg-brand-cyan hover:text-black hover:shadow-[0_0_30px_rgba(0,209,255,0.4)] cursor-pointer'
                 }
               `}
             >
-              {videoMarked ? <Check size={20} /> : <Play size={20} className={videoMarked ? '' : 'fill-current'} />}
-              {videoMarked ? 'VIDEO COMPLETADO ✓' : 'MARCAR VIDEO COMO VISTO'}
+              {videoMarked ? <Check size={18} /> : <Play size={18} className={videoMarked ? '' : 'fill-current'} />}
+              {videoMarked ? 'MÓDULO VISTO ✓' : 'MARCAR COMO VISTO'}
             </button>
           </motion.div>
         </div>
@@ -261,14 +251,17 @@ export default function LessonScreen() {
             initial={{ opacity: 0, x: 20 }} 
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className={`glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden transition-all duration-500 border border-brand-emerald/20 ${
-              videoMarked ? 'bg-[#0f172a]/80 shadow-[0_10px_40px_-10px_rgba(1,228,126,0.15)]' : 'opacity-60 grayscale'
+            className={`glass-panel p-6 md:p-8 rounded-xl relative overflow-hidden transition-all duration-500 border ${
+              videoMarked ? 'border-brand-emerald/20 bg-[#0A0B10]' : 'opacity-60 grayscale border-white/5'
             }`}
           >
-            <div className="absolute top-0 right-0 w-48 h-48 bg-brand-emerald/10 blur-[60px] rounded-full pointer-events-none"></div>
-            
-            <div className="text-[10px] md:text-xs font-black text-brand-emerald mb-4 uppercase tracking-widest relative z-10 flex items-center gap-2">
-              <Sparkles size={16} className="fill-brand-emerald" /> ACTIVIDAD INTERACTIVA
+            {/* Subtle animated gradient background when completed */}
+            {activityDone && (
+              <div className="absolute inset-0 bg-gradient-to-br from-brand-emerald/5 via-transparent to-brand-cyan/5 pointer-events-none" />
+            )}
+
+            <div className="text-[10px] md:text-xs font-mono text-brand-emerald mb-4 uppercase tracking-widest relative z-10 flex items-center gap-2">
+              <span className="w-2 h-2 bg-brand-emerald rounded-sm animate-pulse"></span> VALIDACIÓN PRÁCTICA
             </div>
             
             <div className="relative z-10">
@@ -278,27 +271,33 @@ export default function LessonScreen() {
 
               {activityDone ? (
                 <div className="space-y-3">
-                  <div className="w-full rounded-full py-4 font-black tracking-widest text-sm flex items-center justify-center gap-2 bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald cursor-default shadow-[0_0_20px_rgba(1,228,126,0.15)]">
-                    <Check size={20} /> ACTIVIDAD COMPLETADA
+                  {/* Success celebration */}
+                  <div className="flex flex-col items-center text-center py-4 mb-2">
+                    <div className="w-16 h-16 rounded-2xl bg-brand-emerald/10 border border-brand-emerald/30 flex items-center justify-center mb-4 shadow-[0_0_40px_rgba(1,228,126,0.2)]">
+                      <Check size={28} className="text-brand-emerald" />
+                    </div>
+                    <p className="text-brand-emerald font-mono text-sm tracking-widest uppercase mb-1">Validación Exitosa</p>
+                    <p className="text-white/40 text-xs font-mono">Datos procesados correctamente</p>
                   </div>
+
                   {lesson.activityRoute && (
                     <button
                       onClick={() => navigate(lesson.activityRoute + '?view=results')}
-                      className="w-full rounded-full py-3 font-bold tracking-widest text-xs cursor-pointer transition-all duration-300 bg-brand-blue/15 border border-brand-blue/40 text-brand-blue hover:bg-brand-blue/25 hover:shadow-[0_0_20px_rgba(0,209,255,0.2)] uppercase"
+                      className="w-full rounded-lg py-3.5 font-mono tracking-widest text-xs cursor-pointer transition-all duration-300 bg-brand-cyan/10 border border-brand-cyan/40 text-brand-cyan hover:bg-brand-cyan/20 hover:shadow-[0_0_20px_rgba(0,209,255,0.2)] uppercase flex items-center justify-center gap-2"
                     >
-                      Ver mis resultados
+                      <Sparkles size={14} /> Ver mis resultados
                     </button>
                   )}
                   <button
                     onClick={() => setShowRepeatAlert(true)}
-                    className="w-full rounded-full py-3 font-bold tracking-widest text-xs cursor-pointer transition-all duration-300 bg-transparent border border-white/10 text-white/50 hover:bg-white/5 hover:text-white/80 uppercase"
+                    className="w-full rounded-lg py-3 font-mono tracking-widest text-xs cursor-pointer transition-all duration-300 bg-transparent border border-white/10 text-white/50 hover:bg-white/5 hover:text-white/80 uppercase"
                   >
-                    Repetir la actividad
+                    Repetir validación
                   </button>
                 </div>
               ) : (
                 <button
-                  className={`w-full rounded-full py-4 font-black tracking-widest text-sm transition-all duration-300 ${!videoMarked ? 'bg-white/5 text-white/40 border border-white/10 cursor-not-allowed hover:bg-white/10' : 'cursor-pointer btn-primary shadow-[0_0_30px_rgba(1,228,126,0.4)] hover:shadow-[0_0_50px_rgba(1,228,126,0.6)]'}`}
+                  className={`w-full rounded-lg py-4 font-mono tracking-widest text-xs transition-all duration-300 ${!videoMarked ? 'bg-white/5 text-white/40 border border-white/10 cursor-not-allowed hover:bg-white/10' : 'cursor-pointer bg-[#00E676]/10 border border-[#00E676]/30 text-[#00E676] hover:bg-[#00E676]/20 shadow-[0_0_20px_rgba(1,228,126,0.2)] hover:shadow-[0_0_30px_rgba(1,228,126,0.4)]'}`}
                   onClick={() => {
                     if (!videoMarked) {
                       setShowVideoAlert(true);
@@ -307,7 +306,7 @@ export default function LessonScreen() {
                     }
                   }}
                 >
-                  COMENZAR ACTIVIDAD →
+                  COMENZAR_ACTIVIDAD()
                 </button>
               )}
 
@@ -324,64 +323,63 @@ export default function LessonScreen() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className={`p-6 md:p-8 rounded-3xl backdrop-blur-md relative overflow-hidden transition-all duration-500 ${
+            className={`p-6 md:p-8 rounded-xl backdrop-blur-md relative overflow-hidden transition-all duration-500 ${
               activityDone 
-                ? 'bg-[#0f172a]/60 border border-brand-emerald/20 shadow-[0_10px_30px_-10px_rgba(1,228,126,0.15)]' 
-                : 'bg-[#0f172a]/40 border border-white/[0.04] opacity-50 grayscale pointer-events-none'
+                ? 'bg-[#0A0B10] border border-brand-emerald/20 shadow-[0_10px_30px_-10px_rgba(1,228,126,0.15)]' 
+                : 'bg-[#0A0B10] border border-white/[0.04] opacity-50 grayscale pointer-events-none'
             }`}
           >
-            <div className="flex justify-between items-end mb-4">
-              <div className="text-xs font-bold text-white/50 tracking-widest uppercase">Tu Progreso Global</div>
-              <div className="text-brand-cyan text-sm font-black">{Math.round(progressPercent)}%</div>
-            </div>
-            
-            <div className="progress-bar mb-6 bg-black/60 border border-white/5 h-3 rounded-full overflow-hidden">
-              <div className="progress-bar-fill h-full bg-gradient-to-r from-brand-emerald via-brand-cyan to-[#00D1FF] relative" style={{ width: `${progressPercent}%` }}>
-                 <div className="absolute top-0 right-0 bottom-0 w-10 bg-white/30 blur-[2px]"></div>
+            {/* Subtle gradient overlay when active */}
+            {activityDone && (
+              <div className="absolute inset-0 bg-gradient-to-br from-brand-cyan/5 via-transparent to-brand-emerald/5 pointer-events-none" />
+            )}
+
+            <div className="relative z-10">
+              <div className="flex justify-between items-center mb-3">
+                <div className="text-[10px] md:text-xs font-mono text-white/50 tracking-widest uppercase">Tu Progreso Global</div>
+                <div className="text-brand-cyan text-lg font-bold font-mono">{Math.round(progressPercent)}%</div>
               </div>
+              
+              <div className="progress-bar mb-2">
+                <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
+              </div>
+              <p className="text-[10px] text-white/30 font-mono mb-6">{completedCount} de {TOTAL_LESSONS} nodos completados</p>
             </div>
 
             {nextLesson ? (
-              <div className="text-sm font-medium flex flex-col md:flex-row md:items-center gap-4">
+              <div className="text-sm font-medium flex flex-col gap-4">
                 {activityDone ? (
                   <>
                     <div className="flex items-center gap-4 flex-1">
-                      <div className="w-10 h-10 rounded-full bg-brand-emerald/20 flex shrink-0 items-center justify-center text-brand-emerald border border-brand-emerald/30 shadow-[0_0_15px_rgba(1,228,126,0.3)]">
-                        <Sparkles size={16} />
+                      <div className="w-12 h-12 rounded-xl bg-brand-emerald/10 flex shrink-0 items-center justify-center text-brand-emerald border border-brand-emerald/30 shadow-[0_0_20px_rgba(1,228,126,0.3)]">
+                        <span className="text-lg">{nextLesson.emoji}</span>
                       </div>
-                      <span className="text-brand-emerald text-glow-emerald leading-tight">
-                        Desbloqueaste: <br className="md:hidden" /><strong className="text-white font-bold">{nextLesson.title.replace('\n', ' ')}</strong>
-                      </span>
+                      <div>
+                        <p className="text-brand-emerald font-mono text-[10px] uppercase tracking-widest mb-0.5">Nuevo Acceso Desbloqueado</p>
+                        <p className="text-white font-bold text-sm">{nextLesson.title.replace('\n', ' ')}</p>
+                      </div>
                     </div>
                     <button 
                       onClick={() => navigate(`/app/leccion/${nextLesson.id}`)}
-                      className="btn-primary py-3 px-6 rounded-full text-xs font-black tracking-widest uppercase shrink-0 shadow-[0_0_30px_rgba(1,228,126,0.6)] hover:shadow-[0_0_50px_rgba(1,228,126,0.8)] hover:scale-105 transition-all duration-300 animate-pulse border-2 border-brand-emerald/50"
+                      className="w-full bg-brand-emerald/10 border border-brand-emerald/40 text-brand-emerald py-3.5 px-6 rounded-lg text-xs font-mono tracking-widest uppercase hover:bg-brand-emerald/20 hover:shadow-[0_0_20px_rgba(1,228,126,0.4)] transition-all duration-300 flex items-center justify-center gap-2"
                     >
-                      SIGUIENTE MÓDULO →
+                      Siguiente Módulo <ChevronRight size={14} />
                     </button>
                   </>
                 ) : (
-                  <>
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="w-10 h-10 rounded-full bg-white/5 flex shrink-0 items-center justify-center text-white/30 border border-white/10">
-                        <Lock size={16} />
-                      </div>
-                      <span className="text-brand-text-muted/60 leading-tight">
-                        Siguiente nivel:<br className="md:hidden" /> <strong className="text-white/80 font-bold">{nextLesson.title.replace('\n', ' ')}</strong>
-                      </span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-white/5 flex shrink-0 items-center justify-center text-white/30 border border-white/10">
+                      <Lock size={16} />
                     </div>
-                    <button 
-                      disabled
-                      className="bg-white/5 border border-white/10 text-white/40 py-3 px-6 rounded-full text-xs font-black tracking-widest uppercase shrink-0 cursor-not-allowed flex items-center gap-2"
-                    >
-                      <Lock size={14} /> BLOQUEADO
-                    </button>
-                  </>
+                    <span className="text-white/40 font-mono text-xs leading-tight">
+                      Siguiente: <strong className="text-white/60 font-bold">{nextLesson.title.replace('\n', ' ')}</strong>
+                    </span>
+                  </div>
                 )}
               </div>
             ) : (
-              <div className="text-sm text-center text-brand-gold font-bold p-3 bg-brand-gold/10 rounded-xl border border-brand-gold/20">
-                🎯 Te {remaining === 0 ? 'queda' : `faltan ${remaining}`} lección{remaining !== 1 ? 'es' : ''} para tu Diagnóstico 1 a 1
+              <div className="text-xs font-mono text-center text-brand-gold p-3 bg-brand-gold/5 rounded-lg border border-brand-gold/20">
+                &gt; FALTAN {remaining} VALIDACION{remaining === 1 ? '' : 'ES'} PARA TU RECOMPENSA FINAL
               </div>
             )}
           </motion.div>
@@ -410,13 +408,13 @@ export default function LessonScreen() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowLevelUp(false)}
-            className="fixed inset-0 z-[300] bg-black/90 backdrop-blur-xl flex items-center justify-center flex-col cursor-pointer"
+            className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-md flex items-center justify-center flex-col cursor-pointer"
           >
             <motion.div
               initial={{ scale: 0, rotate: -30 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-              className="text-8xl md:text-9xl mb-8 drop-shadow-[0_0_50px_rgba(255,255,255,0.3)]"
+              className="text-8xl md:text-9xl mb-8 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
             >
               {levelUpData.emoji}
             </motion.div>
@@ -424,17 +422,17 @@ export default function LessonScreen() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="px-8 py-3 bg-brand-gold/20 border border-brand-gold/40 rounded-full mb-6"
+              className="px-8 py-3 bg-[#00D1FF]/10 border border-[#00D1FF]/30 rounded-lg mb-6"
             >
-              <h1 className="text-3xl md:text-5xl font-black text-brand-gold text-center tracking-widest uppercase text-glow-gold">
-                ¡NIVEL UP!
+              <h1 className="text-2xl md:text-4xl font-mono text-[#00D1FF] text-center tracking-widest uppercase shadow-[0_0_20px_rgba(0,209,255,0.2)]">
+                NIVEL ALCANZADO
               </h1>
             </motion.div>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-2xl md:text-4xl font-black text-white mt-2 tracking-tighter uppercase"
+              className="text-xl md:text-3xl font-bold text-white mt-2 tracking-tighter uppercase text-center px-4"
             >
               {levelUpData.name}
             </motion.p>
@@ -442,9 +440,9 @@ export default function LessonScreen() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="text-white/40 mt-12 text-sm md:text-base font-bold tracking-widest uppercase animate-pulse"
+              className="text-[#00D1FF]/60 mt-12 text-xs md:text-sm font-mono tracking-widest uppercase animate-pulse"
             >
-              Toca para continuar la aventura
+              &gt; Toca para continuar la secuencia
             </motion.p>
           </motion.div>
         )}
@@ -458,13 +456,13 @@ export default function LessonScreen() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowModuleUnlocked(false)}
-            className="fixed inset-0 z-[300] bg-[#070b14]/90 backdrop-blur-xl flex items-center justify-center flex-col cursor-pointer"
+            className="fixed inset-0 z-[300] bg-[#05080f]/95 backdrop-blur-md flex items-center justify-center flex-col cursor-pointer"
           >
             <motion.div
               initial={{ scale: 0, y: 50 }}
               animate={{ scale: 1, y: 0 }}
               transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-              className="text-8xl md:text-9xl mb-8 drop-shadow-[0_0_50px_rgba(0,209,255,0.3)]"
+              className="text-8xl md:text-9xl mb-8 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
             >
               {nextLesson.emoji}
             </motion.div>
@@ -472,25 +470,25 @@ export default function LessonScreen() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="px-8 py-3 bg-brand-cyan/20 border border-brand-cyan/40 rounded-full mb-6"
+              className="px-8 py-3 bg-brand-cyan/10 border border-brand-cyan/30 rounded-lg mb-6"
             >
-              <h1 className="text-2xl md:text-4xl font-black text-brand-cyan text-center tracking-widest uppercase shadow-[0_0_20px_rgba(0,209,255,0.4)]">
-                ¡ESTÁS SUBIENDO DE NIVEL!
+              <h1 className="text-xl md:text-3xl font-mono text-brand-cyan text-center tracking-widest uppercase shadow-[0_0_20px_rgba(0,209,255,0.2)]">
+                NUEVO ACCESO
               </h1>
             </motion.div>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-xl md:text-2xl font-medium text-white/80 mt-2 text-center"
+              className="text-xs md:text-sm font-mono text-white/60 mt-2 text-center uppercase"
             >
-              Has desbloqueado:
+              Ahora tienes acceso a:
             </motion.p>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="text-3xl md:text-5xl font-black text-white mt-2 tracking-tighter uppercase text-center px-4"
+              className="text-xl md:text-3xl font-bold text-white mt-2 tracking-tighter uppercase text-center px-4"
             >
               {nextLesson.title}
             </motion.p>
@@ -503,9 +501,9 @@ export default function LessonScreen() {
                 setShowModuleUnlocked(false);
                 navigate(`/app/leccion/${nextLesson.id}`);
               }}
-              className="mt-12 btn-primary px-8 py-4 rounded-full font-black tracking-widest uppercase text-sm flex items-center gap-2 shadow-[0_0_30px_rgba(1,228,126,0.6)] animate-pulse hover:scale-105 transition-transform"
+              className="mt-12 bg-brand-cyan/10 border border-brand-cyan/40 px-8 py-4 rounded-lg font-mono tracking-widest uppercase text-xs flex items-center gap-2 shadow-[0_0_20px_rgba(0,209,255,0.2)] hover:bg-brand-cyan/20 transition-colors text-brand-cyan"
             >
-              Ir al Siguiente Módulo <ChevronRight size={18} />
+              COMENZAR MÓDULO <ChevronRight size={18} />
             </motion.button>
           </motion.div>
         )}

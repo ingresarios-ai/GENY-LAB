@@ -39,8 +39,8 @@ function App() {
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/compartir/:shareCode" element={<SharedResult />} />
 
-        {/* Protected App — requires auth */}
-        <Route path="/app" element={<AuthGuard><AppLayout /></AuthGuard>}>
+        {/* App — currently bypassed auth */}
+        <Route path="/app" element={<AppLayout />}>
           <Route index element={<PathMap />} />
           <Route path="leccion/:lessonId" element={<LessonScreen />} />
           <Route path="logros" element={<Achievements />} />
@@ -56,9 +56,9 @@ function App() {
           <Route path="geny-opciones" element={<GenyOpciones />} />
         </Route>
 
-        {/* Root — redirect to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Root — redirect to app */}
+        <Route path="/" element={<Navigate to="/app" replace />} />
+        <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </BrowserRouter>
   );

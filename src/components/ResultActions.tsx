@@ -35,7 +35,7 @@ export default function ResultActions({
         <button 
           onClick={handleDownload}
           disabled={isGenerating}
-          className="relative inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-brand-blue/10 border border-brand-blue/30 text-brand-blue hover:bg-brand-blue/20 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:pointer-events-none group overflow-hidden"
+          className="relative inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-xs font-mono uppercase tracking-widest bg-brand-blue/10 border border-brand-blue/30 text-brand-blue hover:bg-brand-blue/20 transition-all disabled:opacity-50 disabled:pointer-events-none group overflow-hidden"
         >
           {isGenerating ? (
             <>
@@ -59,7 +59,7 @@ export default function ResultActions({
       <button 
         onClick={onReset}
         disabled={isGenerating}
-        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-white/5 border border-white/10 text-brand-text-muted hover:text-white hover:bg-white/10 transition-all disabled:opacity-50"
+        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-xs font-mono uppercase tracking-widest bg-white/5 border border-white/10 text-brand-text-muted hover:text-white hover:bg-white/10 transition-all disabled:opacity-50"
       >
         <RotateCcw className="w-4 h-4" /> 
         {resetLabel}

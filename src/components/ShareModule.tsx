@@ -76,7 +76,7 @@ export default function ShareModule({ activity, title, resultData, shareMessage 
     <div className="w-full">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-gradient-to-r from-brand-blue/10 to-brand-green/10 border border-brand-blue/30 text-brand-blue hover:from-brand-blue/20 hover:to-brand-green/20 hover:scale-[1.02] transition-all"
+        className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-xs font-mono uppercase tracking-widest bg-gradient-to-r from-brand-blue/10 to-brand-green/10 border border-brand-blue/30 text-brand-blue hover:from-brand-blue/20 hover:to-brand-green/20 transition-all"
       >
         <Share2 className="w-4 h-4" />
         Compartir Resultados
@@ -95,7 +95,7 @@ export default function ShareModule({ activity, title, resultData, shareMessage 
               <button
                 onClick={handleCopyLink}
                 disabled={saving}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
+                className="flex flex-col items-center gap-2 p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
               >
                 {copied ? (
                   <Check className="w-5 h-5 text-brand-green" />
@@ -111,7 +111,7 @@ export default function ShareModule({ activity, title, resultData, shareMessage 
               <button
                 onClick={handleWhatsApp}
                 disabled={saving}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all group"
+                className="flex flex-col items-center gap-2 p-4 rounded-lg bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all group"
               >
                 <MessageCircle className="w-5 h-5 text-[#25D366]" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#25D366]/70 group-hover:text-[#25D366]">WhatsApp</span>
@@ -121,7 +121,7 @@ export default function ShareModule({ activity, title, resultData, shareMessage 
               <button
                 onClick={handleTwitter}
                 disabled={saving}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
+                className="flex flex-col items-center gap-2 p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
               >
                 <svg className="w-5 h-5 text-white/50 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -133,7 +133,7 @@ export default function ShareModule({ activity, title, resultData, shareMessage 
               <button
                 onClick={handleFacebook}
                 disabled={saving}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#1877F2]/10 border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition-all group"
+                className="flex flex-col items-center gap-2 p-4 rounded-lg bg-[#1877F2]/10 border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition-all group"
               >
                 <svg className="w-5 h-5 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>

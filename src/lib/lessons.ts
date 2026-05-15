@@ -132,7 +132,7 @@ export const LESSONS: Lesson[] = [
     subtitle: 'Tu saboteador interior: detectarlo y desactivarlo',
     description: 'El mayor obstáculo entre tú y la consistencia no es la estrategia — son tus emociones. Es hora de enfrentarlas.',
     videoUrl: '',
-    activityRoute: '/app/emociones',
+    activityRoute: '/app/sombra',
     xpVideo: 30,
     xpActivity: 100,
     xpBonus: 20,

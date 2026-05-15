@@ -46,9 +46,9 @@ export default function Onboarding() {
           transition={{ delay: 0.2 }}
           className="mb-12 flex flex-col items-center"
         >
-          <img src="/images/logo.png" alt="GENY LAB Logo" className="w-32 md:w-40 object-contain mb-6 drop-shadow-[0_0_20px_rgba(0,209,255,0.6)]" />
-          <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tight mb-4 text-glow-cyan text-white leading-none">
-            ¡Bienvenido a<br/>GENY LAB!
+          <img src="/images/78.png" alt="GENY LAB Logo" className="w-32 md:w-40 object-contain mb-6" />
+          <h1 className="text-4xl sm:text-5xl font-bold uppercase tracking-tight mb-4 text-white leading-none">
+            Conexión a<br/><span className="text-[#00D1FF] font-light">GENY LAB</span>
           </h1>
           <p className="text-base font-medium text-white/70">
             El ecosistema para aprender a invertir desde cero
@@ -63,7 +63,7 @@ export default function Onboarding() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + i * 0.15 }}
-              className="glass-panel glass-panel-hover rounded-2xl p-5 text-left w-full relative overflow-hidden"
+              className="glass-panel rounded-xl p-5 text-left w-full relative overflow-hidden"
             >
               {/* Subtle background glow based on icon color */}
               <div 
@@ -95,7 +95,7 @@ export default function Onboarding() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
-          className="glass-panel py-4 px-5 rounded-xl mb-8 text-sm text-[#F2C500] font-semibold text-center border-[#F2C500]/20"
+          className="glass-panel py-4 px-5 rounded-lg mb-8 text-sm text-[#F2C500] font-mono text-center border-[#F2C500]/20"
         >
           🎁 Completa todo y desbloquea tu Diagnóstico 1 a 1
         </motion.div>
@@ -105,7 +105,7 @@ export default function Onboarding() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="w-full glass-panel glass-panel-hover rounded-xl py-5 text-lg font-black tracking-widest text-glow-cyan bg-white/5 border-[#00D1FF]/30 hover:border-[#00D1FF]/60 hover:bg-white/10"
+          className="w-full glass-panel rounded-lg py-5 text-base font-mono tracking-widest text-[#00D1FF] bg-[#00D1FF]/10 border-[#00D1FF]/30 hover:border-[#00D1FF]/60 hover:bg-[#00D1FF]/20 transition-all uppercase"
           onClick={handleStart}
         >
           INICIAR SISTEMA
