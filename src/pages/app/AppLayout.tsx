@@ -21,9 +21,17 @@ export default function AppLayout() {
           toast.error("Supera la Fase 2 (Nodo 6) para desbloquear el simulador.", {
             icon: '🔒',
             style: {
-              background: '#0A0B10',
+              background: 'rgba(10, 11, 16, 0.85)',
+              backdropFilter: 'blur(12px)',
               color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)'
+              border: '1px solid rgba(255,255,255,0.2)',
+              fontSize: '1.1rem',
+              fontWeight: '500',
+              padding: '20px 30px',
+              maxWidth: '450px',
+              textAlign: 'center',
+              marginTop: '35vh',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
             }
           });
         }
