@@ -305,6 +305,7 @@ export default function PathMap() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: LESSONS.length * 0.05 }}
+          onClick={() => { if (allDone) navigate('/app/geny-opciones'); }}
           className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
             allDone ? 'glass-panel border-[#F2C500]/30 cursor-pointer' : 'bg-[#0A0B10] border-white/[0.04] opacity-50'
           }`}
@@ -390,6 +391,7 @@ export default function PathMap() {
           })}
           {/* Final Reward - Desktop */}
           <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: LESSONS.length * 0.1 }}
+            onClick={() => { if (allDone) navigate('/app/geny-opciones'); }}
             className={`w-[320px] shrink-0 snap-start relative group rounded-xl overflow-hidden glass-panel h-[360px] flex flex-col ${allDone ? 'tech-panel-active border-[#F2C500]/50 shadow-[0_0_30px_rgba(242,197,0,0.2)] cursor-pointer' : 'opacity-60 border-white/5'}`}>
             <div className={`absolute inset-0 bg-gradient-to-b ${allDone ? 'from-[#F2C500]/10 to-transparent' : 'from-white/5 to-transparent'} opacity-50`} />
             <div className="relative z-10 p-6 h-full flex flex-col justify-between items-center text-center">
