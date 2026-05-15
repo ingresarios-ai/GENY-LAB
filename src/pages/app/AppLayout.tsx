@@ -14,11 +14,15 @@ export default function AppLayout() {
       to: "/app/geny-opciones", 
       icon: Target, 
       label: "Geny Options", 
-      locked: completedCount < 6,
+      // locked: completedCount < 6,
+      locked: false, // Temporary bypass to enable Geny Opciones
       onClick: (e: React.MouseEvent) => {
-        if (completedCount < 6) {
+        // const isLocked = completedCount < 6;
+        const isLocked = false; // Temporary bypass
+        if (isLocked) {
           e.preventDefault();
           toast.error("Supera la Fase 2 (Nodo 6) para desbloquear el simulador.", {
+            id: 'locked-toast',
             icon: '🔒',
             style: {
               background: 'rgba(10, 11, 16, 0.85)',
