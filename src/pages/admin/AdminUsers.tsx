@@ -324,7 +324,12 @@ export default function AdminUsers() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="text-base font-semibold text-white/80 truncate">{u.name}</div>
-                    <div className="text-sm text-white/35 font-mono truncate">{u.email}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-white/35 font-mono truncate">{u.email}</span>
+                      {u.country_name && (
+                        <span className="text-xs px-1.5 py-0.5 rounded font-medium shrink-0" style={{ background: 'rgba(0,209,255,0.06)', color: 'rgba(0,209,255,0.5)', border: '1px solid rgba(0,209,255,0.1)' }}>{u.country_name}</span>
+                      )}
+                    </div>
                   </div>
                   {/* Badges */}
                   <div className="flex items-center gap-2 shrink-0">
@@ -404,6 +409,15 @@ export default function AdminUsers() {
                   </div>
                 </div>
               </div>
+
+              {selectedUser.country_name && (
+                <div className="rounded-lg p-3" style={{ background: 'rgba(0,209,255,0.02)', border: '1px solid rgba(0,209,255,0.08)' }}>
+                  <div className="text-sm text-white/30 font-medium mb-1">País</div>
+                  <div className="text-base font-medium text-white/60">
+                    {selectedUser.country_name} <span className="text-xs text-white/25 font-mono ml-1">({selectedUser.country})</span>
+                  </div>
+                </div>
+              )}
 
               {selectedUser.notes && (
                 <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>

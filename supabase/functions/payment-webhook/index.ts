@@ -18,9 +18,35 @@ function normalizePhone(phone: string): string {
   return cleaned;
 }
 
-// Normaliza país a código ISO 3166-1 alpha-2 (2 letras)
-const COUNTRY_MAP: Record<string, string> = {
-  // Español
+// País: código ISO + nombre para mostrar
+const COUNTRY_DATA: Record<string, { iso: string; name: string }> = {
+  "MX": { iso: "MX", name: "México" },
+  "CO": { iso: "CO", name: "Colombia" },
+  "AR": { iso: "AR", name: "Argentina" },
+  "CL": { iso: "CL", name: "Chile" },
+  "PE": { iso: "PE", name: "Perú" },
+  "EC": { iso: "EC", name: "Ecuador" },
+  "VE": { iso: "VE", name: "Venezuela" },
+  "BO": { iso: "BO", name: "Bolivia" },
+  "PY": { iso: "PY", name: "Paraguay" },
+  "UY": { iso: "UY", name: "Uruguay" },
+  "GT": { iso: "GT", name: "Guatemala" },
+  "CR": { iso: "CR", name: "Costa Rica" },
+  "PA": { iso: "PA", name: "Panamá" },
+  "HN": { iso: "HN", name: "Honduras" },
+  "SV": { iso: "SV", name: "El Salvador" },
+  "NI": { iso: "NI", name: "Nicaragua" },
+  "DO": { iso: "DO", name: "Rep. Dominicana" },
+  "CU": { iso: "CU", name: "Cuba" },
+  "PR": { iso: "PR", name: "Puerto Rico" },
+  "US": { iso: "US", name: "Estados Unidos" },
+  "ES": { iso: "ES", name: "España" },
+  "BR": { iso: "BR", name: "Brasil" },
+  "CA": { iso: "CA", name: "Canadá" },
+};
+
+// Mapeo de nombres comunes → ISO
+const NAME_TO_ISO: Record<string, string> = {
   "mexico": "MX", "méxico": "MX", "colombia": "CO", "argentina": "AR",
   "chile": "CL", "peru": "PE", "perú": "PE", "ecuador": "EC",
   "venezuela": "VE", "bolivia": "BO", "paraguay": "PY", "uruguay": "UY",
@@ -31,22 +57,21 @@ const COUNTRY_MAP: Record<string, string> = {
   "estados unidos": "US", "eeuu": "US",
   "españa": "ES", "espana": "ES",
   "brasil": "BR", "canada": "CA", "canadá": "CA",
-  // English
   "united states": "US", "usa": "US", "united states of america": "US",
   "spain": "ES", "brazil": "BR", "dominican republic": "DO",
-  "mexico city": "MX",
 };
 
 function normalizeCountry(raw: string): string {
   if (!raw) return "";
   const trimmed = raw.trim();
-  // Already ISO 2-letter code
-  if (/^[A-Z]{2}$/.test(trimmed)) return trimmed;
-  if (/^[a-z]{2}$/.test(trimmed)) return trimmed.toUpperCase();
-  // Lookup by name
+  if (/^[A-Za-z]{2}$/.test(trimmed)) return trimmed.toUpperCase();
   const key = trimmed.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  // Try with accents first, then without
-  return COUNTRY_MAP[trimmed.toLowerCase()] || COUNTRY_MAP[key] || trimmed.toUpperCase().slice(0, 2);
+  return NAME_TO_ISO[trimmed.toLowerCase()] || NAME_TO_ISO[key] || trimmed.toUpperCase().slice(0, 2);
+}
+
+function getCountryName(iso: string): string {
+  if (!iso) return "";
+  return COUNTRY_DATA[iso.toUpperCase()]?.name || iso;
 }
 
 // Crea cuenta en Supabase Auth y genera magic link
@@ -249,6 +274,7 @@ Deno.serve(async (req: Request) => {
           email: email.toLowerCase().trim(),
           phone: normalizedPhone || null,
           country: normalizeCountry(country) || null,
+          country_name: getCountryName(normalizeCountry(country)) || null,
           payment_method: "webhook",
           payment_platform: platform,
           transaction_id: transactionId || null,
