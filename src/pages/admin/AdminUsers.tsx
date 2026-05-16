@@ -558,7 +558,7 @@ function AddUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
               <select
                 value={countryCode}
                 onChange={e => setCountryCode(e.target.value)}
-                className="rounded-xl px-3 py-3 text-base text-white focus:outline-none appearance-none cursor-pointer w-[110px] shrink-0"
+                className="rounded-xl px-3 py-3 text-base text-white focus:outline-none cursor-pointer w-[110px] shrink-0"
                 style={{ ...inputStyle, background: 'rgba(255,255,255,0.03)' }}
               >
                 {COUNTRY_CODES.map(c => (
@@ -721,7 +721,7 @@ function EditUserModal({ user, onClose, onUpdated }: { user: any; onClose: () =>
               <select
                 value={countryCode}
                 onChange={e => setCountryCode(e.target.value)}
-                className="rounded-xl px-3 py-3 text-base text-white focus:outline-none appearance-none cursor-pointer w-[110px] shrink-0"
+                className="rounded-xl px-3 py-3 text-base text-white focus:outline-none cursor-pointer w-[110px] shrink-0"
                 style={{ ...inputStyle, background: 'rgba(255,255,255,0.03)' }}
               >
                 {/* Fallback code if the user has an unlisted country code */}
