@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw, Edit } from 'lucide-react';
-import { getUsers, createUser, updateUser, deleteUser, getUserActivity, resendMagicLink } from '../../lib/adminApi';
+import { getUsers, createUser, updateUser, deleteUser, getUserActivity, resendMagicLink, syncCrm } from '../../lib/adminApi';
 
 const ACTIVITIES = [
   { id: 'adn', label: '🧬 ADN Financiero' },
@@ -109,6 +109,56 @@ function MagicLinkSection({ user, onUpdated }: { user: any; onUpdated: (url: str
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+// Sync CRM section component for user detail panel
+function SyncCRMSection({ user }: { user: any }) {
+  const [syncing, setSyncing] = useState(false);
+  const [synced, setSynced] = useState(false);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    setSynced(false);
+    try {
+      await syncCrm(user.id);
+      setSynced(true);
+      setTimeout(() => setSynced(false), 3000);
+    } catch (err) {
+      console.error('Error syncing CRM:', err);
+      alert('Error al sincronizar con el CRM');
+    }
+    setSyncing(false);
+  };
+
+  return (
+    <div
+      className="rounded-lg p-3 space-y-2 mt-2"
+      style={{ background: 'rgba(249,115,22,0.03)', border: '1px solid rgba(249,115,22,0.1)' }}
+    >
+      <div className="flex items-center gap-2">
+        <RefreshCw className="w-3.5 h-3.5 text-orange-400" />
+        <span className="text-sm font-semibold text-orange-400">Sincronización CRM</span>
+      </div>
+      <button
+        onClick={handleSync}
+        disabled={syncing}
+        className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
+        style={{
+          background: synced ? 'rgba(0,230,118,0.08)' : 'rgba(249,115,22,0.06)',
+          border: `1px solid ${synced ? 'rgba(0,230,118,0.2)' : 'rgba(249,115,22,0.15)'}`,
+          color: synced ? '#00E676' : '#fb923c',
+        }}
+      >
+        {syncing ? (
+          <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Sincronizando...</>
+        ) : synced ? (
+          <><Check className="w-3.5 h-3.5" /> Sincronizado</>
+        ) : (
+          <><RefreshCw className="w-3.5 h-3.5" /> Push a CRM</>
+        )}
+      </button>
     </div>
   );
 }
@@ -414,6 +464,9 @@ export default function AdminUsers() {
 
               {/* Magic Link */}
               <MagicLinkSection user={selectedUser} onUpdated={(url) => setSelectedUser({ ...selectedUser, magic_link_url: url })} />
+
+              {/* Sync CRM */}
+              <SyncCRMSection user={selectedUser} />
 
               {/* Activity Timeline */}
               <div>
