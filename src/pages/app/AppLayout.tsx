@@ -70,16 +70,6 @@ export default function AppLayout() {
             </NavLink>
           ))}
           <div className="w-px h-6 bg-white/10 mx-2"></div>
-          <a
-            href="https://wa.me/5215512345678"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-300 font-mono text-xs tracking-widest uppercase text-brand-emerald/80 border border-transparent hover:bg-brand-emerald/10 hover:text-brand-emerald"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>Soporte</span>
-          </a>
-          <div className="w-px h-6 bg-white/10 mx-2"></div>
           <button
             onClick={() => setIsAccountOpen(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 text-white/60 hover:bg-white/5 hover:text-white"
@@ -123,24 +113,14 @@ export default function AppLayout() {
             )}
           </NavLink>
         ))}
-        <a
-          href="https://wa.me/5215512345678"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all text-white/40"
+        <button
+          onClick={() => setIsAccountOpen(true)}
+          className="flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all text-white/40 hover:text-white"
         >
-          <MessageCircle size={22} />
-          <span className="text-[10px] font-mono uppercase tracking-wider">Soporte</span>
-        </a>
+          <User size={22} />
+          <span className="text-[10px] font-mono uppercase tracking-wider">Mi Cuenta</span>
+        </button>
       </nav>
-
-      {/* Floating Account Button (Mobile Only) */}
-      <button
-        onClick={() => setIsAccountOpen(true)}
-        className="md:hidden fixed top-4 right-4 z-40 p-3 rounded-full glass-panel shadow-[0_0_20px_rgba(0,0,0,0.5)] border border-white/10 text-[#00D1FF]"
-      >
-        <User size={24} />
-      </button>
 
       {/* Account Drawer */}
       <AccountDrawer isOpen={isAccountOpen} onClose={() => setIsAccountOpen(false)} />
