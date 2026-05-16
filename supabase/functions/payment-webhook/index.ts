@@ -226,6 +226,7 @@ Deno.serve(async (req: Request) => {
     } else if (
       whopSig ||
       body?.type === "payment.succeeded" ||
+      body?.event === "payment.succeeded" ||
       body?.type === "membership.activated" ||
       body?.data?.user
     ) {

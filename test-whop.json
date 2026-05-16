@@ -1,0 +1,21 @@
+{
+  "event": "payment.succeeded",
+  "data": {
+    "id": "pay_123",
+    "amount": 497,
+    "currency": "MXN",
+    "product": {
+      "id": "prod_123",
+      "name": "El Reto V3"
+    },
+    "billing_address": {
+      "country": "MX"
+    },
+    "user": {
+      "id": "usr_123",
+      "email": "juan@example.com",
+      "name": "Juan Perez",
+      "phone": "+525551234567"
+    }
+  }
+}
