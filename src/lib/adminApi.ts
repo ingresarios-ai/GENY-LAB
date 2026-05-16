@@ -23,7 +23,10 @@ export function logoutAdmin() {
 export async function adminLogin(username: string, password: string): Promise<boolean> {
   const res = await fetch(`${ADMIN_API}/auth`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+    },
     body: JSON.stringify({ username, password }),
   });
   const data = await res.json();
@@ -44,7 +47,8 @@ async function api(path: string, options: RequestInit = {}): Promise<any> {
     headers: {
       'Content-Type': 'application/json',
       'x-admin-secret': token,
-      ...options.headers,
+      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      ...(options.headers || {}),
     },
   });
 

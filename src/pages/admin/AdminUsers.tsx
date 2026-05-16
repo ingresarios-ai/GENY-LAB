@@ -113,6 +113,27 @@ function MagicLinkSection({ user, onUpdated }: { user: any; onUpdated: (url: str
   );
 }
 
+const COUNTRY_CODES = [
+  { code: '+52', flag: '🇲🇽', name: 'México' },
+  { code: '+57', flag: '🇨🇴', name: 'Colombia' },
+  { code: '+1', flag: '🇺🇸', name: 'USA/Canadá' },
+  { code: '+34', flag: '🇪🇸', name: 'España' },
+  { code: '+54', flag: '🇦🇷', name: 'Argentina' },
+  { code: '+51', flag: '🇵🇪', name: 'Perú' },
+  { code: '+56', flag: '🇨🇱', name: 'Chile' },
+  { code: '+593', flag: '🇪🇨', name: 'Ecuador' },
+  { code: '+58', flag: '🇻🇪', name: 'Venezuela' },
+  { code: '+502', flag: '🇬🇹', name: 'Guatemala' },
+  { code: '+506', flag: '🇨🇷', name: 'Costa Rica' },
+  { code: '+507', flag: '🇵🇦', name: 'Panamá' },
+  { code: '+591', flag: '🇧🇴', name: 'Bolivia' },
+  { code: '+595', flag: '🇵🇾', name: 'Paraguay' },
+  { code: '+598', flag: '🇺🇾', name: 'Uruguay' },
+  { code: '+503', flag: '🇸🇻', name: 'El Salvador' },
+  { code: '+504', flag: '🇭🇳', name: 'Honduras' },
+  { code: '+505', flag: '🇳🇮', name: 'Nicaragua' },
+];
+
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -472,7 +493,9 @@ export default function AdminUsers() {
 
 // ── Add User Modal ──
 function AddUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', payment_method: 'efectivo', payment_amount: '', notes: '' });
+  const [form, setForm] = useState({ name: '', email: '', payment_method: 'efectivo', payment_amount: '', notes: '' });
+  const [countryCode, setCountryCode] = useState('+52');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -481,8 +504,10 @@ function AddUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
     setError('');
     setLoading(true);
     try {
+      const fullPhone = phoneNumber ? `${countryCode}${phoneNumber}` : '';
       await createUser({
         ...form,
+        phone: fullPhone,
         payment_amount: form.payment_amount ? parseFloat(form.payment_amount) : undefined,
       });
       onCreated();
@@ -529,12 +554,27 @@ function AddUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
           </div>
           <div>
             <label className="text-sm font-medium text-white/40 block mb-1.5">Teléfono</label>
-            <input value={form.phone} onChange={e => set('phone', e.target.value)}
-              className="w-full rounded-xl px-4 py-3 text-base text-white font-mono focus:outline-none transition-all"
-              style={inputStyle}
-              onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
-              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
-            />
+            <div className="flex gap-2">
+              <select
+                value={countryCode}
+                onChange={e => setCountryCode(e.target.value)}
+                className="rounded-xl px-3 py-3 text-base text-white focus:outline-none appearance-none cursor-pointer w-[110px] shrink-0"
+                style={{ ...inputStyle, background: 'rgba(255,255,255,0.03)' }}
+              >
+                {COUNTRY_CODES.map(c => (
+                  <option key={c.code + c.name} value={c.code} className="bg-gray-900 text-white">
+                    {c.flag} {c.code}
+                  </option>
+                ))}
+              </select>
+              <input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                placeholder="Número sin código"
+                className="w-full rounded-xl px-4 py-3 text-base text-white font-mono focus:outline-none transition-all"
+                style={inputStyle}
+                onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+                onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -588,14 +628,36 @@ function AddUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
 
 // ── Edit User Modal ──
 function EditUserModal({ user, onClose, onUpdated }: { user: any; onClose: () => void; onUpdated: (data: any) => void }) {
+  
+  // Parse existing phone number
+  const initialPhone = user.phone || '';
+  let initialCountryCode = '+52';
+  let initialPhoneNumber = initialPhone;
+  
+  if (initialPhone) {
+    const foundCode = COUNTRY_CODES.find(c => initialPhone.startsWith(c.code));
+    if (foundCode) {
+      initialCountryCode = foundCode.code;
+      initialPhoneNumber = initialPhone.substring(foundCode.code.length);
+    } else if (initialPhone.startsWith('+')) {
+      // Custom country code not in list
+      const parts = initialPhone.match(/^(\+\d{1,3})(.*)$/);
+      if (parts) {
+        initialCountryCode = parts[1];
+        initialPhoneNumber = parts[2];
+      }
+    }
+  }
+
   const [form, setForm] = useState({
     name: user.name || '',
     email: user.email || '',
-    phone: user.phone || '',
     payment_method: user.payment_method || 'efectivo',
     payment_amount: user.payment_amount?.toString() || '',
     notes: user.notes || ''
   });
+  const [countryCode, setCountryCode] = useState(initialCountryCode);
+  const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -604,8 +666,10 @@ function EditUserModal({ user, onClose, onUpdated }: { user: any; onClose: () =>
     setError('');
     setLoading(true);
     try {
+      const fullPhone = phoneNumber ? `${countryCode}${phoneNumber}` : '';
       const payload = {
         ...form,
+        phone: fullPhone,
         payment_amount: form.payment_amount ? parseFloat(form.payment_amount) : null,
       };
       await updateUser(user.id, payload);
@@ -653,12 +717,31 @@ function EditUserModal({ user, onClose, onUpdated }: { user: any; onClose: () =>
           </div>
           <div>
             <label className="text-sm font-medium text-white/40 block mb-1.5">Teléfono</label>
-            <input value={form.phone} onChange={e => set('phone', e.target.value)}
-              className="w-full rounded-xl px-4 py-3 text-base text-white font-mono focus:outline-none transition-all"
-              style={inputStyle}
-              onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
-              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
-            />
+            <div className="flex gap-2">
+              <select
+                value={countryCode}
+                onChange={e => setCountryCode(e.target.value)}
+                className="rounded-xl px-3 py-3 text-base text-white focus:outline-none appearance-none cursor-pointer w-[110px] shrink-0"
+                style={{ ...inputStyle, background: 'rgba(255,255,255,0.03)' }}
+              >
+                {/* Fallback code if the user has an unlisted country code */}
+                {!COUNTRY_CODES.find(c => c.code === countryCode) && (
+                  <option value={countryCode} className="bg-gray-900 text-white">{countryCode}</option>
+                )}
+                {COUNTRY_CODES.map(c => (
+                  <option key={c.code + c.name} value={c.code} className="bg-gray-900 text-white">
+                    {c.flag} {c.code}
+                  </option>
+                ))}
+              </select>
+              <input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                placeholder="Número sin código"
+                className="w-full rounded-xl px-4 py-3 text-base text-white font-mono focus:outline-none transition-all"
+                style={inputStyle}
+                onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+                onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
