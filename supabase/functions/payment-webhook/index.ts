@@ -206,6 +206,7 @@ Deno.serve(async (req: Request) => {
     let transactionId = "";
     let amount: number | null = null;
     let currency = "MXN";
+    let productName = "";
 
     if (
       hotmartToken ||
@@ -223,6 +224,7 @@ Deno.serve(async (req: Request) => {
         body?.data?.purchase?.transaction || body?.transaction || "";
       amount = body?.data?.purchase?.price?.value || null;
       currency = body?.data?.purchase?.price?.currency_code || "MXN";
+      productName = body?.data?.product?.name || body?.product?.name || "";
     } else if (
       whopSig ||
       body?.type === "payment.succeeded" ||
@@ -245,8 +247,8 @@ Deno.serve(async (req: Request) => {
       transactionId = paymentData.id || body?.id || "";
       amount = paymentData.total != null ? paymentData.total : null;
       currency = (paymentData.currency || "USD").toUpperCase();
+      productName = paymentData.product?.name || body?.product?.name || "";
     } else {
-      // ── GENERIC FORMAT ──
       platform = body?.platform || "generic";
       name = body?.name || body?.nombre || "";
       email = body?.email || body?.correo || "";
@@ -255,6 +257,19 @@ Deno.serve(async (req: Request) => {
       transactionId = body?.transaction_id || "";
       amount = body?.amount || body?.monto || null;
       currency = body?.currency || "MXN";
+      productName = body?.product_name || body?.producto || "";
+    }
+
+    // Filter by product: Only process "GENY LAB"
+    if (productName) {
+      const pName = productName.toLowerCase();
+      if (!pName.includes("geny lab") && !pName.includes("genylab")) {
+        console.log(`⏭️ Ignored purchase for product: ${productName} (Not GENY LAB)`);
+        return new Response(
+          JSON.stringify({ success: true, message: "Ignored (not GENY LAB)" }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Validate minimum data
