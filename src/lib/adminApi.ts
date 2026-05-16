@@ -95,8 +95,7 @@ export const getUserActivity = (id: string) =>
 export const resendMagicLink = (userId: string) =>
   api(`users/${userId}/resend-magic-link`, { method: 'POST' });
 
-export const syncCrm = (userId: string) =>
-  api(`users/${userId}/sync-crm`, { method: 'POST' });
+
 
 // Webhooks
 export const getWebhooks = () => api('webhooks');

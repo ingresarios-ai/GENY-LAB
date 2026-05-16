@@ -454,30 +454,6 @@ Deno.serve(async (req: Request) => {
         return json({ success: true, magic_link_url: magicLinkUrl });
       }
 
-      // POST /users/:id/sync-crm
-      if (
-        method === "POST" &&
-        segments.length === 3 &&
-        segments[2] === "sync-crm"
-      ) {
-        const userId = segments[1];
-        const { data: user, error: userError } = await supabase
-          .from("enrolled_users")
-          .select("*")
-          .eq("id", userId)
-          .single();
-
-        if (userError || !user) return json({ error: "User not found" }, 404);
-
-        await sendToLeadConnector(
-          user.name,
-          user.email,
-          user.phone || "",
-          user.magic_link_url
-        );
-
-        return json({ success: true });
-      }
 
       // GET /users/:id/activity
       if (
@@ -508,6 +484,15 @@ Deno.serve(async (req: Request) => {
           .single();
 
         if (error) return json({ error: error.message }, 500);
+
+        // Auto-sync with CRM when user is modified
+        sendToLeadConnector(
+          data.name,
+          data.email,
+          data.phone || "",
+          data.magic_link_url
+        );
+
         return json({ data });
       }
 
