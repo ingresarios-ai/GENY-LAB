@@ -131,29 +131,38 @@ async function createAuthUserAndMagicLink(
 }
 
 // Envía datos al webhook de LeadConnector
-async function sendToLeadConnector(
-  name: string,
-  email: string,
-  phone: string,
-  magicLinkUrl?: string | null
-) {
+async function sendToLeadConnector(opts: {
+  name: string;
+  email: string;
+  phone: string;
+  magicLinkUrl?: string | null;
+  country?: string;
+  countryName?: string;
+  platform?: string;
+  amount?: number | null;
+  currency?: string;
+}) {
   try {
-    const normalizedPhone = normalizePhone(phone);
-    const payload: Record<string, string> = {
-      name,
-      email: email.toLowerCase().trim(),
+    const normalizedPhone = normalizePhone(opts.phone);
+    const payload: Record<string, string | number> = {
+      name: opts.name,
+      email: opts.email.toLowerCase().trim(),
       phone: normalizedPhone,
     };
-    if (magicLinkUrl) {
-      payload.magic_link_url = magicLinkUrl;
-    }
+    if (opts.magicLinkUrl) payload.magic_link_url = opts.magicLinkUrl;
+    if (opts.country) payload.country = opts.country;
+    if (opts.countryName) payload.country_name = opts.countryName;
+    if (opts.platform) payload.payment_platform = opts.platform;
+    if (opts.amount != null) payload.payment_amount = opts.amount;
+    if (opts.currency) payload.payment_currency = opts.currency;
+
     const res = await fetch(LEADCONNECTOR_WEBHOOK, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     console.log(
-      `📤 LeadConnector webhook: ${res.status} for ${email} (phone: ${normalizedPhone})`
+      `📤 LeadConnector webhook: ${res.status} for ${opts.email} (phone: ${normalizedPhone}, platform: ${opts.platform})`
     );
   } catch (err) {
     console.error("LeadConnector webhook error:", err);
@@ -275,7 +284,7 @@ Deno.serve(async (req: Request) => {
           phone: normalizedPhone || null,
           country: normalizeCountry(country) || null,
           country_name: getCountryName(normalizeCountry(country)) || null,
-          payment_method: "webhook",
+          payment_method: platform,
           payment_platform: platform,
           transaction_id: transactionId || null,
           payment_amount: amount,
@@ -299,7 +308,18 @@ Deno.serve(async (req: Request) => {
     }
 
     // Send data to LeadConnector webhook (fire and forget)
-    sendToLeadConnector(name || "Sin nombre", email, normalizedPhone, magicLinkUrl);
+    const isoCountry = normalizeCountry(country);
+    sendToLeadConnector({
+      name: name || "Sin nombre",
+      email,
+      phone: normalizedPhone,
+      magicLinkUrl,
+      country: isoCountry,
+      countryName: getCountryName(isoCountry),
+      platform,
+      amount,
+      currency,
+    });
 
     console.log(
       `✅ User enrolled: ${email} via ${platform} | auth_id: ${authUserId} | magic_link: ${magicLinkUrl ? "yes" : "no"}`
