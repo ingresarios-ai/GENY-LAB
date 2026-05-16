@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw } from 'lucide-react';
+import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw, Edit } from 'lucide-react';
 import { getUsers, createUser, updateUser, deleteUser, getUserActivity, resendMagicLink } from '../../lib/adminApi';
 
 const ACTIVITIES = [
@@ -122,6 +122,7 @@ export default function AdminUsers() {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterHot, setFilterHot] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [userActivities, setUserActivities] = useState<any[]>([]);
 
@@ -339,9 +340,14 @@ export default function AdminUsers() {
           >
             <div className="flex items-center justify-between">
               <h3 className="text-base font-semibold text-white/50">Detalle de usuario</h3>
-              <button onClick={() => setSelectedUser(null)} className="text-white/20 hover:text-white/50 transition-colors">
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowEditModal(true)} className="text-white/20 hover:text-[#00D1FF] transition-colors p-1" title="Editar Usuario">
+                  <Edit className="w-4 h-4" />
+                </button>
+                <button onClick={() => setSelectedUser(null)} className="text-white/20 hover:text-white/50 transition-colors p-1" title="Cerrar">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             <div className="space-y-4">
@@ -447,6 +453,19 @@ export default function AdminUsers() {
 
       {/* Add User Modal */}
       {showAddModal && <AddUserModal onClose={() => setShowAddModal(false)} onCreated={() => { setShowAddModal(false); loadUsers(); }} />}
+      
+      {/* Edit User Modal */}
+      {showEditModal && selectedUser && (
+        <EditUserModal
+          user={selectedUser}
+          onClose={() => setShowEditModal(false)}
+          onUpdated={(updatedUser) => {
+            setShowEditModal(false);
+            setSelectedUser({ ...selectedUser, ...updatedUser });
+            loadUsers();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -560,6 +579,130 @@ function AddUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
             onMouseOut={e => { (e.target as HTMLElement).style.boxShadow = 'none'; }}
           >
             {loading ? 'Guardando…' : 'Registrar Usuario'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Edit User Modal ──
+function EditUserModal({ user, onClose, onUpdated }: { user: any; onClose: () => void; onUpdated: (data: any) => void }) {
+  const [form, setForm] = useState({
+    name: user.name || '',
+    email: user.email || '',
+    phone: user.phone || '',
+    payment_method: user.payment_method || 'efectivo',
+    payment_amount: user.payment_amount?.toString() || '',
+    notes: user.notes || ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const payload = {
+        ...form,
+        payment_amount: form.payment_amount ? parseFloat(form.payment_amount) : null,
+      };
+      await updateUser(user.id, payload);
+      onUpdated(payload);
+    } catch (err: any) {
+      setError(err.message || 'Error updating user');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const set = (key: string, value: string) => setForm(f => ({ ...f, [key]: value }));
+
+  const inputStyle = {
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.08)',
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={onClose}>
+      <div className="glass-panel p-6 w-full max-w-md space-y-5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white/90">Editar Usuario</h2>
+          <button onClick={onClose} className="text-white/25 hover:text-white/60 transition-colors"><X className="w-5 h-5" /></button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-white/40 block mb-1.5">Nombre *</label>
+            <input value={form.name} onChange={e => set('name', e.target.value)} required
+              className="w-full rounded-xl px-4 py-3 text-base text-white focus:outline-none transition-all"
+              style={inputStyle}
+              onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-white/40 block mb-1.5">Email *</label>
+            <input type="email" value={form.email} onChange={e => set('email', e.target.value)} required
+              className="w-full rounded-xl px-4 py-3 text-base text-white font-mono focus:outline-none transition-all"
+              style={inputStyle}
+              onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-white/40 block mb-1.5">Teléfono</label>
+            <input value={form.phone} onChange={e => set('phone', e.target.value)}
+              className="w-full rounded-xl px-4 py-3 text-base text-white font-mono focus:outline-none transition-all"
+              style={inputStyle}
+              onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm font-medium text-white/40 block mb-1.5">Método de Pago</label>
+              <select value={form.payment_method} onChange={e => set('payment_method', e.target.value)}
+                className="w-full rounded-xl px-4 py-3 text-base text-white focus:outline-none appearance-none cursor-pointer"
+                style={inputStyle}>
+                {PAYMENT_METHODS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-white/40 block mb-1.5">Monto</label>
+              <input type="number" step="0.01" value={form.payment_amount} onChange={e => set('payment_amount', e.target.value)}
+                placeholder="$0.00"
+                className="w-full rounded-xl px-4 py-3 text-base text-white font-mono focus:outline-none transition-all"
+                style={inputStyle}
+                onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+                onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-white/40 block mb-1.5">Notas</label>
+            <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={2}
+              className="w-full rounded-xl px-4 py-3 text-base text-white focus:outline-none resize-none transition-all"
+              style={inputStyle}
+              onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+            />
+          </div>
+
+          {error && (
+            <p className="text-base rounded-xl px-3.5 py-2.5" style={{ color: '#ff6b6b', background: 'rgba(255,80,80,0.06)', border: '1px solid rgba(255,80,80,0.12)' }}>
+              {error}
+            </p>
+          )}
+
+          <button type="submit" disabled={loading}
+            className="w-full py-3 rounded-xl font-bold text-base transition-all disabled:opacity-30"
+            style={{ background: '#00D1FF', color: '#060910' }}
+            onMouseOver={e => { if (!loading) (e.target as HTMLElement).style.boxShadow = '0 0 20px rgba(0,209,255,0.3)'; }}
+            onMouseOut={e => { (e.target as HTMLElement).style.boxShadow = 'none'; }}
+          >
+            {loading ? 'Guardando…' : 'Guardar Cambios'}
           </button>
         </form>
       </div>
