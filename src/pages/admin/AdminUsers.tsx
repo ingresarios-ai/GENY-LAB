@@ -580,7 +580,7 @@ function AddUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
             <div>
               <label className="text-sm font-medium text-white/40 block mb-1.5">Método de Pago</label>
               <select value={form.payment_method} onChange={e => set('payment_method', e.target.value)}
-                className="w-full rounded-xl px-4 py-3 text-base text-white focus:outline-none appearance-none cursor-pointer"
+                className="w-full rounded-xl px-4 py-3 text-base text-white focus:outline-none cursor-pointer"
                 style={inputStyle}>
                 {PAYMENT_METHODS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
               </select>
@@ -747,7 +747,7 @@ function EditUserModal({ user, onClose, onUpdated }: { user: any; onClose: () =>
             <div>
               <label className="text-sm font-medium text-white/40 block mb-1.5">Método de Pago</label>
               <select value={form.payment_method} onChange={e => set('payment_method', e.target.value)}
-                className="w-full rounded-xl px-4 py-3 text-base text-white focus:outline-none appearance-none cursor-pointer"
+                className="w-full rounded-xl px-4 py-3 text-base text-white focus:outline-none cursor-pointer"
                 style={inputStyle}>
                 {PAYMENT_METHODS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
               </select>
