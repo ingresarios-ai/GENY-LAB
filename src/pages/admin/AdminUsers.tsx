@@ -324,12 +324,17 @@ export default function AdminUsers() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="text-base font-semibold text-white/80 truncate">{u.name}</div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-white/35 font-mono truncate">{u.email}</span>
-                      {u.country_name && (
-                        <span className="text-xs px-1.5 py-0.5 rounded font-medium shrink-0" style={{ background: 'rgba(0,209,255,0.06)', color: 'rgba(0,209,255,0.5)', border: '1px solid rgba(0,209,255,0.1)' }}>{u.country_name}</span>
-                      )}
-                    </div>
+                    <div className="text-sm text-white/35 font-mono truncate">{u.email}</div>
+                    {(u.phone || u.country_name) && (
+                      <div className="flex items-center gap-3 mt-0.5">
+                        {u.phone && (
+                          <span className="text-xs text-white/25 font-mono">📱 {u.phone}</span>
+                        )}
+                        {u.country_name && (
+                          <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(0,209,255,0.06)', color: 'rgba(0,209,255,0.5)', border: '1px solid rgba(0,209,255,0.1)' }}>🌎 {u.country_name}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                   {/* Badges */}
                   <div className="flex items-center gap-2 shrink-0">
