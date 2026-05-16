@@ -1,11 +1,14 @@
 import { NavLink, Outlet, Link } from 'react-router-dom';
-import { Map, Trophy, MessageCircle, Target, Lock } from 'lucide-react';
+import { Map, Trophy, MessageCircle, Target, Lock, User } from 'lucide-react';
 import { Footer } from '../../components/Footer';
 import { getCompletedCount } from '../../lib/progressStore';
 import toast from 'react-hot-toast';
+import { AccountDrawer } from '../../components/AccountDrawer';
+import { useState } from 'react';
 
 export default function AppLayout() {
   const completedCount = getCompletedCount();
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
 
   const navItems = [
     { to: "/app", icon: Map, label: "Mi Ruta", end: true },
@@ -76,6 +79,15 @@ export default function AppLayout() {
             <MessageCircle className="w-4 h-4" />
             <span>Soporte</span>
           </a>
+          <div className="w-px h-6 bg-white/10 mx-2"></div>
+          <button
+            onClick={() => setIsAccountOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 text-white/60 hover:bg-white/5 hover:text-white"
+          >
+            <div className="p-1 rounded-full bg-[#00D1FF]/20 text-[#00D1FF]">
+              <User size={16} />
+            </div>
+          </button>
         </nav>
       </header>
 
@@ -121,6 +133,17 @@ export default function AppLayout() {
           <span className="text-[10px] font-mono uppercase tracking-wider">Soporte</span>
         </a>
       </nav>
+
+      {/* Floating Account Button (Mobile Only) */}
+      <button
+        onClick={() => setIsAccountOpen(true)}
+        className="md:hidden fixed top-4 right-4 z-40 p-3 rounded-full glass-panel shadow-[0_0_20px_rgba(0,0,0,0.5)] border border-white/10 text-[#00D1FF]"
+      >
+        <User size={24} />
+      </button>
+
+      {/* Account Drawer */}
+      <AccountDrawer isOpen={isAccountOpen} onClose={() => setIsAccountOpen(false)} />
     </div>
   );
 }
