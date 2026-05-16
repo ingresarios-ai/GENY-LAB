@@ -129,11 +129,14 @@ Deno.serve(async (req: Request) => {
 
     // Detect platform from headers or payload
     const hotmartToken = req.headers.get("x-hotmart-hottok");
-    const whopSig = req.headers.get("x-whop-signature");
+    const whopSig =
+      req.headers.get("webhook-signature") ||
+      req.headers.get("x-whop-signature");
 
     let name = "";
     let email = "";
     let phone = "";
+    let country = "";
     let platform = "unknown";
     let transactionId = "";
     let amount: number | null = null;
@@ -150,25 +153,39 @@ Deno.serve(async (req: Request) => {
       name = buyer.name || body?.data?.buyer?.name || "";
       email = buyer.email || body?.data?.buyer?.email || "";
       phone = buyer.checkout_phone || "";
+      country = buyer.address?.country || buyer.country || "";
       transactionId =
         body?.data?.purchase?.transaction || body?.transaction || "";
       amount = body?.data?.purchase?.price?.value || null;
       currency = body?.data?.purchase?.price?.currency_code || "MXN";
-    } else if (whopSig || body?.action || body?.data?.email) {
+    } else if (
+      whopSig ||
+      body?.type === "payment.succeeded" ||
+      body?.type === "membership.activated" ||
+      body?.data?.user
+    ) {
       // ── WHOP FORMAT ──
+      // Whop nests user info inside data.user and data.member
       platform = "whop";
-      const user = body?.data || {};
-      name = user.username || user.name || "";
+      const paymentData = body?.data || {};
+      const user = paymentData?.user || {};
+      const member = paymentData?.member || {};
+      const billing = paymentData?.billing_address || {};
+
+      name = user.name || user.username || "";
       email = user.email || "";
-      transactionId = user.id || body?.id || "";
-      amount = user.amount ? user.amount / 100 : null; // Whop sends cents
-      currency = user.currency || "USD";
+      phone = member.phone || "";
+      country = billing.country || "";
+      transactionId = paymentData.id || body?.id || "";
+      amount = paymentData.total != null ? paymentData.total : null;
+      currency = (paymentData.currency || "USD").toUpperCase();
     } else {
       // ── GENERIC FORMAT ──
       platform = body?.platform || "generic";
       name = body?.name || body?.nombre || "";
       email = body?.email || body?.correo || "";
       phone = body?.phone || body?.telefono || "";
+      country = body?.country || body?.pais || "";
       transactionId = body?.transaction_id || "";
       amount = body?.amount || body?.monto || null;
       currency = body?.currency || "MXN";
@@ -200,6 +217,7 @@ Deno.serve(async (req: Request) => {
           name: name || "Sin nombre",
           email: email.toLowerCase().trim(),
           phone: normalizedPhone || null,
+          country: country || null,
           payment_method: "webhook",
           payment_platform: platform,
           transaction_id: transactionId || null,
