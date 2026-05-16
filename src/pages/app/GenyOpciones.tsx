@@ -154,7 +154,7 @@ const TIERS = [
 function TarjetaLeccion({ leccion, onPractice }: { leccion: any; onPractice: () => void }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="glass-card overflow-hidden">
+    <div className="glass-panel overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full text-left p-5 flex items-center gap-4 hover:bg-white/[0.03] transition-colors"
@@ -529,7 +529,7 @@ export default function GenyOpciones() {
       <CompletionBanner lessonId="geny" />
 
       {/* ── HEADER ── */}
-      <div className="glass-card p-5 relative overflow-hidden border-t-2 border-t-brand-blue/40">
+      <div className="glass-panel p-5 relative overflow-hidden border-t-2 border-t-brand-blue/40">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/8 via-transparent to-brand-green/5 pointer-events-none" />
         <div className="relative z-10 space-y-4">
           {/* Title Row */}
@@ -570,7 +570,7 @@ export default function GenyOpciones() {
             </div>
 
             {/* Price */}
-            <div className="glass-card px-4 py-2 flex items-center gap-3" style={{ borderColor: `${SD.col}30` }}>
+            <div className="glass-panel px-4 py-2 flex items-center gap-3" style={{ borderColor: `${SD.col}30` }}>
               <div>
                 <div className="text-[9px] font-black uppercase tracking-widest" style={{ color: SD.col }}>{sym}</div>
                 <div className="font-black text-lg font-mono leading-tight">${spot.toFixed(sym === 'SPX' ? 0 : 2)}</div>
@@ -581,7 +581,7 @@ export default function GenyOpciones() {
             </div>
 
             {/* Portfolio */}
-            <div className="glass-card px-4 py-2 ml-auto">
+            <div className="glass-panel px-4 py-2 ml-auto">
               <div className="text-xs font-black uppercase tracking-widest text-brand-text-muted">Portafolio</div>
               <div className={`font-black text-lg font-mono leading-tight ${equity >= 25000 ? 'text-brand-green' : 'text-red-500'}`}>
                 ${equity.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -601,7 +601,7 @@ export default function GenyOpciones() {
         {/* LEFT: Main Panel */}
         <div className="flex-1 min-w-0 space-y-4">
           {/* Tab Bar */}
-          <div className="flex gap-2 glass-card p-1.5">
+          <div className="flex gap-2 glass-panel p-1.5">
             {([
               ['learn', '📖 Aprender', BookOpen],
               ['chain', '📊 Chain', BarChart3],
@@ -652,7 +652,7 @@ export default function GenyOpciones() {
 
           {/* ═══ CHAIN TAB ═══ */}
           {tab === 'chain' && (
-            <div className={`glass-card overflow-hidden transition-all duration-500 ${chainGlow ? 'ring-2 ring-brand-blue/60 shadow-[0_0_30px_rgba(0,209,255,0.3)]' : ''}`}>
+            <div className={`glass-panel overflow-hidden transition-all duration-500 border-t-2 border-t-brand-blue/30 ${chainGlow ? 'tech-panel-active' : ''}`}>
               {/* Chain Header */}
               <div className="p-3 flex items-center gap-3 border-b border-white/5" style={{ background: `${SD.col}08` }}>
                 <span className="font-black text-sm" style={{ color: SD.col }}>{sym}</span>
@@ -671,44 +671,46 @@ export default function GenyOpciones() {
               </div>
 
               {/* Chain Rows */}
-              <div className="max-h-[500px] overflow-y-auto">
+              <div className="max-h-[500px] overflow-y-auto no-scrollbar pb-10">
                 {chain.map(row => {
                   const sc = sel?.strike === row.K && sel?.ot === 'call';
                   const sp = sel?.strike === row.K && sel?.ot === 'put';
+                  const isAtm = row.atm;
                   return (
                     <div key={row.K}
-                      className={`grid grid-cols-5 px-3 py-2 border-b border-white/[0.03] transition-colors ${row.atm ? 'bg-brand-blue/5 border-l-2 border-l-brand-blue' : row.itmc ? 'bg-brand-green/[0.02]' : ''}`}>
+                      className={`grid grid-cols-5 px-3 py-2.5 border-b border-white/[0.03] transition-colors relative ${isAtm ? 'bg-brand-blue/[0.04]' : row.itmc ? 'bg-brand-green/[0.02]' : ''}`}>
+                      
+                      {isAtm && <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-blue shadow-[0_0_10px_rgba(0,209,255,0.8)]" />}
+
                       {/* Call side */}
                       <button onClick={() => { setSel({ strike: row.K, ot: 'call' }); setOSide('buy'); setShowOrder(true); }}
-                        className={`text-left rounded-lg px-2 py-1 cursor-pointer hover:bg-brand-green/10 transition-colors ${sc ? 'bg-brand-blue/10 ring-1 ring-brand-blue/30' : ''}`}>
-                        <div className="font-black text-brand-green font-mono text-sm">{row.c.p.toFixed(2)}</div>
-                        <div className="text-[10px] text-brand-text-muted mt-0.5">Δ{row.c.d} Θ{row.c.t}</div>
+                        className={`text-left rounded-lg px-2 py-1.5 cursor-pointer transition-all ${sc ? 'bg-brand-green/20 ring-1 ring-brand-green/50 shadow-[0_0_15px_rgba(0,230,118,0.2)]' : 'hover:bg-brand-green/10'}`}>
+                        <div className={`font-black font-mono text-[13px] ${sc ? 'text-white' : 'text-brand-green'}`}>{row.c.p.toFixed(2)}</div>
+                        <div className="text-[9px] text-brand-text-muted mt-0.5 font-mono">Δ{row.c.d} Θ{row.c.t}</div>
                       </button>
 
                       <div onClick={() => { setSel({ strike: row.K, ot: 'call' }); setOSide('buy'); setShowOrder(true); }}
-                        className="flex items-center justify-center gap-1 font-mono text-xs cursor-pointer">
-                        <span className="text-brand-text-muted">{row.c.bid}</span>
-                        <span className="text-white/10">/</span>
-                        <span className="text-brand-green">{row.c.ask}</span>
+                        className="flex items-center justify-center gap-1.5 font-mono text-[11px] cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+                        <span className="text-white/60">{row.c.bid}</span>
+                        <span className="text-brand-green/60">{row.c.ask}</span>
                       </div>
 
                       {/* Strike */}
-                      <div className={`flex items-center justify-center font-black text-sm ${row.atm ? 'text-brand-blue' : 'text-brand-text-muted'}`}>
+                      <div className={`flex items-center justify-center font-black text-sm font-mono tracking-wider ${isAtm ? 'text-glow-cyan text-white' : 'text-brand-text-muted'}`}>
                         {row.K}
                       </div>
 
                       <div onClick={() => { setSel({ strike: row.K, ot: 'put' }); setOSide('buy'); setShowOrder(true); }}
-                        className="flex items-center justify-center gap-1 font-mono text-xs cursor-pointer">
-                        <span className="text-red-500">{row.p.bid}</span>
-                        <span className="text-white/10">/</span>
-                        <span className="text-brand-text-muted">{row.p.ask}</span>
+                        className="flex items-center justify-center gap-1.5 font-mono text-[11px] cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+                        <span className="text-red-400/80">{row.p.bid}</span>
+                        <span className="text-white/60">{row.p.ask}</span>
                       </div>
 
                       {/* Put side */}
                       <button onClick={() => { setSel({ strike: row.K, ot: 'put' }); setOSide('buy'); setShowOrder(true); }}
-                        className={`text-right rounded-lg px-2 py-1 cursor-pointer hover:bg-red-500/10 transition-colors ${sp ? 'bg-red-500/10 ring-1 ring-red-500/30' : ''}`}>
-                        <div className="font-black text-red-500 font-mono text-sm">{row.p.p.toFixed(2)}</div>
-                        <div className="text-[10px] text-brand-text-muted mt-0.5">Δ{row.p.d} Θ{row.p.t}</div>
+                        className={`text-right rounded-lg px-2 py-1.5 cursor-pointer transition-all ${sp ? 'bg-red-500/20 ring-1 ring-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'hover:bg-red-500/10'}`}>
+                        <div className={`font-black font-mono text-[13px] ${sp ? 'text-white' : 'text-red-500'}`}>{row.p.p.toFixed(2)}</div>
+                        <div className="text-[9px] text-brand-text-muted mt-0.5 font-mono">Δ{row.p.d} Θ{row.p.t}</div>
                       </button>
                     </div>
                   );
@@ -719,12 +721,12 @@ export default function GenyOpciones() {
 
           {/* ═══ POSITIONS TAB ═══ */}
           {tab === 'positions' && (
-            <div className="space-y-3">
+            <div className="space-y-3 pb-8">
               {!positions.length && (
-                <div className="glass-card p-12 text-center">
+                <div className="glass-panel p-12 text-center border-t-2 border-t-white/5">
                   <Briefcase className="w-10 h-10 text-brand-text-muted/30 mx-auto mb-3" />
-                  <p className="text-brand-text-muted font-medium">Sin posiciones abiertas.</p>
-                  <p className="text-sm text-brand-text-muted/60 mt-1">Ve al <span className="text-brand-blue font-bold cursor-pointer" onClick={goToChain}>Chain</span> para abrir tu primera posición.</p>
+                  <p className="text-brand-text-muted font-medium text-sm">Sin posiciones abiertas.</p>
+                  <p className="text-xs text-brand-text-muted/50 mt-2">Ve al <span className="text-brand-blue font-bold cursor-pointer hover:text-cyan-400 transition-colors" onClick={goToChain}>Chain</span> para abrir tu primera posición.</p>
                 </div>
               )}
               {positions.map(p => {
@@ -732,7 +734,7 @@ export default function GenyOpciones() {
                 const pnl2 = (p.side === 'buy' ? (curr - p.avg) : (p.avg - curr)) * 100 * p.qty;
                 const pct = (pnl2 / (p.avg * 100 * p.qty)) * 100;
                 return (
-                  <div key={p.id} className={`glass-card p-5 ${pnl2 >= 0 ? 'border-brand-green/20' : 'border-red-500/20'}`}>
+                  <div key={p.id} className={`glass-panel p-5 border-l-4 ${pnl2 >= 0 ? 'border-l-brand-green' : 'border-l-red-500'}`}>
                     <div className="flex items-center justify-between">
                       <div>
                         <span className={`font-black text-sm ${p.ot === 'call' ? 'text-brand-green' : 'text-red-500'}`}>
@@ -767,15 +769,15 @@ export default function GenyOpciones() {
 
           {/* ═══ HISTORY TAB ═══ */}
           {tab === 'history' && (
-            <div className="space-y-2">
+            <div className="space-y-2 pb-8">
               {!trades.length && (
-                <div className="glass-card p-12 text-center">
+                <div className="glass-panel p-12 text-center border-t-2 border-t-white/5">
                   <History className="w-10 h-10 text-brand-text-muted/30 mx-auto mb-3" />
-                  <p className="text-brand-text-muted font-medium">Sin operaciones aún. ¡A operar!</p>
+                  <p className="text-brand-text-muted font-medium text-sm">Sin operaciones aún. ¡A operar!</p>
                 </div>
               )}
               {trades.map(t => (
-                <div key={t.id} className="glass-card p-4 flex items-center justify-between">
+                <div key={t.id} className="glass-panel p-4 flex items-center justify-between border-t border-t-white/5">
                   <div>
                     <span className="font-black text-xs" style={{ color: SYMBOLS[t.sym]?.col }}>{t.sym}</span>
                     <span className={`ml-2 font-bold text-xs ${t.ot === 'call' ? 'text-brand-green' : 'text-red-500'}`}>
@@ -800,30 +802,33 @@ export default function GenyOpciones() {
         <div className="w-full lg:w-80 shrink-0 space-y-4">
 
           {/* Order Entry */}
-          <div className="glass-card p-5 space-y-4">
+          <div className="glass-panel p-5 space-y-5 border-t-2 border-t-brand-blue/30 relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand-blue/50 to-transparent" />
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-widest text-brand-text-muted">Entrada de Orden</span>
-              {sel && <span className="text-[9px] font-black px-2 py-0.5 rounded-lg border" style={{ color: SD.col, borderColor: `${SD.col}40`, background: `${SD.col}10` }}>{sym}</span>}
+              <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue">Entrada de Orden</span>
+              {sel && <span className="text-[9px] font-black font-mono px-2 py-0.5 rounded border" style={{ color: SD.col, borderColor: `${SD.col}40`, background: `${SD.col}10` }}>{sym}</span>}
             </div>
 
             {sel && selInfo ? (
-              <>
-                <div className="glass-card p-4 space-y-2" style={{ borderColor: `${SD.col}30` }}>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                <div className="glass-panel p-4 space-y-3 bg-white/[0.01]" style={{ borderColor: `${SD.col}20` }}>
                   <div className="flex justify-between items-center">
-                    <span className={`font-black text-sm ${sel.ot === 'call' ? 'text-brand-green' : 'text-red-500'}`}>{sym} ${sel.strike} {sel.ot.toUpperCase()}</span>
-                    <span className="text-[10px] text-brand-text-muted">{dte}D venc.</span>
+                    <span className={`font-black tracking-tight text-sm uppercase ${sel.ot === 'call' ? 'text-brand-green' : 'text-red-500'}`}>{sym} ${sel.strike} {sel.ot}</span>
+                    <span className="text-[10px] font-mono text-brand-text-muted">{dte}D venc.</span>
                   </div>
-                  <div className="font-mono text-2xl font-black">${selInfo.px.toFixed(2)} <span className="text-xs text-brand-text-muted font-sans">/ acción</span></div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="font-mono text-3xl font-black tracking-tighter text-white">
+                    ${selInfo.px.toFixed(2)} <span className="text-[10px] text-white/40 tracking-widest font-sans uppercase">/ contract</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-white/5">
                     {[
-                      ['Delta Δ', selInfo.g.d, 'text-brand-blue'],
-                      ['Gamma Γ', selInfo.g.g, 'text-purple-400'],
-                      ['Theta Θ', selInfo.g.t, 'text-amber-400'],
-                      ['Vega ν', selInfo.g.v, 'text-brand-green'],
-                    ].map(([l, v, c]) => (
-                      <div key={l as string} className="bg-white/[0.02] rounded-lg p-2">
-                        <div className="text-[10px] text-brand-text-muted">{l}</div>
-                        <div className={`font-black font-mono text-sm ${c}`}>{v}</div>
+                      ['Δ', selInfo.g.d, 'text-brand-blue', 'Delta'],
+                      ['Γ', selInfo.g.g, 'text-purple-400', 'Gamma'],
+                      ['Θ', selInfo.g.t, 'text-amber-400', 'Theta'],
+                      ['ν', selInfo.g.v, 'text-emerald-400', 'Vega'],
+                    ].map(([l, v, c, n]) => (
+                      <div key={l as string} className="bg-white/[0.03] rounded p-1.5 text-center border border-white/5" title={n as string}>
+                        <div className="text-[8px] font-black text-white/40 mb-0.5">{l}</div>
+                        <div className={`font-black font-mono text-[9px] ${c}`}>{v}</div>
                       </div>
                     ))}
                   </div>
@@ -832,87 +837,89 @@ export default function GenyOpciones() {
                 <div className="flex gap-2">
                   {[['buy', 'COMPRAR'], ['sell', 'VENDER']].map(([s, lbl]) => (
                     <button key={s} onClick={() => setOSide(s)}
-                      className={`flex-1 py-2.5 font-black text-xs uppercase tracking-widest rounded-xl transition-all ${oSide === s
-                        ? (s === 'buy' ? 'bg-brand-green/15 text-brand-green border-2 border-brand-green/30' : 'bg-red-500/15 text-red-500 border-2 border-red-500/30')
-                        : 'border border-white/10 text-brand-text-muted hover:border-white/20'}`}>
+                      className={`flex-1 py-3 font-black text-xs uppercase tracking-[0.2em] rounded-xl transition-all ${oSide === s
+                        ? (s === 'buy' ? 'bg-brand-green/10 text-brand-green border border-brand-green/40 shadow-[0_0_15px_rgba(0,230,118,0.15)]' : 'bg-red-500/10 text-red-500 border border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.15)]')
+                        : 'bg-white/[0.02] border border-white/10 text-white/40 hover:text-white/80 hover:bg-white/[0.05]'}`}>
                       {lbl}
                     </button>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-brand-text-muted font-bold">Contratos:</span>
+                <div className="flex items-center justify-between bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                  <span className="text-xs font-black uppercase tracking-widest text-white/60">Contratos</span>
                   <div className="flex items-center gap-3">
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white font-black hover:bg-white/10 transition-all">−</button>
-                    <span className="font-black font-mono text-lg min-w-[24px] text-center">{qty}</span>
-                    <button onClick={() => setQty(q => q + 1)} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white font-black hover:bg-white/10 transition-all">+</button>
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-7 h-7 rounded-md bg-white/5 border border-white/10 text-white font-black hover:bg-white/15 transition-colors flex items-center justify-center">−</button>
+                    <span className="font-black font-mono text-base min-w-[20px] text-center">{qty}</span>
+                    <button onClick={() => setQty(q => q + 1)} className="w-7 h-7 rounded-md bg-white/5 border border-white/10 text-white font-black hover:bg-white/15 transition-colors flex items-center justify-center">+</button>
                   </div>
                 </div>
 
-                <div className="text-xs text-brand-text-muted bg-white/[0.02] rounded-xl p-3">
+                <div className="text-[10px] font-medium leading-relaxed text-brand-text-muted bg-white/[0.02] border border-white/5 rounded-xl p-3">
                   {oSide === 'buy'
-                    ? `📌 Pérd. máx: $${(selInfo.px * 1.018 * 100 * qty).toFixed(0)} · Ganas si ${sel.ot === 'call' ? `${sym} sube sobre` : `${sym} cae bajo`} $${(sel.strike + (sel.ot === 'call' ? 1 : -1) * selInfo.px).toFixed(0)}`
-                    : `📌 Gan. máx: $${(selInfo.px * 0.982 * 100 * qty).toFixed(0)} · Te quedas la prima si expira sin valor`}
+                    ? `📌 Riesgo máx: $${(selInfo.px * 1.018 * 100 * qty).toFixed(0)} · Ganas si ${sym} ${sel.ot === 'call' ? 'sube de' : 'cae de'} $${(sel.strike + (sel.ot === 'call' ? 1 : -1) * selInfo.px).toFixed(0)}`
+                    : `📌 Ganas máx: $${(selInfo.px * 0.982 * 100 * qty).toFixed(0)} si expira OTM`}
                 </div>
 
                 <button onClick={ejecutarOrden}
-                  className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm text-white transition-all hover:scale-[1.02] active:scale-[0.98] ${oSide === 'buy' ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 shadow-[0_0_20px_rgba(0,230,118,0.2)]' : 'bg-gradient-to-r from-red-600 to-red-700 shadow-[0_0_20px_rgba(239,68,68,0.2)]'}`}>
-                  {oSide === 'buy' ? '📈' : '📉'} {oSide === 'buy' ? 'COMPRAR' : 'VENDER'} {qty} CONTRATO{qty !== 1 ? 'S' : ''}
+                  className={`w-full py-4 rounded-xl font-black uppercase tracking-[0.15em] text-xs text-white transition-all hover:scale-[1.02] active:scale-[0.98] ${oSide === 'buy' ? 'bg-brand-green text-black shadow-[0_0_20px_rgba(0,230,118,0.3)] hover:shadow-[0_0_30px_rgba(0,230,118,0.5)]' : 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)]'}`}>
+                  {oSide === 'buy' ? 'ENVIAR COMPRA' : 'ENVIAR VENTA'}
                 </button>
-              </>
+              </motion.div>
             ) : (
-              <div className="text-center py-6 space-y-3">
-                <Crosshair className="w-8 h-8 text-brand-blue/30 mx-auto" />
-                <p className="text-brand-text-muted text-sm">Selecciona un precio del <span className="text-brand-blue font-bold cursor-pointer" onClick={goToChain}>Chain</span> para operar.</p>
+              <div className="text-center py-10 space-y-4">
+                <Crosshair className="w-10 h-10 text-brand-blue/20 mx-auto" />
+                <p className="text-brand-text-muted text-xs leading-relaxed max-w-[200px] mx-auto">Selecciona un precio del <span className="text-brand-blue font-bold cursor-pointer hover:text-cyan-400" onClick={goToChain}>Chain</span> para abrir el panel de orden.</p>
               </div>
             )}
           </div>
 
           {/* Payoff Chart */}
-          <div className="glass-card p-4 space-y-2">
-            <span className="text-xs font-black uppercase tracking-widest text-brand-text-muted">Payoff al Vencimiento</span>
+          <div className="glass-panel p-4 space-y-3 border-t-2 border-t-purple-500/30">
+            <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">Payoff al Vencimiento</span>
             {payoff.length ? (
               <ResponsiveContainer width="100%" height={130}>
                 <LineChart data={payoff} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
-                  <CartesianGrid strokeDasharray="2 4" stroke="#0d1828" />
-                  <XAxis dataKey="s" tick={{ fontSize: 8, fill: '#4a5a72' }} interval={14} />
-                  <YAxis tick={{ fontSize: 8, fill: '#4a5a72' }} tickFormatter={(v: number) => v >= 0 ? `$${v}` : `-$${Math.abs(v)}`} />
-                  <Tooltip contentStyle={{ background: '#0d1421', border: '1px solid #1a2840', borderRadius: 8, fontSize: 9 }}
+                  <CartesianGrid strokeDasharray="2 4" stroke="#ffffff0a" />
+                  <XAxis dataKey="s" tick={{ fontSize: 9, fill: '#64748b', fontFamily: 'monospace' }} interval={14} />
+                  <YAxis tick={{ fontSize: 9, fill: '#64748b', fontFamily: 'monospace' }} tickFormatter={(v: number) => v >= 0 ? `$${v}` : `-$${Math.abs(v)}`} />
+                  <Tooltip contentStyle={{ background: '#0f1420', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 10, fontFamily: 'monospace' }}
                     formatter={(v: number) => [`${v >= 0 ? '+' : ''}$${v}`, 'P&L']} labelFormatter={(l: string) => `${sym} @ $${l}`} />
-                  <ReferenceLine y={0} stroke="#374151" strokeDasharray="3 3" />
+                  <ReferenceLine y={0} stroke="rgba(255,255,255,0.15)" strokeDasharray="3 3" />
                   <ReferenceLine x={spot.toFixed(0)} stroke="#00D1FF" strokeDasharray="3 3" />
-                  <Line type="monotone" dataKey="pnl" stroke="#00D1FF" dot={false} strokeWidth={2} />
+                  <Line type="monotone" dataKey="pnl" stroke="#00D1FF" dot={false} strokeWidth={2} style={{ filter: 'drop-shadow(0 0 4px rgba(0,209,255,0.5))' }} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="text-center text-brand-text-muted text-xs py-6 bg-white/[0.02] rounded-xl">
-                Abre una posición<br />para ver el diagrama
+              <div className="text-center text-white/30 text-[10px] uppercase tracking-widest font-black py-8 bg-white/[0.01] rounded-xl border border-white/5">
+                Abre una posición<br />para ver gráfica
               </div>
             )}
           </div>
 
           {/* Missions Progress */}
-          <div className="glass-card p-4 space-y-3">
-            <span className="text-xs font-black uppercase tracking-widest text-brand-text-muted">Misiones</span>
+          <div className="glass-panel p-4 space-y-3 border-t-2 border-t-[#F2C500]/40">
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#F2C500]">Misiones de Progreso</span>
             {TIERS.map(t => {
               const lock = !desbloqueado(t.id);
               const cnt = t.missions.filter(m => done.has(m.id)).length;
               return (
                 <div key={t.id}>
                   <button onClick={() => !lock && setMTab(mTab === t.id ? 0 : t.id)}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${lock ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/[0.03] cursor-pointer'} ${mTab === t.id ? 'bg-white/[0.03]' : ''}`}>
-                    <span className="text-xs font-black">{t.icon} Nivel {t.id}: {t.name}</span>
-                    {lock ? <Lock className="w-3.5 h-3.5 text-brand-text-muted" /> : <span className="text-[10px] font-black" style={{ color: t.col }}>{cnt}/{t.missions.length}</span>}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${lock ? 'opacity-40 cursor-not-allowed bg-white/[0.01]' : 'hover:bg-white/[0.03] cursor-pointer border border-white/5 shadow-sm'} ${mTab === t.id ? 'bg-white/[0.04] border-white/10' : ''}`}>
+                    <span className="text-[11px] font-black tracking-wide">{t.icon} NIVEL {t.id}: <span className="opacity-80">{t.name.toUpperCase()}</span></span>
+                    {lock ? <Lock className="w-3.5 h-3.5 text-brand-text-muted" /> : <span className="text-[10px] font-black font-mono" style={{ color: t.col }}>{cnt}/{t.missions.length}</span>}
                   </button>
                   {mTab === t.id && !lock && (
-                    <div className="mt-1 space-y-1 pl-2">
+                    <div className="mt-2 space-y-1.5 pl-1 pr-1">
                       {t.missions.map(m => {
                         const isDone = done.has(m.id);
                         return (
-                          <div key={m.id} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${isDone ? 'bg-brand-green/5 text-brand-green' : 'text-brand-text-muted'}`}>
-                            {isDone ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded border border-white/10 shrink-0" />}
-                            <span className="font-bold truncate">{m.title}</span>
-                            <span className="ml-auto text-amber-400 font-black shrink-0">+{m.xp}</span>
+                          <div key={m.id} className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs border ${isDone ? 'bg-brand-green/10 text-brand-green border-brand-green/20' : 'bg-white/[0.02] border-white/5 text-white/50'}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              {isDone ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-white/10 shrink-0" />}
+                              <span className="font-bold truncate text-[11px] uppercase tracking-wide">{m.title}</span>
+                            </div>
+                            <span className={`font-black font-mono shrink-0 text-[10px] ${isDone ? 'text-brand-green' : 'text-[#F2C500]'}`}>+{m.xp}XP</span>
                           </div>
                         );
                       })}
@@ -924,20 +931,23 @@ export default function GenyOpciones() {
           </div>
 
           {/* AI Coach */}
-          <div className="glass-card p-4 space-y-2">
-            <div className="flex items-center gap-2">
-              <Bot className="w-4 h-4 text-amber-400" />
-              <span className="text-xs font-black uppercase tracking-widest text-amber-400">Coach Geny IA</span>
-            </div>
-            <div className="bg-white/[0.02] rounded-xl p-3">
-              {aiLoad ? (
-                <div className="flex items-center gap-2 text-brand-blue text-xs font-bold">
-                  <div className="w-4 h-4 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" />
-                  Analizando operación...
-                </div>
-              ) : (
-                <p className="text-brand-text-muted text-sm leading-relaxed whitespace-pre-wrap">{aiMsg}</p>
-              )}
+          <div className="glass-panel p-5 space-y-3 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <Bot className="w-5 h-5 text-amber-400" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">Coach Geny IA</span>
+              </div>
+              <div className="bg-[#05080f]/50 rounded-xl p-4 border border-white/5 shadow-inner">
+                {aiLoad ? (
+                  <div className="flex items-center gap-3 text-brand-blue text-[11px] font-black uppercase tracking-widest">
+                    <div className="w-4 h-4 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" />
+                    Analizando operación...
+                  </div>
+                ) : (
+                  <p className="text-slate-300 text-[13px] leading-relaxed whitespace-pre-wrap">{aiMsg}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>

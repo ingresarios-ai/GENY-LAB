@@ -1,0 +1,249 @@
+// payment-webhook — Receives payment confirmations from Hotmart, Whop, etc.
+// Creates Supabase Auth user with magic link + forwards data to LeadConnector
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+const LEADCONNECTOR_WEBHOOK =
+  "https://services.leadconnectorhq.com/hooks/jTugwykceKyJlATOSvkb/webhook-trigger/9354f7a9-2c5f-4ad8-99b9-cd8714874ca5";
+
+// Normaliza teléfonos mexicanos: +52 sin el 1 → +521
+function normalizePhone(phone: string): string {
+  if (!phone) return "";
+  const cleaned = phone.trim();
+  if (cleaned.startsWith("+52") && !cleaned.startsWith("+521")) {
+    return "+521" + cleaned.slice(3);
+  }
+  return cleaned;
+}
+
+// Crea cuenta en Supabase Auth y genera magic link
+async function createAuthUserAndMagicLink(
+  supabase: any,
+  email: string,
+  name: string
+): Promise<{ authUserId: string | null; magicLinkUrl: string | null }> {
+  try {
+    // Try to create the auth user (will fail silently if already exists)
+    const { data: existingUsers } = await supabase.auth.admin.listUsers();
+    const existing = (existingUsers?.users || []).find(
+      (u: any) => u.email?.toLowerCase() === email.toLowerCase()
+    );
+
+    let authUserId: string;
+
+    if (existing) {
+      authUserId = existing.id;
+    } else {
+      // Create new auth user — email auto-confirmed, no password
+      const { data: newUser, error: createError } =
+        await supabase.auth.admin.createUser({
+          email: email.toLowerCase().trim(),
+          email_confirm: true,
+          user_metadata: { name },
+        });
+
+      if (createError) {
+        console.error("Auth user creation error:", createError);
+        return { authUserId: null, magicLinkUrl: null };
+      }
+      authUserId = newUser.user.id;
+    }
+
+    // Generate magic link — redirect to custom domain after verification
+    const SITE_URL = "https://genylab.ingresarios.net";
+    const { data: linkData, error: linkError } =
+      await supabase.auth.admin.generateLink({
+        type: "magiclink",
+        email: email.toLowerCase().trim(),
+        options: { redirectTo: `${SITE_URL}/app` },
+      });
+
+    if (linkError) {
+      console.error("Magic link generation error:", linkError);
+      return { authUserId, magicLinkUrl: null };
+    }
+
+    const magicLinkUrl = linkData?.properties?.action_link || null;
+
+    return { authUserId, magicLinkUrl };
+  } catch (err) {
+    console.error("Auth/magic link error:", err);
+    return { authUserId: null, magicLinkUrl: null };
+  }
+}
+
+// Envía datos al webhook de LeadConnector
+async function sendToLeadConnector(
+  name: string,
+  email: string,
+  phone: string,
+  magicLinkUrl?: string | null
+) {
+  try {
+    const normalizedPhone = normalizePhone(phone);
+    const payload: Record<string, string> = {
+      name,
+      email: email.toLowerCase().trim(),
+      phone: normalizedPhone,
+    };
+    if (magicLinkUrl) {
+      payload.magic_link_url = magicLinkUrl;
+    }
+    const res = await fetch(LEADCONNECTOR_WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    console.log(
+      `📤 LeadConnector webhook: ${res.status} for ${email} (phone: ${normalizedPhone})`
+    );
+  } catch (err) {
+    console.error("LeadConnector webhook error:", err);
+  }
+}
+
+Deno.serve(async (req: Request) => {
+  // Only accept POST
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers":
+          "content-type, x-hotmart-hottok, x-whop-signature",
+      },
+    });
+  }
+
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+    });
+  }
+
+  try {
+    const body = await req.json();
+    const supabase = createClient(supabaseUrl, serviceKey);
+
+    // Detect platform from headers or payload
+    const hotmartToken = req.headers.get("x-hotmart-hottok");
+    const whopSig = req.headers.get("x-whop-signature");
+
+    let name = "";
+    let email = "";
+    let phone = "";
+    let platform = "unknown";
+    let transactionId = "";
+    let amount: number | null = null;
+    let currency = "MXN";
+
+    if (
+      hotmartToken ||
+      body?.event === "PURCHASE_APPROVED" ||
+      body?.data?.buyer
+    ) {
+      // ── HOTMART FORMAT ──
+      platform = "hotmart";
+      const buyer = body?.data?.buyer || body?.buyer || {};
+      name = buyer.name || body?.data?.buyer?.name || "";
+      email = buyer.email || body?.data?.buyer?.email || "";
+      phone = buyer.checkout_phone || "";
+      transactionId =
+        body?.data?.purchase?.transaction || body?.transaction || "";
+      amount = body?.data?.purchase?.price?.value || null;
+      currency = body?.data?.purchase?.price?.currency_code || "MXN";
+    } else if (whopSig || body?.action || body?.data?.email) {
+      // ── WHOP FORMAT ──
+      platform = "whop";
+      const user = body?.data || {};
+      name = user.username || user.name || "";
+      email = user.email || "";
+      transactionId = user.id || body?.id || "";
+      amount = user.amount ? user.amount / 100 : null; // Whop sends cents
+      currency = user.currency || "USD";
+    } else {
+      // ── GENERIC FORMAT ──
+      platform = body?.platform || "generic";
+      name = body?.name || body?.nombre || "";
+      email = body?.email || body?.correo || "";
+      phone = body?.phone || body?.telefono || "";
+      transactionId = body?.transaction_id || "";
+      amount = body?.amount || body?.monto || null;
+      currency = body?.currency || "MXN";
+    }
+
+    // Validate minimum data
+    if (!email) {
+      return new Response(
+        JSON.stringify({ error: "Missing email in payload" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Normalize phone
+    const normalizedPhone = normalizePhone(phone);
+
+    // Create Supabase Auth user + generate magic link
+    const { authUserId, magicLinkUrl } = await createAuthUserAndMagicLink(
+      supabase,
+      email,
+      name || "Sin nombre"
+    );
+
+    // Upsert user (don't duplicate if same email)
+    const { data, error } = await supabase
+      .from("enrolled_users")
+      .upsert(
+        {
+          name: name || "Sin nombre",
+          email: email.toLowerCase().trim(),
+          phone: normalizedPhone || null,
+          payment_method: "webhook",
+          payment_platform: platform,
+          transaction_id: transactionId || null,
+          payment_amount: amount,
+          payment_currency: currency,
+          status: "active",
+          auth_user_id: authUserId || null,
+          magic_link_url: magicLinkUrl || null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "email" }
+      )
+      .select()
+      .single();
+
+    if (error) {
+      console.error("DB Error:", error);
+      return new Response(
+        JSON.stringify({ error: "Database error", detail: error.message }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Send data to LeadConnector webhook (fire and forget)
+    sendToLeadConnector(name || "Sin nombre", email, normalizedPhone, magicLinkUrl);
+
+    console.log(
+      `✅ User enrolled: ${email} via ${platform} | auth_id: ${authUserId} | magic_link: ${magicLinkUrl ? "yes" : "no"}`
+    );
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        user_id: data.id,
+        email,
+        magic_link_url: magicLinkUrl,
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (err) {
+    console.error("Webhook error:", err);
+    return new Response(
+      JSON.stringify({ error: "Internal error", detail: String(err) }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+});

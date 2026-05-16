@@ -8,8 +8,7 @@ export default function AppLayout() {
   const completedCount = getCompletedCount();
 
   const navItems = [
-    { to: "/app", icon: Map, label: "Camino", end: true },
-    { to: "/app/logros", icon: Trophy, label: "Logros" },
+    { to: "/app", icon: Map, label: "Mi Ruta", end: true },
     { 
       to: "/app/geny-opciones", 
       icon: Target, 
@@ -41,6 +40,7 @@ export default function AppLayout() {
         }
       }
     },
+    { to: "/app/logros", icon: Trophy, label: "Logros" },
   ];
 
   return (

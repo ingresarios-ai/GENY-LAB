@@ -10,6 +10,13 @@ import Achievements from './pages/app/Achievements';
 import AuthGuard from './components/AuthGuard';
 import SharedResult from './pages/public/SharedResult';
 
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminWebhooks from './pages/admin/AdminWebhooks';
+import AdminSettings from './pages/admin/AdminSettings';
+
 import { GastosHormiga } from './pages/app/GastosHormiga';
 import RetoADN from './pages/app/RetoADN';
 import TrampasDinero from './pages/app/TrampasDinero';
@@ -54,6 +61,15 @@ function App() {
           <Route path="termostato" element={<TermostatoFinanciero />} />
           <Route path="pedem" element={<MiPrimerPedem />} />
           <Route path="geny-opciones" element={<GenyOpciones />} />
+        </Route>
+
+        {/* Admin */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="usuarios" element={<AdminUsers />} />
+          <Route path="webhooks" element={<AdminWebhooks />} />
+          <Route path="configuracion" element={<AdminSettings />} />
         </Route>
 
         {/* Root — redirect to app */}

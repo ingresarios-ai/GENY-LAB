@@ -85,7 +85,8 @@ export const getCompletedCount = (): number => {
 };
 
 export const isAllCompleted = (): boolean => {
-  return getCompletedCount() === LESSONS.length;
+  // return getCompletedCount() === LESSONS.length;
+  return true; // Temporary bypass
 };
 
 // ============================================
