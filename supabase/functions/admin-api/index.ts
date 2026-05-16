@@ -476,6 +476,11 @@ Deno.serve(async (req: Request) => {
       if (method === "PATCH" && segments.length === 2) {
         const userId = segments[1];
         const body = await req.json();
+        
+        if (body.phone !== undefined) {
+          body.phone = body.phone ? normalizePhone(body.phone) : null;
+        }
+
         const { data, error } = await supabase
           .from("enrolled_users")
           .update({ ...body, updated_at: new Date().toISOString() })
