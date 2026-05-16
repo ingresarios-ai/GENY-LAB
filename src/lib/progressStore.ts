@@ -47,16 +47,13 @@ const saveProgress = (progress: UserProgress) => {
 // ============================================
 
 export const isLessonUnlocked = (lessonOrder: number): boolean => {
-  // if (lessonOrder === 1) return true; // First lesson always unlocked
-  // const progress = getProgress();
-  // // Previous lesson must be fully completed
-  // const prevLesson = LESSONS.find(l => l.order === lessonOrder - 1);
-  // if (!prevLesson) return false;
-  // const prevProgress = progress.lessonProgress[prevLesson.id];
-  // return !!(prevProgress?.videoCompleted && prevProgress?.activityCompleted);
-  
-  // Temporary bypass to enable all activities
-  return true;
+  if (lessonOrder === 1) return true; // First lesson always unlocked
+  const progress = getProgress();
+  // Previous lesson must be fully completed
+  const prevLesson = LESSONS.find(l => l.order === lessonOrder - 1);
+  if (!prevLesson) return false;
+  const prevProgress = progress.lessonProgress[prevLesson.id];
+  return !!(prevProgress?.videoCompleted && prevProgress?.activityCompleted);
 };
 
 export const isLessonCompleted = (lessonId: string): boolean => {
@@ -85,8 +82,7 @@ export const getCompletedCount = (): number => {
 };
 
 export const isAllCompleted = (): boolean => {
-  // return getCompletedCount() === LESSONS.length;
-  return true; // Temporary bypass
+  return getCompletedCount() === LESSONS.length;
 };
 
 // ============================================

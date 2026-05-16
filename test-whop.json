@@ -1,21 +1,19 @@
 {
   "event": "payment.succeeded",
   "data": {
-    "id": "pay_123",
-    "amount": 497,
-    "currency": "MXN",
+    "id": "pay_ignore",
+    "amount": 97,
+    "currency": "USD",
     "product": {
-      "id": "prod_123",
-      "name": "El Reto V3"
+      "name": "Otro Producto"
     },
     "billing_address": {
-      "country": "MX"
+      "country": "US"
     },
     "user": {
-      "id": "usr_123",
-      "email": "juan@example.com",
-      "name": "Juan Perez",
-      "phone": "+525551234567"
+      "email": "ignore@example.com",
+      "name": "Ignorado",
+      "phone": "+1234567890"
     }
   }
 }
