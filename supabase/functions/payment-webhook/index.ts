@@ -18,6 +18,37 @@ function normalizePhone(phone: string): string {
   return cleaned;
 }
 
+// Normaliza país a código ISO 3166-1 alpha-2 (2 letras)
+const COUNTRY_MAP: Record<string, string> = {
+  // Español
+  "mexico": "MX", "méxico": "MX", "colombia": "CO", "argentina": "AR",
+  "chile": "CL", "peru": "PE", "perú": "PE", "ecuador": "EC",
+  "venezuela": "VE", "bolivia": "BO", "paraguay": "PY", "uruguay": "UY",
+  "guatemala": "GT", "costa rica": "CR", "panama": "PA", "panamá": "PA",
+  "honduras": "HN", "el salvador": "SV", "nicaragua": "NI",
+  "republica dominicana": "DO", "república dominicana": "DO",
+  "cuba": "CU", "puerto rico": "PR",
+  "estados unidos": "US", "eeuu": "US",
+  "españa": "ES", "espana": "ES",
+  "brasil": "BR", "canada": "CA", "canadá": "CA",
+  // English
+  "united states": "US", "usa": "US", "united states of america": "US",
+  "spain": "ES", "brazil": "BR", "dominican republic": "DO",
+  "mexico city": "MX",
+};
+
+function normalizeCountry(raw: string): string {
+  if (!raw) return "";
+  const trimmed = raw.trim();
+  // Already ISO 2-letter code
+  if (/^[A-Z]{2}$/.test(trimmed)) return trimmed;
+  if (/^[a-z]{2}$/.test(trimmed)) return trimmed.toUpperCase();
+  // Lookup by name
+  const key = trimmed.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  // Try with accents first, then without
+  return COUNTRY_MAP[trimmed.toLowerCase()] || COUNTRY_MAP[key] || trimmed.toUpperCase().slice(0, 2);
+}
+
 // Crea cuenta en Supabase Auth y genera magic link
 async function createAuthUserAndMagicLink(
   supabase: any,
@@ -217,7 +248,7 @@ Deno.serve(async (req: Request) => {
           name: name || "Sin nombre",
           email: email.toLowerCase().trim(),
           phone: normalizedPhone || null,
-          country: country || null,
+          country: normalizeCountry(country) || null,
           payment_method: "webhook",
           payment_platform: platform,
           transaction_id: transactionId || null,
