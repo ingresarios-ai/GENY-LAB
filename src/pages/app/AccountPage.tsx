@@ -6,6 +6,17 @@ import { LESSONS } from '../../lib/lessons';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+const AVAILABLE_AVATARS = [
+  '/avatars/avatar_m_1.png', '/avatars/avatar_f_1.png',
+  '/avatars/avatar_m_2.png', '/avatars/avatar_f_2.png',
+  '/avatars/avatar_m_3.png', '/avatars/avatar_f_3.png',
+  '/avatars/avatar_m_4.png', '/avatars/avatar_f_4.png',
+  '/avatars/avatar_m_5.png', '/avatars/avatar_f_5.png',
+  '/avatars/avatar_m_6.png', '/avatars/avatar_f_6.png',
+  '/avatars/avatar_m_7.png', '/avatars/avatar_f_7.png',
+  '/avatars/avatar_bear.png', '/avatars/avatar_bull.png'
+];
+
 export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
@@ -16,6 +27,7 @@ export default function AccountPage() {
   const [editName, setEditName] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editCountry, setEditCountry] = useState('');
+  const [editAvatar, setEditAvatar] = useState('');
   const [saving, setSaving] = useState(false);
 
   const navigate = useNavigate();
@@ -68,6 +80,7 @@ export default function AccountPage() {
     setEditName(profile?.name || user?.user_metadata?.name || '');
     setEditPhone(profile?.phone || '');
     setEditCountry(profile?.country_name || '');
+    setEditAvatar(profile?.avatar_url || '');
     setIsEditing(true);
   };
 
@@ -84,6 +97,7 @@ export default function AccountPage() {
         name: editName,
         phone: editPhone,
         country_name: editCountry,
+        avatar_url: editAvatar,
       };
 
       const { error } = await supabase
@@ -133,8 +147,12 @@ export default function AccountPage() {
               )}
 
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00D1FF] to-[#0055FF] p-1 shadow-[0_0_20px_rgba(0,209,255,0.3)] mt-2">
-                <div className="w-full h-full bg-[#0A0B10] rounded-full flex items-center justify-center text-[#00D1FF]">
-                  <User size={40} />
+                <div className="w-full h-full bg-[#0A0B10] rounded-full flex items-center justify-center text-[#00D1FF] overflow-hidden">
+                  {(isEditing ? editAvatar : profile?.avatar_url) ? (
+                    <img src={isEditing ? editAvatar : profile?.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={40} />
+                  )}
                 </div>
               </div>
               
@@ -146,6 +164,25 @@ export default function AccountPage() {
                   </div>
                 ) : isEditing ? (
                   <div className="space-y-3 w-full mt-2">
+                    {/* Selector de Avatar */}
+                    <div>
+                      <label className="block text-left text-xs font-mono text-white/50 mb-2">Elige un Avatar</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {AVAILABLE_AVATARS.map((avatar, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setEditAvatar(avatar)}
+                            className={`w-full aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                              editAvatar === avatar 
+                                ? 'border-[#00D1FF] shadow-[0_0_10px_rgba(0,209,255,0.3)] scale-105' 
+                                : 'border-transparent hover:border-white/20'
+                            }`}
+                          >
+                            <img src={avatar} alt={`Avatar ${idx}`} className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     <div>
                       <label className="block text-left text-xs font-mono text-white/50 mb-1">Nombre</label>
                       <input 
