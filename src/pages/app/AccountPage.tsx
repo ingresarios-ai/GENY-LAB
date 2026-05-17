@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User, Trophy, Crown, HelpCircle, LogOut, Phone, Globe, Shield, Star, Award } from 'lucide-react';
+import { User, Trophy, Crown, HelpCircle, LogOut, Phone, Globe, Shield, Star, Award, Edit2, Save, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { getProgress, getCompletedCount } from '../../lib/progressStore';
 import { LESSONS } from '../../lib/lessons';
@@ -10,6 +10,14 @@ export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Edit state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editCountry, setEditCountry] = useState('');
+  const [saving, setSaving] = useState(false);
+
   const navigate = useNavigate();
 
   // Progress metrics
@@ -56,6 +64,46 @@ export default function AccountPage() {
     }
   };
 
+  const handleEditClick = () => {
+    setEditName(profile?.name || user?.user_metadata?.name || '');
+    setEditPhone(profile?.phone || '');
+    setEditCountry(profile?.country_name || '');
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user?.email) return;
+    
+    try {
+      setSaving(true);
+      const updates = {
+        name: editName,
+        phone: editPhone,
+        country_name: editCountry,
+      };
+
+      const { error } = await supabase
+        .from('enrolled_users')
+        .update(updates)
+        .eq('email', user.email);
+
+      if (error) throw error;
+
+      setProfile({ ...profile, ...updates });
+      setIsEditing(false);
+      toast.success('Perfil actualizado correctamente');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Error al actualizar el perfil');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 pb-32 lg:pb-8">
       
@@ -73,7 +121,18 @@ export default function AccountPage() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#00D1FF]/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
             
             <div className="flex flex-col items-center gap-4 relative z-10">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00D1FF] to-[#0055FF] p-1 shadow-[0_0_20px_rgba(0,209,255,0.3)]">
+              {/* Botón Editar */}
+              {!isEditing && !loading && (
+                <button
+                  onClick={handleEditClick}
+                  className="absolute top-0 right-0 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                  title="Editar perfil"
+                >
+                  <Edit2 size={16} />
+                </button>
+              )}
+
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00D1FF] to-[#0055FF] p-1 shadow-[0_0_20px_rgba(0,209,255,0.3)] mt-2">
                 <div className="w-full h-full bg-[#0A0B10] rounded-full flex items-center justify-center text-[#00D1FF]">
                   <User size={40} />
                 </div>
@@ -85,32 +144,93 @@ export default function AccountPage() {
                     <div className="h-6 bg-white/10 rounded w-32 mx-auto"></div>
                     <div className="h-4 bg-white/10 rounded w-48 mx-auto"></div>
                   </div>
+                ) : isEditing ? (
+                  <div className="space-y-3 w-full mt-2">
+                    <div>
+                      <label className="block text-left text-xs font-mono text-white/50 mb-1">Nombre</label>
+                      <input 
+                        type="text" 
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#00D1FF] transition-colors"
+                        placeholder="Tu nombre"
+                      />
+                    </div>
+                    <p className="text-white/30 text-xs text-left truncate">{user?.email}</p>
+                  </div>
                 ) : (
                   <>
                     <h3 className="text-xl font-bold text-white mb-1">
                       {profile?.name || user?.user_metadata?.name || 'Inversor'}
                     </h3>
-                    <p className="text-white/50 text-sm">{user?.email}</p>
+                    <p className="text-white/50 text-sm truncate max-w-full px-2">{user?.email}</p>
                   </>
                 )}
               </div>
 
               {/* Badges Info */}
               <div className="w-full flex flex-col gap-2 mt-4 pt-4 border-t border-white/5">
-                {profile?.phone && (
-                  <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 text-sm text-white/70">
-                    <Phone size={14} className="text-white/40" /> 
-                    <span>{profile.phone}</span>
+                {isEditing ? (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-left text-xs font-mono text-white/50 mb-1">Teléfono</label>
+                      <input 
+                        type="tel" 
+                        value={editPhone}
+                        onChange={(e) => setEditPhone(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#00D1FF] transition-colors"
+                        placeholder="+1 234 567 890"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-left text-xs font-mono text-white/50 mb-1">País</label>
+                      <input 
+                        type="text" 
+                        value={editCountry}
+                        onChange={(e) => setEditCountry(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#00D1FF] transition-colors"
+                        placeholder="Ej. México, Colombia..."
+                      />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <button 
+                        onClick={handleCancelEdit}
+                        className="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm font-medium transition-colors flex items-center justify-center gap-1"
+                        disabled={saving}
+                      >
+                        <X size={14} /> Cancelar
+                      </button>
+                      <button 
+                        onClick={handleSaveProfile}
+                        disabled={saving}
+                        className="flex-1 py-2 rounded-lg bg-[#00D1FF] hover:bg-[#00D1FF]/80 text-black text-sm font-bold transition-colors flex items-center justify-center gap-1"
+                      >
+                        {saving ? (
+                          <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                        ) : (
+                          <><Save size={14} /> Guardar</>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                )}
-                {profile?.country_name && (
-                  <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 text-sm text-white/70">
-                    <Globe size={14} className="text-white/40" /> 
-                    <span>{profile.country_name}</span>
-                  </div>
-                )}
-                {!profile?.phone && !profile?.country_name && !loading && (
-                  <p className="text-center text-xs text-white/40 italic">Información de contacto no disponible.</p>
+                ) : (
+                  <>
+                    {profile?.phone && (
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 text-sm text-white/70">
+                        <Phone size={14} className="text-white/40" /> 
+                        <span>{profile.phone}</span>
+                      </div>
+                    )}
+                    {profile?.country_name && (
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 text-sm text-white/70">
+                        <Globe size={14} className="text-white/40" /> 
+                        <span>{profile.country_name}</span>
+                      </div>
+                    )}
+                    {!profile?.phone && !profile?.country_name && !loading && (
+                      <p className="text-center text-xs text-white/40 italic">Información de contacto no disponible.</p>
+                    )}
+                  </>
                 )}
               </div>
             </div>
