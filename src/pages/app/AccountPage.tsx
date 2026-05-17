@@ -393,7 +393,7 @@ export default function AccountPage() {
                 className="w-full py-4 rounded-xl flex items-center justify-center gap-2 font-bold text-black bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 transition-all shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:-translate-y-1"
               >
                 <Star size={18} />
-                ACTUALIZAR A PRO
+                IR AL SIGUIENTE NIVEL
               </a>
             </div>
           </section>
