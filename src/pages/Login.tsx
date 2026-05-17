@@ -65,7 +65,10 @@ export default function Login() {
                   <span className="text-2xl">✉️</span>
                 </div>
                 <p className="text-white text-sm">Te enviamos un correo a <strong className="text-brand-blue">{email}</strong> con un enlace para restablecer tu contraseña.</p>
-                <p className="text-white/40 text-xs">Revisa tu bandeja de entrada y spam.</p>
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 text-left">
+                  <p className="text-amber-400 text-xs font-semibold mb-1">📌 Importante:</p>
+                  <p className="text-amber-300/70 text-xs leading-relaxed">Si no lo encuentras en tu bandeja de entrada, revisa las carpetas de <strong>Spam</strong>, <strong>Correo no deseado</strong> o <strong>Promociones</strong>.</p>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleForgotPassword} className="space-y-6">
