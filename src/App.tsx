@@ -26,6 +26,7 @@ import GenyOpciones from './pages/app/GenyOpciones';
 import MiPrimerPedem from './pages/app/pedem/MiPrimerPedem';
 import TermostatoFinanciero from './pages/app/termostato-financiero/TermostatoFinanciero';
 import AccountPage from './pages/app/AccountPage';
+import AutoLogin from './pages/AutoLogin';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/compartir/:shareCode" element={<SharedResult />} />
+        <Route path="/acceso/:code" element={<AutoLogin />} />
 
         {/* App Routes */}
         <Route path="/app" element={<AuthGuard><AppLayout /></AuthGuard>}>

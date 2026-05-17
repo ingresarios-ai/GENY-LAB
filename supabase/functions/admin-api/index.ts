@@ -10,6 +10,7 @@ const corsHeaders = {
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const TOTAL_ACTIVITIES = 7;
+const SITE_URL = "https://genylab.ingresarios.net";
 
 const LEADCONNECTOR_WEBHOOK =
   "https://services.leadconnectorhq.com/hooks/jTugwykceKyJlATOSvkb/webhook-trigger/9354f7a9-2c5f-4ad8-99b9-cd8714874ca5";
@@ -386,6 +387,10 @@ Deno.serve(async (req: Request) => {
 
         const normalizedPhone = normalizePhone(phone || "");
 
+        // Generate a permanent access code
+        const accessCode = crypto.randomUUID().replace(/-/g, '');
+        const permanentUrl = `${SITE_URL}/acceso/${accessCode}`;
+
         const { authUserId, magicLinkUrl } = await createAuthUserAndMagicLink(
           supabase,
           email,
@@ -403,7 +408,8 @@ Deno.serve(async (req: Request) => {
             notes: notes || null,
             status: "active",
             auth_user_id: authUserId || null,
-            magic_link_url: magicLinkUrl || null,
+            magic_link_url: permanentUrl,
+            access_code: accessCode,
           })
           .select()
           .single();
@@ -414,9 +420,9 @@ Deno.serve(async (req: Request) => {
           return json({ error: error.message }, 500);
         }
 
-        sendToLeadConnector(name, email, normalizedPhone, magicLinkUrl);
+        sendToLeadConnector(name, email, normalizedPhone, permanentUrl);
 
-        return json({ data, magic_link_url: magicLinkUrl }, 201);
+        return json({ data, magic_link_url: permanentUrl }, 201);
       }
 
       // POST /users/:id/resend-magic-link
@@ -441,17 +447,27 @@ Deno.serve(async (req: Request) => {
         );
 
         if (magicLinkUrl) {
+          // Ensure user has an access_code; generate one if missing
+          let accessCode = user.access_code;
+          if (!accessCode) {
+            accessCode = crypto.randomUUID().replace(/-/g, '');
+          }
+          const permanentUrl = `${SITE_URL}/acceso/${accessCode}`;
+
           await supabase
             .from("enrolled_users")
             .update({
-              magic_link_url: magicLinkUrl,
+              magic_link_url: permanentUrl,
+              access_code: accessCode,
               auth_user_id: authUserId || user.auth_user_id,
               updated_at: new Date().toISOString(),
             })
             .eq("id", userId);
+
+          return json({ success: true, magic_link_url: permanentUrl });
         }
 
-        return json({ success: true, magic_link_url: magicLinkUrl });
+        return json({ success: true, magic_link_url: user.magic_link_url });
       }
 
 
