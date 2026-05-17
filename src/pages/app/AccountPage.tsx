@@ -134,9 +134,18 @@ export default function AccountPage() {
     <div className="max-w-6xl mx-auto px-4 py-8 pb-32 lg:pb-8">
       
       {/* Encabezado */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white tracking-tight">Mi Cuenta</h1>
-        <p className="text-white/50 mt-2">Gestiona tu progreso, suscripciones y configuración.</p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white tracking-tight">Mi Cuenta</h1>
+          <p className="text-white/50 mt-2">Gestiona tu progreso, suscripciones y configuración.</p>
+        </div>
+        <button 
+          onClick={handleLogout}
+          className="shrink-0 flex items-center gap-2 px-4 py-2.5 text-red-400/80 hover:text-red-300 hover:bg-red-500/15 border border-red-500/20 hover:border-red-500/40 rounded-xl transition-all text-sm font-mono tracking-wider uppercase"
+        >
+          <LogOut size={16} />
+          <span className="hidden sm:inline">Cerrar Sesión</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
@@ -304,15 +313,6 @@ export default function AccountPage() {
               </div>
             </div>
           </section>
-
-          {/* Botón Cerrar Sesión Desktop (visible on larger screens here, or standard on all) */}
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 p-4 text-red-500/80 hover:text-red-400 hover:bg-red-500/10 border border-red-500/20 rounded-2xl transition-all glass-panel-hover"
-          >
-            <LogOut size={18} />
-            <span className="font-mono tracking-wider uppercase text-sm font-semibold">Cerrar Sesión</span>
-          </button>
         </div>
 
         {/* Columna Central: Progreso */}
