@@ -141,10 +141,10 @@ export default function AccountPage() {
         </div>
         <button 
           onClick={handleLogout}
-          className="shrink-0 flex items-center gap-2 px-4 py-2.5 text-red-400/80 hover:text-red-300 hover:bg-red-500/15 border border-red-500/20 hover:border-red-500/40 rounded-xl transition-all text-sm font-mono tracking-wider uppercase"
+          className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-red-500/15 text-red-400 hover:text-white hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-xl transition-all text-xs sm:text-sm font-mono tracking-wider uppercase font-semibold"
         >
           <LogOut size={16} />
-          <span className="hidden sm:inline">Cerrar Sesión</span>
+          Salir
         </button>
       </div>
 
