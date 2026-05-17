@@ -25,6 +25,7 @@ import RetoFlow from './pages/app/RetoFlow';
 import GenyOpciones from './pages/app/GenyOpciones';
 import MiPrimerPedem from './pages/app/pedem/MiPrimerPedem';
 import TermostatoFinanciero from './pages/app/termostato-financiero/TermostatoFinanciero';
+import AccountPage from './pages/app/AccountPage';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
         {/* App — currently bypassed auth */}
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<PathMap />} />
+          <Route path="cuenta" element={<AccountPage />} />
           <Route path="leccion/:lessonId" element={<LessonScreen />} />
           <Route path="logros" element={<Achievements />} />
           

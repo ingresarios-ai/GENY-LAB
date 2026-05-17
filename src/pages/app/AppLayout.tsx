@@ -3,12 +3,9 @@ import { Map, Trophy, MessageCircle, Target, Lock, User } from 'lucide-react';
 import { Footer } from '../../components/Footer';
 import { getCompletedCount } from '../../lib/progressStore';
 import toast from 'react-hot-toast';
-import { AccountDrawer } from '../../components/AccountDrawer';
-import { useState } from 'react';
 
 export default function AppLayout() {
   const completedCount = getCompletedCount();
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
 
   const navItems = [
     { to: "/app", icon: Map, label: "Mi Ruta", end: true },
@@ -70,14 +67,16 @@ export default function AppLayout() {
             </NavLink>
           ))}
           <div className="w-px h-6 bg-white/10 mx-2"></div>
-          <button
-            onClick={() => setIsAccountOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 text-white/60 hover:bg-white/5 hover:text-white"
+          <NavLink
+            to="/app/cuenta"
+            className={({ isActive }) => `flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 ${
+              isActive ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
+            }`}
           >
             <div className="p-1 rounded-full bg-[#00D1FF]/20 text-[#00D1FF]">
               <User size={16} />
             </div>
-          </button>
+          </NavLink>
         </nav>
       </header>
 
@@ -113,17 +112,20 @@ export default function AppLayout() {
             )}
           </NavLink>
         ))}
-        <button
-          onClick={() => setIsAccountOpen(true)}
-          className="flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all text-white/40 hover:text-white"
+        <NavLink
+          to="/app/cuenta"
+          className={({ isActive }) => `flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all ${
+            isActive ? 'text-[#00D1FF]' : 'text-white/40 hover:text-white'
+          }`}
         >
-          <User size={22} />
-          <span className="text-[10px] font-mono uppercase tracking-wider">Mi Cuenta</span>
-        </button>
+          {({ isActive }) => (
+            <>
+              <User size={22} className={isActive ? 'drop-shadow-[0_0_8px_rgba(0,209,255,0.8)]' : ''} />
+              <span className="text-[10px] font-mono uppercase tracking-wider">Mi Cuenta</span>
+            </>
+          )}
+        </NavLink>
       </nav>
-
-      {/* Account Drawer */}
-      <AccountDrawer isOpen={isAccountOpen} onClose={() => setIsAccountOpen(false)} />
     </div>
   );
 }
