@@ -17,6 +17,15 @@ const AVAILABLE_AVATARS = [
   '/avatars/avatar_bear.png', '/avatars/avatar_bull.png'
 ];
 
+const COUNTRY_FLAGS: Record<string, string> = {
+  'México': '🇲🇽', 'Colombia': '🇨🇴', 'Argentina': '🇦🇷', 'Chile': '🇨🇱',
+  'Perú': '🇵🇪', 'Ecuador': '🇪🇨', 'Venezuela': '🇻🇪', 'Brasil': '🇧🇷',
+  'España': '🇪🇸', 'Estados Unidos': '🇺🇸', 'Guatemala': '🇬🇹',
+  'Costa Rica': '🇨🇷', 'Panamá': '🇵🇦', 'Bolivia': '🇧🇴',
+  'Paraguay': '🇵🇾', 'Uruguay': '🇺🇾', 'Honduras': '🇭🇳',
+  'El Salvador': '🇸🇻', 'Nicaragua': '🇳🇮', 'Rep. Dominicana': '🇩🇴',
+};
+
 export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
@@ -149,14 +158,24 @@ export default function AccountPage() {
                 </button>
               )}
 
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00D1FF] to-[#0055FF] p-1 shadow-[0_0_20px_rgba(0,209,255,0.3)] mt-2">
-                <div className="w-full h-full bg-[#0A0B10] rounded-full flex items-center justify-center text-[#00D1FF] overflow-hidden">
-                  {(isEditing ? editAvatar : profile?.avatar_url) ? (
-                    <img src={isEditing ? editAvatar : profile?.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                  ) : (
-                    <User size={40} />
-                  )}
+              <div className="relative mt-2">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00D1FF] to-[#0055FF] p-1 shadow-[0_0_20px_rgba(0,209,255,0.3)]">
+                  <div className="w-full h-full bg-[#0A0B10] rounded-full flex items-center justify-center text-[#00D1FF] overflow-hidden">
+                    {(isEditing ? editAvatar : profile?.avatar_url) ? (
+                      <img src={isEditing ? editAvatar : profile?.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <User size={40} />
+                    )}
+                  </div>
                 </div>
+                {!isEditing && profile?.country_name && COUNTRY_FLAGS[profile.country_name] && (
+                  <span 
+                    className="absolute -bottom-1 -right-1 text-2xl drop-shadow-lg"
+                    title={profile.country_name}
+                  >
+                    {COUNTRY_FLAGS[profile.country_name]}
+                  </span>
+                )}
               </div>
               
               <div className="text-center w-full">

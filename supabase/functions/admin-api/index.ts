@@ -24,6 +24,26 @@ function normalizePhone(phone: string): string {
   return cleaned;
 }
 
+const DEFAULT_AVATAR = "/avatars/avatar_bull.png";
+
+function countryFromPhone(phone: string): string | null {
+  if (!phone) return null;
+  const p = phone.trim();
+  const map: [string, string][] = [
+    ["+593", "Ecuador"], ["+591", "Bolivia"], ["+595", "Paraguay"],
+    ["+598", "Uruguay"], ["+502", "Guatemala"], ["+503", "El Salvador"],
+    ["+504", "Honduras"], ["+505", "Nicaragua"], ["+506", "Costa Rica"],
+    ["+507", "Panamá"], ["+521", "México"], ["+52", "México"],
+    ["+57", "Colombia"], ["+54", "Argentina"], ["+56", "Chile"],
+    ["+51", "Perú"], ["+58", "Venezuela"], ["+55", "Brasil"],
+    ["+34", "España"], ["+1", "Estados Unidos"],
+  ];
+  for (const [prefix, country] of map) {
+    if (p.startsWith(prefix)) return country;
+  }
+  return null;
+}
+
 async function createAuthUserAndMagicLink(
   supabase: any,
   email: string,
@@ -410,6 +430,8 @@ Deno.serve(async (req: Request) => {
             auth_user_id: authUserId || null,
             magic_link_url: permanentUrl,
             access_code: accessCode,
+            country_name: countryFromPhone(normalizedPhone) || null,
+            avatar_url: DEFAULT_AVATAR,
           })
           .select()
           .single();
