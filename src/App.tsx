@@ -50,7 +50,7 @@ function App() {
         {/* App — currently bypassed auth */}
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<PathMap />} />
-          <Route path="cuenta" element={<AccountPage />} />
+          <Route path="cuenta" element={<AuthGuard><AccountPage /></AuthGuard>} />
           <Route path="leccion/:lessonId" element={<LessonScreen />} />
           <Route path="logros" element={<Achievements />} />
           

@@ -102,8 +102,11 @@ export default function AccountPage() {
 
       const { error } = await supabase
         .from('enrolled_users')
-        .update(updates)
-        .eq('email', user.email);
+        .upsert({ 
+          email: user.email, 
+          auth_user_id: user.id, 
+          ...updates 
+        }, { onConflict: 'email' });
 
       if (error) throw error;
 
@@ -265,7 +268,17 @@ export default function AccountPage() {
                       </div>
                     )}
                     {!profile?.phone && !profile?.country_name && !loading && (
-                      <p className="text-center text-xs text-white/40 italic">Información de contacto no disponible.</p>
+                      <div className="flex flex-col items-center justify-center gap-2 mt-2">
+                        <p className="text-center text-xs text-white/40 italic">
+                          Completa tu información de contacto para una experiencia más personalizada.
+                        </p>
+                        <button 
+                          onClick={handleEditClick}
+                          className="text-xs text-[#00D1FF] hover:text-white transition-colors underline decoration-[#00D1FF]/30 underline-offset-2"
+                        >
+                          Completar mi perfil
+                        </button>
+                      </div>
                     )}
                   </>
                 )}
