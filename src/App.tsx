@@ -47,10 +47,10 @@ function App() {
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/compartir/:shareCode" element={<SharedResult />} />
 
-        {/* App — currently bypassed auth */}
-        <Route path="/app" element={<AppLayout />}>
+        {/* App Routes */}
+        <Route path="/app" element={<AuthGuard><AppLayout /></AuthGuard>}>
           <Route index element={<PathMap />} />
-          <Route path="cuenta" element={<AuthGuard><AccountPage /></AuthGuard>} />
+          <Route path="cuenta" element={<AccountPage />} />
           <Route path="leccion/:lessonId" element={<LessonScreen />} />
           <Route path="logros" element={<Achievements />} />
           
