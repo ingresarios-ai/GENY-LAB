@@ -177,7 +177,7 @@ export const AccountDrawer: React.FC<AccountDrawerProps> = ({ isOpen, onClose })
             <div className="relative z-10">
               <p className="text-white/80 text-sm mb-1">Plan Actual:</p>
               <div className="inline-block px-3 py-1 rounded bg-black/40 border border-white/10 text-white font-mono text-sm mb-5">
-                RETO GENY LAB V3
+                GENY LAB
               </div>
 
               <a 
