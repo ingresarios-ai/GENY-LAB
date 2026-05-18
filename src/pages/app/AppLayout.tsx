@@ -62,7 +62,7 @@ export default function AppLayout() {
                     : 'text-white/60 border border-transparent hover:bg-white/5 hover:text-white'
               }`}
             >
-              {item.locked ? <Lock className="w-4 h-4 opacity-50" /> : <item.icon className="w-4 h-4" />}
+              {item.locked ? <Lock className="w-5 h-5 opacity-50" /> : <item.icon className="w-5 h-5" />}
               <span>{item.label}</span>
             </NavLink>
           ))}
@@ -74,7 +74,7 @@ export default function AppLayout() {
             }`}
           >
             <div className="p-1 rounded-full bg-[#00D1FF]/20 text-[#00D1FF]">
-              <User size={16} />
+              <User size={18} />
             </div>
           </NavLink>
         </nav>
@@ -103,9 +103,9 @@ export default function AppLayout() {
             {({ isActive }) => (
               <>
                 {item.locked ? (
-                  <Lock size={22} className="opacity-50" />
+                  <Lock size={28} className="opacity-50" />
                 ) : (
-                  <item.icon size={22} className={isActive ? 'drop-shadow-[0_0_8px_rgba(0,209,255,0.8)]' : ''} />
+                  <item.icon size={28} className={isActive ? 'drop-shadow-[0_0_8px_rgba(0,209,255,0.8)]' : ''} />
                 )}
                 <span className="text-[10px] font-mono uppercase tracking-wider">{item.label}</span>
               </>
@@ -120,7 +120,7 @@ export default function AppLayout() {
         >
           {({ isActive }) => (
             <>
-              <User size={22} className={isActive ? 'drop-shadow-[0_0_8px_rgba(0,209,255,0.8)]' : ''} />
+              <User size={28} className={isActive ? 'drop-shadow-[0_0_8px_rgba(0,209,255,0.8)]' : ''} />
               <span className="text-[10px] font-mono uppercase tracking-wider">Mi Cuenta</span>
             </>
           )}
