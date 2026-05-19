@@ -1,18 +1,18 @@
 // @ts-nocheck
+// SharedResult — Viral curiosity-generating share pages
+// Route: /compartir/:shareCode  (Supabase-backed)
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import { supabase } from '../../lib/supabase';
+import { ArrowRight, Lock } from 'lucide-react';
 
+/* ── Helpers ── */
 const CAT_LABELS: Record<string, string> = {
   programacion: 'Programación', setpoint: 'Setpoint', neuronas_espejo: 'Neuronas Espejo',
   adaptacion: 'Adaptación', merecimiento: 'Merecimiento', disciplina: 'Disciplina',
 };
-const PROFILE_COLORS: Record<string, string> = {
-  Guardián: '#3b82f6', Constructor: '#8b5cf6', Estratega: '#f59e0b', Cazador: '#ef4444', Emprendedor: '#10b981',
-};
-
 function getTempColor(score: number): string {
   if (score <= 20) return '#3b82f6';
   if (score <= 40) return '#06b6d4';
@@ -22,25 +22,95 @@ function getTempColor(score: number): string {
   return '#ef4444';
 }
 
-function ADNResult({ d }: { d: any }) {
-  const color = PROFILE_COLORS[d.adn] || '#00D4FF';
+/* ── Curiosity CTA Block (shared across all activities) ── */
+function CuriosityCTA({ hook, ctaText, emoji }: { hook: string; ctaText: string; emoji: string }) {
   return (
-    <div className="space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.6 }}
+      className="mt-10 space-y-6"
+    >
+      {/* Curiosity Hook */}
+      <div className="relative overflow-hidden rounded-3xl p-8 md:p-10 text-center bg-gradient-to-br from-brand-blue/10 via-purple-500/5 to-brand-green/10 border border-white/10">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,209,255,0.08),transparent_70%)]" />
+        <div className="relative space-y-5">
+          <div className="text-5xl">{emoji}</div>
+          <p className="text-lg md:text-xl font-bold text-white leading-snug max-w-md mx-auto">{hook}</p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-brand-blue to-cyan-500 text-white font-black uppercase tracking-widest text-sm shadow-[0_0_30px_rgba(0,209,255,0.4)] hover:shadow-[0_0_50px_rgba(0,209,255,0.6)] hover:scale-[1.02] transition-all"
+          >
+            {ctaText}
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+          <p className="text-[10px] text-white/30 uppercase tracking-widest">Gratis · 5 minutos · Sin tarjeta</p>
+        </div>
+      </div>
+
+      {/* Social proof */}
+      <div className="flex items-center justify-center gap-4">
+        <div className="flex -space-x-2">
+          {['🧑‍💼', '👩‍💻', '🧑‍🎓', '👨‍💼'].map((e, i) => (
+            <div key={i} className="w-8 h-8 rounded-full bg-white/10 border-2 border-brand-bg flex items-center justify-center text-sm">{e}</div>
+          ))}
+        </div>
+        <p className="text-xs text-slate-400"><span className="text-white font-bold">+2,400 traders</span> ya lo descubrieron</p>
+      </div>
+
+      <p className="text-[9px] font-mono text-white/15 uppercase tracking-widest text-center">INGRESARIOS · GENY LAB</p>
+    </motion.div>
+  );
+}
+
+/* ── Blurred teaser section ── */
+function BlurredSection({ label }: { label: string }) {
+  return (
+    <div className="relative glass-card p-6 overflow-hidden">
+      <div className="absolute inset-0 backdrop-blur-xl bg-white/5 z-10 flex items-center justify-center">
+        <div className="flex items-center gap-2 text-white/60 text-xs font-black uppercase tracking-widest">
+          <Lock className="w-4 h-4" />
+          {label}
+        </div>
+      </div>
+      <div className="space-y-3 blur-sm select-none" aria-hidden>
+        <div className="h-3 bg-white/10 rounded w-3/4" />
+        <div className="h-3 bg-white/10 rounded w-1/2" />
+        <div className="h-3 bg-white/10 rounded w-2/3" />
+        <div className="h-3 bg-white/10 rounded w-1/3" />
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   ACTIVITY RENDERERS — Viral / Curiosity-driven
+   ────────────────────────────────────────────────────────── */
+
+function ADNResult({ d }: { d: any }) {
+  const color = '#00D4FF';
+  return (
+    <div className="space-y-6">
       <div className="text-center space-y-4">
-        <div className="text-7xl">{d.emoji}</div>
-        <p className="text-xs font-black uppercase tracking-widest text-[#FFD700]">{d.titulo}</p>
-        <h2 className="text-4xl font-black uppercase">ADN <span style={{ color }}>{d.adn}</span></h2>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">{d.emoji || '🧬'}</motion.div>
+        <p className="text-xs font-black uppercase tracking-widest text-[#FFD700]">Test de ADN Financiero</p>
+        <h1 className="text-4xl md:text-5xl font-black uppercase">Mi ADN es <span style={{ color }}>{d.adn}</span></h1>
+        <p className="text-slate-400 text-base max-w-sm mx-auto">Cada trader tiene un perfil genético financiero único que define cómo gana, cómo pierde y cómo se sabotea.</p>
       </div>
-      <div className="glass-card p-6"><p className="text-xs font-black uppercase tracking-widest text-brand-blue mb-3">Lectura de tu perfil</p><p className="text-base text-slate-300 leading-relaxed">{d.lecturaCore}</p></div>
-      <div className="glass-card p-6 border border-amber-500/20"><p className="text-xs font-black uppercase tracking-widest text-[#FFD700] mb-3">Tu sombra financiera</p><p className="text-base text-slate-300 leading-relaxed">{d.sombra}</p></div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="glass-card p-6"><p className="text-xs font-black uppercase tracking-widest text-brand-blue mb-3">Tu fortaleza real</p><p className="text-base text-slate-300">{d.fortaleza}</p></div>
-        <div className="glass-card p-6 border border-amber-500/10"><p className="text-xs font-black uppercase tracking-widest text-[#FFD700] mb-3">Patrón de sabotaje</p><p className="text-base text-slate-300">{d.patron}</p></div>
+      {/* Show just the teaser — enough to intrigue */}
+      <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: color }}>
+        <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color }}>Lectura de perfil</p>
+        <p className="text-base text-slate-300 leading-relaxed line-clamp-3">{d.lecturaCore}</p>
+        <p className="text-xs text-brand-blue mt-3 font-bold">... continúa en el análisis completo</p>
       </div>
-      <div className="rounded-2xl p-8 text-center bg-brand-blue/10 border border-brand-blue/20">
-        <p className="text-xs font-black uppercase tracking-widest text-brand-blue mb-4">Frase de activación</p>
-        <p className="text-xl text-white font-medium italic">"{d.activacion}"</p>
-      </div>
+      {/* Blur the rest */}
+      <BlurredSection label="Descubre tu sombra financiera" />
+      <BlurredSection label="Patrón de sabotaje · Fortaleza real" />
+      <CuriosityCTA
+        emoji="🧬"
+        hook="¿Cuál es TU ADN Financiero? Hay 5 perfiles. Solo uno es el tuyo."
+        ctaText="Descubrir MI ADN"
+      />
     </div>
   );
 }
@@ -49,56 +119,39 @@ function TermostatoResult({ d }: { d: any }) {
   const color = getTempColor(d.puntaje_global);
   const radarData = Object.entries(d.categorias || {}).map(([k, v]) => ({ axis: CAT_LABELS[k] || k, value: v }));
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="text-center space-y-3">
-        <div className="text-7xl">🌡️</div>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🌡️</motion.div>
+        <p className="text-xs font-black uppercase tracking-widest" style={{ color }}>Termóstato Financiero</p>
         <div className="flex items-baseline justify-center gap-3">
-          <span className="text-7xl font-black font-mono" style={{ color }}>{d.puntaje_global}°</span>
-          <span className="text-2xl font-bold" style={{ color }}>{d.temperatura_label}</span>
+          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-7xl font-black font-mono" style={{ color }}>{d.puntaje_global}°</motion.span>
         </div>
-        {d.tags_patron && <div className="flex flex-wrap justify-center gap-2">{d.tags_patron.map((t: string, i: number) => (<span key={i} className="text-[11px] font-mono px-3 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">{t}</span>))}</div>}
+        <p className="text-2xl font-bold" style={{ color }}>{d.temperatura_label}</p>
+        <p className="text-slate-400 text-sm max-w-sm mx-auto">Tu "temperatura" determina cuánto dinero estás programado para ganar. Si no la cambias, siempre volverás al mismo nivel.</p>
       </div>
-      <div className="glass-card p-6 border-t-2" style={{ borderTopColor: `${color}60` }}>
-        <p className="text-xs font-mono uppercase tracking-widest mb-3" style={{ color }}>Arquetipo: {d.arquetipo}</p>
-        <p className="text-base text-slate-300 leading-relaxed">{d.arquetipo_desc}</p>
-      </div>
-      <div className="glass-card p-6"><p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">Diagnóstico</p><p className="text-base text-slate-300 leading-relaxed">{d.diagnostico_breve}</p></div>
+      {/* Show radar — this is visually intriguing */}
       {radarData.length > 0 && (
         <div className="glass-card p-6">
-          <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-2">Radar de Dimensiones</p>
-          <div className="h-[220px]"><ResponsiveContainer width="100%" height="100%"><RadarChart data={radarData}><PolarGrid stroke="rgba(255,255,255,0.1)" /><PolarAngleAxis dataKey="axis" tick={{ fill: '#9ca3af', fontSize: 10 }} /><Radar dataKey="value" stroke="#00D4FF" fill="#00D4FF" fillOpacity={0.25} strokeWidth={2} /></RadarChart></ResponsiveContainer></div>
+          <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color }}>Mapa de Dimensiones</p>
+          <div className="h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={radarData}>
+                <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                <PolarAngleAxis dataKey="axis" tick={{ fill: '#9ca3af', fontSize: 10 }} />
+                <Radar dataKey="value" stroke={color} fill={color} fillOpacity={0.25} strokeWidth={2} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="glass-card p-6 border-t-2 border-t-emerald-500/40">
-          <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-4">Fortalezas</p>
-          {(d.fortalezas || []).map((f: string, i: number) => (<p key={i} className="text-sm text-white/80 mb-2">• {f}</p>))}
-        </div>
-        <div className="glass-card p-6 border-t-2 border-t-red-500/40">
-          <p className="text-xs font-mono text-red-400 uppercase tracking-widest mb-4">Sombras</p>
-          {(d.sombras || []).map((s: string, i: number) => (<p key={i} className="text-sm text-white/80 mb-2">• {s}</p>))}
-        </div>
-      </div>
-      <div className="glass-card p-8 bg-gradient-to-br from-cyan-500/5 to-[#FFD700]/5 border-t-2 border-t-cyan-500/40">
-        <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">Primer Paso esta Semana</p>
-        <p className="text-lg text-white font-semibold">{d.primer_paso}</p>
-      </div>
-    </div>
-  );
-}
-
-function GenericResult({ d, activity }: { d: any; activity: string }) {
-  const labels: Record<string, string> = { gastos: 'Gastos Hormiga', trampas: 'Trampas del Dinero', pedem: 'Mi Primer PEDEM', sombra: 'Mis Emociones', flow: 'Reto del Flow' };
-  return (
-    <div className="space-y-6">
-      <div className="text-center"><h2 className="text-2xl font-black uppercase">{labels[activity] || activity}</h2><p className="text-brand-text-muted text-sm mt-2">Resultados de la actividad</p></div>
-      {d.summary && <div className="glass-card p-6"><p className="text-base text-slate-300 leading-relaxed">{d.summary}</p></div>}
-      {d.score !== undefined && <div className="glass-card p-6 text-center"><p className="text-xs font-black uppercase tracking-widest text-brand-blue mb-2">Puntaje</p><p className="text-5xl font-black text-brand-blue">{d.score}</p></div>}
-      {d.items && Array.isArray(d.items) && (
-        <div className="glass-card p-6 space-y-3">
-          {d.items.map((item: any, i: number) => (<div key={i} className="flex items-start gap-3"><span className="text-brand-blue font-mono text-sm">0{i + 1}</span><p className="text-sm text-white/80">{typeof item === 'string' ? item : JSON.stringify(item)}</p></div>))}
-        </div>
-      )}
+      {/* Blur the diagnosis */}
+      <BlurredSection label="Diagnóstico completo · Arquetipo" />
+      <BlurredSection label="Fortalezas · Sombras · Plan de acción" />
+      <CuriosityCTA
+        emoji="🌡️"
+        hook="¿A qué temperatura está TU termostato? El 90% de los traders están calibrados en modo supervivencia."
+        ctaText="Medir MI Temperatura"
+      />
     </div>
   );
 }
@@ -106,182 +159,183 @@ function GenericResult({ d, activity }: { d: any; activity: string }) {
 function GastosHormigaResult({ d }: { d: any }) {
   const fmt = (n: number) => `$${Math.round(n).toLocaleString('en-US')}`;
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-3">
-        <div className="text-7xl">🐜</div>
+    <div className="space-y-6">
+      <div className="text-center space-y-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🐜</motion.div>
         <p className="text-xs font-black uppercase tracking-widest text-[#FFD700]">Gastos Hormiga</p>
-        <div className="text-5xl font-black text-white">{fmt(d.total)}<span className="text-lg text-white/50">/mes</span></div>
-        <p className="text-sm text-brand-green font-medium">Proyección a 10 años: {fmt(d.proyeccion)}</p>
+        <h1 className="text-5xl md:text-6xl font-black text-white">{fmt(d.total)}<span className="text-lg text-white/40">/mes</span></h1>
+        <p className="text-lg text-red-400 font-bold">Eso es {fmt((d.total || 0) * 12)} al año que desaparece sin darte cuenta</p>
       </div>
-      <div className="glass-card p-6 space-y-4 border-t-2 border-t-[#FFD700]/40">
-        <p className="text-xs font-mono uppercase tracking-widest text-[#FFD700] mb-2">Resumen de Fugas</p>
-        {(d.gastos || []).map((g: any, i: number) => (
-          <div key={i} className="flex flex-col gap-1 border-b border-white/5 pb-3 last:border-0 last:pb-0">
-            <p className="text-white/80 text-sm">{g.desc}</p>
-            <p className="text-[#FFD700] text-xs italic">"{g.highlight}"</p>
-          </div>
-        ))}
+      <div className="glass-card p-6 text-center border-t-2 border-t-emerald-500/40">
+        <p className="text-xs font-mono uppercase tracking-widest text-emerald-400 mb-2">Si inviertes eso en el mercado...</p>
+        <p className="text-4xl font-black text-emerald-400">{fmt(d.proyeccion || (d.total || 0) * 120)}</p>
+        <p className="text-xs text-slate-400 mt-1">en 10 años con interés compuesto</p>
       </div>
+      <BlurredSection label="Desglose completo de tus fugas" />
+      <CuriosityCTA
+        emoji="💸"
+        hook="¿Cuánto dinero se te escapa sin darte cuenta cada mes? La mayoría pierde más de $3,000. ¿Y tú?"
+        ctaText="Calcular MIS Gastos Hormiga"
+      />
     </div>
   );
 }
 
 function TrampasDineroResult({ d }: { d: any }) {
+  const totalResponses = Object.keys(d.responses || {}).length;
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-3">
-        <div className="text-7xl">🧠</div>
-        <p className="text-xs font-black uppercase tracking-widest text-brand-green">Trampas del Dinero</p>
-        <h2 className="text-3xl font-black text-white uppercase">Reto Completado</h2>
+    <div className="space-y-6">
+      <div className="text-center space-y-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🧠</motion.div>
+        <p className="text-xs font-black uppercase tracking-widest text-amber-500">Trampas del Dinero</p>
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase">Reto de {totalResponses} Preguntas Completado</h1>
+        <p className="text-slate-400 text-base max-w-sm mx-auto">Tu cerebro tiene trampas mentales que te hacen tomar decisiones financieras irracionales. Cada una te cuesta dinero real.</p>
       </div>
-      <div className="glass-card p-6 border-t-2 border-t-brand-green/40">
-         <p className="text-xs font-mono uppercase tracking-widest text-brand-green mb-4">Respuestas Destacadas</p>
-         <div className="space-y-4">
-           {Object.entries(d.responses || {}).map(([idx, resp], i) => (
-             <div key={idx} className="bg-white/5 p-4 rounded-xl border border-white/5">
-                <span className="text-[10px] text-white/30 font-mono uppercase">Pregunta {Number(idx)+1}</span>
-                <p className="text-white/80 text-sm mt-1">{String(resp)}</p>
-             </div>
-           ))}
-         </div>
+      <div className="glass-card p-6 border-l-4 border-l-amber-500">
+        <p className="text-xs font-black uppercase tracking-widest text-amber-500 mb-3">¿Sabías que...?</p>
+        <p className="text-base text-white leading-relaxed">El <span className="text-amber-500 font-black">87% de los traders</span> activan al menos 3 trampas mentales por sesión sin darse cuenta. Cada trampa puede costarte entre el 2% y el 15% de tu cuenta.</p>
       </div>
+      <BlurredSection label="Tus respuestas · Análisis de sesgos" />
+      <CuriosityCTA
+        emoji="🪤"
+        hook="¿Cuántas trampas mentales activas en cada trade? Descúbrelo en 5 minutos."
+        ctaText="Descubrir MIS Trampas"
+      />
     </div>
   );
 }
 
 function PedemResultView({ d }: { d: any }) {
+  const entries = Object.entries(d.data || {});
+  const preview = entries.slice(0, 2);
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-3">
-        <div className="text-7xl">📋</div>
+    <div className="space-y-6">
+      <div className="text-center space-y-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">📋</motion.div>
         <p className="text-xs font-black uppercase tracking-widest text-brand-blue">Mi Primer PEDEM</p>
-        <h2 className="text-2xl font-black text-white uppercase">Plan Estructurado</h2>
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase">Plan Estructurado de Trading</h1>
+        <p className="text-slate-400 text-base max-w-sm mx-auto">El PEDEM es el plan que separa a los traders que improvisan de los que son consistentes.</p>
       </div>
-      <div className="glass-card p-6 border-t-2 border-t-brand-blue/40 space-y-3">
-        {Object.entries(d.data || {}).map(([key, val], i) => (
-          <div key={i} className="flex justify-between items-start py-2 border-b border-dashed border-white/10 last:border-b-0">
-            <span className="text-xs tracking-[0.15em] uppercase text-slate-400 font-bold">{key}</span>
-            <span className="text-sm font-medium text-right text-white max-w-[60%]">{String(val)}</span>
-          </div>
-        ))}
-      </div>
+      {preview.length > 0 && (
+        <div className="glass-card p-6 border-l-4 border-l-brand-blue">
+          <p className="text-xs font-black uppercase tracking-widest text-brand-blue mb-3">Vista previa</p>
+          {preview.map(([key, val], i) => (
+            <div key={i} className="flex justify-between items-start py-2 border-b border-dashed border-white/10 last:border-b-0">
+              <span className="text-xs tracking-[0.15em] uppercase text-slate-400 font-bold">{key}</span>
+              <span className="text-sm font-medium text-right text-white max-w-[60%]">{String(val)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      <BlurredSection label="Plan completo · Estrategia · Risk Management" />
+      <CuriosityCTA
+        emoji="📋"
+        hook="¿Operas sin un plan? El 92% de los traders que pierden no tienen un PEDEM. Crea el tuyo en 10 minutos."
+        ctaText="Crear MI PEDEM"
+      />
     </div>
   );
 }
 
 function SombraResult({ d }: { d: any }) {
   const day = d.selDay || d.d || 1;
-  const totalDays = 10;
-  const completedDays = d.d || day;
-  const progressPerc = Math.round((completedDays / totalDays) * 100);
   const phase = day <= 3 ? 'Detectar' : day <= 7 ? 'Desactivar' : 'Dominar';
-  const phaseIcon = day <= 3 ? '🎯' : day <= 7 ? '⚔️' : '👑';
   const phaseColor = day <= 3 ? '#f97316' : day <= 7 ? '#f59e0b' : '#10b981';
-  const traderName = d.n || d.name || 'Un Trader';
-  const routeLabel = d.r === 'operador' ? '⚔️ Luchador' : '🛡️ Principiante';
-
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="text-center space-y-4">
-        <div className="text-7xl">🤯</div>
-        <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Mis Emociones · Reto de 10 Días</p>
-        <h2 className="text-3xl font-black text-white uppercase">Día {day} Completado</h2>
-        {d.title && <p className="text-lg italic font-medium" style={{ color: phaseColor }}>"{d.title}"</p>}
-        <p className="text-slate-400 text-sm"><span className="text-white font-bold">{traderName}</span> está dominando su Saboteador Interior</p>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🎭</motion.div>
+        <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Saboteador Interior · Día {day}/10</p>
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
+          {d.title ? `"${d.title}"` : `Fase ${phase} Activada`}
+        </h1>
+        <p className="text-slate-400 text-base max-w-md mx-auto">Todos tenemos un <span className="text-white font-bold">Saboteador Interior</span> — una voz que nos hace cerrar trades ganadores antes de tiempo, mover el stop loss, o entrar por venganza.</p>
       </div>
 
-      {/* Progress */}
-      <div className="glass-card p-6 border-t-2" style={{ borderTopColor: `${phaseColor}60` }}>
-        <div className="flex justify-between text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest">
-          <span>Progreso del reto</span>
-          <span className="text-white">{completedDays} de {totalDays} días</span>
-        </div>
-        <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 rounded-full transition-all" style={{ width: `${progressPerc}%` }} />
-        </div>
-        <div className="flex justify-between mt-3">
-          <span className="text-[10px] font-black tracking-widest text-orange-500">🎯 Detectar</span>
-          <span className="text-[10px] font-black tracking-widest text-amber-500">⚔️ Desactivar</span>
-          <span className="text-[10px] font-black tracking-widest text-emerald-500">👑 Dominar</span>
-        </div>
+      {/* The shocking stat */}
+      <div className="glass-card p-8 text-center border-t-2" style={{ borderTopColor: phaseColor }}>
+        <p className="text-6xl font-black text-red-500 mb-2">80%</p>
+        <p className="text-base text-white font-medium">de los traders pierden por sus emociones,<br /><span className="text-slate-400">no por su estrategia.</span></p>
       </div>
 
-      {/* Current Phase */}
-      <div className="glass-card p-6 text-center">
-        <div className="text-4xl mb-3">{phaseIcon}</div>
-        <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: phaseColor }}>Fase Actual</p>
-        <p className="text-2xl font-black text-white uppercase">{phase}</p>
-        {d.r && <p className="text-xs text-slate-500 mt-2">Ruta: <span className="font-bold text-slate-300">{routeLabel}</span></p>}
+      {/* What they discovered */}
+      <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: phaseColor }}>
+        <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>Lo que descubrió este trader</p>
+        <p className="text-base text-white leading-relaxed">Completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del reto más difícil: enfrentar su propia psicología de trading. La mayoría abandona en el día 3.</p>
       </div>
 
-      {/* Motivational */}
-      <div className="rounded-2xl p-8 text-center bg-gradient-to-br from-orange-500/5 to-emerald-500/5 border border-white/5">
-        <p className="text-xs font-black uppercase tracking-widest text-orange-500 mb-4">¿Tú también tienes un Saboteador?</p>
-        <p className="text-base text-slate-300 leading-relaxed">
-          El 80% de los traders pierden por sus emociones, no por su estrategia.
-          <span className="text-white font-bold"> Descubre al trader que te hace perder dinero.</span>
-        </p>
-      </div>
+      <BlurredSection label="Tu perfil de Saboteador · Diario emocional" />
+
+      <CuriosityCTA
+        emoji="🎭"
+        hook="¿Quién es el trader que te hace perder dinero? No es el mercado. Eres TÚ. Descúbrelo en 10 días."
+        ctaText="Empezar MI Reto"
+      />
     </div>
   );
 }
 
 function FlowResult({ d }: { d: any }) {
   const day = d.selDay || d.d || 1;
-  const totalDays = 10;
-  const completedDays = d.d || day;
-  const progressPerc = Math.round((completedDays / totalDays) * 100);
-  const phase = day <= 3 ? 'Despertar' : day <= 6 ? 'Entrenamiento' : day <= 9 ? 'Integración' : 'Maestría';
-  const phaseIcon = day <= 3 ? '🌅' : day <= 6 ? '⚡' : day <= 9 ? '🧬' : '👑';
-  const phaseColor = day <= 3 ? '#3b82f6' : day <= 6 ? '#f59e0b' : day <= 9 ? '#8b5cf6' : '#10b981';
-  const traderName = d.n || d.name || 'Un Trader';
-
+  const phaseColor = day <= 3 ? '#3b82f6' : day <= 6 ? '#f59e0b' : '#10b981';
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="text-center space-y-4">
-        <div className="text-7xl">⚡</div>
-        <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Flow · 10 Días</p>
-        <h2 className="text-3xl font-black text-white uppercase">Día {day} Completado</h2>
-        {d.title && <p className="text-lg italic font-medium" style={{ color: phaseColor }}>"{d.title}"</p>}
-        <p className="text-slate-400 text-sm"><span className="text-white font-bold">{traderName}</span> está activando su estado de Flow</p>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">⚡</motion.div>
+        <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Flow · Día {day}/10</p>
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
+          {d.title ? `"${d.title}"` : 'Estado de Flow Activado'}
+        </h1>
+        <p className="text-slate-400 text-base max-w-md mx-auto">El <span className="text-white font-bold">estado de Flow</span> es cuando tu mente opera a su máximo rendimiento — sin miedo, sin ego, concentración absoluta.</p>
       </div>
 
-      {/* Progress */}
-      <div className="glass-card p-6 border-t-2" style={{ borderTopColor: `${phaseColor}60` }}>
-        <div className="flex justify-between text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest">
-          <span>Progreso del reto</span>
-          <span className="text-white">{completedDays} de {totalDays} días</span>
-        </div>
-        <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-blue-500 via-amber-500 to-emerald-500 rounded-full transition-all" style={{ width: `${progressPerc}%` }} />
-        </div>
+      <div className="glass-card p-8 text-center border-t-2" style={{ borderTopColor: phaseColor }}>
+        <p className="text-6xl font-black text-brand-blue mb-2">5%</p>
+        <p className="text-base text-white font-medium">de los traders operan en Flow.<br /><span className="text-slate-400">El resto opera en miedo, ego o aburrimiento.</span></p>
       </div>
 
-      {/* Current Phase */}
-      <div className="glass-card p-6 text-center">
-        <div className="text-4xl mb-3">{phaseIcon}</div>
-        <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: phaseColor }}>Fase Actual</p>
-        <p className="text-2xl font-black text-white uppercase">{phase}</p>
-        {d.r && <p className="text-xs text-slate-500 mt-2">Ruta: <span className="font-bold text-slate-300 capitalize">{d.r}</span></p>}
+      <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: phaseColor }}>
+        <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>Lo que descubrió este trader</p>
+        <p className="text-base text-white leading-relaxed">Completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del entrenamiento de Flow para traders. Concentración absoluta. Rendimiento máximo.</p>
       </div>
 
-      {/* Motivational */}
-      <div className="rounded-2xl p-8 text-center bg-gradient-to-br from-blue-500/5 to-emerald-500/5 border border-white/5">
-        <p className="text-xs font-black uppercase tracking-widest text-brand-green mb-4">¿Quieres operar en Flow?</p>
-        <p className="text-base text-slate-300 leading-relaxed">
-          Los mejores traders operan en estado de Flow — concentración absoluta, sin ego, sin miedo.
-          <span className="text-white font-bold"> Activa tu estado óptimo de rendimiento.</span>
-        </p>
-      </div>
+      <BlurredSection label="Tu perfil de Flow · Ritual pre-trading" />
+
+      <CuriosityCTA
+        emoji="⚡"
+        hook="¿Operas en Flow o en caos? Los traders élite entrenan su mente como atletas. ¿Y tú?"
+        ctaText="Activar MI Flow"
+      />
     </div>
   );
 }
+
+function GenericResult({ d, activity }: { d: any; activity: string }) {
+  return (
+    <div className="space-y-6">
+      <div className="text-center space-y-4">
+        <div className="text-8xl">📊</div>
+        <h1 className="text-3xl font-black text-white uppercase">Actividad Completada</h1>
+        <p className="text-slate-400">Un trader completó una actividad en GENY LAB.</p>
+      </div>
+      <CuriosityCTA
+        emoji="🚀"
+        hook="GENY LAB es el laboratorio que transforma la psicología de tu trading. ¿Listo para descubrirte?"
+        ctaText="Entrar a GENY LAB"
+      />
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   MAIN COMPONENT
+   ────────────────────────────────────────────────────────── */
 
 const ACTIVITY_TITLES: Record<string, string> = {
   adn: 'ADN Financiero', termostato: 'Termóstato Financiero', gastos: 'Gastos Hormiga',
   trampas: 'Trampas del Dinero', pedem: 'Mi Primer PEDEM', sombra: 'Mis Emociones', flow: 'Reto del Flow',
 };
-const ACTIVITY_EMOJI: Record<string, string> = { adn: '🧬', termostato: '🌡️', gastos: '🐜', trampas: '🧠', pedem: '📋', sombra: '🤯', flow: '⚡' };
+const ACTIVITY_EMOJI: Record<string, string> = { adn: '🧬', termostato: '🌡️', gastos: '🐜', trampas: '🧠', pedem: '📋', sombra: '🎭', flow: '⚡' };
 
 export default function SharedResult() {
   const { shareCode } = useParams();
@@ -298,7 +352,13 @@ export default function SharedResult() {
     })();
   }, [shareCode]);
 
-  if (loading) return (<div className="min-h-screen bg-brand-bg flex items-center justify-center"><motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-brand-blue font-black text-sm uppercase tracking-widest">Cargando resultados...</motion.div></div>);
+  if (loading) return (
+    <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+      <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-brand-blue font-black text-sm uppercase tracking-widest">
+        Cargando...
+      </motion.div>
+    </div>
+  );
 
   if (notFound) return (
     <div className="min-h-screen bg-brand-bg flex items-center justify-center px-4">
@@ -316,22 +376,31 @@ export default function SharedResult() {
   return (
     <div className="min-h-screen bg-brand-bg">
       {/* Header */}
-      <div className="border-b border-white/10 bg-brand-bg/95 backdrop-blur-md">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="border-b border-white/10 bg-brand-bg/95 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/images/78.png" alt="GENY LAB" className="h-8 md:h-10 w-auto object-contain" />
             <div className="h-6 w-px bg-white/10" />
             <div className="flex items-center gap-2">
-              <span className="text-xl">{ACTIVITY_EMOJI[activity] || '📊'}</span>
-              <p className="text-sm font-bold text-white">{ACTIVITY_TITLES[activity] || activity}</p>
+              <span className="text-lg">{ACTIVITY_EMOJI[activity] || '📊'}</span>
+              <p className="text-xs font-bold text-white uppercase tracking-wider">{ACTIVITY_TITLES[activity] || activity}</p>
             </div>
           </div>
-          <Link to="/" className="text-[10px] font-black uppercase tracking-widest text-brand-text-muted hover:text-white transition-colors">Descubrir mi resultado →</Link>
+          <Link
+            to="/"
+            className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-blue/10 border border-brand-blue/30 text-brand-blue text-[10px] font-black uppercase tracking-widest hover:bg-brand-blue/20 transition-all"
+          >
+            Probar gratis <ArrowRight className="w-3 h-3" />
+          </Link>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-4 py-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto px-4 py-10"
+      >
         {activity === 'adn' && <ADNResult d={d} />}
         {activity === 'termostato' && <TermostatoResult d={d} />}
         {activity === 'gastos' && <GastosHormigaResult d={d} />}
@@ -340,17 +409,7 @@ export default function SharedResult() {
         {activity === 'sombra' && <SombraResult d={d} />}
         {activity === 'flow' && <FlowResult d={d} />}
         {!['adn', 'termostato', 'gastos', 'trampas', 'pedem', 'sombra', 'flow'].includes(activity) && <GenericResult d={d} activity={activity} />}
-
-        {/* CTA */}
-        <div className="mt-12 text-center space-y-4">
-          <div className="h-px bg-white/10 mb-8" />
-          <p className="text-brand-text-muted text-sm">¿Quieres descubrir tu propio resultado?</p>
-          <Link to="/" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-cyan-500 text-white font-black uppercase tracking-widest text-sm shadow-[0_0_25px_rgba(0,209,255,0.3)] hover:shadow-[0_0_40px_rgba(0,209,255,0.5)] transition-all">
-            Entrar a GENY LAB 🚀
-          </Link>
-          <p className="text-[9px] font-mono text-white/15 uppercase tracking-widest mt-6">INGRESARIOS · GENY LAB</p>
-        </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
