@@ -289,7 +289,7 @@ export default function PathMap() {
                 </div>
                 <div>
                   <p className="text-[10px] font-mono tracking-widest text-white/50 mb-1 uppercase">NODO {lesson.order}</p>
-                  <h2 className="text-xl font-bold tracking-tight leading-tight mb-2 text-[#00D1FF]">{lesson.title}</h2>
+                  <h2 className="text-xl font-bold tracking-wide leading-tight mb-2 text-[#00D1FF]">{lesson.title}</h2>
                   <p className="text-xs font-mono text-white/60 leading-relaxed mb-4">&gt; {lesson.description}</p>
                 </div>
                 <div className="inline-flex items-center gap-2 px-4 py-3 rounded-md bg-[#00D1FF]/10 border border-[#00D1FF]/40 text-[#00D1FF] font-mono text-xs uppercase tracking-wider w-full justify-center">
@@ -375,7 +375,7 @@ export default function PathMap() {
                   </div>
                   <div className="mt-auto">
                     <div className="text-xs font-mono tracking-widest text-white/50 mb-2 uppercase">NODO {lesson.order}</div>
-                    <h2 className={`min-h-[60px] whitespace-pre-line line-clamp-2 text-2xl font-bold tracking-tight leading-tight mb-2 transition-colors duration-300 ${isCurrent ? 'text-[#00D1FF]' : completed ? 'text-white/90' : 'text-white/40'}`}>{lesson.title}</h2>
+                    <h2 className={`min-h-[60px] whitespace-pre-line line-clamp-2 text-2xl font-bold tracking-wide leading-tight mb-2 transition-colors duration-300 ${isCurrent ? 'text-[#00D1FF]' : completed ? 'text-white/90' : 'text-white/40'}`}>{lesson.title}</h2>
                     <p className={`text-sm font-mono mb-6 line-clamp-3 leading-relaxed ${isCurrent ? 'text-white/60' : 'text-white/30'}`}>&gt; {lesson.description}</p>
                     {completed ? (
                       <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-[#00E676]/10 border border-[#00E676]/30 text-[#00E676] font-mono text-xs uppercase tracking-wider w-full justify-center">ESTADO: COMPLETADO <Check size={14} /></div>
