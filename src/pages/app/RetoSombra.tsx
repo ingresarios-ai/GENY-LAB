@@ -39,7 +39,6 @@ export default function MisEmociones() {
   const [view, setView] = useState<"hero" | "diag" | "result" | "route" | "home" | "day">("hero");
   const [selDay, setSelDay] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState(false);
-  const [dashTab, setDashTab] = useState<"mission" | "calendar" | "progress">("mission");
   const [shareModal, setShareModal] = useState(false);
 
   // Diagnostic
@@ -67,9 +66,38 @@ export default function MisEmociones() {
         if (r.completedDays) setCompletedDays(r.completedDays);
         if (r.diagAns) {
           setDiagAns(r.diagAns);
-          if (r.diagAns.length >= 4) setView('result');
+          if (r.diagAns.length >= 4 && !r.route) setView('result');
         }
-        if (r.view === 'home') setView('home');
+        
+        // Auto-redirect logic
+        if (r.route) {
+          const compDays = r.completedDays || {};
+          let next = 1;
+          for (let i = 1; i <= 10; i++) {
+            if (!compDays[i]) {
+              next = i;
+              break;
+            }
+            if (i === 10) next = 10; // If all 10 are somehow true but next wasn't found, default to 10
+          }
+          const completedCount = Object.values(compDays).filter(Boolean).length;
+          
+          if (completedCount === 10 || r.view === 'home') {
+             // If completely finished, or explicitly requested home, let them see the dashboard. 
+             // Actually, the user asked to always redirect them to where they left off. If completedCount === 10, they left off at the end.
+             // Let's redirect to 'day' view unless they completed all 10, then 'home' is better so they see the victory screen.
+             if (completedCount === 10) {
+               setView('home');
+             } else {
+               setView('day');
+               setSelDay(next);
+             }
+          } else if (r.view) {
+            setView(r.view);
+          }
+        } else if (r.view) {
+          setView(r.view);
+        }
       }
     } catch (e) {
       console.error('Error loading sombra progress:', e);
@@ -678,7 +706,7 @@ export default function MisEmociones() {
   }
 
   // ═══════════════════════════════════════════════════════════════════════
-  // VIEW: HOME / DASHBOARD (Tabbed: Mission, Calendar, Progress)
+  // VIEW: HOME / DASHBOARD (Vertical Journey)
   // ═══════════════════════════════════════════════════════════════════════
   if (view === "home") {
     const totalDays = DAYS.length;
@@ -697,7 +725,7 @@ export default function MisEmociones() {
     const nextPc = phaseColorMap[nextDayData.phase];
 
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto space-y-6 pb-12">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
         <style>{`
           @keyframes journey-pulse { 0%, 100% { box-shadow: 0 0 14px rgba(249,115,22,0.12); } 50% { box-shadow: 0 0 28px rgba(249,115,22,0.3); } }
           @keyframes card-shine2 { 0%, 100% { transform: translateX(-150%) skewX(-20deg); } 50% { transform: translateX(150%) skewX(-20deg); } }
@@ -705,318 +733,210 @@ export default function MisEmociones() {
 
         <CompletionBanner lessonId="sombra" />
 
-        {/* ── Header Card ── */}
+        {/* ── 1. Cabecera Minimalista ── */}
         <div className="glass-card p-6 md:p-8 border-t-2 border-t-orange-500/50 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-amber-500/5 pointer-events-none" />
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-black uppercase tracking-wider mb-2">
-                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 bg-clip-text text-transparent">
-                  MIS EMOCIONES
+          <div className="relative z-10 flex flex-col items-center text-center gap-4">
+            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-wider">
+              <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 bg-clip-text text-transparent">
+                MIS EMOCIONES
+              </span>
+            </h1>
+            <div className="flex items-center gap-3 justify-center flex-wrap">
+              <span className="bg-orange-500/20 text-orange-400 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-orange-500/30">
+                {route === "operador" ? "⚔️ Luchador" : "🛡️ Principiante"}
+              </span>
+              {diagScore > 0 && (
+                <span className="bg-amber-500/20 text-amber-400 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-amber-500/30">
+                  🎯 Saboteador: {diagScore}%
                 </span>
-              </h1>
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className="bg-orange-500/20 text-orange-400 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-orange-500/30">
-                  {route === "operador" ? "⚔️ Luchador" : "🛡️ Principiante"}
-                </span>
-                {diagScore > 0 && (
-                  <span className="bg-amber-500/20 text-amber-400 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-amber-500/30">
-                    🎯 Saboteador: {diagScore}%
-                  </span>
-                )}
-              </div>
-            </div>
-            {/* Circular progress */}
-            <div className="shrink-0">
-              <svg width="78" height="78" viewBox="0 0 78 78">
-                <circle cx="39" cy="39" r="32" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="4"/>
-                <circle cx="39" cy="39" r="32" fill="none" stroke="url(#hpg)" strokeWidth="4"
-                  strokeDasharray={`${progressPerc * 2.01} ${201 - progressPerc * 2.01}`}
-                  strokeDashoffset="50" strokeLinecap="round"
-                  style={{ transition: "stroke-dasharray .8s" }}
-                />
-                <defs>
-                  <linearGradient id="hpg" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#f97316"/>
-                    <stop offset="100%" stopColor="#10b981"/>
-                  </linearGradient>
-                </defs>
-                <text x="39" y="36" textAnchor="middle" fill="#fff" fontSize="17" fontWeight="900" fontFamily="monospace">{completedCount}</text>
-                <text x="39" y="49" textAnchor="middle" fill="#334155" fontSize="8" fontWeight="700" fontFamily="monospace">/10</text>
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Tab Navigation ── */}
-        <div className="flex bg-white/[0.02] rounded-xl p-1 border border-white/5">
-          {([
-            { id: "mission" as const, label: "🎯 Misión" },
-            { id: "calendar" as const, label: "📅 Calendario" },
-            { id: "progress" as const, label: "📊 Progreso" },
-          ]).map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setDashTab(tab.id)}
-              className={cx(
-                "flex-1 py-2.5 px-4 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer",
-                dashTab === tab.id
-                  ? "bg-orange-500/15 text-orange-400 border border-orange-500/25"
-                  : "text-brand-text-muted hover:text-white border border-transparent"
               )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* ═══ TAB: MISIÓN ═══ */}
-        {dashTab === "mission" && (
-          <div className="space-y-6">
-            {/* El Camino — Horizontal Journey */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black text-brand-text-muted uppercase tracking-[0.2em]">EL CAMINO · 10 DÍAS</span>
-                <span className="text-[10px] font-black text-brand-text-muted uppercase tracking-[0.15em]">{completedCount}/10</span>
-              </div>
-              <div className="flex gap-1.5 overflow-x-auto pb-2" style={{ scrollbarWidth: "thin" }}>
-                {DAYS.map((dy, idx) => {
-                  const dn = completedDays[dy.day];
-                  const isNext = dy.day === nextDay && !completedDays[nextDay];
-                  const lk = getDayStatus(dy.day) === "locked";
-                  const pp = phaseColorMap[dy.phase];
-                  const showSep = idx === 3 || idx === 7;
-                  return (
-                    <div key={dy.day} className="flex items-stretch shrink-0">
-                      {showSep && <div className="w-2 flex items-center justify-center"><div className="w-0.5 h-8 bg-white/5 rounded-full" /></div>}
-                      <motion.button
-                        whileHover={!lk ? { y: -2 } : {}}
-                        onClick={() => { if (!lk) { setSelDay(dy.day); setView("day"); } }}
-                        disabled={lk}
-                        className={cx("w-[62px] rounded-xl text-center transition-all py-2.5 px-1", lk ? "opacity-40 cursor-not-allowed" : "cursor-pointer")}
-                        style={{
-                          border: isNext ? `2px solid ${pp.hex}` : dn ? `1px solid ${pp.hex}50` : "1px solid rgba(255,255,255,0.05)",
-                          background: dn ? `${pp.hex}15` : isNext ? `${pp.hex}0a` : "rgba(255,255,255,0.015)",
-                          animation: isNext ? "journey-pulse 2.5s ease-in-out infinite" : "none",
-                        }}
-                      >
-                        <div className="text-[8px] font-black tracking-wider font-mono mb-1" style={{ color: lk ? "#475569" : pp.hex }}>DÍA {dy.day}</div>
-                        <div className="text-xl leading-none mb-1" style={{ filter: lk ? "grayscale(0.6) opacity(0.5)" : "none" }}>{dy.icon}</div>
-                        <div className="text-[10px] font-black" style={{ color: dn ? pp.hex : lk ? "#475569" : "#cbd5e1" }}>
-                          {dn ? "✓" : lk ? "🔒" : isNext ? "●" : ""}
-                        </div>
-                      </motion.button>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="flex justify-between mt-2 px-1">
-                <span className="text-[8px] font-black tracking-widest text-orange-500">🎯 DETECTAR</span>
-                <span className="text-[8px] font-black tracking-widest text-amber-500">⚔️ DESACTIVAR</span>
-                <span className="text-[8px] font-black tracking-widest text-emerald-500">👑 DOMINAR</span>
-              </div>
+              {streak > 0 && (
+                <span className="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-red-500/30">
+                  🔥 Racha: {streak}
+                </span>
+              )}
             </div>
 
-            {/* Phase Counters */}
-            <div className="grid grid-cols-3 gap-3">
-              {([
-                { label: "Detectar", count: Object.keys(completedDays).filter(k => Number(k) <= 3 && completedDays[Number(k)]).length, total: 3, color: "#f97316", icon: "🎯" },
-                { label: "Desactivar", count: Object.keys(completedDays).filter(k => Number(k) > 3 && Number(k) <= 7 && completedDays[Number(k)]).length, total: 4, color: "#f59e0b", icon: "⚔️" },
-                { label: "Dominar", count: Object.keys(completedDays).filter(k => Number(k) > 7 && completedDays[Number(k)]).length, total: 3, color: "#10b981", icon: "👑" },
-              ]).map((s) => (
-                <div key={s.label} className="glass-card p-4 text-center">
-                  <div className="text-xl mb-1">{s.icon}</div>
-                  <div className="text-lg font-black font-mono" style={{ color: s.color }}>{s.count}/{s.total}</div>
-                  <div className="text-[9px] font-black text-brand-text-muted uppercase tracking-widest">{s.label}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Next Day CTA */}
-            {!completedDays[nextDay] && nextDay <= 10 && (
-              <>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: nextPc.hex }}>
-                    ▸ {nextDay === 1 ? "EMPIEZA HOY" : "SIGUIENTE MISIÓN"}
-                  </span>
-                  {streak > 0 && <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">🔥 {streak} días seguidos</span>}
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={() => { setSelDay(nextDayData.day); setView("day"); }}
-                  className="w-full glass-card p-5 md:p-6 text-left relative overflow-hidden cursor-pointer transition-all"
-                  style={{ borderColor: `${nextPc.hex}30`, borderWidth: 1, animation: "journey-pulse 2.5s ease-in-out infinite" }}
-                >
-                  <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(135deg, ${nextPc.hex}10, transparent 60%)` }} />
-                  {/* Shine sweep */}
-                  <div className="absolute inset-0 skew-x-[-20deg] pointer-events-none" style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)", animation: "card-shine2 5s ease-in-out infinite" }} />
-                  <div className="relative z-10 flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0" style={{ background: `${nextPc.hex}15` }}>{nextDayData.icon}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-black font-mono tracking-wider mb-1" style={{ color: nextPc.hex }}>
-                        DÍA {nextDayData.day} · {PHASES[nextDayData.phase].label.toUpperCase()}
-                      </div>
-                      <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-wider mb-2 leading-tight">{nextDayData.title}</h3>
-                      <p className="text-sm text-orange-200/70 italic font-medium line-clamp-2">"{nextDayData.hook}"</p>
-                    </div>
-                    <ArrowRight className="w-6 h-6 shrink-0 mt-2 animate-pulse" style={{ color: nextPc.hex }} />
-                  </div>
-                  {route && (
-                    <div className="flex gap-2 mt-4 flex-wrap relative z-10">
-                      {nextDayData.routes[route].exercises.map((ex, i) => (
-                        <span key={i} className="text-[11px] font-bold px-3 py-1.5 rounded-full border"
-                          style={{
-                            background: tasksDone[`${nextDayData.day}-${i}`] ? `${nextPc.hex}20` : "rgba(255,255,255,0.05)",
-                            color: tasksDone[`${nextDayData.day}-${i}`] ? nextPc.hex : "#cbd5e1",
-                            borderColor: tasksDone[`${nextDayData.day}-${i}`] ? `${nextPc.hex}40` : "rgba(255,255,255,0.08)"
-                          }}>
-                          {ex.icon} {ex.title.length > 20 ? ex.title.slice(0, 20) + "…" : ex.title}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </motion.button>
-              </>
-            )}
-
-            {/* All Complete */}
-            {completedCount === 10 && (
-              <div className="glass-card p-8 text-center border-t-2 border-t-emerald-500/50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
-                <div className="relative z-10 space-y-3">
-                  <div className="text-5xl">👑</div>
-                  <h2 className="text-2xl font-black text-emerald-500 uppercase tracking-wider">¡Saboteador Desactivado!</h2>
-                  <p className="text-slate-400 text-base">Has completado el protocolo de 10 días. Eres otro trader.</p>
-                  
-                  <div className="pt-6">
-                    <p className="text-sm font-medium text-slate-300 mb-4">
-                      El siguiente paso: descubrir <span className="text-orange-400 font-bold">por qué o de dónde vienen tus trampas de dinero</span>.
-                    </p>
-                    <Link
-                      to="/app/trampas-dinero"
-                      className="btn-premium-orange inline-flex py-3 px-8 rounded-xl text-sm font-black uppercase tracking-widest"
-                      style={{
-                        background: 'linear-gradient(135deg, #f97316 0%, #f59e0b 100%)',
-                        color: '#fff',
-                        boxShadow: '0 0 20px rgba(249,115,22,0.3)',
-                      }}
-                    >
-                      SIGUIENTE → TRAMPAS DEL DINERO
-                    </Link>
-                  </div>
-                </div>
+            {/* Linear Progress Bar */}
+            <div className="w-full max-w-md mt-4">
+              <div className="flex justify-between text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
+                <span>Progreso</span>
+                <span className="text-white">{completedCount} de 10 días</span>
               </div>
-            )}
-
-            {/* ── Inline Share Section (matches GastosHormiga pattern) ── */}
-            <div className="glass-card p-6 md:p-8 space-y-6 border-orange-500/10">
-              <div className="flex items-center gap-4">
-                <Share2 className="w-6 h-6 text-orange-500" />
-                <div>
-                  <div className="font-black uppercase tracking-tight text-base">Comparte tu progreso</div>
-                  <div className="text-brand-text-muted text-sm font-medium mt-1">Recluta a otro trader — el que pierde por su propia culpa lo necesita más que nadie.</div>
-                </div>
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progressPerc}%` }}
+                  className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500"
+                  transition={{ duration: 1, ease: "easeOut" }}
+                />
               </div>
-
-              <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
-                <p className="text-brand-text-muted text-sm leading-relaxed font-medium">
-                  "🚨 Acabo de descubrir al <span className="text-orange-400 font-black">trader que me hacía perder dinero</span>. Resulta que vivía dentro de mí.{' '}
-                  Día <span className="text-orange-400 font-black">{Math.min(nextDay, 10)}/10</span> del reto <span className="text-orange-400 font-black">Mis Emociones</span> (GENY LAB).{' '}
-                  ¿Te atreves a conocer al tuyo? 🎯"
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <button onClick={() => handleSocialShare('whatsapp')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all text-sm font-black text-white/80 hover:text-white">
-                  <span className="text-[#25D366]">💬</span> WhatsApp
-                </button>
-                <button onClick={() => handleSocialShare('facebook')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1877F2]/10 border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition-all text-sm font-black text-white/80 hover:text-white">
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#1877F2]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073c0 6.028 4.388 11.024 10.125 11.927v-8.437H7.078v-3.49h3.047V9.42c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.929-1.956 1.883v2.263h3.328l-.532 3.49h-2.796v8.437C19.612 23.097 24 18.1 24 12.073z"/></svg> 
-                </button>
-                <button onClick={() => handleSocialShare('linkedin')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0A66C2]/10 border border-[#0A66C2]/20 hover:bg-[#0A66C2]/20 transition-all text-sm font-black text-white/80 hover:text-white">
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#0A66C2]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> LinkedIn
-                </button>
-                <button onClick={() => handleSocialShare('twitter')} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm font-black text-white/80 hover:text-white">
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/70" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X
-                </button>
-              </div>
-
-              <button
-                onClick={handleCopyLink}
-                className={cx(
-                  "w-full flex items-center justify-center gap-3 p-3.5 rounded-xl border transition-all font-black uppercase tracking-widest text-xs",
-                  copiedLink
-                    ? "bg-brand-green/10 border-brand-green/30 text-brand-green"
-                    : "bg-white/5 border-white/10 text-brand-text-muted hover:bg-white/10 hover:text-white"
-                )}
-              >
-                {copiedLink ? (<><Check className="w-5 h-5" /> ¡Link Copiado!</>) : (<><Copy className="w-5 h-5" /> Copiar Link de Resultados</>)}
-              </button>
-            </div>
-
-            {/* Cambiar de misión */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => { setRoute(null); setView("route"); }}
-                className="flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em] py-4"
-              >
-                🔄 Cambiar de misión
-              </button>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* ═══ TAB: CALENDARIO ═══ */}
-        {dashTab === "calendar" && (
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl font-black text-white uppercase tracking-wider mb-3">Una misión a la vez</h2>
-              <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                <motion.div initial={{ width: 0 }} animate={{ width: `${progressPerc}%` }} className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 rounded-full" />
+        {/* ── 2. Misión Actual (Hero) ── */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-black text-white uppercase tracking-[0.2em] px-3 py-1 bg-white/10 rounded-full">
+              TU MISIÓN ACTUAL
+            </span>
+          </div>
+
+          {!completedDays[nextDay] && nextDay <= 10 ? (
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={() => { setSelDay(nextDayData.day); setView("day"); }}
+              className="w-full glass-card p-6 md:p-8 text-left relative overflow-hidden cursor-pointer transition-all border-l-4"
+              style={{
+                borderLeftColor: nextPc.hex,
+                borderTopColor: "rgba(255,255,255,0.05)",
+                borderRightColor: "rgba(255,255,255,0.05)",
+                borderBottomColor: "rgba(255,255,255,0.05)",
+                animation: "journey-pulse 2.5s ease-in-out infinite"
+              }}
+            >
+              <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(135deg, ${nextPc.hex}15, transparent 70%)` }} />
+              <div className="absolute inset-0 skew-x-[-20deg] pointer-events-none" style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)", animation: "card-shine2 5s ease-in-out infinite" }} />
+              
+              <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shrink-0 border border-white/10" style={{ background: `${nextPc.hex}20` }}>
+                  {nextDayData.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-black font-mono tracking-widest mb-2" style={{ color: nextPc.hex }}>
+                    DÍA {nextDayData.day} · {PHASES[nextDayData.phase].label.toUpperCase()}
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider mb-2 leading-tight">
+                    {nextDayData.title}
+                  </h3>
+                  <p className="text-base text-slate-300 italic font-medium">"{nextDayData.hook}"</p>
+                </div>
+                <div className="shrink-0 w-full md:w-auto mt-4 md:mt-0">
+                  <div className="flex items-center justify-center gap-2 bg-white text-black px-6 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition-colors">
+                    EMPEZAR MISIÓN <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </motion.button>
+          ) : (
+            <div className="glass-card p-8 text-center border-t-2 border-t-emerald-500/50 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
+              <div className="relative z-10 space-y-4">
+                <div className="text-6xl">👑</div>
+                <h2 className="text-3xl font-black text-emerald-500 uppercase tracking-wider">¡Saboteador Desactivado!</h2>
+                <p className="text-slate-300 text-lg">Has completado el protocolo de 10 días. Eres otro trader.</p>
+                
+                <div className="pt-6">
+                  <p className="text-sm font-medium text-slate-400 mb-4">
+                    El siguiente paso: descubrir <span className="text-orange-400 font-bold">por qué o de dónde vienen tus trampas de dinero</span>.
+                  </p>
+                  <Link
+                    to="/app/trampas-dinero"
+                    className="btn-premium-orange inline-flex py-4 px-8 rounded-xl text-sm font-black uppercase tracking-widest transition-transform hover:scale-105"
+                    style={{
+                      background: 'linear-gradient(135deg, #f97316 0%, #f59e0b 100%)',
+                      color: '#fff',
+                      boxShadow: '0 0 20px rgba(249,115,22,0.3)',
+                    }}
+                  >
+                    SIGUIENTE RETO <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </div>
               </div>
             </div>
+          )}
+        </div>
+
+        {/* ── 3. Línea de Tiempo Vertical (El Camino) ── */}
+        <div className="space-y-6 pt-8 border-t border-white/10">
+          <div className="text-center mb-8">
+            <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest">El Camino de 10 Días</h2>
+            <p className="text-brand-text-muted text-sm mt-2">Sigue tu progreso a través de las 3 fases del dominio.</p>
+          </div>
+
+          <div className="relative max-w-2xl mx-auto">
+            {/* Línea conectora central */}
+            <div className="absolute top-8 bottom-8 left-[28px] md:left-[50%] w-1 bg-white/5 -ml-[0.5px] rounded-full" />
+
             {Object.entries(PHASES).map(([phaseKey, phaseObj]) => {
               const daysInPhase = DAYS.filter((d) => d.phase === phaseKey);
               const pc = phaseColorMap[phaseKey];
+              
               return (
-                <div key={phaseKey} className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{phaseObj.icon}</span>
-                    <span className="text-sm font-black text-white uppercase tracking-wider">{phaseObj.label}</span>
-                    <span className="text-[10px] font-mono text-brand-text-muted">Días {phaseObj.range[0]}–{phaseObj.range[1]}</span>
+                <div key={phaseKey} className="relative mb-12 last:mb-0">
+                  {/* Phase Marker */}
+                  <div className="flex items-center md:justify-center mb-8 relative z-10">
+                    <div className="bg-[#0B0C10] px-5 py-2.5 rounded-full border border-white/10 flex items-center gap-3 shadow-xl">
+                      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: pc.hex }} />
+                      <span className="text-xl">{phaseObj.icon}</span>
+                      <span className="text-sm font-black uppercase tracking-widest" style={{ color: pc.hex }}>
+                        FASE {phaseObj.label}
+                      </span>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {daysInPhase.map((d) => {
+
+                  {/* Days in Phase */}
+                  <div className="space-y-4">
+                    {daysInPhase.map((d, index) => {
                       const dn = completedDays[d.day];
                       const isNext = d.day === nextDay && !completedDays[nextDay];
                       const lk = getDayStatus(d.day) === "locked";
-                      const exDone = route ? d.routes[route].exercises.filter((_, i) => tasksDone[`${d.day}-${i}`]).length : 0;
-                      const exTotal = route ? d.routes[route].exercises.length : 4;
+                      const isEven = index % 2 === 0;
+
                       return (
-                        <motion.button
-                          key={d.day}
-                          whileHover={!lk ? { y: -2 } : {}}
-                          onClick={() => { if (!lk) { setSelDay(d.day); setView("day"); } }}
-                          disabled={lk}
-                          className={cx("p-4 rounded-xl text-left transition-all relative", lk ? "opacity-20 cursor-not-allowed" : "cursor-pointer")}
-                          style={{
-                            background: dn ? `${pc.hex}12` : isNext ? `${pc.hex}08` : "rgba(255,255,255,0.015)",
-                            border: `1px solid ${dn ? `${pc.hex}35` : isNext ? `${pc.hex}30` : "rgba(255,255,255,0.04)"}`,
-                            animation: isNext ? "journey-pulse 2.5s ease-in-out infinite" : "none",
-                          }}
-                        >
-                          {dn && <div className="absolute top-2 right-2 text-sm">✅</div>}
-                          {lk && <div className="absolute top-2 right-2 text-xs">🔒</div>}
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-2xl">{d.icon}</span>
-                            <div>
-                              <div className="text-[8px] font-black font-mono tracking-wider" style={{ color: pc.hex }}>DÍA {d.day}</div>
-                              <div className="text-sm font-black text-white leading-tight mt-0.5">{d.title}</div>
+                        <div key={d.day} className={cx("relative flex items-center w-full", "md:justify-between")}>
+                          {/* Nodo central (círculo) */}
+                          <div className="absolute left-[16px] md:left-1/2 md:-ml-4 w-8 h-8 rounded-full bg-[#0B0C10] flex items-center justify-center z-10 border-4 border-[#0B0C10]">
+                            <div
+                              className="w-full h-full rounded-full flex items-center justify-center text-xs font-black shadow-inner"
+                              style={{
+                                backgroundColor: dn ? pc.hex : isNext ? `${pc.hex}40` : "rgba(255,255,255,0.1)",
+                                color: dn ? "#000" : "#fff",
+                                border: isNext ? `2px solid ${pc.hex}` : "none"
+                              }}
+                            >
+                              {dn ? "✓" : d.day}
                             </div>
                           </div>
-                          <div className="text-[10px] font-mono font-bold text-brand-text-muted">{exDone}/{exTotal} ejercicios</div>
-                        </motion.button>
+
+                          {/* Tarjeta del Día */}
+                          <motion.div
+                            whileHover={!lk ? { scale: 1.02 } : {}}
+                            onClick={() => { if (!lk) { setSelDay(d.day); setView("day"); } }}
+                            className={cx(
+                              "w-[calc(100%-4rem)] ml-16 md:ml-0 md:w-[calc(50%-2.5rem)]",
+                              !isEven ? "md:order-last" : "md:order-first md:text-right"
+                            )}
+                          >
+                            <div
+                              className={cx(
+                                "p-4 rounded-xl transition-all relative glass-card",
+                                lk ? "opacity-40 grayscale cursor-not-allowed border-transparent bg-white/5" : "cursor-pointer hover:bg-white/10"
+                              )}
+                              style={{
+                                borderColor: isNext ? pc.hex : dn ? `${pc.hex}50` : "rgba(255,255,255,0.05)",
+                                borderWidth: isNext ? 2 : 1,
+                                boxShadow: isNext ? `0 0 20px ${pc.hex}20` : "none"
+                              }}
+                            >
+                              <div className={cx("flex items-center gap-3", !isEven ? "flex-row" : "md:flex-row-reverse flex-row")}>
+                                <div className="text-3xl shrink-0">{d.icon}</div>
+                                <div className="flex-1">
+                                  <div className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: lk ? "#64748b" : pc.hex }}>
+                                    DÍA {d.day}
+                                  </div>
+                                  <div className="text-sm font-black text-white leading-tight">
+                                    {d.title}
+                                  </div>
+                                </div>
+                                {lk && <Lock className="w-4 h-4 text-slate-500 shrink-0" />}
+                              </div>
+                            </div>
+                          </motion.div>
+                        </div>
                       );
                     })}
                   </div>
@@ -1024,71 +944,45 @@ export default function MisEmociones() {
               );
             })}
           </div>
-        )}
+        </div>
 
-        {/* ═══ TAB: PROGRESO ═══ */}
-        {dashTab === "progress" && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-black text-white uppercase tracking-wider">Tu progreso de campo</h2>
-            {/* Big SVG Circle */}
-            <div className="glass-card p-8 text-center">
-              <svg width="140" height="140" viewBox="0 0 140 140" className="mx-auto block">
-                <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="6"/>
-                <circle cx="70" cy="70" r="58" fill="none" stroke="url(#bpg)" strokeWidth="6"
-                  strokeDasharray={`${progressPerc * 3.64} ${364 - progressPerc * 3.64}`}
-                  strokeDashoffset="91" strokeLinecap="round"
-                  style={{ transition: "stroke-dasharray 1s" }}
-                />
-                <defs>
-                  <linearGradient id="bpg" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#f97316"/>
-                    <stop offset="50%" stopColor="#f59e0b"/>
-                    <stop offset="100%" stopColor="#10b981"/>
-                  </linearGradient>
-                </defs>
-                <text x="70" y="65" textAnchor="middle" fill="#fff" fontSize="30" fontWeight="900" fontFamily="monospace">{progressPerc}%</text>
-                <text x="70" y="82" textAnchor="middle" fill="#475569" fontSize="10" fontWeight="700" fontFamily="monospace">Saboteador</text>
-                <text x="70" y="95" textAnchor="middle" fill="#475569" fontSize="10" fontWeight="700" fontFamily="monospace">desactivado</text>
-              </svg>
-              <div className="flex justify-center gap-10 mt-6">
-                {([
-                  { label: "Días", value: String(completedCount), color: "#f97316" },
-                  { label: "Racha", value: `${streak}🔥`, color: "#f59e0b" },
-                  { label: "Ejercicios", value: String(Object.keys(tasksDone).filter(k => tasksDone[k]).length), color: "#10b981" },
-                ]).map((s) => (
-                  <div key={s.label}>
-                    <div className="text-xl font-black font-mono" style={{ color: s.color }}>{s.value}</div>
-                    <div className="text-[9px] font-black text-brand-text-muted uppercase tracking-widest">{s.label}</div>
-                  </div>
-                ))}
-              </div>
+        {/* ── 4. Acciones Secundarias ── */}
+        <div className="grid md:grid-cols-2 gap-4 pt-8 border-t border-white/10">
+          <div className="glass-card p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <Share2 className="w-5 h-5 text-orange-500" />
+              <h3 className="font-black uppercase tracking-wider text-sm">Comparte tu Progreso</h3>
             </div>
-            {/* Milestones */}
-            <div className="space-y-2">
-              {([
-                { threshold: 3, label: "Saboteador Detectado", icon: "🎯" },
-                { threshold: 7, label: "Saboteador Desactivado", icon: "⚔️" },
-                { threshold: 10, label: "Trader Imparable", icon: "👑" },
-              ]).map((m) => {
-                const ok = completedCount >= m.threshold;
-                return (
-                  <div key={m.threshold} className={cx("glass-card p-4 flex items-center gap-4", ok ? "border-l-4" : "opacity-40")} style={ok ? { borderLeftColor: "#f97316" } : {}}>
-                    <span className="text-2xl" style={{ filter: ok ? "none" : "grayscale(1)" }}>{m.icon}</span>
-                    <span className={cx("text-sm font-black flex-1", ok ? "text-orange-300" : "text-brand-text-muted")}>{m.label}</span>
-                    {ok && <CheckCircle className="w-5 h-5 text-orange-500" />}
-                  </div>
-                );
-              })}
+            <p className="text-xs text-slate-400 font-medium">Invita a otros traders a enfrentarse a su propio Saboteador.</p>
+            <div className="flex gap-2">
+              <button onClick={() => handleSocialShare('whatsapp')} className="flex-1 p-2 rounded-lg bg-[#25D366]/10 hover:bg-[#25D366]/20 transition-all flex justify-center text-[#25D366]">
+                <span className="text-sm">💬</span>
+              </button>
+              <button onClick={() => handleSocialShare('twitter')} className="flex-1 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all flex justify-center text-white/70">
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> 
+              </button>
+              <button onClick={handleCopyLink} className="flex-1 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all flex justify-center text-slate-400">
+                {copiedLink ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+              </button>
             </div>
-            <button onClick={() => setDashTab("mission")} className="w-full glass-card p-4 text-center cursor-pointer text-orange-400 text-sm font-black flex items-center justify-center gap-2 transition-all hover:bg-white/[0.04] uppercase tracking-widest">
-              <Share2 className="w-4 h-4" /> Compartir mi progreso
+          </div>
+
+          <div className="glass-card p-6 flex flex-col justify-center items-center text-center space-y-3">
+            <h3 className="font-black uppercase tracking-wider text-sm text-slate-300">¿Quieres cambiar de misión?</h3>
+            <p className="text-xs text-slate-500 font-medium">Revisa tu diagnóstico o cambia entre Principiante y Operador.</p>
+            <button
+              onClick={() => { setRoute(null); setView("route"); }}
+              className="text-orange-400 hover:text-orange-300 transition-colors uppercase font-black text-xs tracking-widest px-4 py-2 bg-orange-500/10 rounded-lg hover:bg-orange-500/20"
+            >
+              🔄 Cambiar de Ruta
             </button>
           </div>
-        )}
+        </div>
 
       </motion.div>
     );
   }
+
 
   // ═══════════════════════════════════════════════════════════════════════
   // VIEW: DAY DETAIL
