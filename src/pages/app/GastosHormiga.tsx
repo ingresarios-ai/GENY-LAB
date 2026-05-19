@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'motion/react';
 import { TrendingUp, ChevronRight, ArrowLeft, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 import { Category, Currency, Projection } from './gastos-hormiga/types';
 import { CATEGORIES, CURRENCIES, ANNUAL_RATE, getRecommendation } from './gastos-hormiga/constants';
@@ -40,6 +41,7 @@ export const GastosHormiga = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('Trader');
 
   const total = useMemo(
     () => Object.values(amounts).reduce((s: number, v) => s + (parseFloat(v as string) || 0), 0),
@@ -124,6 +126,19 @@ export const GastosHormiga = () => {
     setLoading(false);
   }, []);
 
+  // ── Fetch user name ───────────────────────────────────────────────────
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser?.email) {
+          const { data } = await supabase.from('enrolled_users').select('name').eq('email', authUser.email).single();
+          if (data?.name) setUserName(data.name);
+        }
+      } catch {}
+    })();
+  }, []);
+
   // ── Save progress ────────────────────────────────────────────────────────
   const handleComplete = async () => {
     setStep(2);
@@ -158,7 +173,7 @@ export const GastosHormiga = () => {
   const getShareUrl = useCallback(() => {
     if (!user) return '';
     const payload = {
-      n: 'Trader',
+      n: userName,
       t: 'gastos',
       s: proj[3]?.val || 0,
       c: {

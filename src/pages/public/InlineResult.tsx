@@ -138,7 +138,7 @@ function SombraResult({ d }: { d: any }) {
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🎭</motion.div>
         <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Saboteador Interior · Día {day}/10</p>
         <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
-          "{d.n || 'Un Trader'}" está enfrentando a su Saboteador
+          {d.n ? `${d.n} está enfrentando a su Saboteador` : 'Reto del Saboteador Interior'}
         </h1>
         <p className="text-slate-400 text-base max-w-md mx-auto">Todos tenemos un <span className="text-white font-bold">Saboteador Interior</span> — la voz que te hace cerrar trades ganadores, mover el stop loss, o entrar por venganza.</p>
       </div>
@@ -165,7 +165,7 @@ function FlowResult({ d }: { d: any }) {
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">⚡</motion.div>
         <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Flow · Día {day}/10</p>
         <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
-          "{d.n || 'Un Trader'}" está activando su estado de Flow
+          {d.n ? `${d.n} está activando su estado de Flow` : 'Estado de Flow Activado'}
         </h1>
         <p className="text-slate-400 text-base max-w-md mx-auto">El <span className="text-white font-bold">estado de Flow</span> es cuando tu mente opera a su máximo — sin miedo, sin ego, concentración absoluta.</p>
       </div>

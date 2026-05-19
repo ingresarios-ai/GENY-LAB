@@ -87,14 +87,17 @@ function BlurredSection({ label }: { label: string }) {
    ACTIVITY RENDERERS — Viral / Curiosity-driven
    ────────────────────────────────────────────────────────── */
 
+function getName(d: any) { return d.userName || d.n || d.name || null; }
+
 function ADNResult({ d }: { d: any }) {
   const color = '#00D4FF';
+  const name = getName(d);
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">{d.emoji || '🧬'}</motion.div>
         <p className="text-xs font-black uppercase tracking-widest text-[#FFD700]">Test de ADN Financiero</p>
-        <h1 className="text-4xl md:text-5xl font-black uppercase">Mi ADN es <span style={{ color }}>{d.adn}</span></h1>
+        <h1 className="text-4xl md:text-5xl font-black uppercase">{name ? `El ADN de ${name}:` : 'Mi ADN es'} <span style={{ color }}>{d.adn}</span></h1>
         <p className="text-slate-400 text-base max-w-sm mx-auto">Cada trader tiene un perfil genético financiero único que define cómo gana, cómo pierde y cómo se sabotea.</p>
       </div>
       {/* Show just the teaser — enough to intrigue */}
@@ -158,11 +161,13 @@ function TermostatoResult({ d }: { d: any }) {
 
 function GastosHormigaResult({ d }: { d: any }) {
   const fmt = (n: number) => `$${Math.round(n).toLocaleString('en-US')}`;
+  const name = getName(d);
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🐜</motion.div>
         <p className="text-xs font-black uppercase tracking-widest text-[#FFD700]">Gastos Hormiga</p>
+        {name && <p className="text-slate-400 text-sm"><span className="text-white font-bold">{name}</span> acaba de descubrir sus fugas invisibles</p>}
         <h1 className="text-5xl md:text-6xl font-black text-white">{fmt(d.total)}<span className="text-lg text-white/40">/mes</span></h1>
         <p className="text-lg text-red-400 font-bold">Eso es {fmt((d.total || 0) * 12)} al año que desaparece sin darte cuenta</p>
       </div>
@@ -183,12 +188,13 @@ function GastosHormigaResult({ d }: { d: any }) {
 
 function TrampasDineroResult({ d }: { d: any }) {
   const totalResponses = Object.keys(d.responses || {}).length;
+  const name = getName(d);
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🧠</motion.div>
         <p className="text-xs font-black uppercase tracking-widest text-amber-500">Trampas del Dinero</p>
-        <h1 className="text-3xl md:text-4xl font-black text-white uppercase">Reto de {totalResponses} Preguntas Completado</h1>
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase">{name ? `${name} completó` : 'Reto de'} {totalResponses} Preguntas</h1>
         <p className="text-slate-400 text-base max-w-sm mx-auto">Tu cerebro tiene trampas mentales que te hacen tomar decisiones financieras irracionales. Cada una te cuesta dinero real.</p>
       </div>
       <div className="glass-card p-6 border-l-4 border-l-amber-500">
@@ -208,12 +214,13 @@ function TrampasDineroResult({ d }: { d: any }) {
 function PedemResultView({ d }: { d: any }) {
   const entries = Object.entries(d.data || {});
   const preview = entries.slice(0, 2);
+  const name = getName(d);
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">📋</motion.div>
         <p className="text-xs font-black uppercase tracking-widest text-brand-blue">Mi Primer PEDEM</p>
-        <h1 className="text-3xl md:text-4xl font-black text-white uppercase">Plan Estructurado de Trading</h1>
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase">{name ? `${name} ya tiene su` : ''} Plan Estructurado de Trading</h1>
         <p className="text-slate-400 text-base max-w-sm mx-auto">El PEDEM es el plan que separa a los traders que improvisan de los que son consistentes.</p>
       </div>
       {preview.length > 0 && (
@@ -241,13 +248,14 @@ function SombraResult({ d }: { d: any }) {
   const day = d.selDay || d.d || 1;
   const phase = day <= 3 ? 'Detectar' : day <= 7 ? 'Desactivar' : 'Dominar';
   const phaseColor = day <= 3 ? '#f97316' : day <= 7 ? '#f59e0b' : '#10b981';
+  const name = getName(d);
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🎭</motion.div>
         <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Saboteador Interior · Día {day}/10</p>
         <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
-          {d.title ? `"${d.title}"` : `Fase ${phase} Activada`}
+          {name ? `${name} está enfrentando a su Saboteador` : (d.title ? `"${d.title}"` : `Fase ${phase} Activada`)}
         </h1>
         <p className="text-slate-400 text-base max-w-md mx-auto">Todos tenemos un <span className="text-white font-bold">Saboteador Interior</span> — una voz que nos hace cerrar trades ganadores antes de tiempo, mover el stop loss, o entrar por venganza.</p>
       </div>
@@ -260,8 +268,8 @@ function SombraResult({ d }: { d: any }) {
 
       {/* What they discovered */}
       <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: phaseColor }}>
-        <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>Lo que descubrió este trader</p>
-        <p className="text-base text-white leading-relaxed">Completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del reto más difícil: enfrentar su propia psicología de trading. La mayoría abandona en el día 3.</p>
+        <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>{name ? `Lo que descubrió ${name}` : 'Lo que descubrió'}</p>
+        <p className="text-base text-white leading-relaxed">{name || 'Este trader'} completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del reto más difícil: enfrentar su propia psicología de trading. La mayoría abandona en el día 3.</p>
       </div>
 
       <BlurredSection label="Tu perfil de Saboteador · Diario emocional" />
@@ -278,13 +286,14 @@ function SombraResult({ d }: { d: any }) {
 function FlowResult({ d }: { d: any }) {
   const day = d.selDay || d.d || 1;
   const phaseColor = day <= 3 ? '#3b82f6' : day <= 6 ? '#f59e0b' : '#10b981';
+  const name = getName(d);
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">⚡</motion.div>
         <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Flow · Día {day}/10</p>
         <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
-          {d.title ? `"${d.title}"` : 'Estado de Flow Activado'}
+          {name ? `${name} está activando su estado de Flow` : (d.title ? `"${d.title}"` : 'Estado de Flow Activado')}
         </h1>
         <p className="text-slate-400 text-base max-w-md mx-auto">El <span className="text-white font-bold">estado de Flow</span> es cuando tu mente opera a su máximo rendimiento — sin miedo, sin ego, concentración absoluta.</p>
       </div>
@@ -295,8 +304,8 @@ function FlowResult({ d }: { d: any }) {
       </div>
 
       <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: phaseColor }}>
-        <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>Lo que descubrió este trader</p>
-        <p className="text-base text-white leading-relaxed">Completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del entrenamiento de Flow para traders. Concentración absoluta. Rendimiento máximo.</p>
+        <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>{name ? `Lo que descubrió ${name}` : 'Lo que descubrió'}</p>
+        <p className="text-base text-white leading-relaxed">{name || 'Este trader'} completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del entrenamiento de Flow para traders. Concentración absoluta. Rendimiento máximo.</p>
       </div>
 
       <BlurredSection label="Tu perfil de Flow · Ritual pre-trading" />

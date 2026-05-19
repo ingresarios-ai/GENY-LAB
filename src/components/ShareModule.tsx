@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Share2, Copy, Check, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -20,6 +20,19 @@ export default function ShareModule({ activity, title, resultData, shareMessage 
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState(false);
   const [open, setOpen] = useState(false);
+  const [userName, setUserName] = useState<string>('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.email) {
+          const { data } = await supabase.from('enrolled_users').select('name').eq('email', user.email).single();
+          if (data?.name) setUserName(data.name);
+        }
+      } catch {}
+    })();
+  }, []);
 
   const baseUrl = window.location.origin;
   const defaultMsg = shareMessage || `¡Acabo de completar "${title}" en GENY LAB de Ingresarios! 🚀`;
@@ -29,10 +42,11 @@ export default function ShareModule({ activity, title, resultData, shareMessage 
     setSaving(true);
     try {
       const code = generateCode();
+      const enrichedData = { ...resultData, userName: userName || undefined };
       const { error } = await supabase.from('shared_results').insert({
         share_code: code,
         activity,
-        result_data: resultData,
+        result_data: enrichedData,
       });
       if (error) throw error;
       const url = `${baseUrl}/compartir/${code}`;
