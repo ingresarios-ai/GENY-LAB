@@ -153,7 +153,7 @@ export default function RetoFlow() {
       r: route || "novato",
       d: Object.values(completedDays).filter(Boolean).length,
     };
-    return `https://reto.ingresarios.net/resultado/${btoa(JSON.stringify(payload))}`;
+    return `https://genylab.ingresarios.net/resultado/${btoa(JSON.stringify(payload))}`;
   };
 
   const handleCopyLink = () => {

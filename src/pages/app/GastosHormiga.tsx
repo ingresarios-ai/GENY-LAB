@@ -169,7 +169,7 @@ export const GastosHormiga = () => {
       },
     };
     const encoded = btoa(JSON.stringify(payload));
-    return `https://lab.ingresarios.net/resultado/${encoded}`;
+    return `https://genylab.ingresarios.net/resultado/${encoded}`;
   }, [user, total, proj, currency]);
 
   const handleShare = (platform: string) => {

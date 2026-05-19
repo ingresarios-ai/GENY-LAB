@@ -204,7 +204,7 @@ export default function TrampasDinero() {
       c: TOTAL_QUESTIONS,
       p: "Completado",
     };
-    return `https://lab.ingresarios.net/resultado/${btoa(JSON.stringify(payload))}`;
+    return `https://genylab.ingresarios.net/resultado/${btoa(JSON.stringify(payload))}`;
   };
 
   const handleCopyLink = () => {

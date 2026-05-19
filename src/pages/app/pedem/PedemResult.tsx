@@ -93,7 +93,7 @@ export function PedemResult({ path, data, onRestart }: Props) {
     };
     // UTF-8 safe base64
     const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-    return `https://reto.ingresarios.net/resultado/${b64}`;
+    return `https://genylab.ingresarios.net/resultado/${b64}`;
   };
 
   const handleCopyLink = () => {
