@@ -9,11 +9,18 @@ import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, is
 
 export default function PathMap() {
   const navigate = useNavigate();
-  const progress = useMemo(() => getProgress(), []);
+  const [tick, setTick] = useState(0);
+  const progress = useMemo(() => getProgress(), [tick]);
   const level = getLevelForXp(progress.totalXp);
   const xpInLevel = getXpProgressInLevel(progress.totalXp);
   const completedCount = getCompletedCount();
   const allDone = isAllCompleted();
+
+  // Re-read progress after background sync has had time to finish
+  useEffect(() => {
+    const t = setTimeout(() => setTick(1), 1500);
+    return () => clearTimeout(t);
+  }, []);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const currentCardRef = useRef<HTMLDivElement>(null);
