@@ -9,6 +9,7 @@ import LessonScreen from './pages/app/LessonScreen';
 import Achievements from './pages/app/Achievements';
 import AuthGuard from './components/AuthGuard';
 import SharedResult from './pages/public/SharedResult';
+import InlineResult from './pages/public/InlineResult';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -48,6 +49,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/compartir/:shareCode" element={<SharedResult />} />
+        <Route path="/resultado/:data" element={<InlineResult />} />
         <Route path="/acceso/:code" element={<AutoLogin />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
