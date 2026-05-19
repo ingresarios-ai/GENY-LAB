@@ -157,20 +157,20 @@ export default function PathMap() {
                   Conexión a<br /><span className="text-[#00D1FF] font-light">GENY LAB</span>
                 </h1>
                 <p className="text-white/60 text-sm md:text-base font-medium leading-relaxed">
-                  Secuencia de entrenamiento algorítmico. Cada nodo está diseñado para calibrar tu precisión y mentalidad financiera.
+                  Sigue tu ruta paso a paso. Cada lección te acerca más a dominar tus finanzas.
                 </p>
                 <ul className="mt-6 space-y-4 text-sm text-white/60 font-mono">
                   <li className="flex gap-3 items-start">
                     <Play className="text-[#00D1FF] shrink-0 mt-0.5" size={16} />
-                    <span><strong className="text-white font-sans tracking-wide">CARGA DE DATOS:</strong> Asimilación del video clave.</span>
+                    <span><strong className="text-white font-sans tracking-wide">MIRA EL VIDEO:</strong> Aprende el concepto clave de cada lección.</span>
                   </li>
                   <li className="flex gap-3 items-start">
                     <Check className="text-[#00E676] shrink-0 mt-0.5" size={16} />
-                    <span><strong className="text-white font-sans tracking-wide">VALIDACIÓN:</strong> Pon en práctica lo aprendido.</span>
+                    <span><strong className="text-white font-sans tracking-wide">COMPLETA EL RETO:</strong> Pon en práctica lo aprendido con una actividad.</span>
                   </li>
                   <li className="flex gap-3 items-start">
                     <Lock className="text-white/40 shrink-0 mt-0.5" size={16} />
-                    <span><strong className="text-white font-sans tracking-wide">AUTORIZACIÓN:</strong> Tu progreso desbloquea nuevos sistemas.</span>
+                    <span><strong className="text-white font-sans tracking-wide">DESBLOQUEA:</strong> Al avanzar se abren nuevas lecciones y herramientas.</span>
                   </li>
                 </ul>
               </div>
