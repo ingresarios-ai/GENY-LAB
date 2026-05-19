@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Link } from "react-router-dom";
 import {
@@ -40,6 +40,7 @@ export default function MisEmociones() {
   const [selDay, setSelDay] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState(false);
   const [shareModal, setShareModal] = useState(false);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   // Diagnostic
   const [diagAns, setDiagAns] = useState<string[]>([]);
@@ -719,6 +720,14 @@ export default function MisEmociones() {
       dominar:     { bg: "from-emerald-500/10 to-transparent",  border: "border-emerald-500/20",  text: "text-emerald-500",  hex: "#10b981", glow: "16,185,129" },
     };
 
+    useEffect(() => {
+      if (completedCount === totalDays) {
+        setTimeout(() => {
+          bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
+      }
+    }, [completedCount, totalDays, view]);
+
     const streak = (() => { let s = 0; for (let i = 1; i <= 10; i++) { if (completedDays[i]) s++; else break; } return s; })();
     const nextDay = (() => { for (let i = 1; i <= 10; i++) { if (!completedDays[i]) return i; } return 10; })();
     const nextDayData = DAYS[Math.min(nextDay, 10) - 1];
@@ -731,7 +740,12 @@ export default function MisEmociones() {
           @keyframes card-shine2 { 0%, 100% { transform: translateX(-150%) skewX(-20deg); } 50% { transform: translateX(150%) skewX(-20deg); } }
         `}</style>
 
-        <CompletionBanner lessonId="sombra" />
+        <CompletionBanner 
+          ref={bannerRef}
+          lessonId="sombra" 
+          disabled={completedCount < totalDays}
+          progressLabel={`${completedCount}/${totalDays} días`}
+        />
 
         {/* ── 1. Cabecera Minimalista ── */}
         <div className="glass-card p-6 md:p-8 border-t-2 border-t-orange-500/50 relative overflow-hidden">
@@ -1151,7 +1165,7 @@ export default function MisEmociones() {
                 onClick={() => setView("home")}
                 className="btn-primary py-3 px-8 text-sm tracking-widest rounded-xl"
               >
-                VOLVER AL MAPA
+                {selDay === 10 ? "FINALIZAR RETO" : "VOLVER AL MAPA"}
               </button>
             </div>
           </motion.div>

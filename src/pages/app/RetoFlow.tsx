@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import {
@@ -54,6 +54,7 @@ export default function RetoFlow() {
   const [selDay, setSelDay] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState(false);
   const [glosarioQuery, setGlosarioQuery] = useState("");
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   // ── Load saved progress ─────────────────────────────────────────────────
   useEffect(() => {
@@ -477,9 +478,22 @@ export default function RetoFlow() {
       integracion:    { bg: "from-brand-green/10 to-transparent",  border: "border-brand-green/20",  text: "text-brand-green" },
     };
 
+    useEffect(() => {
+      if (completedCount === totalDays) {
+        setTimeout(() => {
+          bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
+      }
+    }, [completedCount, totalDays, view]);
+
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
-        <CompletionBanner lessonId="flow" />
+        <CompletionBanner 
+          ref={bannerRef}
+          lessonId="flow" 
+          disabled={completedCount < totalDays}
+          progressLabel={`${completedCount}/${totalDays} días`}
+        />
 
         {/* ── Header Card ── */}
         <div className="glass-card p-6 md:p-8 border-t-2 border-t-brand-green/50 relative overflow-hidden">
@@ -829,7 +843,7 @@ export default function RetoFlow() {
                   doc.save(`reto-flow-dia-${selDay}.pdf`);
                 }} 
                 onReset={() => setView("home")} 
-                resetLabel="Volver al mapa"
+                resetLabel={selDay === 10 ? "FINALIZAR RETO" : "VOLVER AL MAPA"}
               />
 
               <ShareModule 
