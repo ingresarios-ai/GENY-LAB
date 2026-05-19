@@ -219,28 +219,7 @@ export default function LessonScreen() {
             </div>
           </motion.div>
 
-          {/* Mark Video Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex justify-center lg:justify-start"
-          >
-            <button
-              onClick={handleMarkVideo}
-              disabled={videoMarked}
-              className={`
-                w-full lg:w-auto px-8 py-4 rounded-lg font-mono tracking-widest text-xs flex items-center justify-center gap-3 transition-all duration-300 border
-                ${videoMarked 
-                  ? 'bg-brand-emerald/[0.1] text-brand-emerald border-brand-emerald/40 cursor-default' 
-                  : 'bg-brand-cyan/10 text-brand-cyan border-brand-cyan/30 hover:bg-brand-cyan hover:text-black hover:shadow-[0_0_30px_rgba(0,209,255,0.4)] cursor-pointer'
-                }
-              `}
-            >
-              {videoMarked ? <Check size={18} /> : <Play size={18} className={videoMarked ? '' : 'fill-current'} />}
-              {videoMarked ? 'MÓDULO VISTO ✓' : 'MARCAR COMO VISTO'}
-            </button>
-          </motion.div>
+
         </div>
 
         {/* RIGHT COLUMN: Info & Actions */}
@@ -251,9 +230,7 @@ export default function LessonScreen() {
             initial={{ opacity: 0, x: 20 }} 
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className={`glass-panel p-6 md:p-8 rounded-xl relative overflow-hidden transition-all duration-500 border ${
-              videoMarked ? 'border-brand-emerald/20 bg-[#0A0B10]' : 'opacity-60 grayscale border-white/5'
-            }`}
+            className={`glass-panel p-6 md:p-8 rounded-xl relative overflow-hidden transition-all duration-500 border border-brand-emerald/20 bg-[#0A0B10]`}
           >
             {/* Subtle animated gradient background when completed */}
             {activityDone && (
@@ -297,24 +274,18 @@ export default function LessonScreen() {
                 </div>
               ) : (
                 <button
-                  className={`w-full rounded-lg py-4 font-mono tracking-widest text-xs transition-all duration-300 ${!videoMarked ? 'bg-white/5 text-white/40 border border-white/10 cursor-not-allowed hover:bg-white/10' : 'cursor-pointer bg-[#00E676]/10 border border-[#00E676]/30 text-[#00E676] hover:bg-[#00E676]/20 shadow-[0_0_20px_rgba(1,228,126,0.2)] hover:shadow-[0_0_30px_rgba(1,228,126,0.4)]'}`}
+                  className={`w-full rounded-lg py-4 font-mono tracking-widest text-xs transition-all duration-300 cursor-pointer bg-[#00E676]/10 border border-[#00E676]/30 text-[#00E676] hover:bg-[#00E676]/20 shadow-[0_0_20px_rgba(1,228,126,0.2)] hover:shadow-[0_0_30px_rgba(1,228,126,0.4)]`}
                   onClick={() => {
                     if (!videoMarked) {
-                      setShowVideoAlert(true);
-                    } else {
-                      handleStartActivity();
+                      handleMarkVideo();
                     }
+                    handleStartActivity();
                   }}
                 >
                   COMENZAR_ACTIVIDAD()
                 </button>
               )}
 
-              {!videoMarked && (
-                <div className="text-xs font-bold text-brand-text-muted/60 mt-5 text-center flex items-center justify-center gap-2 uppercase tracking-widest">
-                  <Lock size={14} /> Mira el video para desbloquear
-                </div>
-              )}
             </div>
           </motion.div>
 
@@ -549,37 +520,7 @@ export default function LessonScreen() {
         )}
       </AnimatePresence>
 
-      {/* Video not completed alert overlay */}
-      <AnimatePresence>
-        {showVideoAlert && (
-          <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="glass-panel p-8 rounded-3xl max-w-sm w-full border border-brand-cyan/20 shadow-[0_0_50px_rgba(0,209,255,0.15)] space-y-6"
-            >
-              <div className="text-center space-y-4">
-                <div className="w-20 h-20 rounded-full bg-brand-cyan/10 flex items-center justify-center mx-auto mb-2 border border-brand-cyan/30 text-brand-cyan shadow-[0_0_30px_rgba(0,209,255,0.2)]">
-                  <Play size={32} className="ml-1" />
-                </div>
-                <h3 className="text-xl font-black uppercase tracking-tight text-white text-glow-cyan">¡Información Vital Requerida!</h3>
-                <p className="text-brand-text-muted text-sm font-medium leading-relaxed">
-                  Para poder dominar esta misión con éxito, primero necesitas marcar la transmisión como completada. ¡No te saltes el conocimiento clave!
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 mt-4">
-                <button
-                  onClick={() => setShowVideoAlert(false)}
-                  className="w-full py-4 rounded-xl font-black tracking-widest text-xs cursor-pointer transition-all duration-300 bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30 hover:bg-brand-cyan hover:text-black shadow-[0_0_20px_rgba(0,209,255,0.2)]"
-                >
-                  ENTENDIDO, VERÉ EL VIDEO
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+
 
       {/* Loading overlay for route changes */}
       <AnimatePresence>
