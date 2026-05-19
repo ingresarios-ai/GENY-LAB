@@ -113,7 +113,7 @@ async function createAuthUserAndMagicLink(
       await supabase.auth.admin.generateLink({
         type: "magiclink",
         email: email.toLowerCase().trim(),
-        options: { redirectTo: `${SITE_URL}/app` },
+        options: { redirectTo: `${SITE_URL}/establecer-contrasena` },
       });
 
     if (linkError) {

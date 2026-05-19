@@ -29,6 +29,8 @@ import TermostatoFinanciero from './pages/app/termostato-financiero/TermostatoFi
 import AccountPage from './pages/app/AccountPage';
 import AutoLogin from './pages/AutoLogin';
 import ResetPassword from './pages/ResetPassword';
+import InscripcionExitosa from './pages/public/InscripcionExitosa';
+import EstablecerContrasena from './pages/public/EstablecerContrasena';
 
 function App() {
   return (
@@ -52,6 +54,8 @@ function App() {
         <Route path="/resultado/:data" element={<InlineResult />} />
         <Route path="/acceso/:code" element={<AutoLogin />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/inscripcion-exitosa" element={<InscripcionExitosa />} />
+        <Route path="/establecer-contrasena" element={<EstablecerContrasena />} />
 
         {/* App Routes */}
         <Route path="/app" element={<AuthGuard><AppLayout /></AuthGuard>}>
