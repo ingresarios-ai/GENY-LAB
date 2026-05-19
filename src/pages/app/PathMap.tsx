@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap } from 'lucide-react';
+import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap, GraduationCap } from 'lucide-react';
 import { LESSONS, getLevelForXp, getXpProgressInLevel, PHASE_LABELS, type Lesson } from '../../lib/lessons';
 import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted } from '../../lib/progressStore';
 
@@ -311,7 +311,7 @@ export default function PathMap() {
           }`}
         >
           <div className={`w-12 h-12 rounded-lg flex items-center justify-center border shrink-0 ${allDone ? 'bg-[#F2C500]/10 border-[#F2C500]/40 text-[#F2C500]' : 'bg-white/5 border-white/5 text-white/30'}`}>
-            {allDone ? <Zap size={18} /> : <Lock size={16} />}
+            {allDone ? <GraduationCap size={18} /> : <Lock size={16} />}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Recompensa</p>
@@ -319,7 +319,7 @@ export default function PathMap() {
               {allDone ? '¡Acceso Liberado!' : 'Diagnóstico Final'}
             </h3>
           </div>
-          {allDone && <Zap size={14} className="text-[#F2C500] shrink-0" />}
+          {allDone && <GraduationCap size={14} className="text-[#F2C500] shrink-0" />}
         </motion.div>
       </div>
 
@@ -396,7 +396,7 @@ export default function PathMap() {
             <div className={`absolute inset-0 bg-gradient-to-b ${allDone ? 'from-[#F2C500]/10 to-transparent' : 'from-white/5 to-transparent'} opacity-50`} />
             <div className="relative z-10 p-6 h-full flex flex-col justify-between items-center text-center">
               <div className={`w-14 h-14 rounded-lg flex items-center justify-center backdrop-blur-md border ${allDone ? 'bg-[#F2C500]/10 border-[#F2C500]/40 text-[#F2C500]' : 'bg-white/5 border-white/10 text-white/30'}`}>
-                {allDone ? <Zap size={24} /> : <Lock size={20} />}
+                {allDone ? <GraduationCap size={24} /> : <Lock size={20} />}
               </div>
               <div className="mt-auto flex flex-col items-center w-full">
                 <h2 className={`text-xl font-bold tracking-tight uppercase mb-2 ${allDone ? 'text-[#F2C500]' : 'text-white/40'}`}>{allDone ? '¡ACCESO LIBERADO!' : 'RECOMPENSA FINAL'}</h2>
