@@ -170,26 +170,108 @@ function PedemResultView({ d }: { d: any }) {
 }
 
 function SombraResult({ d }: { d: any }) {
+  const day = d.selDay || d.d || 1;
+  const totalDays = 10;
+  const completedDays = d.d || day;
+  const progressPerc = Math.round((completedDays / totalDays) * 100);
+  const phase = day <= 3 ? 'Detectar' : day <= 7 ? 'Desactivar' : 'Dominar';
+  const phaseIcon = day <= 3 ? '🎯' : day <= 7 ? '⚔️' : '👑';
+  const phaseColor = day <= 3 ? '#f97316' : day <= 7 ? '#f59e0b' : '#10b981';
+  const traderName = d.n || d.name || 'Un Trader';
+  const routeLabel = d.r === 'operador' ? '⚔️ Luchador' : '🛡️ Principiante';
+
   return (
     <div className="space-y-8">
-      <div className="text-center space-y-3">
+      <div className="text-center space-y-4">
         <div className="text-7xl">🤯</div>
-        <p className="text-xs font-black uppercase tracking-widest text-emerald-500">Mis Emociones</p>
-        <h2 className="text-3xl font-black text-white uppercase">Día {d.selDay} Completado</h2>
-        <p className="text-emerald-400 font-bold">{d.title}</p>
+        <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Mis Emociones · Reto de 10 Días</p>
+        <h2 className="text-3xl font-black text-white uppercase">Día {day} Completado</h2>
+        {d.title && <p className="text-lg italic font-medium" style={{ color: phaseColor }}>"{d.title}"</p>}
+        <p className="text-slate-400 text-sm"><span className="text-white font-bold">{traderName}</span> está dominando su Saboteador Interior</p>
+      </div>
+
+      {/* Progress */}
+      <div className="glass-card p-6 border-t-2" style={{ borderTopColor: `${phaseColor}60` }}>
+        <div className="flex justify-between text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest">
+          <span>Progreso del reto</span>
+          <span className="text-white">{completedDays} de {totalDays} días</span>
+        </div>
+        <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 rounded-full transition-all" style={{ width: `${progressPerc}%` }} />
+        </div>
+        <div className="flex justify-between mt-3">
+          <span className="text-[10px] font-black tracking-widest text-orange-500">🎯 Detectar</span>
+          <span className="text-[10px] font-black tracking-widest text-amber-500">⚔️ Desactivar</span>
+          <span className="text-[10px] font-black tracking-widest text-emerald-500">👑 Dominar</span>
+        </div>
+      </div>
+
+      {/* Current Phase */}
+      <div className="glass-card p-6 text-center">
+        <div className="text-4xl mb-3">{phaseIcon}</div>
+        <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: phaseColor }}>Fase Actual</p>
+        <p className="text-2xl font-black text-white uppercase">{phase}</p>
+        {d.r && <p className="text-xs text-slate-500 mt-2">Ruta: <span className="font-bold text-slate-300">{routeLabel}</span></p>}
+      </div>
+
+      {/* Motivational */}
+      <div className="rounded-2xl p-8 text-center bg-gradient-to-br from-orange-500/5 to-emerald-500/5 border border-white/5">
+        <p className="text-xs font-black uppercase tracking-widest text-orange-500 mb-4">¿Tú también tienes un Saboteador?</p>
+        <p className="text-base text-slate-300 leading-relaxed">
+          El 80% de los traders pierden por sus emociones, no por su estrategia.
+          <span className="text-white font-bold"> Descubre al trader que te hace perder dinero.</span>
+        </p>
       </div>
     </div>
   );
 }
 
 function FlowResult({ d }: { d: any }) {
+  const day = d.selDay || d.d || 1;
+  const totalDays = 10;
+  const completedDays = d.d || day;
+  const progressPerc = Math.round((completedDays / totalDays) * 100);
+  const phase = day <= 3 ? 'Despertar' : day <= 6 ? 'Entrenamiento' : day <= 9 ? 'Integración' : 'Maestría';
+  const phaseIcon = day <= 3 ? '🌅' : day <= 6 ? '⚡' : day <= 9 ? '🧬' : '👑';
+  const phaseColor = day <= 3 ? '#3b82f6' : day <= 6 ? '#f59e0b' : day <= 9 ? '#8b5cf6' : '#10b981';
+  const traderName = d.n || d.name || 'Un Trader';
+
   return (
     <div className="space-y-8">
-      <div className="text-center space-y-3">
+      <div className="text-center space-y-4">
         <div className="text-7xl">⚡</div>
-        <p className="text-xs font-black uppercase tracking-widest text-brand-green">Reto del Flow</p>
-        <h2 className="text-3xl font-black text-white uppercase">Día {d.selDay} Completado</h2>
-        <p className="text-brand-green font-bold">{d.title}</p>
+        <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Flow · 10 Días</p>
+        <h2 className="text-3xl font-black text-white uppercase">Día {day} Completado</h2>
+        {d.title && <p className="text-lg italic font-medium" style={{ color: phaseColor }}>"{d.title}"</p>}
+        <p className="text-slate-400 text-sm"><span className="text-white font-bold">{traderName}</span> está activando su estado de Flow</p>
+      </div>
+
+      {/* Progress */}
+      <div className="glass-card p-6 border-t-2" style={{ borderTopColor: `${phaseColor}60` }}>
+        <div className="flex justify-between text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest">
+          <span>Progreso del reto</span>
+          <span className="text-white">{completedDays} de {totalDays} días</span>
+        </div>
+        <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-blue-500 via-amber-500 to-emerald-500 rounded-full transition-all" style={{ width: `${progressPerc}%` }} />
+        </div>
+      </div>
+
+      {/* Current Phase */}
+      <div className="glass-card p-6 text-center">
+        <div className="text-4xl mb-3">{phaseIcon}</div>
+        <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: phaseColor }}>Fase Actual</p>
+        <p className="text-2xl font-black text-white uppercase">{phase}</p>
+        {d.r && <p className="text-xs text-slate-500 mt-2">Ruta: <span className="font-bold text-slate-300 capitalize">{d.r}</span></p>}
+      </div>
+
+      {/* Motivational */}
+      <div className="rounded-2xl p-8 text-center bg-gradient-to-br from-blue-500/5 to-emerald-500/5 border border-white/5">
+        <p className="text-xs font-black uppercase tracking-widest text-brand-green mb-4">¿Quieres operar en Flow?</p>
+        <p className="text-base text-slate-300 leading-relaxed">
+          Los mejores traders operan en estado de Flow — concentración absoluta, sin ego, sin miedo.
+          <span className="text-white font-bold"> Activa tu estado óptimo de rendimiento.</span>
+        </p>
       </div>
     </div>
   );
