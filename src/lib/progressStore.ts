@@ -178,3 +178,39 @@ export const markActivityCompleted = (lessonId: string): {
 
   return { xpEarned, newTotalXp: progress.totalXp, lessonCompleted: true, leveledUp, newLevel };
 };
+
+export const syncFromDB = (activityIds: string[]) => {
+  const progress = getProgress();
+  let changed = false;
+
+  for (const lessonId of activityIds) {
+    const lesson = LESSONS.find(l => l.id === lessonId);
+    if (!lesson) continue;
+
+    if (!progress.lessonProgress[lessonId]) {
+      progress.lessonProgress[lessonId] = {
+        lessonId,
+        videoCompleted: false,
+        activityCompleted: false,
+      };
+    }
+
+    const lp = progress.lessonProgress[lessonId];
+    if (!lp.videoCompleted || !lp.activityCompleted) {
+      if (!lp.videoCompleted) {
+        lp.videoCompleted = true;
+        progress.totalXp += lesson.xpVideo;
+      }
+      if (!lp.activityCompleted) {
+        lp.activityCompleted = true;
+        progress.totalXp += lesson.xpActivity;
+        lp.completedAt = new Date().toISOString();
+      }
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    saveProgress(progress);
+  }
+};

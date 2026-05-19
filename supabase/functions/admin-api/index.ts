@@ -469,11 +469,8 @@ Deno.serve(async (req: Request) => {
         );
 
         if (magicLinkUrl) {
-          // Ensure user has an access_code; generate one if missing
-          let accessCode = user.access_code;
-          if (!accessCode) {
-            accessCode = crypto.randomUUID().replace(/-/g, '');
-          }
+          // Always generate a fresh access code when regenerating
+          const accessCode = crypto.randomUUID().replace(/-/g, '');
           const permanentUrl = `${SITE_URL}/acceso/${accessCode}`;
 
           await supabase
@@ -485,6 +482,14 @@ Deno.serve(async (req: Request) => {
               updated_at: new Date().toISOString(),
             })
             .eq("id", userId);
+
+          // Automatically sync the new magic link to the CRM
+          sendToLeadConnector(
+            user.name,
+            user.email,
+            user.phone || "",
+            permanentUrl
+          );
 
           return json({ success: true, magic_link_url: permanentUrl });
         }

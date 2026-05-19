@@ -1,34 +1,72 @@
 // @ts-nocheck
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { syncFromDB } from '../lib/progressStore';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<any>(undefined); // undefined = loading
   const [ready, setReady] = useState(false);
+  const synced = useRef(false);
 
   useEffect(() => {
-    // Listen for auth state changes FIRST — this is what processes magic link tokens
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setReady(true);
-    });
+    let isMounted = true;
 
-    // Also check existing session, but only use it if onAuthStateChange hasn't fired yet
-    supabase.auth.getSession().then(({ data }) => {
-      // Small delay to give onAuthStateChange priority for magic link processing
-      setTimeout(() => {
-        setReady((prev) => {
-          if (!prev) {
-            setSession(data.session);
-            return true;
+    const initialize = async () => {
+      // 1. Get current session
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      
+      // 2. If logged in and not synced, sync from DB
+      if (currentSession?.user?.email && !synced.current) {
+        synced.current = true;
+        try {
+          const { data: user } = await supabase.from('enrolled_users').select('id').eq('email', currentSession.user.email).single();
+          if (user) {
+            const { data: acts } = await supabase.from('user_activity_log').select('activity_id').eq('user_id', user.id);
+            if (acts && acts.length > 0) {
+              const ids = acts.map((a: any) => a.activity_id);
+              syncFromDB(ids);
+            }
           }
-          return prev;
-        });
-      }, 500);
+        } catch (err) {
+          console.error("Error syncing progress from DB", err);
+        }
+      }
+
+      if (isMounted) {
+        setSession(currentSession);
+        setReady(true);
+      }
+    };
+
+    initialize();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      if (newSession?.user?.email && !synced.current) {
+        synced.current = true;
+        try {
+          const { data: user } = await supabase.from('enrolled_users').select('id').eq('email', newSession.user.email).single();
+          if (user) {
+            const { data: acts } = await supabase.from('user_activity_log').select('activity_id').eq('user_id', user.id);
+            if (acts && acts.length > 0) {
+              const ids = acts.map((a: any) => a.activity_id);
+              syncFromDB(ids);
+            }
+          }
+        } catch (err) {
+          console.error("Error syncing progress from DB", err);
+        }
+      }
+      if (isMounted) {
+        setSession(newSession);
+        setReady(true);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (!ready) {
