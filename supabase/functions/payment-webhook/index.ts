@@ -248,6 +248,8 @@ Deno.serve(async (req: Request) => {
       amount = paymentData.total != null ? paymentData.total : null;
       currency = (paymentData.currency || "USD").toUpperCase();
       productName = paymentData.product?.name || body?.product?.name || "";
+      // Whop product ID for filtering
+      const whopProductId = paymentData.product?.id || body?.product?.id || "";
     } else {
       platform = body?.platform || "generic";
       name = body?.name || body?.nombre || "";
@@ -260,11 +262,24 @@ Deno.serve(async (req: Request) => {
       productName = body?.product_name || body?.producto || "";
     }
 
-    // Filter by product: Only process "GENY LAB"
-    if (productName) {
+    // Filter by product — platform-specific rules
+    const WHOP_PRODUCT_ID = "prod_yohcdlgNjm2cm";
+
+    if (platform === "whop") {
+      // Whop: filter by product_id
+      const whopPid = body?.data?.product?.id || body?.product?.id || "";
+      if (whopPid && whopPid !== WHOP_PRODUCT_ID) {
+        console.log(`⏭️ Ignored Whop purchase for product_id: ${whopPid} (expected ${WHOP_PRODUCT_ID})`);
+        return new Response(
+          JSON.stringify({ success: true, message: "Ignored (wrong Whop product)" }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    } else if (platform === "hotmart" && productName) {
+      // Hotmart: filter by product name
       const pName = productName.toLowerCase();
       if (!pName.includes("geny lab") && !pName.includes("genylab")) {
-        console.log(`⏭️ Ignored purchase for product: ${productName} (Not GENY LAB)`);
+        console.log(`⏭️ Ignored Hotmart purchase for product: ${productName} (Not GENY LAB)`);
         return new Response(
           JSON.stringify({ success: true, message: "Ignored (not GENY LAB)" }),
           { status: 200, headers: { "Content-Type": "application/json" } }
