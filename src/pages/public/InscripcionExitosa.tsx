@@ -52,7 +52,7 @@ export default function InscripcionExitosa() {
             </motion.div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-wider text-white leading-tight mt-2">
-              ¡INCRIPCIÓN <span className="title-highlight text-brand-emerald">COMPLETADA</span>!
+              ¡INSCRIPCIÓN <span className="title-highlight text-brand-emerald">COMPLETADA</span>!
             </h1>
             <p className="text-white/80 text-base md:text-lg max-w-lg font-medium leading-relaxed">
               ¡Felicidades por dar el paso! Te has unido con éxito a <span className="text-[#00D1FF] font-bold">GENY LAB</span>. Tu ruta de aprendizaje para aprender a invertir desde cero está lista.
