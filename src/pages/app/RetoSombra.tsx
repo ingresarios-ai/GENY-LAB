@@ -36,11 +36,11 @@ export default function MisEmociones() {
   const [route, setRoute] = useState<RouteType | null>(null);
   const [tasksDone, setTasksDone] = useState<Record<string, boolean>>({});
   const [completedDays, setCompletedDays] = useState<Record<number, boolean>>({});
+  const bannerRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"hero" | "diag" | "result" | "route" | "home" | "day">("hero");
   const [selDay, setSelDay] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState(false);
   const [shareModal, setShareModal] = useState(false);
-  const bannerRef = useRef<HTMLDivElement>(null);
 
   // Diagnostic
   const [diagAns, setDiagAns] = useState<string[]>([]);
@@ -174,6 +174,23 @@ export default function MisEmociones() {
         origin: { y: 0.6 },
         colors: ["#f97316", "#f59e0b", "#10b981"],
       });
+
+      // Check if ALL 10 days are now complete → auto-scroll to completion banner
+      const allDaysComplete = Object.values(newDays).filter(Boolean).length >= DAYS.length;
+      if (allDaysComplete) {
+        setTimeout(() => {
+          setView("home");
+          setTimeout(() => {
+            bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            confetti({
+              particleCount: 300,
+              spread: 120,
+              origin: { y: 0.4 },
+              colors: ["#01E47E", "#10b981", "#f59e0b", "#f97316"],
+            });
+          }, 600);
+        }, 1500);
+      }
     } else if (!allDone && completedDays[selDay]) {
       newDays[selDay] = false;
     }
@@ -720,14 +737,6 @@ export default function MisEmociones() {
       dominar:     { bg: "from-emerald-500/10 to-transparent",  border: "border-emerald-500/20",  text: "text-emerald-500",  hex: "#10b981", glow: "16,185,129" },
     };
 
-    useEffect(() => {
-      if (completedCount === totalDays) {
-        setTimeout(() => {
-          bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 500);
-      }
-    }, [completedCount, totalDays, view]);
-
     const streak = (() => { let s = 0; for (let i = 1; i <= 10; i++) { if (completedDays[i]) s++; else break; } return s; })();
     const nextDay = (() => { for (let i = 1; i <= 10; i++) { if (!completedDays[i]) return i; } return 10; })();
     const nextDayData = DAYS[Math.min(nextDay, 10) - 1];
@@ -740,11 +749,11 @@ export default function MisEmociones() {
           @keyframes card-shine2 { 0%, 100% { transform: translateX(-150%) skewX(-20deg); } 50% { transform: translateX(150%) skewX(-20deg); } }
         `}</style>
 
-        <CompletionBanner 
+        <CompletionBanner
           ref={bannerRef}
-          lessonId="sombra" 
+          lessonId="sombra"
           disabled={completedCount < totalDays}
-          progressLabel={`${completedCount}/${totalDays} días`}
+          progressLabel={completedCount < totalDays ? `${completedCount}/${totalDays} días completados` : undefined}
         />
 
         {/* ── 1. Cabecera Minimalista ── */}
@@ -1165,7 +1174,7 @@ export default function MisEmociones() {
                 onClick={() => setView("home")}
                 className="btn-primary py-3 px-8 text-sm tracking-widest rounded-xl"
               >
-                {selDay === 10 ? "FINALIZAR RETO" : "VOLVER AL MAPA"}
+                VOLVER AL MAPA
               </button>
             </div>
           </motion.div>
