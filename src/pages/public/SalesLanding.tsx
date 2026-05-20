@@ -311,7 +311,6 @@ export default function SalesLanding() {
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block">EL GRAN REVELADOR</span>
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
                 El problema nunca fue<br />
                 <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,209,255,0.15)]">la estrategia.</span>
