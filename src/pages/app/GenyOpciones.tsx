@@ -239,7 +239,7 @@ export default function GenyOpciones() {
   const [mTab, setMTab] = useState(1);
   const [done, setDone] = useState<Set<string>>(new Set());
   const [xp, setXp] = useState(0);
-  const [aiMsg, setAiMsg] = useState('¡Bienvenido a Geny Options Academy! 🎓\n\nEmpieza en Aprender para dominar los conceptos, luego ve al Chain para practicar.\n\nSelecciona tu activo arriba y ¡a operar!');
+  const [aiMsg, setAiMsg] = useState('¡Bienvenido a la Academia de Opciones Geny! 🎓\n\nEmpieza en Aprender para dominar los conceptos, luego ve a la Cadena para practicar.\n\nSelecciona tu activo arriba y ¡a operar!');
   const [aiLoad, setAiLoad] = useState(false);
   const [dia, setDia] = useState(1);
   const [toast, setToast] = useState<string | null>(null);
@@ -536,7 +536,7 @@ export default function GenyOpciones() {
             <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">
-                GENY <span className="title-highlight">OPTIONS</span> ACADEMY
+                ACADEMIA DE <span className="title-highlight">OPCIONES</span> GENY
               </h1>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-text-muted mt-0.5">Simulador de Opciones · GENY LAB</p>
             </div>
@@ -604,7 +604,7 @@ export default function GenyOpciones() {
           <div className="flex gap-2 glass-panel p-1.5">
             {([
               ['learn', '📖 Aprender', BookOpen],
-              ['chain', '📊 Chain', BarChart3],
+              ['chain', '📊 Cadena', BarChart3],
               ['positions', `📂 (${positions.length})`, Briefcase],
               ['history', `📋 (${trades.length})`, History],
             ] as const).map(([k, lbl]) => (
@@ -726,7 +726,7 @@ export default function GenyOpciones() {
                 <div className="glass-panel p-12 text-center border-t-2 border-t-white/5">
                   <Briefcase className="w-10 h-10 text-brand-text-muted/30 mx-auto mb-3" />
                   <p className="text-brand-text-muted font-medium text-sm">Sin posiciones abiertas.</p>
-                  <p className="text-xs text-brand-text-muted/50 mt-2">Ve al <span className="text-brand-blue font-bold cursor-pointer hover:text-cyan-400 transition-colors" onClick={goToChain}>Chain</span> para abrir tu primera posición.</p>
+                  <p className="text-xs text-brand-text-muted/50 mt-2">Ve a la <span className="text-brand-blue font-bold cursor-pointer hover:text-cyan-400 transition-colors" onClick={goToChain}>Cadena</span> para abrir tu primera posición.</p>
                 </div>
               )}
               {positions.map(p => {
@@ -868,7 +868,7 @@ export default function GenyOpciones() {
             ) : (
               <div className="text-center py-10 space-y-4">
                 <Crosshair className="w-10 h-10 text-brand-blue/20 mx-auto" />
-                <p className="text-brand-text-muted text-xs leading-relaxed max-w-[200px] mx-auto">Selecciona un precio del <span className="text-brand-blue font-bold cursor-pointer hover:text-cyan-400" onClick={goToChain}>Chain</span> para abrir el panel de orden.</p>
+                <p className="text-brand-text-muted text-xs leading-relaxed max-w-[200px] mx-auto">Selecciona un precio de la <span className="text-brand-blue font-bold cursor-pointer hover:text-cyan-400" onClick={goToChain}>Cadena</span> para abrir el panel de orden.</p>
               </div>
             )}
           </div>

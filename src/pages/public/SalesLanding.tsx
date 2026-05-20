@@ -450,28 +450,28 @@ export default function SalesLanding() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
             {[
               {
-                emoji: '🧠', title: 'Investor DNA Blueprint', hook: 'LAB 1: ¿POR QUÉ OPERAS COMO OPERAS?', color: '#00D1FF', num: '01',
+                emoji: '🧠', title: 'Mapa del ADN del Inversor', hook: 'LAB 1: ¿POR QUÉ OPERAS COMO OPERAS?', color: '#00D1FF', num: '01',
                 desc: 'Descubre qué tipo de trader eres realmente, cuál es tu perfil de riesgo ideal y qué estilo operativo se alinea con tu ADN financiero. Deja de forzar estrategias de otros y calibra la tuya.'
               },
               {
-                emoji: '🐜', title: 'Money Leak Projection', hook: 'LAB 2: ¿A DÓNDE SE VA TU CAPITAL?', color: '#f59e0b', num: '02',
+                emoji: '🐜', title: 'Proyección de Fugas de Dinero', hook: 'LAB 2: ¿A DÓNDE SE VA TU CAPITAL?', color: '#f59e0b', num: '02',
                 desc: 'Identifica las fugas de dinero invisibles que destruyen tu capital sin que te des cuenta. Calcula la proyección real de pérdidas a 5-10 años si sigues cometiendo el mismo error hoy.'
               },
               {
-                emoji: '🤯', title: 'Shadow Money Code', hook: 'LAB 3: OPERACIÓN SUBCONSCIENTE', color: '#8b5cf6', num: '03',
+                emoji: '🤯', title: 'Código del Dinero Sombra', hook: 'LAB 3: OPERACIÓN SUBCONSCIENTE', color: '#8b5cf6', num: '03',
                 desc: 'Desmantela las creencias ocultas que sabotean tus decisiones en pleno mercado. Elimina el impulso irracional de sobreoperar para recuperar o cerrar antes por miedo.'
               },
               {
-                emoji: '🌡️', title: 'Financial Thermostat', hook: 'LAB 4: CAPACIDAD DE ABSORCIÓN', color: '#ef4444', num: '04',
+                emoji: '🌡️', title: 'Termostato Financiero', hook: 'LAB 4: CAPACIDAD DE ABSORCIÓN', color: '#ef4444', num: '04',
                 desc: 'Mide y expande tu tolerancia biológica a la pérdida antes de que tu cerebro entre en pánico. Si no calibras este termostato, seguirás rompiendo tus stops sistemáticamente.'
               },
               {
-                emoji: '🚫', title: 'Money Traps Classifier', hook: 'LAB 5: SESGOS COGNITIVOS', color: '#f97316', num: '05',
+                emoji: '🚫', title: 'Clasificador de Trampas de Dinero', hook: 'LAB 5: SESGOS COGNITIVOS', color: '#f97316', num: '05',
                 desc: 'Detecta y aisla los sesgos emocionales y trampas mentales específicas en las que caes cuando estás bajo presión. Reconócelas antes de que afecten tu saldo.'
               },
               {
-                emoji: '🎯', title: 'Geny Options Lab', hook: 'LAB 6: SIMULACIÓN AVANZADA', color: '#00E676', num: '06',
-                desc: 'Practica operaciones en tiempo real con $25,000 en capital virtual guiado por un coach de Inteligencia Artificial que audita y califica cada una de tus decisiones antes del mercado real.'
+                emoji: '🎯', title: 'Laboratorio de Opciones Geny', hook: 'LAB 6: SIMULACIÓN AVANZADA', color: '#00E676', num: '06',
+                desc: 'Practica operaciones en tiempo real con $25,000 en capital virtual guiado por un mentor de Inteligencia Artificial que audita y califica cada una de tus decisiones antes del mercado real.'
               },
             ].map((lab, i) => (
               <FadeIn key={i} delay={i * 0.08} className="h-full">
@@ -571,11 +571,11 @@ export default function SalesLanding() {
               },
               {
                 name: 'Luis P.', handle: '@luisp_fx', country: 'México', rating: 5,
-                quote: 'Siempre me quejaba de mi falta de disciplina. Con el Financial Thermostat de GENY LAB entendí que mi cerebro entraba en modo supervivencia por el tamaño del stop. Expandir mi termostato de forma guiada con la IA cambió todo. $67 es literalmente un regalo frente a lo que perdía operando.'
+                quote: 'Siempre me quejaba de mi falta de disciplina. Con el Termostato Financiero de GENY LAB entendí que mi cerebro entraba en modo supervivencia por el tamaño del stop. Expandir mi termostato de forma guiada con la IA cambió todo. $67 es literalmente un regalo frente a lo que perdía operando.'
               },
               {
                 name: 'Andrea G.', handle: '@andrea_options', country: 'España', rating: 5,
-                quote: 'La parálisis por exceso de información me tenía paralizada. Tenía 5 indicadores y 3 estrategias en la cabeza. Las simulaciones del Options Lab con feedback del coach IA me ayudaron a simplificar mi pantalla al mínimo. En dos semanas recuperé la claridad mental y la confianza para tomar posiciones.'
+                quote: 'La parálisis por exceso de información me tenía paralizada. Tenía 5 indicadores y 3 estrategias en la cabeza. Las simulaciones del Laboratorio de Opciones con retroalimentación del mentor IA me ayudaron a simplificar mi pantalla al mínimo. En dos semanas recuperé la claridad mental y la confianza para tomar posiciones.'
               }
             ].map((t, i) => (
               <FadeIn key={i} delay={i * 0.1} className="h-full">
@@ -630,7 +630,7 @@ export default function SalesLanding() {
                 <p className="text-[10px] font-mono uppercase tracking-widest text-[#f59e0b] font-bold flex items-center gap-1.5 mb-4">
                   <Gift size={14} /> BONO EXCLUSIVO #1
                 </p>
-                <h3 className="text-xl font-black uppercase tracking-tight text-white mb-2">Trading Room Elite</h3>
+                <h3 className="text-xl font-black uppercase tracking-tight text-white mb-2">Sala de Trading Elite</h3>
                 <p className="text-xs font-mono text-white/30 uppercase tracking-widest mb-4">Sesiones en Vivo — Sábados 11:00 AM EST</p>
                 <p className="text-sm text-white/60 leading-relaxed mb-6">
                   Únete a nuestras mentorías en vivo semanales. Analizamos los resultados de tus labs, revisamos operaciones reales y calibramos tu estructura operativa en directo con otros miembros.
@@ -694,7 +694,7 @@ export default function SalesLanding() {
                 <div className="space-y-1 mb-10">
                   {[
                     ['Ecosistema GENY LAB — 6 Laboratorios Interactivos + IA', '$1,200 USD'],
-                    ['Bono #1 — Mentorías del Trading Room Elite (Semanales)', '$800 USD'],
+                    ['Bono #1 — Mentorías de la Sala de Trading Elite (Semanales)', '$800 USD'],
                     ['Bono #2 — Diagnóstico Privado 1-a-1 de tu Consistencia', '$1,000 USD'],
                   ].map(([item, val], i) => (
                     <div key={i} className="flex items-center justify-between gap-4 py-4 border-b border-white/5 text-sm sm:text-base">
@@ -738,7 +738,7 @@ export default function SalesLanding() {
                     <div>
                       <h4 className="font-black text-white text-sm uppercase tracking-wide mb-1.5">Garantía Incondicional de 15 Días</h4>
                       <p className="text-sm text-white/50 leading-relaxed">
-                        Entra, haz los labs, prueba el simulador, asiste al trading room en vivo. Si en 15 días sientes que no te revela patrones mentales de trading que te valen miles de dólares, nos mandas un correo y te devolvemos el <strong className="text-white">100% de tu dinero</strong>. Sin explicaciones ni condiciones. El riesgo es todo nuestro.
+                        Entra, haz los labs, prueba el simulador, asiste a la sala de trading en vivo. Si en 15 días sientes que no te revela patrones mentales de trading que te valen miles de dólares, nos mandas un correo y te devolvemos el <strong className="text-white">100% de tu dinero</strong>. Sin explicaciones ni condiciones. El riesgo es todo nuestro.
                       </p>
                     </div>
                   </div>
@@ -790,7 +790,7 @@ export default function SalesLanding() {
                   'Completas tu inscripción segura en la pasarela SSL.',
                   'Recibes tus credenciales de acceso instantáneo en tu correo.',
                   'Entras al mapa nodal y desbloqueas tu ADN Financiero.',
-                  'Asistes al próximo Trading Room en vivo el sábado.'
+                  'Asistes a la próxima Sala de Trading en vivo el sábado.'
                 ].map((text, i) => (
                   <div key={i} className="space-y-4">
                     <div className="w-12 h-12 rounded-2xl bg-[#00E676]/10 border-2 border-[#00E676]/25 flex items-center justify-center text-[#00E676] font-mono font-black text-base sm:text-lg shadow-[0_4px_15px_rgba(0,230,118,0.15)]">
@@ -824,7 +824,7 @@ export default function SalesLanding() {
           <div className="space-y-6 max-w-4xl mx-auto">
             <FadeIn><FAQItem q="¿Necesito experiencia en trading?" a="GENY LAB está optimizado para traders de cualquier nivel. Si estás empezando, te ayuda a formar hábitos correctos desde el día uno. Si eres experimentado, te ayuda a diagnosticar y extirpar las trampas psicológicas que te impiden escalar tus resultados." /></FadeIn>
             <FadeIn delay={0.05}><FAQItem q="¿Es una estrategia o señales de trading?" a="Ninguna de las dos. GENY LAB no te da señales ni te vende una fórmula mágica de velas japonesas. Es una terminal interactiva que diagnostica tus sesgos cognitivos, mide tu límite real de riesgo e integra retroalimentación de Inteligencia Artificial para pulir tu disciplina." /></FadeIn>
-            <FadeIn delay={0.1}><FAQItem q="¿Cuánto tiempo al día requiere?" a="Cada uno de los 6 laboratorios se puede completar en unos 15 a 30 minutos. Está diseñado para que avances a tu propio ritmo. La mentoría en vivo del Trading Room Elite es de 1 hora los sábados y queda grabada si no puedes asistir." /></FadeIn>
+            <FadeIn delay={0.1}><FAQItem q="¿Cuánto tiempo al día requiere?" a="Cada uno de los 6 laboratorios se puede completar en unos 15 a 30 minutos. Está diseñado para que avances a tu propio ritmo. La mentoría en vivo de la Sala de Trading Elite es de 1 hora los sábados y queda grabada si no puedes asistir." /></FadeIn>
             <FadeIn delay={0.15}><FAQItem q="He comprado otros cursos de trading antes. ¿Por qué funcionaría este?" a="Los cursos tradicionales asumen que tu cerebro reacciona igual que el del profesor. GENY LAB es único porque te mide a ti primero: diagnostica tu aversión al riesgo, calcula tus fugas de capital y mapea tu perfil específico para darte un plan personalizado." /></FadeIn>
             <FadeIn delay={0.2}><FAQItem q="¿Cómo funciona la garantía de 15 días?" a="Es simple: entras al panel, utilizas el simulador, asistes a la sesión en vivo y completas los módulos. Si no sientes que el ecosistema te da la claridad que necesitas, nos escribes un correo y te reembolsamos el 100% de tu pago. Cero preguntas incómodas." /></FadeIn>
             <FadeIn delay={0.25}><FAQItem q="¿Cómo accedo tras realizar el pago?" a="El sistema te enviará automáticamente tus credenciales a tu correo en menos de 60 segundos. Podrás ingresar a tu panel de inmediato y empezar con el Lab 1 hoy mismo." /></FadeIn>

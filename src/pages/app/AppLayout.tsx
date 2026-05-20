@@ -12,7 +12,7 @@ export default function AppLayout() {
     { 
       to: "/app/geny-opciones", 
       icon: Target, 
-      label: "Geny Options", 
+      label: "Geny Opciones", 
       // locked: completedCount < 6,
       locked: false, // Temporary bypass to enable Geny Opciones
       onClick: (e: React.MouseEvent) => {
