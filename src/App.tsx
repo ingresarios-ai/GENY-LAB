@@ -31,6 +31,7 @@ import AutoLogin from './pages/AutoLogin';
 import ResetPassword from './pages/ResetPassword';
 import InscripcionExitosa from './pages/public/InscripcionExitosa';
 import EstablecerContrasena from './pages/public/EstablecerContrasena';
+import SalesLanding from './pages/public/SalesLanding';
 
 function App() {
   return (
@@ -84,8 +85,8 @@ function App() {
           <Route path="configuracion" element={<AdminSettings />} />
         </Route>
 
-        {/* Root — redirect to app */}
-        <Route path="/" element={<Navigate to="/app" replace />} />
+        {/* Root — Sales Landing Page */}
+        <Route path="/" element={<SalesLanding />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </BrowserRouter>
