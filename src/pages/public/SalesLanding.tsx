@@ -750,26 +750,26 @@ export default function SalesLanding() {
       </section>
 
       {/* ⚠️ Warning Cohorte Limitada */}
-      <section className="py-10 relative">
+      <section className="py-14 relative bg-[#060912]/50 border-b border-white/5">
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <FadeIn>
-              <div className="rounded-3xl p-7 h-full border border-red-500/10 bg-red-500/[0.01] space-y-3">
-                <h4 className="font-black uppercase tracking-tight text-sm text-red-400 flex items-center gap-2">
-                  <Users size={16} /> Cohorte limitada a 100 cupos
+              <div className="rounded-3xl p-8 h-full border-2 border-red-500/20 bg-red-500/[0.02] space-y-4 shadow-[0_10px_35px_rgba(239,68,68,0.02)]">
+                <h4 className="font-black uppercase tracking-tight text-base sm:text-lg text-red-400 flex items-center gap-2">
+                  <Users size={20} className="animate-pulse" /> Cohorte limitada a 100 cupos
                 </h4>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Para poder revisar los perfiles de riesgo y dar feedback de calidad 1-a-1, limitamos el acceso estrictamente. Una vez llenado el cupo, las inscripciones se bloquean hasta la siguiente temporada.
+                <p className="text-base text-white/80 leading-relaxed">
+                  Para poder revisar los perfiles de riesgo y dar feedback de calidad 1-a-1, limitamos el acceso estrictamente. Una vez llenado el cupo, las inscripciones se bloquean de manera automática hasta la siguiente temporada.
                 </p>
               </div>
             </FadeIn>
             <FadeIn delay={0.1}>
-              <div className="rounded-3xl p-7 h-full border border-[#f59e0b]/10 bg-[#f59e0b]/[0.01] space-y-3">
-                <h4 className="font-black uppercase tracking-tight text-sm text-[#f59e0b] flex items-center gap-2">
-                  <Clock size={16} /> Entrada sincronizada
+              <div className="rounded-3xl p-8 h-full border-2 border-[#f59e0b]/20 bg-[#f59e0b]/[0.02] space-y-4 shadow-[0_10px_35px_rgba(245,158,11,0.02)]">
+                <h4 className="font-black uppercase tracking-tight text-base sm:text-lg text-[#f59e0b] flex items-center gap-2">
+                  <Clock size={20} /> Entrada sincronizada
                 </h4>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Todos los miembros de esta cohorte inician al mismo tiempo para poder coordinar las mentorías y los diagnósticos iniciales. Si no entras hoy, deberás esperar meses.
+                <p className="text-base text-white/80 leading-relaxed">
+                  Todos los miembros de esta cohorte inician al mismo tiempo para poder coordinar las mentorías y los diagnósticos iniciales. Si no entras hoy, deberás esperar meses para la próxima apertura.
                 </p>
               </div>
             </FadeIn>
@@ -778,25 +778,25 @@ export default function SalesLanding() {
       </section>
 
       {/* ⏱️ Proceso de Onboarding */}
-      <section className="py-14 md:py-20 relative">
+      <section className="py-20 md:py-24 relative">
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="rounded-[2rem] p-8 md:p-12 border border-[#00E676]/15 bg-[#00E676]/[0.01] space-y-8">
-              <h3 className="text-2xl sm:text-3xl font-black text-center text-white">
+            <div className="rounded-[2.5rem] p-8 md:p-14 border-2 border-[#00E676]/30 bg-[#00E676]/[0.02] space-y-10 shadow-[inset_0_0_40px_rgba(0,230,118,0.03)]">
+              <h3 className="text-3xl sm:text-4xl font-black text-center text-white leading-tight">
                 Tu plan de acción para los próximos <span className="text-[#00E676]">2 minutos</span>:
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                 {[
                   'Completas tu inscripción segura en la pasarela SSL.',
                   'Recibes tus credenciales de acceso instantáneo en tu correo.',
                   'Entras al mapa nodal y desbloqueas tu ADN Financiero.',
                   'Asistes al próximo Trading Room en vivo el sábado.'
                 ].map((text, i) => (
-                  <div key={i} className="space-y-3">
-                    <div className="w-10 h-10 rounded-2xl bg-[#00E676]/10 border border-[#00E676]/20 flex items-center justify-center text-[#00E676] font-mono font-bold text-sm">
+                  <div key={i} className="space-y-4">
+                    <div className="w-12 h-12 rounded-2xl bg-[#00E676]/10 border-2 border-[#00E676]/25 flex items-center justify-center text-[#00E676] font-mono font-black text-base sm:text-lg shadow-[0_4px_15px_rgba(0,230,118,0.15)]">
                       {i + 1}
                     </div>
-                    <p className="text-white/60 text-sm leading-relaxed">{text}</p>
+                    <p className="text-white/80 text-base leading-relaxed">{text}</p>
                   </div>
                 ))}
               </div>
@@ -808,19 +808,20 @@ export default function SalesLanding() {
       {/* ══════════════════════════════════════════════════════════════════
           FAQ — Frequently Asked Questions
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 relative border-t border-white/5">
+      <section className="py-24 md:py-32 relative border-t border-white/5 bg-[#060912]">
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff01_1px,transparent_1px)] [background-size:24px_24px] opacity-50 pointer-events-none" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="text-center mb-16">
-              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block">RESOLVIENDO DUDAS</span>
-              <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight">
-                Preguntas <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">Frecuentes</span>
+            <div className="text-center mb-20">
+              <span className="text-sm md:text-base font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-4 block font-black">RESOLVIENDO DUDAS</span>
+              <h2 className="text-4xl sm:text-6xl font-black text-white uppercase tracking-tight leading-tight">
+                Preguntas <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(0,209,255,0.2)]">Frecuentes</span>
               </h2>
-              <p className="text-white/40 text-sm max-w-sm mx-auto mt-2">Todo lo que necesitas saber antes de asegurar tu cupo.</p>
+              <p className="text-white/60 text-base sm:text-lg max-w-xl mx-auto mt-4">Todo lo que necesitas saber antes de asegurar tu cupo en esta cohorte.</p>
             </div>
           </FadeIn>
           
-          <div className="space-y-4 max-w-4xl mx-auto">
+          <div className="space-y-6 max-w-4xl mx-auto">
             <FadeIn><FAQItem q="¿Necesito experiencia en trading?" a="GENY LAB está optimizado para traders de cualquier nivel. Si estás empezando, te ayuda a formar hábitos correctos desde el día uno. Si eres experimentado, te ayuda a diagnosticar y extirpar las trampas psicológicas que te impiden escalar tus resultados." /></FadeIn>
             <FadeIn delay={0.05}><FAQItem q="¿Es una estrategia o señales de trading?" a="Ninguna de las dos. GENY LAB no te da señales ni te vende una fórmula mágica de velas japonesas. Es una terminal interactiva que diagnostica tus sesgos cognitivos, mide tu límite real de riesgo e integra retroalimentación de Inteligencia Artificial para pulir tu disciplina." /></FadeIn>
             <FadeIn delay={0.1}><FAQItem q="¿Cuánto tiempo al día requiere?" a="Cada uno de los 6 laboratorios se puede completar en unos 15 a 30 minutos. Está diseñado para que avances a tu propio ritmo. La mentoría en vivo del Trading Room Elite es de 1 hora los sábados y queda grabada si no puedes asistir." /></FadeIn>
@@ -835,20 +836,20 @@ export default function SalesLanding() {
           FINAL CLOSE — Short, direct, emotional
           Technique: Mirror the opening pain + offer the exit
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 md:py-32 relative border-t border-white/5">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#00D1FF]/[0.03] to-transparent pointer-events-none" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center space-y-8">
+      <section className="py-28 md:py-36 relative border-t border-white/5">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#00D1FF]/[0.05] to-transparent pointer-events-none" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center space-y-10">
           <FadeIn>
-            <img src="/images/78.png" alt="GENY LAB" className="w-48 md:w-56 mx-auto object-contain opacity-75 mb-4" />
-            <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <img src="/images/78.png" alt="GENY LAB" className="w-56 md:w-64 mx-auto object-contain opacity-75 mb-6" />
+            <p className="text-white/80 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
               La próxima vez que abras una operación en tu cuenta real, puedes hacerlo desde el mismo caos e indisciplina de siempre... o puedes hacerlo calibrado, con control total y el respaldo del ecosistema.
             </p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-white mb-8">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight text-white mb-10">
               Tu consistencia te espera del{' '}
-              <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">otro lado.</span>
+              <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(0,230,118,0.25)]">otro lado.</span>
             </h2>
             <CTAButton large text="SÍ, QUIERO MI ACCESO — $67 USD" />
-            <p className="text-white/15 text-xs font-mono uppercase tracking-widest mt-4">
+            <p className="text-white/40 text-sm font-mono uppercase tracking-widest mt-6 font-bold">
               Pago único · Garantía 15 días · Acceso inmediato
             </p>
           </FadeIn>
@@ -859,16 +860,16 @@ export default function SalesLanding() {
       <AnimatePresence>
         {showStickyBar && (
           <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }} transition={{ duration: 0.3 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#05080f]/95 backdrop-blur-xl border-t border-white/10 py-3 px-4">
-            <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-              <div className="hidden sm:flex items-center gap-3">
-                <span className="text-white/25 text-sm line-through">$3,000</span>
-                <span className="text-2xl font-black bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">$67</span>
-                <span className="text-xs text-[#f59e0b] font-mono font-bold">{pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}</span>
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#05080f]/95 backdrop-blur-xl border-t border-white/10 py-4 px-4 sm:px-6">
+            <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+              <div className="hidden sm:flex items-center gap-4">
+                <span className="text-white/30 text-base line-through font-bold font-mono">$3,000</span>
+                <span className="text-3xl font-black bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent font-mono">$67</span>
+                <span className="text-sm text-[#f59e0b] font-mono font-black bg-[#f59e0b]/5 border border-[#f59e0b]/20 px-3 py-1 rounded-full uppercase tracking-wider">{pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}</span>
               </div>
               <a href={CTA_URL} target="_blank" rel="noopener noreferrer"
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-wider text-sm bg-gradient-to-r from-[#00D1FF] to-[#00E676] text-[#05080f] hover:scale-[1.02] active:scale-[0.98] transition-transform">
-                QUIERO MI ACCESO <ArrowRight size={16} />
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black uppercase tracking-wider text-base bg-gradient-to-r from-[#00D1FF] to-[#00E676] text-[#05080f] hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-[0_0_20px_rgba(0,230,118,0.3)]">
+                QUIERO MI ACCESO <ArrowRight size={18} />
               </a>
             </div>
           </motion.div>
