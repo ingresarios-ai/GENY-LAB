@@ -406,19 +406,31 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-8 md:py-10 relative">
+      <section className="py-10 md:py-14 relative">
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+          <FadeIn>
+            <div className="text-center mb-8">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight mb-3">
+                Mira lo que pasa cuando un trader deja de operar{' '}
+                <span className="text-[#00D1FF]">emocionalmente</span>
+              </h2>
+              <p className="text-white/40 text-sm max-w-xl mx-auto">
+                …y empieza a ejecutar con estructura real.
+              </p>
+            </div>
+          </FadeIn>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[1, 2, 3].map((i) => (
               <FadeIn key={i} delay={i * 0.1}>
                 <div className="rounded-2xl p-6 border border-white/5 bg-white/[0.02] backdrop-blur-sm flex flex-col items-center text-center gap-4">
                   <div className="flex gap-1">{[1,2,3,4,5].map(s => <Star key={s} size={14} className="text-[#f59e0b] fill-[#f59e0b]" />)}</div>
-                  <p className="text-white/25 text-sm italic">"Testimonio próximamente..."</p>
+                  <p className="text-white/30 text-sm italic">"Testimonio próximamente..."</p>
                   <div className="flex items-center gap-3 mt-auto pt-3 border-t border-white/5 w-full justify-center">
                     <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10" />
                     <div className="text-left">
-                      <p className="text-white/20 text-sm font-bold">Nombre</p>
-                      <p className="text-white/10 text-xs">País</p>
+                      <p className="text-white/25 text-sm font-bold">Nombre</p>
+                      <p className="text-white/15 text-xs">País</p>
                     </div>
                   </div>
                 </div>
