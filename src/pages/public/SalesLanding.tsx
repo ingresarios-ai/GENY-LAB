@@ -159,7 +159,7 @@ export default function SalesLanding() {
               </span>
             </h1>
             <p className="text-white/80 text-xl sm:text-2xl md:text-3xl leading-relaxed max-w-4xl mx-auto mb-10 font-medium">
-              Si esa frase te dolió al leerla, felicidades: eres parte del 95% de los traders que opera bajo el caos. Esto es para ti.
+              Si esa frase te dolió al leerla, felicidades: significa que eres lo suficientemente honesto para admitir que estás operando bajo el caos. Y ese es el primer paso para corregirlo.
             </p>
             <div className="animate-bounce inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-white/40">
               <ArrowDown size={18} />
