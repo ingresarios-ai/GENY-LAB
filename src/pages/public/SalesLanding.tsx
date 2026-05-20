@@ -70,6 +70,7 @@ export default function SalesLanding() {
   const [timeLeft, setTimeLeft] = useState({ h: 47, m: 59, s: 59 });
   const [showStickyBar, setShowStickyBar] = useState(false);
   const pricingRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('geny_landing_timer');
@@ -86,7 +87,7 @@ export default function SalesLanding() {
   }, []);
 
   useEffect(() => {
-    const h = () => { if (pricingRef.current) setShowStickyBar(pricingRef.current.getBoundingClientRect().bottom < 0); };
+    const h = () => { if (headlineRef.current) setShowStickyBar(headlineRef.current.getBoundingClientRect().bottom < 0); };
     window.addEventListener('scroll', h, { passive: true });
     return () => window.removeEventListener('scroll', h);
   }, []);
@@ -151,7 +152,7 @@ export default function SalesLanding() {
           </div>
 
           {/* HEADLINE — Identity-based pattern interrupt (HUGE TYPOGRAPHY) */}
-          <div className="text-center max-w-5xl mx-auto mt-6">
+          <div ref={headlineRef} className="text-center max-w-5xl mx-auto mt-6">
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.6rem] font-black leading-[1.08] tracking-tight mb-8">
               Sabes exactamente lo que tienes que hacer…<br />
               <span className="bg-gradient-to-r from-red-500 via-red-400 to-[#FF6321] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(239,68,68,0.25)]">
