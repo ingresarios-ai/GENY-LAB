@@ -110,7 +110,7 @@ export default function SalesLanding() {
       {/* 🚨 Warning Top Bar */}
       <div className="bg-[#fe0443]/10 border-b border-[#fe0443]/20 py-4 text-center text-sm sm:text-base font-mono tracking-widest text-[#fe0443] font-black flex items-center justify-center gap-2">
         <span className="w-3 h-3 rounded-full bg-[#fe0443] animate-pulse" />
-        ATENCIÓN: COHORTE EXCLUSIVA LIMITADA A 100 CUPOS · SÓLO QUEDAN {spots} DISPONIBLES HOY
+        ATENCIÓN: ACCESO EXCLUSIVO LIMITADO A 100 CUPOS · SÓLO QUEDAN {spots} DISPONIBLES HOY
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════
@@ -753,14 +753,14 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ⚠️ Warning Cohorte Limitada */}
+      {/* ⚠️ Warning Cupos Limitados */}
       <section className="py-14 relative bg-[#060912]/50 border-b border-white/5">
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <FadeIn>
               <div className="rounded-3xl p-8 h-full border-2 border-red-500/20 bg-red-500/[0.02] space-y-4 shadow-[0_10px_35px_rgba(239,68,68,0.02)]">
                 <h4 className="font-black uppercase tracking-tight text-base sm:text-lg text-red-400 flex items-center gap-2">
-                  <Users size={20} className="animate-pulse" /> Cohorte limitada a 100 cupos
+                  <Users size={20} className="animate-pulse" /> Registro limitado a 100 cupos
                 </h4>
                 <p className="text-base text-white/80 leading-relaxed">
                   Para poder revisar los perfiles de riesgo y dar feedback de calidad 1-a-1, limitamos el acceso estrictamente. Una vez llenado el cupo, las inscripciones se bloquean de manera automática hasta la siguiente temporada.
@@ -773,7 +773,7 @@ export default function SalesLanding() {
                   <Clock size={20} /> Entrada sincronizada
                 </h4>
                 <p className="text-base text-white/80 leading-relaxed">
-                  Todos los miembros de esta cohorte inician al mismo tiempo para poder coordinar las mentorías y los diagnósticos iniciales. Si no entras hoy, deberás esperar meses para la próxima apertura.
+                  Todos los miembros que se registren hoy inician al mismo tiempo para poder coordinar las mentorías y los diagnósticos iniciales. Si no entras hoy, deberás esperar hasta la próxima apertura.
                 </p>
               </div>
             </FadeIn>
@@ -821,7 +821,7 @@ export default function SalesLanding() {
               <h2 className="text-4xl sm:text-6xl font-black text-white uppercase tracking-tight leading-tight">
                 Preguntas <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(0,209,255,0.2)]">Frecuentes</span>
               </h2>
-              <p className="text-white/60 text-base sm:text-lg max-w-xl mx-auto mt-4">Todo lo que necesitas saber antes de asegurar tu cupo en esta cohorte.</p>
+              <p className="text-white/60 text-base sm:text-lg max-w-xl mx-auto mt-4">Todo lo que necesitas saber antes de asegurar tu cupo de acceso.</p>
             </div>
           </FadeIn>
           
