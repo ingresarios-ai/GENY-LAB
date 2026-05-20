@@ -25,12 +25,12 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
 
 const CTA_URL = 'https://whop.com/ingresarios/geny-lab/';
 
-function CTAButton({ large = false, className = '', text = 'QUIERO MI ACCESO AHORA' }: { large?: boolean; className?: string; text?: string }) {
+function CTAButton({ large = false, className = '', text = 'QUIERO MI ACCESO AHORA' }: { large?: boolean; className?: string; text?: React.ReactNode }) {
   return (
     <a href={CTA_URL} target="_blank" rel="noopener noreferrer"
       className={`group relative inline-flex items-center justify-center gap-3 font-black uppercase tracking-wider rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] ${large ? 'px-10 py-5 text-base md:text-lg' : 'px-8 py-4 text-sm md:text-base'} bg-gradient-to-r from-[#00D1FF] to-[#00E676] text-[#05080f] shadow-[0_0_40px_rgba(0,209,255,0.3)] hover:shadow-[0_0_60px_rgba(0,209,255,0.5)] ${className}`}>
-      <span>{text}</span>
-      <ArrowRight size={large ? 22 : 18} className="group-hover:translate-x-1 transition-transform" />
+      <span className="text-center">{text}</span>
+      <ArrowRight size={large ? 22 : 18} className="group-hover:translate-x-1 transition-transform shrink-0" />
       <span className="absolute inset-0 rounded-2xl border-2 border-[#00D1FF]/40 animate-ping opacity-20 pointer-events-none" />
     </a>
   );
@@ -729,7 +729,12 @@ export default function SalesLanding() {
                 </div>
 
                 <div className="text-center pt-2 pb-8">
-                  <CTAButton large text="SÍ, QUIERO MI ACCESO AHORA — $67 USD" className="w-full max-w-lg mx-auto" />
+                  <CTAButton large text={
+                    <div className="flex flex-col items-center leading-tight">
+                      <span>SÍ, QUIERO MI ACCESO AHORA</span>
+                      <span className="text-xs md:text-sm font-bold opacity-80 mt-0.5">— SOLO POR $67 USD —</span>
+                    </div>
+                  } className="w-full max-w-lg mx-auto" />
                 </div>
 
                 {/* 🛡️ Guarantee Box */}
@@ -852,7 +857,12 @@ export default function SalesLanding() {
               Tu consistencia te espera del{' '}
               <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(0,230,118,0.25)]">otro lado.</span>
             </h2>
-            <CTAButton large text="SÍ, QUIERO MI ACCESO — $67 USD" />
+            <CTAButton large text={
+              <div className="flex flex-col items-center leading-tight">
+                <span>SÍ, QUIERO MI ACCESO</span>
+                <span className="text-xs md:text-sm font-bold opacity-80 mt-0.5">— SOLO POR $67 USD —</span>
+              </div>
+            } />
             <p className="text-white/40 text-sm font-mono uppercase tracking-widest mt-6 font-bold">
               Pago único · Garantía 15 días · Acceso inmediato
             </p>
