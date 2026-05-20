@@ -716,13 +716,14 @@ Deno.serve(async (req: Request) => {
           
         if (whErr || !wh) return json({ error: "Webhook not found" }, 404);
 
+        const activityName = wh.events && wh.events.length > 0 ? (wh.events[0] === 'all' ? 'adn' : wh.events[0]) : "actividad_prueba";
         const testPayload = {
           event: "test_connection",
           user: {
             name: "Usuario de Prueba",
             email: "prueba@genylab.com",
           },
-          activity: "test_activity",
+          activity: activityName,
           timestamp: new Date().toISOString(),
           is_test: true,
         };
