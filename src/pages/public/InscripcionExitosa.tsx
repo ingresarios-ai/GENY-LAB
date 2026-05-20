@@ -34,6 +34,11 @@ export default function InscripcionExitosa() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="w-full max-w-5xl relative z-10"
         >
+          {/* LOGO — above everything, bigger */}
+          <div className="text-center mb-8">
+            <img src="/images/78.png" alt="GENY LAB" className="w-52 md:w-72 object-contain mx-auto" />
+          </div>
+
           {/* GLASS PANEL CONTAINER */}
           <div className="glass-panel p-8 md:p-12 border border-brand-emerald/30 shadow-[0_0_50px_rgba(1,228,126,0.08)] rounded-3xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-emerald via-[#00D1FF] to-brand-emerald"></div>
@@ -41,11 +46,8 @@ export default function InscripcionExitosa() {
             {/* Two-column grid on desktop, single column on mobile */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
 
-              {/* LEFT COLUMN — Logo + Success Header */}
+              {/* LEFT COLUMN — Success Header */}
               <div className="flex flex-col items-center text-center space-y-6">
-                {/* LOGO */}
-                <img src="/images/78.png" alt="GENY LAB" className="w-40 md:w-52 object-contain" />
-
                 <motion.div 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
