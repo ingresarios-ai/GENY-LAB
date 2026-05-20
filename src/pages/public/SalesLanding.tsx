@@ -227,14 +227,10 @@ export default function SalesLanding() {
       {/* ══════════════════════════════════════════════════════════════════
           THE SHIFT — Reframe the problem
           Technique: "The real problem isn't what you think"
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-20 md:py-28 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00D1FF]/[0.015] to-transparent" />
         <div className="relative z-10 max-w-3xl mx-auto px-4">
           <FadeIn>
-            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#00D1FF]/60 mb-8 text-center">EL DESCUBRIMIENTO</p>
-          </FadeIn>
-          <FadeIn delay={0.1}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-center mb-8">
               El problema nunca fue<br />la estrategia.
             </h2>
@@ -258,16 +254,11 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          THE SOLUTION — Identity-based reveal
-          Technique: Don't describe the product. Describe who they BECOME.
-      ══════════════════════════════════════════════════════════════════ */}
       <section id="solucion" className="py-20 md:py-32 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00D1FF]/[0.02] to-transparent" />
         <div className="relative z-10 max-w-4xl mx-auto px-4">
           <FadeIn>
             <div className="text-center mb-10">
-              <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#00D1FF]/60 mb-3">LA SOLUCIÓN</p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
                 <span className="text-[#00D1FF]">GENY LAB</span>
               </h2>
@@ -275,7 +266,6 @@ export default function SalesLanding() {
             </div>
           </FadeIn>
 
-          {/* Future Pacing — make them visualize the transformation */}
           <FadeIn delay={0.1}>
             <Callout color="#00E676">
               <p className="text-white/80 text-base md:text-lg leading-relaxed">
@@ -302,7 +292,6 @@ export default function SalesLanding() {
             </div>
           </FadeIn>
 
-          {/* Mockups */}
           <FadeIn>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-12">
               <div className="text-center">
@@ -318,10 +307,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          QUICK WIN — Lower the perceived effort
-          Technique: "You'll know in 15 minutes" reduces commitment anxiety
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-12 md:py-16 relative">
         <div className="relative z-10 max-w-3xl mx-auto px-4">
           <FadeIn>
@@ -334,15 +319,10 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          THE SYSTEM — What's inside (Desire building)
-          Technique: Each lab positioned as solving a SPECIFIC painful scenario
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-20 md:py-28 relative">
         <div className="relative z-10 max-w-5xl mx-auto px-4">
           <FadeIn>
             <div className="text-center mb-10">
-              <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#00D1FF]/60 mb-3">QUÉ HAY DENTRO</p>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight mb-3">
                 6 laboratorios diseñados para<br />
                 <span className="text-[#00D1FF]">auditar tu psicología</span> y estructura
@@ -403,10 +383,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          OBJECTION BRIDGE — "Ya probé demasiadas cosas"
-          Technique: Damaging admission + identity resonance
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-16 md:py-24 relative">
         <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
           <FadeIn>
@@ -430,9 +406,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          TESTIMONIALS (Placeholder)
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-12 md:py-16 relative">
         <div className="relative z-10 max-w-5xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -455,15 +428,9 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          BONUSES — Perceived value amplifiers
-          Technique: Position bonuses as solving ADDITIONAL pain points
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-20 md:py-28 relative">
         <div className="relative z-10 max-w-4xl mx-auto px-4">
-          <FadeIn>
-            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#f59e0b]/60 text-center mb-8">PERO ESO NO ES TODO</p>
-          </FadeIn>
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FadeIn>
@@ -492,10 +459,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          THE OFFER — Single price reveal moment
-          Technique: Anchor high → justify → reveal → philosophy → urgency
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-20 md:py-32 relative" id="precio" ref={pricingRef}>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E676]/[0.02] to-transparent" />
         <div className="relative z-10 max-w-3xl mx-auto px-4">
@@ -504,7 +467,6 @@ export default function SalesLanding() {
               <div className="h-1.5 bg-gradient-to-r from-[#00D1FF] via-[#00E676] to-[#f59e0b]" />
 
               <div className="p-8 md:p-12">
-                {/* Scarcity */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm mb-8">
                   <span className="flex items-center gap-1.5 text-[#f59e0b] font-mono font-bold">
                     <Clock size={16} /> {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
@@ -515,7 +477,6 @@ export default function SalesLanding() {
                   </span>
                 </div>
 
-                {/* Value Stack */}
                 <div className="space-y-0 mb-6">
                   {[
                     ['GENY LAB — 6 Laboratorios Interactivos + IA', '$1,200'],
@@ -532,23 +493,19 @@ export default function SalesLanding() {
                   ))}
                 </div>
 
-                {/* Anchor */}
                 <div className="text-center py-4 border-t border-white/10">
                   <p className="text-white/40 text-sm mb-2">Valor total del ecosistema:</p>
                   <p className="text-3xl font-black text-white/25 line-through decoration-red-400/40 decoration-2">$3,000 USD</p>
                 </div>
 
-                {/* Justify — why it WOULD be worth $3K */}
                 <p className="text-white/50 text-sm text-center leading-relaxed max-w-lg mx-auto py-4">
                   Si lo único que lograra este sistema fuera <strong className="text-white/70">detener tus pérdidas emocionales</strong> y volverte un trader que cierra en verde todas las semanas… ¿valdría $3,000? <strong className="text-[#00E676]">Recuperarías eso en unos cuantos buenos trades.</strong>
                 </p>
 
-                {/* The Drop — dramatic price reveal */}
                 <div className="text-center py-6 space-y-3">
                   <p className="text-white/70 text-lg">Pero hoy no vas a pagar $3,000.</p>
                   <p className="text-white/50">Ni $1,000. Ni siquiera la mitad.</p>
 
-                  {/* THE PHILOSOPHY — this is the KEY conversion copy */}
                   <div className="py-4">
                     <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto">
                       Porque el objetivo de GENY LAB <strong className="text-white">no es venderte otro curso aburrido para que lo dejes a medias.</strong> El objetivo es darte la estructura que te falta para que dejes de adivinar y empieces a <strong className="text-[#00D1FF]">ejecutar con precisión.</strong>
@@ -562,12 +519,10 @@ export default function SalesLanding() {
                   </div>
                 </div>
 
-                {/* CTA */}
                 <div className="text-center pt-2 pb-6">
                   <CTAButton large text="SÍ, QUIERO MI ACCESO — $67 USD" className="w-full max-w-md mx-auto" />
                 </div>
 
-                {/* Guarantee — Risk Reversal as HERO element */}
                 <div className="rounded-xl p-5 border border-[#00D1FF]/15 bg-[#00D1FF]/[0.03] mb-6">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl bg-[#00D1FF]/10 border border-[#00D1FF]/25 flex items-center justify-center shrink-0">
@@ -593,10 +548,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          URGENCY — Real reasons, not just timers
-          Technique: Logical urgency (cohort-based) > fake countdown
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-16 md:py-20 relative">
         <div className="relative z-10 max-w-3xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -624,10 +575,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          FUTURE IMMEDIATE — Reduce gap between "pay" and "use"
-          Technique: Visualize the NEXT 2 MINUTES after clicking
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-16 md:py-20 relative">
         <div className="relative z-10 max-w-3xl mx-auto px-4">
           <FadeIn>
@@ -655,9 +602,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          FAQ — Objection handling
-      ══════════════════════════════════════════════════════════════════ */}
       <section className="py-20 md:py-28 relative">
         <div className="relative z-10 max-w-3xl mx-auto px-4">
           <FadeIn>
