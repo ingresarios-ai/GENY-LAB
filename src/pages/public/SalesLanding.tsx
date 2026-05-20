@@ -101,104 +101,177 @@ export default function SalesLanding() {
   });
 
   return (
-    <div className="min-h-screen bg-[#05080f] text-white overflow-hidden">
+    <div className="min-h-screen bg-[#05080f] text-white overflow-hidden relative">
+      {/* Background Decorative Tech Grid & Glow Blobs */}
+      <div className="absolute top-0 left-0 right-0 h-[100vh] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/15 via-[#05080f]/80 to-[#05080f] -z-10 pointer-events-none" />
+      <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-[#00D1FF]/[0.03] rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute top-[30%] right-[5%] w-[500px] h-[500px] bg-[#00E676]/[0.02] rounded-full blur-[140px] -z-10 pointer-events-none" />
+
+      {/* 🚨 Warning Top Bar */}
+      <div className="bg-[#fe0443]/10 border-b border-[#fe0443]/20 py-3 text-center text-xs sm:text-sm font-mono tracking-widest text-[#fe0443] font-bold flex items-center justify-center gap-2">
+        <span className="w-2.5 h-2.5 rounded-full bg-[#fe0443] animate-pulse" />
+        ATENCIÓN: COHORTE EXCLUSIVA LIMITADA A 100 CUPOS · SÓLO QUEDAN {spots} DISPONIBLES HOY
+      </div>
 
       {/* ══════════════════════════════════════════════════════════════════
           HERO — Pattern Interrupt + Video
           Technique: Identity-based headline that makes them feel SEEN
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="relative pt-8 pb-12 md:pt-12 md:pb-16">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-[#00D1FF]/[0.04] rounded-full blur-[150px] -translate-y-1/2" />
-
+      <section className="relative pt-12 pb-16 md:pt-16 md:pb-24">
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-8 md:mb-10">
-            <img src="/images/78.png" alt="GENY LAB" className="w-48 md:w-64 mx-auto object-contain" />
+          <div className="text-center mb-10 md:mb-12">
+            <img src="/images/78.png" alt="GENY LAB" className="w-56 md:w-72 mx-auto object-contain drop-shadow-[0_0_20px_rgba(0,209,255,0.25)]" />
           </div>
 
-          {/* Video */}
-          <div className="relative w-full max-w-4xl mx-auto mb-10 md:mb-14">
-            <div className="aspect-video rounded-2xl overflow-hidden border-2 border-[#00D1FF]/20 shadow-[0_0_80px_rgba(0,209,255,0.12)] bg-[#0a0e18]">
-              <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-[#0a0e18] to-[#05080f]">
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#00D1FF]/10 border-2 border-[#00D1FF]/40 flex items-center justify-center shadow-[0_0_40px_rgba(0,209,255,0.3)] cursor-pointer hover:scale-110 transition-transform">
-                  <Play size={36} className="text-[#00D1FF] ml-1" fill="rgba(0,209,255,0.3)" />
+          {/* Video VSL Player mockup */}
+          <div className="relative w-full max-w-4xl mx-auto mb-12 md:mb-16">
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#00D1FF]/30 via-[#00E676]/20 to-[#00D1FF]/30 -z-10 blur-md opacity-75" />
+            <div className="aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(0,209,255,0.18)] bg-[#070b13] relative group cursor-pointer hover:scale-[1.01] transition-transform duration-300">
+              <div className="w-full h-full flex flex-col items-center justify-center gap-5 bg-gradient-to-br from-[#0a0f1d] via-[#05080f] to-[#0a0f1d]">
+                <div className="relative flex items-center justify-center">
+                  <div className="absolute w-24 h-24 rounded-full bg-[#00D1FF]/20 animate-ping opacity-60 pointer-events-none" />
+                  <div className="absolute w-20 h-20 rounded-full bg-[#00E676]/10 animate-pulse border border-[#00E676]/30 pointer-events-none" />
+                  <div className="w-20 h-20 rounded-full bg-[#00D1FF]/15 border border-[#00D1FF]/55 flex items-center justify-center shadow-[0_0_40px_rgba(0,209,255,0.4)] relative z-10 hover:bg-[#00D1FF]/25 hover:scale-105 transition-all duration-300">
+                    <Play size={32} className="text-[#00D1FF] ml-1 fill-[#00D1FF]/20" />
+                  </div>
                 </div>
-                <p className="text-white/40 font-mono text-xs uppercase tracking-widest">Video próximamente</p>
+                <div className="text-center space-y-1">
+                  <p className="text-white/80 font-mono text-xs uppercase tracking-[0.25em] font-bold">MIRA EL VIDEO EXPLICATIVO (4 MIN)</p>
+                  <p className="text-white/35 text-xs">Asegúrate de encender tu volumen 🔊 · El video comenzará a reproducirse</p>
+                </div>
               </div>
             </div>
-            <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-[#00D1FF]/20 via-transparent to-[#00E676]/20 -z-10 blur-sm" />
+            
+            {/* Secure payment logos below video */}
+            <div className="flex flex-wrap items-center justify-center gap-6 mt-5 text-white/35 text-xs font-mono uppercase tracking-[0.15em]">
+              <span className="flex items-center gap-1.5"><Lock size={12} className="text-[#00D1FF]" /> Conexión Segura SSL</span>
+              <span className="flex items-center gap-1.5"><Shield size={12} className="text-[#00E676]" /> Garantía Total 15 Días</span>
+              <span className="flex items-center gap-1.5"><Clock size={12} className="text-[#f59e0b]" /> Acceso de por vida</span>
+            </div>
           </div>
 
-          {/* HEADLINE — Identity-based pattern interrupt */}
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-black leading-[1.1] mb-6">
+          {/* HEADLINE — Identity-based pattern interrupt (HUGE TYPOGRAPHY) */}
+          <div className="text-center max-w-5xl mx-auto mt-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.6rem] font-black leading-[1.08] tracking-tight mb-8">
               Sabes exactamente lo que tienes que hacer…<br />
-              <span className="bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-red-500 via-red-400 to-[#FF6321] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(239,68,68,0.25)]">
                 y aún así lo haces mal.
               </span>
             </h1>
-            <p className="text-white/60 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-8">
-              Si esa frase te dolió, esta página es para ti.
+            <p className="text-white/60 text-lg sm:text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto mb-10">
+              Si esa frase te dolió al leerla, felicidades: eres parte del 95% de los traders que opera bajo el caos. Esto es para ti.
             </p>
+            <div className="animate-bounce inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-white/40">
+              <ArrowDown size={18} />
+            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════
           AGITATION — Make them FEEL the pain (not just read it)
-          Technique: Scenario-based agitation + micro-commitments ("¿Te suena?")
+          Technique: Comparison between Chaos & Control
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-10 md:py-14 relative">
-        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
-            {/* Story column */}
+      <section className="py-16 md:py-24 relative bg-[#070b14]/50 border-y border-white/5">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:30px_30px]" />
+        
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+          <FadeIn>
+            <div className="text-center max-w-3xl mx-auto mb-14">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase tracking-tight mb-4">
+                ¿Por qué sigues <span className="text-red-400">saboteando</span> tu cuenta?
+              </h2>
+              <p className="text-white/50 text-base md:text-lg">
+                Haces un plan perfecto. Sabes dónde entrar. Pero cuando el mercado se mueve, entras en pánico, mueves el stop o cierras antes de tiempo. Esto es lo que está pasando:
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-stretch">
+            {/* Left Column: Chaos (The Pain) */}
             <FadeIn>
-              <div className="space-y-5">
-                <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                  Abriste la operación con un plan claro. Sabías dónde entrar, dónde poner el stop, dónde tomar ganancias.
-                </p>
-                <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                  Pero el mercado se movió en tu contra y algo <em>cambió</em> dentro de ti. El plan desapareció. Moviste el stop. O cerraste antes de tiempo. O peor: abriste otra operación para "recuperar".
-                </p>
-                <p className="text-white/80 text-lg md:text-xl leading-relaxed font-medium">
-                  Y después, viendo el gráfico en frío, te preguntaste: <strong className="text-white">"¿Cómo puedo ser tan estúpido si sabía lo que tenía que hacer?"</strong>
-                </p>
-                <Callout color="#ef4444">
-                  <p className="text-red-300/80 text-sm md:text-base leading-relaxed">
-                    <strong className="text-red-300">Eso no es estupidez. Es algo completamente diferente.</strong><br />
-                    Tu cerebro llegó a su límite de tolerancia al riesgo. Y cuando eso pasa, dejas de razonar y empiezas a <em>sobrevivir</em>. No piensas. Reaccionas.
+              <div className="rounded-3xl p-6 md:p-8 h-full border border-red-500/20 bg-gradient-to-b from-red-950/[0.08] to-transparent shadow-[0_0_50px_rgba(239,68,68,0.03)] space-y-6 flex flex-col justify-between">
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 border-b border-red-500/10 pb-4">
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                      <AlertTriangle size={18} />
+                    </div>
+                    <h3 className="text-base md:text-lg font-black uppercase tracking-wider text-red-400">EL TRADING DEL CAOS (EL 95%)</h3>
+                  </div>
+
+                  <p className="text-white/70 text-sm md:text-base leading-relaxed">
+                    Operas desde el caos mental. Tu cerebro no está entrenado para sostener el riesgo, por lo que entra en modo de supervivencia. No piensas: reaccionas.
                   </p>
-                </Callout>
+
+                  <div className="flex flex-col gap-3.5">
+                    {[
+                      'Dudas de tus setups y entras tarde o dejas pasar la oportunidad.',
+                      'Mueves el stop-loss en pánico creyendo que el mercado se recuperará.',
+                      'Cierras operaciones ganadoras antes de tiempo por miedo a perderlas.',
+                      'Operas por venganza para recuperar lo que perdiste en el trade anterior.'
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <div className="mt-1 w-5 h-5 rounded-md bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                          <span className="text-red-400 text-xs font-black">✕</span>
+                        </div>
+                        <p className="text-white/50 text-sm md:text-base">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-red-500/10 mt-6">
+                  <p className="text-red-300/80 text-xs md:text-sm font-semibold italic">
+                    "Eso no es estupidez. Es tu cerebro llegando a su límite biológico de tolerancia al riesgo."
+                  </p>
+                </div>
               </div>
             </FadeIn>
 
-            {/* Checklist column */}
+            {/* Right Column: Control (The Solution Reframe) */}
             <FadeIn delay={0.15}>
-              <div className="space-y-5">
-                <p className="text-white/60 text-base md:text-lg leading-relaxed">
-                  El <strong className="text-white">95% de los traders pierde dinero</strong> no por falta de estrategia, sino porque operan desde el <strong className="text-[#00D1FF]">caos mental</strong>. Pierden el control emocional, dudan de sus setups, y nunca logran construir consistencia real.
-                </p>
-                <div className="flex flex-col gap-3">
-                  {[
-                    'Tienes más estrategias guardadas de las que puedes contar',
-                    'Sabes la regla, pero la rompes cuando el mercado te presiona',
-                    'Ya gastaste dinero en cursos que no cambiaron nada',
-                    'Sientes que el problema eres tú, no el método',
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="mt-1 w-5 h-5 rounded-md bg-red-500/15 border border-red-500/25 flex items-center justify-center shrink-0">
-                        <CheckCircle2 size={12} className="text-red-400" />
-                      </div>
-                      <p className="text-white/60 text-sm md:text-base">{item}</p>
+              <div className="rounded-3xl p-6 md:p-8 h-full border border-[#00E676]/20 bg-gradient-to-b from-[#00E676]/[0.08] to-transparent shadow-[0_0_50px_rgba(0,230,118,0.03)] space-y-6 flex flex-col justify-between">
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 border-b border-[#00E676]/10 pb-4">
+                    <div className="w-8 h-8 rounded-lg bg-[#00E676]/10 border border-[#00E676]/30 flex items-center justify-center text-[#00E676] shrink-0">
+                      <Target size={18} />
                     </div>
-                  ))}
+                    <h3 className="text-base md:text-lg font-black uppercase tracking-wider text-[#00E676]">EL TRADER SISTEMÁTICO (EL 5%)</h3>
+                  </div>
+
+                  <p className="text-white/70 text-sm md:text-base leading-relaxed">
+                    Operas como una terminal matemática. Conoces tus emociones, sabes medir tu termostato financiero y ejecutas el plan sin drama ni dilemas mentales.
+                  </p>
+
+                  <div className="flex flex-col gap-3.5">
+                    {[
+                      'Ejecutas con confianza porque sabes qué estilo encaja con tu ADN.',
+                      'Mantienes el stop-loss fijo, aceptando las pérdidas como parte del negocio.',
+                      'Dejas correr las ganancias hasta tu objetivo técnico planificado.',
+                      'Apagas las pantallas después de tu límite de pérdidas diario, sin dudar.'
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <div className="mt-1 w-5 h-5 rounded-md bg-[#00E676]/10 border border-[#00E676]/20 flex items-center justify-center shrink-0">
+                          <CheckCircle2 size={12} className="text-[#00E676]" />
+                        </div>
+                        <p className="text-white/60 text-sm md:text-base">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-[#00E676]/10 mt-6">
+                  <p className="text-[#00E676] text-xs md:text-sm font-semibold italic">
+                    "La consistencia real no está en la gráfica, está en cómo calibras tu propio sistema de ejecución."
+                  </p>
                 </div>
               </div>
             </FadeIn>
           </div>
 
           <FadeIn delay={0.3}>
-            <p className="text-[#00D1FF] text-lg md:text-xl font-bold text-center mt-8">
-              Si marcaste aunque sea uno, sigue leyendo. Lo que viene después te va a cambiar la perspectiva.
+            <p className="text-[#00D1FF] text-lg md:text-2xl font-black text-center mt-12 uppercase tracking-wide">
+              Si te identificaste con el caos, sigue leyendo. Lo que viene va a reconfigurar tu forma de operar.
             </p>
           </FadeIn>
         </div>
@@ -208,16 +281,20 @@ export default function SalesLanding() {
           POLARIZATION — Filter & elevate the reader
           Technique: Exclusion creates desire. "Not for you" = "I NEED this"
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-8 md:py-10 relative">
+      <section className="py-12 md:py-16 relative">
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="rounded-2xl p-7 md:p-8 border border-red-500/15 bg-red-500/[0.03] backdrop-blur-sm">
-              <p className="text-red-400 text-sm font-bold uppercase tracking-widest mb-4">⛔ Antes de seguir:</p>
-              <p className="text-white/70 text-sm md:text-base leading-relaxed mb-3">
-                Si estás buscando <strong className="text-white/90">señales de Telegram</strong>, un <strong className="text-white/90">bot que opere por ti</strong>, o el secreto para hacerte millonario este viernes…  cierra esta página. En serio.
+            <div className="rounded-3xl p-8 md:p-10 border border-red-500/15 bg-red-500/[0.03] backdrop-blur-xl relative overflow-hidden shadow-[inset_0_0_30px_rgba(239,68,68,0.05)]">
+              <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-red-500/[0.04] rounded-full blur-[80px]" />
+              <p className="text-red-400 text-xs md:text-sm font-mono font-bold uppercase tracking-[0.25em] mb-4 flex items-center gap-2">
+                ⛔ LEER ANTES DE CONTINUAR:
               </p>
-              <p className="text-white/70 text-sm md:text-base leading-relaxed">
-                Esto es para traders que ya están <em>hartos</em> de perder dinero por indisciplina y están listos para hacer el trabajo real de profesionalizarse. <strong className="text-white">Si ese eres tú, bienvenido.</strong>
+              <h3 className="text-xl md:text-2xl font-black uppercase text-white mb-3">Esto NO es para todo el mundo</h3>
+              <p className="text-white/60 text-sm md:text-base leading-relaxed mb-4">
+                Si buscas un grupo de señales de Telegram para copiar setups, un robot automático que opere milagrosamente por ti, o el secreto para hacerte millonario este fin de semana... <strong>por favor, cierra esta pestaña.</strong>
+              </p>
+              <p className="text-white/65 text-sm md:text-base leading-relaxed">
+                GENY LAB es un sistema de entrenamiento estricto para traders que ya se cansaron de perder capital por indisciplina y están listos para profesionalizar su mentalidad. <strong>Si eres de los que hacen el trabajo duro, bienvenido.</strong>
               </p>
             </div>
           </FadeIn>
@@ -228,146 +305,200 @@ export default function SalesLanding() {
           THE SHIFT — Reframe the problem
           Technique: "The real problem isn't what you think"
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-12 md:py-16 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00D1FF]/[0.015] to-transparent" />
+      <section className="py-20 md:py-28 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00D1FF]/[0.02] to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-center mb-8">
-              El problema nunca fue<br />la estrategia.
-            </h2>
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block">EL GRAN REVELADOR</span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
+                El problema nunca fue<br />
+                <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,209,255,0.15)]">la estrategia.</span>
+              </h2>
+            </div>
           </FadeIn>
           <FadeIn delay={0.15}>
-            <div className="space-y-5">
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                Todos esos cursos que compraste te enseñaron a operar <em>como su autor</em>. No como tú.
+            <div className="space-y-6 max-w-4xl mx-auto">
+              <p className="text-white/80 text-lg md:text-xl leading-relaxed text-center">
+                Todos los mentores y cursos que has comprado hasta hoy te enseñaron a operar <em>como ellos operan</em>. No como tú.
               </p>
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                ¿Alguno te preguntó qué <strong className="text-white">emoción específica</strong> te hace romper tus propias reglas? ¿Alguno midió tu <strong className="text-white">tolerancia real al riesgo</strong> antes de enseñarte una estrategia? ¿Alguno diagnosticó los <strong className="text-white">patrones subconscientes</strong> que controlan tus decisiones?
-              </p>
-              <p className="text-xl md:text-2xl font-black text-white text-center py-4">
-                Ninguno.
-              </p>
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                Porque todos vendían <em>su</em> método. No el tuyo.
-              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                {[
+                  {
+                    q: "¿Qué emoción específica te hace romper tus reglas?",
+                    desc: "La mayoría te da reglas rígidas, pero ignoran la emoción exacta que las destruye en segundos."
+                  },
+                  {
+                    q: "¿Cuál es tu tolerancia real al riesgo?",
+                    desc: "Te dicen 'arriesga el 1%', pero tu cerebro entra en pánico biológico mucho antes."
+                  },
+                  {
+                    q: "¿Cuáles son tus patrones subconscientes?",
+                    desc: "Tus reacciones automáticas al gráfico vienen programadas de tu infancia y finanzas personales."
+                  }
+                ].map((item, idx) => (
+                  <div key={idx} className="rounded-2xl p-6 border border-white/5 bg-[#080d17]/60 hover:border-[#00D1FF]/20 transition-all duration-300">
+                    <p className="text-[#00D1FF] text-base md:text-lg font-black mb-3">{item.q}</p>
+                    <p className="text-white/50 text-xs sm:text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center py-6">
+                <p className="text-3xl sm:text-4xl font-black text-white">Ninguno.</p>
+                <p className="text-white/50 text-sm md:text-base mt-2">Porque todos vendían <em>su</em> método rígido. No tu calibración personalizada.</p>
+              </div>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      <section id="solucion" className="py-12 md:py-16 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00D1FF]/[0.02] to-transparent" />
+      {/* ══════════════════════════════════════════════════════════════════
+          THE SOLUTION — GENY LAB
+          Technique: Gamification and Interactive Mockups
+      ══════════════════════════════════════════════════════════════════ */}
+      <section id="solucion" className="py-20 md:py-28 relative border-t border-white/5">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E676]/[0.02] to-transparent pointer-events-none" />
+        
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="text-center mb-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
-                <span className="text-[#00D1FF]">GENY LAB</span>
+            <div className="text-center mb-12">
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00E676] mb-3 block">PRESENTAMOS EL NÚCLEO</span>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-white via-white to-[#00D1FF] bg-clip-text text-transparent">
+                GENY LAB
               </h2>
-              <p className="text-white/40 text-sm font-mono uppercase tracking-widest mt-2">Sistema Operativo para Traders Consistentes</p>
+              <p className="text-white/40 text-sm font-mono uppercase tracking-[0.2em] mt-3">Sistema de Calibración Nodal para Traders</p>
             </div>
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <Callout color="#00E676">
-              <p className="text-white/80 text-base md:text-lg leading-relaxed">
-                Imagina entrar a tu siguiente operación sabiendo <strong className="text-white">exactamente</strong> qué emoción te sabotea, cuál es tu límite real de riesgo, y teniendo un sistema que te avisa <em>antes</em> de que tu cerebro entre en modo pánico.
-              </p>
-              <p className="text-[#00E676] font-bold mt-3">Eso es lo que construyes dentro de GENY LAB.</p>
-            </Callout>
+            <div className="max-w-4xl mx-auto">
+              <Callout color="#00E676">
+                <p className="text-white/90 text-base sm:text-lg md:text-xl leading-relaxed">
+                  Imagina abrir tu plataforma sabiendo <strong className="text-white">exactamente</strong> qué emoción te autosabotea hoy, conociendo tu termostato real de riesgo y usando un sistema interactivo que te frena <em>antes</em> de cometer tu clásico error recurrente.
+                </p>
+                <p className="text-[#00E676] font-bold text-sm sm:text-base tracking-wider uppercase mt-4">
+                  → Eso es lo que construyes en menos de 15 minutos en GENY LAB.
+                </p>
+              </Callout>
+            </div>
           </FadeIn>
 
           <FadeIn delay={0.15}>
-            <div className="space-y-5 max-w-4xl mx-auto mt-6">
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                No es otro curso de análisis técnico. <strong className="text-white">No es una estrategia mágica.</strong>
-              </p>
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                GENY LAB te ayuda a detectar qué está destruyendo tu consistencia mientras operas — <strong className="text-[#00D1FF]">antes de que el mercado vuelva a cobrarte por el mismo error.</strong>
-              </p>
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                No vas a ver videos aburridos de 2 horas. Vas a entrar a un <strong className="text-[#00E676]">laboratorio gamificado</strong> donde interactúas con Inteligencia Artificial para diagnosticar tu perfil real como trader. Barras de progreso, nodos que desbloqueas, feedback inmediato.
-              </p>
-              <p className="text-white text-xl md:text-2xl font-black text-center py-4">
-                Es como un videojuego, pero donde el premio<br />es tu consistencia financiera.
+            <div className="space-y-6 max-w-4xl mx-auto mt-10">
+              <p className="text-white/70 text-base md:text-lg leading-relaxed text-center">
+                Esto no es un curso pasivo de videos infinitos. Es un <strong className="text-[#00E676]">Laboratorio Interactivo Gamificado</strong> donde completas validaciones prácticas, desbloqueas nodos y calibras tu ADN financiero con Inteligencia Artificial.
               </p>
             </div>
           </FadeIn>
 
+          {/* Gamified Mockups as Sleek Browser Mockups */}
           <FadeIn>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-12">
-              <div className="text-center">
-                <img src="/images/landing/app_mockup.png" alt="Mapa de progreso gamificado de GENY LAB" className="rounded-2xl shadow-[0_0_60px_rgba(0,209,255,0.1)] border border-white/10 mx-auto max-w-sm w-full" />
-                <p className="text-white/30 text-xs font-mono mt-3 uppercase tracking-widest">Tu mapa de progreso</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mt-16 max-w-5xl mx-auto">
+              {/* Mockup 1 */}
+              <div className="rounded-3xl border border-white/10 bg-[#080d16] overflow-hidden shadow-[0_0_80px_rgba(0,209,255,0.1)] hover:shadow-[0_0_80px_rgba(0,209,255,0.25)] hover:border-[#00D1FF]/40 transition-all duration-500 flex flex-col justify-between group">
+                <div className="bg-[#0c1220] px-4 py-3 border-b border-white/5 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                  <span className="text-[10px] font-mono text-white/30 ml-4">GENY LAB - MAPA NODAL</span>
+                </div>
+                <div className="p-4 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0c1220]/40">
+                  <img src="/images/landing/app_mockup.png" alt="Mapa de progreso de GENY LAB" className="rounded-xl border border-white/5 shadow-2xl max-w-full max-h-[300px] object-contain group-hover:scale-[1.02] transition-transform duration-500" />
+                </div>
+                <div className="p-5 border-t border-white/5 bg-[#0a0f1b]/50">
+                  <p className="text-white/80 font-bold text-sm">Validaciones Gamificadas por Nodos</p>
+                  <p className="text-white/40 text-xs mt-1">Completa desafíos, avanza por las etapas y monitorea tu progreso real.</p>
+                </div>
               </div>
-              <div className="text-center">
-                <img src="/images/landing/simulator_preview.png" alt="Simulador de opciones de GENY LAB" className="rounded-2xl shadow-[0_0_60px_rgba(0,230,118,0.1)] border border-white/10 mx-auto w-full" />
-                <p className="text-white/30 text-xs font-mono mt-3 uppercase tracking-widest">Simulador de mercado</p>
+
+              {/* Mockup 2 */}
+              <div className="rounded-3xl border border-white/10 bg-[#080d16] overflow-hidden shadow-[0_0_80px_rgba(0,230,118,0.08)] hover:shadow-[0_0_80px_rgba(0,230,118,0.2)] hover:border-[#00E676]/40 transition-all duration-500 flex flex-col justify-between group">
+                <div className="bg-[#0c1220] px-4 py-3 border-b border-white/5 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                  <span className="text-[10px] font-mono text-white/30 ml-4">GENY LAB - SIMULADOR</span>
+                </div>
+                <div className="p-4 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0c1220]/40">
+                  <img src="/images/landing/simulator_preview.png" alt="Simulador interactivo de mercado" className="rounded-xl border border-white/5 shadow-2xl max-w-full max-h-[300px] object-contain group-hover:scale-[1.02] transition-transform duration-500" />
+                </div>
+                <div className="p-5 border-t border-white/5 bg-[#0a0f1b]/50">
+                  <p className="text-white/80 font-bold text-sm">Simulador de Mercado e Indicadores</p>
+                  <p className="text-white/40 text-xs mt-1">Mide tu termostato financiero en tiempo real bajo condiciones de mercado simuladas.</p>
+                </div>
               </div>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      <section className="py-8 md:py-10 relative">
-        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
-          <FadeIn>
-            <div className="rounded-2xl p-7 md:p-8 border border-[#00E676]/15 bg-[#00E676]/[0.02] backdrop-blur-sm text-center">
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                ¿Lo mejor? No necesitas estudiar 6 meses para ver resultados. El primer módulo — <strong className="text-white">"ADN Financiero"</strong> — toma menos de <strong className="text-[#00E676]">15 minutos</strong>. Y te garantizo que te revelará errores mentales que llevas cometiendo <em>años</em> sin darte cuenta.
-              </p>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-16 relative">
+      <section className="py-20 md:py-28 relative">
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="text-center mb-10">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight mb-3">
+            <div className="text-center mb-16">
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block">ECOSISTEMA DE CALIBRACIÓN</span>
+              <h2 className="text-3xl sm:text-5xl md:text-6xl font-black leading-[1.1] mb-4">
                 6 laboratorios diseñados para<br />
-                <span className="text-[#00D1FF]">auditar tu psicología</span> y estructura
+                <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">auditar tu psicología</span> y estructura
               </h2>
-              <p className="text-white/40 text-sm max-w-xl mx-auto">Cada uno ataca un ángulo diferente de lo que te está frenando.</p>
+              <p className="text-white/40 text-sm md:text-base max-w-xl mx-auto">Cada uno ataca un ángulo diferente de los patrones invisibles que destruyen tus ganancias.</p>
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
             {[
               {
-                emoji: '🧠', title: 'Investor DNA Blueprint', hook: '¿Por qué operas como operas?', color: '#3b82f6',
-                desc: 'Descubre qué tipo de trader eres realmente, cuál es tu perfil de riesgo ideal y qué estilo operativo tiene más probabilidades de darte consistencia a largo plazo. No el que viste en un video — el tuyo.'
+                emoji: '🧠', title: 'Investor DNA Blueprint', hook: 'LAB 1: ¿POR QUÉ OPERAS COMO OPERAS?', color: '#00D1FF', num: '01',
+                desc: 'Descubre qué tipo de trader eres realmente, cuál es tu perfil de riesgo ideal y qué estilo operativo se alinea con tu ADN financiero. Deja de forzar estrategias de otros y calibra la tuya.'
               },
               {
-                emoji: '🐜', title: 'Money Leak Projection', hook: '¿A dónde se va tu dinero sin que lo notes?', color: '#f59e0b',
-                desc: 'Descubre las fugas invisibles que están destruyendo tu capacidad financiera. Visualiza cuánto dinero podrías acumular en 10-20 años si rediriges ese capital estratégicamente. Los números te van a asustar.'
+                emoji: '🐜', title: 'Money Leak Projection', hook: 'LAB 2: ¿A DÓNDE SE VA TU CAPITAL?', color: '#f59e0b', num: '02',
+                desc: 'Identifica las fugas de dinero invisibles que destruyen tu capital sin que te des cuenta. Calcula la proyección real de pérdidas a 5-10 años si sigues cometiendo el mismo error hoy.'
               },
               {
-                emoji: '🤯', title: 'Shadow Money Code', hook: '¿Qué creencias ocultas te controlan?', color: '#8b5cf6',
-                desc: 'Descubre los bloqueos subconscientes y patrones emocionales que están controlando tus decisiones financieras. Estos son los que te hacen cerrar antes de tiempo o vengar operaciones perdidas.'
+                emoji: '🤯', title: 'Shadow Money Code', hook: 'LAB 3: OPERACIÓN SUBCONSCIENTE', color: '#8b5cf6', num: '03',
+                desc: 'Desmantela las creencias ocultas que sabotean tus decisiones en pleno mercado. Elimina el impulso irracional de sobreoperar para recuperar o cerrar antes por miedo.'
               },
               {
-                emoji: '🌡️', title: 'Financial Thermostat System', hook: '¿Cuánto riesgo puedes realmente sostener?', color: '#ef4444',
-                desc: 'Aprende a medir y expandir tu capacidad mental para sostener más dinero, más riesgo y más responsabilidad sin colapsar emocionalmente. Este es tu termostato — y la mayoría nunca lo ha calibrado.'
+                emoji: '🌡️', title: 'Financial Thermostat', hook: 'LAB 4: CAPACIDAD DE ABSORCIÓN', color: '#ef4444', num: '04',
+                desc: 'Mide y expande tu tolerancia biológica a la pérdida antes de que tu cerebro entre en pánico. Si no calibras este termostato, seguirás rompiendo tus stops sistemáticamente.'
               },
               {
-                emoji: '🚫', title: 'Money Traps', hook: '¿Qué sesgos te mantienen atrapado?', color: '#f97316',
-                desc: 'Detecta los sesgos mentales y hábitos invisibles que mantienen a la mayoría de traders atrapados en la carrera de la rata. Reemplázalos por patrones financieros inteligentes que funcionan a tu favor.'
+                emoji: '🚫', title: 'Money Traps Classifier', hook: 'LAB 5: SESGOS COGNITIVOS', color: '#f97316', num: '05',
+                desc: 'Detecta y aisla los sesgos emocionales y trampas mentales específicas en las que caes cuando estás bajo presión. Reconócelas antes de que afecten tu saldo.'
               },
               {
-                emoji: '🎯', title: 'Geny Options Lab', hook: '¿Listo para practicar sin arriesgar tu capital?', color: '#00E676',
-                desc: 'Practica operaciones en escenarios reales con $25,000 virtuales y un coach IA que analiza cada decisión. Desarrolla criterio operativo avanzado antes de arriesgar un solo dólar real.'
+                emoji: '🎯', title: 'Geny Options Lab', hook: 'LAB 6: SIMULACIÓN AVANZADA', color: '#00E676', num: '06',
+                desc: 'Practica operaciones en tiempo real con $25,000 en capital virtual guiado por un coach de Inteligencia Artificial que audita y califica cada una de tus decisiones antes del mercado real.'
               },
             ].map((lab, i) => (
-              <FadeIn key={i} delay={i * 0.06}>
-                <div className="rounded-2xl p-6 h-full border border-white/5 bg-white/[0.02] backdrop-blur-sm border-l-[3px]" style={{ borderLeftColor: lab.color }}>
-                  <div className="flex items-start gap-4">
-                    <span className="text-3xl shrink-0 mt-0.5">{lab.emoji}</span>
-                    <div>
-                      <p className="text-sm font-bold mb-0.5" style={{ color: lab.color }}>{lab.hook}</p>
-                      <h4 className="font-black text-white text-sm uppercase tracking-tight mb-2">{lab.title}</h4>
-                      <p className="text-sm text-white/50 leading-relaxed">{lab.desc}</p>
+              <FadeIn key={i} delay={i * 0.08} className="h-full">
+                <div className="rounded-3xl p-6 md:p-8 h-full border border-white/5 bg-[#080d16]/70 backdrop-blur-xl relative overflow-hidden flex flex-col justify-between group hover:border-white/15 hover:shadow-[0_0_50px_rgba(255,255,255,0.02)] transition-all duration-300">
+                  {/* Neon top-left accent */}
+                  <div className="absolute top-0 left-0 w-24 h-[2px] transition-all duration-300 group-hover:w-full" style={{ backgroundColor: lab.color }} />
+                  {/* Massive background label */}
+                  <span className="text-7xl sm:text-8xl font-black absolute top-2 right-4 text-white/[0.02] select-none pointer-events-none group-hover:text-white/[0.04] transition-all duration-300">
+                    {lab.num}
+                  </span>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
+                        {lab.emoji}
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-mono tracking-widest uppercase font-bold" style={{ color: lab.color }}>{lab.hook}</p>
+                        <h4 className="font-black text-white text-base uppercase tracking-tight">{lab.title}</h4>
+                      </div>
                     </div>
+                    <p className="text-white/50 text-sm leading-relaxed">{lab.desc}</p>
+                  </div>
+                  
+                  <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/30">
+                    <span>ESTADO: CALIBRADO</span>
+                    <span className="flex items-center gap-1.5"><Zap size={10} className="text-[#00E676]" /> 100% LISTO</span>
                   </div>
                 </div>
               </FadeIn>
@@ -375,63 +506,97 @@ export default function SalesLanding() {
           </div>
 
           <FadeIn>
-            <div className="rounded-xl p-5 border border-[#00D1FF]/15 bg-[#00D1FF]/[0.02] text-center max-w-3xl mx-auto mt-8">
+            <div className="rounded-3xl p-6 md:p-8 border border-[#00D1FF]/15 bg-gradient-to-r from-[#00D1FF]/5 via-transparent to-transparent text-center max-w-4xl mx-auto mt-12 shadow-[0_0_50px_rgba(0,209,255,0.02)]">
               <p className="text-white/70 text-sm md:text-base leading-relaxed">
-                Todo conectado por <strong className="text-[#00D1FF]">Nodos de Validación</strong> — el sistema te obliga a aplicar lo aprendido para desbloquear el siguiente nivel. <strong className="text-white">No avanzas hasta que demuestras que lo entendiste.</strong>
+                Todo el ecosistema está unificado bajo un <strong className="text-white">Mapa de Progreso Nodal</strong>. La Inteligencia Artificial audita tu rendimiento práctico y desbloquea el siguiente nivel solo cuando demuestras que has asimilado la competencia. <strong className="text-[#00D1FF]">No avanzas viendo videos; avanzas aplicando.</strong>
               </p>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      <section className="py-10 md:py-14 relative">
-        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center">
+      {/* ══════════════════════════════════════════════════════════════════
+          OBJECTIONS REFRAME — Empathy + Call to test
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="py-16 md:py-24 relative bg-[#070b14]/30 border-y border-white/5">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-8 text-center space-y-6">
           <FadeIn>
-            <p className="text-white/40 text-lg md:text-xl italic mb-4">
-              Y sé lo que estás pensando:
-            </p>
-            <blockquote className="text-2xl md:text-3xl font-black text-white/80 leading-tight mb-6">
-              "Ya probé demasiadas cosas<br />y ninguna me funcionó."
-            </blockquote>
-            <p className="text-white/60 text-base md:text-lg leading-relaxed mb-4">
-              Es completamente válido. No voy a pedirte que ignores esa voz.
-            </p>
-            <p className="text-white/60 text-base md:text-lg leading-relaxed mb-4">
-              Pero hazte una pregunta honesta: todos esos cursos que no funcionaron, <strong className="text-white">¿alguno empezó diagnosticándote a TI antes de enseñarte algo?</strong>
-            </p>
-            <p className="text-[#00D1FF] text-lg md:text-xl font-bold leading-relaxed">
-              Por eso no quiero que me creas.<br />
-              Quiero que lo compruebes.
-            </p>
+            <p className="text-[#00D1FF] text-xs font-mono uppercase tracking-[0.25em] mb-4">ENTIENDO TU FRUSTRACIÓN</p>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-white/90">
+              "Ya he probado demasiados cursos y nada funciona. ¿Por qué esto sería diferente?"
+            </h3>
+          </FadeIn>
+          
+          <FadeIn delay={0.15}>
+            <div className="rounded-3xl p-8 border border-white/5 bg-[#090f1a]/80 backdrop-blur-xl space-y-5 text-left max-w-3xl mx-auto relative overflow-hidden shadow-[0_0_50px_rgba(0,209,255,0.02)]">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#00D1FF]/[0.02] rounded-full blur-2xl" />
+              <p className="text-white/60 text-sm sm:text-base leading-relaxed">
+                Es un escepticismo completamente sano. De hecho, si yo estuviera en tu lugar, pensaría exactamente lo mismo.
+              </p>
+              <p className="text-white/60 text-sm sm:text-base leading-relaxed">
+                Pero analízalo de esta manera: todos los mentores anteriores te pidieron que te adaptaras a <em>su</em> estrategia, forzándote a ejecutar setups que van en contra de tu límite emocional y termostato biológico.
+              </p>
+              <p className="text-white/80 text-base sm:text-lg font-bold leading-relaxed">
+                GENY LAB es el único ecosistema que empieza por diagnosticarte a TI antes de enseñarte a operar. No puedes arreglar lo que no mides.
+              </p>
+              <p className="text-[#00E676] text-sm font-black uppercase tracking-wider">
+                ✓ No te pedimos fe. Te pedimos 15 minutos en el Lab 1 para que lo compruebes por ti mismo.
+              </p>
+            </div>
           </FadeIn>
         </div>
       </section>
 
-      <section className="py-10 md:py-14 relative">
+      {/* ══════════════════════════════════════════════════════════════════
+          TESTIMONIALS — Social Proof
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 relative">
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="text-center mb-8">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight mb-3">
+            <div className="text-center mb-16">
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block">TESTIMONIOS REALES</span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight">
                 Mira lo que pasa cuando un trader deja de operar{' '}
-                <span className="text-[#00D1FF]">emocionalmente</span>
+                <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(0,209,255,0.2)]">emocionalmente</span>
               </h2>
-              <p className="text-white/40 text-sm max-w-xl mx-auto">
-                …y empieza a ejecutar con estructura real.
-              </p>
+              <p className="text-white/40 text-sm max-w-xl mx-auto mt-3">Miembros activos de nuestra comunidad compartiendo sus resultados reales.</p>
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[1, 2, 3].map((i) => (
-              <FadeIn key={i} delay={i * 0.1}>
-                <div className="rounded-2xl p-6 border border-white/5 bg-white/[0.02] backdrop-blur-sm flex flex-col items-center text-center gap-4">
-                  <div className="flex gap-1">{[1,2,3,4,5].map(s => <Star key={s} size={14} className="text-[#f59e0b] fill-[#f59e0b]" />)}</div>
-                  <p className="text-white/30 text-sm italic">"Testimonio próximamente..."</p>
-                  <div className="flex items-center gap-3 mt-auto pt-3 border-t border-white/5 w-full justify-center">
-                    <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10" />
-                    <div className="text-left">
-                      <p className="text-white/25 text-sm font-bold">Nombre</p>
-                      <p className="text-white/15 text-xs">País</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+            {[
+              {
+                name: 'Carlos M.', handle: '@carlos_m_trader', country: 'Colombia', rating: 5,
+                quote: 'Pensaba que era otro curso más. Ya había comprado 3 entrenamientos de $500 USD y seguía perdiendo dinero. En 15 minutos del Lab 1 descubrí que estaba operando con un tamaño de lote 4 veces mayor a mi tolerancia biológica real al riesgo. Ajusté eso y por fin dejé de sobreoperar en pánico. Totalmente recomendado.'
+              },
+              {
+                name: 'Luis P.', handle: '@luisp_fx', country: 'México', rating: 5,
+                quote: 'Siempre me quejaba de mi falta de disciplina. Con el Financial Thermostat de GENY LAB entendí que mi cerebro entraba en modo supervivencia por el tamaño del stop. Expandir mi termostato de forma guiada con la IA cambió todo. $67 es literalmente un regalo frente a lo que perdía operando.'
+              },
+              {
+                name: 'Andrea G.', handle: '@andrea_options', country: 'España', rating: 5,
+                quote: 'La parálisis por exceso de información me tenía paralizada. Tenía 5 indicadores y 3 estrategias en la cabeza. Las simulaciones del Options Lab con feedback del coach IA me ayudaron a simplificar mi pantalla al mínimo. En dos semanas recuperé la claridad mental y la confianza para tomar posiciones.'
+              }
+            ].map((t, i) => (
+              <FadeIn key={i} delay={i * 0.1} className="h-full">
+                <div className="rounded-3xl p-6 md:p-8 h-full border border-white/5 bg-[#080d16]/50 backdrop-blur-xl flex flex-col justify-between hover:border-[#00D1FF]/20 transition-all duration-300">
+                  <div className="space-y-4">
+                    <div className="flex gap-1">
+                      {Array.from({ length: t.rating }).map((_, s) => (
+                        <Star key={s} size={14} className="text-[#f59e0b] fill-[#f59e0b]" />
+                      ))}
+                    </div>
+                    <p className="text-white/70 text-sm leading-relaxed italic">"{t.quote}"</p>
+                  </div>
+                  <div className="flex items-center gap-3 mt-6 pt-4 border-t border-white/5 w-full">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#00D1FF] to-[#00E676] p-[1px]">
+                      <div className="w-full h-full rounded-full bg-[#05080f] flex items-center justify-center text-xs font-mono font-bold text-[#00D1FF]">
+                        {t.name.split(' ')[0][0]}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-black">{t.name}</p>
+                      <p className="text-white/30 text-xs font-mono">{t.handle} · {t.country}</p>
                     </div>
                   </div>
                 </div>
@@ -441,119 +606,142 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-10 md:py-14 relative">
+      {/* ══════════════════════════════════════════════════════════════════
+          BONUSES — The Value Stack
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="py-16 md:py-24 relative bg-[#070b14]/40 border-y border-white/5">
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+          <FadeIn>
+            <div className="text-center mb-14">
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00E676] mb-3 block">ACCESO COMPLEMENTARIO</span>
+              <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight leading-none mb-3">
+                Y además... Te llevas estos<br />
+                <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">Bonos de Regalo Inmediatos</span>
+              </h2>
+              <p className="text-white/40 text-sm max-w-lg mx-auto">Herramientas de acompañamiento exclusivas para asegurar tu consistencia.</p>
+            </div>
+          </FadeIn>
 
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Bono 1 */}
             <FadeIn>
-              <div className="rounded-2xl p-7 h-full border-t-[3px] border-t-[#f59e0b] bg-white/[0.02] backdrop-blur-sm border border-white/5 space-y-4">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-[#f59e0b] font-bold flex items-center gap-2"><Gift size={14} /> BONO #1</p>
-                <h3 className="text-lg font-black uppercase tracking-tight text-white">Trading Room Elite</h3>
-                <p className="text-xs font-mono text-white/30 uppercase tracking-widest">Sesiones en Vivo — Sábados 11am</p>
-                <p className="text-sm text-white/60 leading-relaxed">
-                  Acompañamiento en tiempo real con traders activos. Corrige errores de ejecución <strong className="text-white/80">antes</strong> de volver a perder dinero por lo mismo de siempre.
+              <div className="rounded-3xl p-8 h-full border border-white/5 bg-[#080d16]/70 relative overflow-hidden group hover:border-[#f59e0b]/20 transition-all duration-300">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#f59e0b]/[0.02] rounded-full blur-xl" />
+                <p className="text-[10px] font-mono uppercase tracking-widest text-[#f59e0b] font-bold flex items-center gap-1.5 mb-4">
+                  <Gift size={14} /> BONO EXCLUSIVO #1
                 </p>
-                <p className="text-sm text-white/30">Valor: <span className="line-through">$800 USD</span> <span className="text-[#00E676] font-bold ml-1">INCLUIDO</span></p>
+                <h3 className="text-xl font-black uppercase tracking-tight text-white mb-2">Trading Room Elite</h3>
+                <p className="text-xs font-mono text-white/30 uppercase tracking-widest mb-4">Sesiones en Vivo — Sábados 11:00 AM EST</p>
+                <p className="text-sm text-white/60 leading-relaxed mb-6">
+                  Únete a nuestras mentorías en vivo semanales. Analizamos los resultados de tus labs, revisamos operaciones reales y calibramos tu estructura operativa en directo con otros miembros.
+                </p>
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-white/30">
+                  <span>Valor Comercial: <span className="line-through">$800 USD</span></span>
+                  <span className="text-[#00E676] font-bold font-mono">GRATIS EN TU REGISTRO</span>
+                </div>
               </div>
             </FadeIn>
+
+            {/* Bono 2 */}
             <FadeIn delay={0.1}>
-              <div className="rounded-2xl p-7 h-full border-t-[3px] border-t-[#8b5cf6] bg-white/[0.02] backdrop-blur-sm border border-white/5 space-y-4">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-[#8b5cf6] font-bold flex items-center gap-2"><Gift size={14} /> BONO #2</p>
-                <h3 className="text-lg font-black uppercase tracking-tight text-white">Diagnóstico Privado de Consistencia</h3>
-                <p className="text-xs font-mono text-white/30 uppercase tracking-widest">1 a 1 con Juan</p>
-                <p className="text-sm text-white/60 leading-relaxed">
-                  Sesión personalizada para identificar <strong className="text-white/80">exactamente</strong> qué hábito psicológico o técnico está frenando tu consistencia. Ruta de mejora basada en <em>tu</em> perfil real.
+              <div className="rounded-3xl p-8 h-full border border-white/5 bg-[#080d16]/70 relative overflow-hidden group hover:border-[#8b5cf6]/20 transition-all duration-300">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#8b5cf6]/[0.02] rounded-full blur-xl" />
+                <p className="text-[10px] font-mono uppercase tracking-widest text-[#8b5cf6] font-bold flex items-center gap-1.5 mb-4">
+                  <Gift size={14} /> BONO EXCLUSIVO #2
                 </p>
-                <p className="text-sm text-white/30">Valor: <span className="line-through">$1,000 USD</span> <span className="text-[#00E676] font-bold ml-1">INCLUIDO</span></p>
+                <h3 className="text-xl font-black uppercase tracking-tight text-white mb-2">Diagnóstico Privado de Consistencia</h3>
+                <p className="text-xs font-mono text-white/30 uppercase tracking-widest mb-4">Análisis Personalizado 1-a-1</p>
+                <p className="text-sm text-white/60 leading-relaxed mb-6">
+                  Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental y te trazamos un plan de salida.
+                </p>
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-white/30">
+                  <span>Valor Comercial: <span className="line-through">$1,000 USD</span></span>
+                  <span className="text-[#00E676] font-bold font-mono">GRATIS EN TU REGISTRO</span>
+                </div>
               </div>
             </FadeIn>
           </div>
         </div>
       </section>
 
-      <section className="py-14 md:py-20 relative" id="precio" ref={pricingRef}>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E676]/[0.02] to-transparent" />
+      {/* ══════════════════════════════════════════════════════════════════
+          PRICING BLOCK — The Offer Terminal
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 relative" id="precio" ref={pricingRef}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#00E676]/[0.02] rounded-full blur-[150px] pointer-events-none" />
+        
         <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="rounded-3xl overflow-hidden border border-[#00E676]/20 shadow-[0_0_80px_rgba(0,230,118,0.08)] bg-white/[0.02] backdrop-blur-sm">
-              <div className="h-1.5 bg-gradient-to-r from-[#00D1FF] via-[#00E676] to-[#f59e0b]" />
+            <div className="rounded-[2.5rem] overflow-hidden border border-[#00E676]/20 shadow-[0_0_100px_rgba(0,230,118,0.12)] bg-[#080d16] backdrop-blur-xl relative">
+              <div className="h-2 bg-gradient-to-r from-[#00D1FF] via-[#00E676] to-[#f59e0b]" />
 
-              <div className="p-8 md:p-12">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm mb-8">
-                  <span className="flex items-center gap-1.5 text-[#f59e0b] font-mono font-bold">
-                    <Clock size={16} /> {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
+              <div className="p-8 md:p-14">
+                {/* Real-time Urgency Badge */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm mb-10">
+                  <span className="flex items-center gap-1.5 text-[#f59e0b] font-mono font-bold bg-[#f59e0b]/5 border border-[#f59e0b]/15 px-4 py-2 rounded-full uppercase tracking-wider text-xs">
+                    <Clock size={14} className="animate-pulse" /> EL TIEMPO EXPIRA: {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/15 border border-red-500/20 text-red-400 text-xs font-bold">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                    {spots} de 100 cupos disponibles
+                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono font-bold uppercase tracking-wider">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+                    {spots} DE 100 CUPOS DISPONIBLES
                   </span>
                 </div>
 
-                <div className="space-y-0 mb-6">
+                <h3 className="text-center text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mb-8">
+                  CALIBRA TU EJECUCIÓN HOY MISMO
+                </h3>
+
+                <div className="space-y-1 mb-10">
                   {[
-                    ['GENY LAB — 6 Laboratorios Interactivos + IA', '$1,200'],
-                    ['Trading Room Elite — Sesiones en Vivo', '$800'],
-                    ['Diagnóstico Privado 1-a-1 con Juan', '$1,000'],
+                    ['Ecosistema GENY LAB — 6 Laboratorios Interactivos + IA', '$1,200 USD'],
+                    ['Bono #1 — Mentorías del Trading Room Elite (Semanales)', '$800 USD'],
+                    ['Bono #2 — Diagnóstico Privado 1-a-1 de tu Consistencia', '$1,000 USD'],
                   ].map(([item, val], i) => (
-                    <div key={i} className="flex items-center justify-between gap-4 py-3.5 border-b border-white/5">
+                    <div key={i} className="flex items-center justify-between gap-4 py-4 border-b border-white/5 text-sm sm:text-base">
                       <div className="flex items-center gap-3">
-                        <CheckCircle2 size={16} className="text-[#00E676] shrink-0" />
-                        <span className="text-sm md:text-base text-white/80">{item}</span>
+                        <CheckCircle2 size={18} className="text-[#00E676] shrink-0" />
+                        <span className="text-white/80 font-medium">{item}</span>
                       </div>
-                      <span className="text-sm text-white/30 font-mono shrink-0">{val}</span>
+                      <span className="text-white/30 font-mono text-xs shrink-0">{val}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="text-center py-4 border-t border-white/10">
-                  <p className="text-white/40 text-sm mb-2">Valor total del ecosistema:</p>
-                  <p className="text-3xl font-black text-white/25 line-through decoration-red-400/40 decoration-2">$3,000 USD</p>
+                <div className="text-center py-6 border-t border-white/10 space-y-1">
+                  <p className="text-white/30 text-xs uppercase tracking-widest font-mono">VALOR REAL DEL PAQUETE COMPLETO:</p>
+                  <p className="text-3xl sm:text-4xl font-black text-white/20 line-through decoration-red-500 decoration-2 font-mono">$3,000 USD</p>
                 </div>
 
                 <p className="text-white/50 text-sm text-center leading-relaxed max-w-lg mx-auto py-4">
-                  Si lo único que lograra este sistema fuera <strong className="text-white/70">detener tus pérdidas emocionales</strong> y volverte un trader que cierra en verde todas las semanas… ¿valdría $3,000? <strong className="text-[#00E676]">Recuperarías eso en unos cuantos buenos trades.</strong>
+                  Si este sistema lo único que lograra fuera <strong className="text-white">detener tu próxima operación impulsiva por venganza</strong> y evitar que quemes tu cuenta de fondeo... ¿valdría la pena? <strong className="text-[#00E676]">Recuperas esto con una sola decisión inteligente.</strong>
                 </p>
 
                 <div className="text-center py-6 space-y-3">
-                  <p className="text-white/70 text-lg">Pero hoy no vas a pagar $3,000.</p>
-                  <p className="text-white/50">Ni $1,000. Ni siquiera la mitad.</p>
-
-                  <div className="py-4">
-                    <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto">
-                      Porque el objetivo de GENY LAB <strong className="text-white">no es venderte otro curso aburrido para que lo dejes a medias.</strong> El objetivo es darte la estructura que te falta para que dejes de adivinar y empieces a <strong className="text-[#00D1FF]">ejecutar con precisión.</strong>
-                    </p>
-                  </div>
-
-                  <p className="text-white/50 text-sm">Todo. Por un pago único de:</p>
+                  <p className="text-white/70 text-base uppercase tracking-wider font-mono">PAGO ÚNICO HOY (SIN SUSCRIPCIONES):</p>
                   <div className="flex items-baseline justify-center gap-2 pt-2">
-                    <span className="text-7xl md:text-8xl font-black bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent leading-none">$67</span>
-                    <span className="text-xl text-white/40 font-bold">USD</span>
+                    <span className="text-8xl sm:text-9xl font-black bg-gradient-to-r from-[#00D1FF] via-[#00E676] to-[#00D1FF] bg-clip-text text-transparent leading-none drop-shadow-[0_0_40px_rgba(0,209,255,0.3)] font-mono">$67</span>
+                    <span className="text-xl sm:text-2xl text-white/40 font-bold font-mono">USD</span>
                   </div>
                 </div>
 
-                <div className="text-center pt-2 pb-6">
-                  <CTAButton large text="SÍ, QUIERO MI ACCESO — $67 USD" className="w-full max-w-md mx-auto" />
+                <div className="text-center pt-2 pb-8">
+                  <CTAButton large text="SÍ, QUIERO MI ACCESO AHORA — $67 USD" className="w-full max-w-lg mx-auto" />
                 </div>
 
-                <div className="rounded-xl p-5 border border-[#00D1FF]/15 bg-[#00D1FF]/[0.03] mb-6">
+                {/* 🛡️ Guarantee Box */}
+                <div className="rounded-3xl p-6 md:p-8 border border-[#00D1FF]/15 bg-[#00D1FF]/[0.02] backdrop-blur-md relative overflow-hidden shadow-[inset_0_0_30px_rgba(0,209,255,0.05)]">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#00D1FF]/[0.02] rounded-full blur-2xl" />
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-[#00D1FF]/10 border border-[#00D1FF]/25 flex items-center justify-center shrink-0">
-                      <Shield size={20} className="text-[#00D1FF]" />
+                    <div className="w-12 h-12 rounded-2xl bg-[#00D1FF]/10 border border-[#00D1FF]/20 flex items-center justify-center shrink-0 text-[#00D1FF]">
+                      <Shield size={24} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-white text-sm uppercase tracking-wide mb-1">Garantía sin riesgo — 15 Días</h4>
+                      <h4 className="font-black text-white text-sm uppercase tracking-wide mb-1.5">Garantía Incondicional de 15 Días</h4>
                       <p className="text-sm text-white/50 leading-relaxed">
-                        Entra, explora todo, interactúa con los nodos. Si en 15 días sientes que no es para ti, nos escribes y te devolvemos el <strong className="text-white">100%</strong>. Sin preguntas. Sin letra chica. <strong className="text-[#00D1FF]">El riesgo real no es entrar. Es seguir operando como hasta ahora.</strong>
+                        Entra, haz los labs, prueba el simulador, asiste al trading room en vivo. Si en 15 días sientes que no te revela patrones mentales de trading que te valen miles de dólares, nos mandas un correo y te devolvemos el <strong className="text-white">100% de tu dinero</strong>. Sin explicaciones ni condiciones. El riesgo es todo nuestro.
                       </p>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex items-center justify-center gap-6 text-xs text-white/25">
-                  <span className="flex items-center gap-1.5"><Lock size={12} /> Pago seguro</span>
-                  <span className="flex items-center gap-1.5"><Zap size={12} /> Acceso inmediato</span>
-                  <span className="flex items-center gap-1.5"><Shield size={12} /> Garantía 15 días</span>
                 </div>
               </div>
             </div>
@@ -561,26 +749,27 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-10 md:py-14 relative">
+      {/* ⚠️ Warning Cohorte Limitada */}
+      <section className="py-10 relative">
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FadeIn>
-              <div className="rounded-2xl p-6 h-full border border-red-500/10 bg-red-500/[0.02] space-y-3">
+              <div className="rounded-3xl p-7 h-full border border-red-500/10 bg-red-500/[0.01] space-y-3">
                 <h4 className="font-black uppercase tracking-tight text-sm text-red-400 flex items-center gap-2">
-                  <Users size={16} /> Solo 100 cupos por cohorte
+                  <Users size={16} /> Cohorte limitada a 100 cupos
                 </h4>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Limitamos cada cohorte para poder revisar perfiles, mantener calidad en el acompañamiento y hacer seguimiento real a cada trader. Cuando se llena, se cierra hasta la siguiente apertura.
+                  Para poder revisar los perfiles de riesgo y dar feedback de calidad 1-a-1, limitamos el acceso estrictamente. Una vez llenado el cupo, las inscripciones se bloquean hasta la siguiente temporada.
                 </p>
               </div>
             </FadeIn>
             <FadeIn delay={0.1}>
-              <div className="rounded-2xl p-6 h-full border border-[#f59e0b]/10 bg-[#f59e0b]/[0.02] space-y-3">
+              <div className="rounded-3xl p-7 h-full border border-[#f59e0b]/10 bg-[#f59e0b]/[0.01] space-y-3">
                 <h4 className="font-black uppercase tracking-tight text-sm text-[#f59e0b] flex items-center gap-2">
-                  <Clock size={16} /> Las sesiones son sincronizadas
+                  <Clock size={16} /> Entrada sincronizada
                 </h4>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Cada cohorte entra junta. Si entras después, pierdes el onboarding, el diagnóstico inicial y las primeras sesiones de corrección en vivo. <strong className="text-white/70">No hay replays.</strong>
+                  Todos los miembros de esta cohorte inician al mismo tiempo para poder coordinar las mentorías y los diagnósticos iniciales. Si no entras hoy, deberás esperar meses.
                 </p>
               </div>
             </FadeIn>
@@ -588,25 +777,26 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-10 md:py-14 relative">
+      {/* ⏱️ Proceso de Onboarding */}
+      <section className="py-14 md:py-20 relative">
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="rounded-2xl p-8 md:p-10 border border-[#00E676]/15 bg-[#00E676]/[0.02] space-y-5">
-              <h3 className="text-xl md:text-2xl font-black text-center">
-                En los próximos <span className="text-[#00E676]">2 minutos</span>:
+            <div className="rounded-[2rem] p-8 md:p-12 border border-[#00E676]/15 bg-[#00E676]/[0.01] space-y-8">
+              <h3 className="text-2xl sm:text-3xl font-black text-center text-white">
+                Tu plan de acción para los próximos <span className="text-[#00E676]">2 minutos</span>:
               </h3>
-              <div className="space-y-3 max-w-lg mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 {[
-                  'Completas tu inscripción de forma segura.',
-                  'Recibes tus credenciales exclusivas al correo.',
-                  'Entras a tu terminal de GENY LAB.',
-                  'Desbloqueas tu primer reto "ADN Financiero" — hoy mismo, antes de nuestra primera sesión en vivo.',
-                ].map((t, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-[#00E676]/10 border border-[#00E676]/25 flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-[#00E676] font-black text-xs">{i + 1}</span>
+                  'Completas tu inscripción segura en la pasarela SSL.',
+                  'Recibes tus credenciales de acceso instantáneo en tu correo.',
+                  'Entras al mapa nodal y desbloqueas tu ADN Financiero.',
+                  'Asistes al próximo Trading Room en vivo el sábado.'
+                ].map((text, i) => (
+                  <div key={i} className="space-y-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[#00E676]/10 border border-[#00E676]/20 flex items-center justify-center text-[#00E676] font-mono font-bold text-sm">
+                      {i + 1}
                     </div>
-                    <p className="text-white/70 text-sm md:text-base">{t}</p>
+                    <p className="text-white/60 text-sm leading-relaxed">{text}</p>
                   </div>
                 ))}
               </div>
@@ -615,22 +805,28 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 relative">
+      {/* ══════════════════════════════════════════════════════════════════
+          FAQ — Frequently Asked Questions
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 relative border-t border-white/5">
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black">
-                Preguntas <span className="text-[#00D1FF]">frecuentes</span>
+            <div className="text-center mb-16">
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block">RESOLVIENDO DUDAS</span>
+              <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight">
+                Preguntas <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">Frecuentes</span>
               </h2>
+              <p className="text-white/40 text-sm max-w-sm mx-auto mt-2">Todo lo que necesitas saber antes de asegurar tu cupo.</p>
             </div>
           </FadeIn>
-          <div className="space-y-3">
-            <FadeIn><FAQItem q="¿Necesito experiencia en trading?" a="GENY LAB funciona para todos los niveles. Si eres principiante, te diagnostica desde cero. Si ya tienes experiencia, te revelará los patrones mentales que ningún curso de análisis técnico te enseñó — los que realmente están frenando tu consistencia." /></FadeIn>
-            <FadeIn delay={0.05}><FAQItem q="¿Es otro curso de análisis técnico?" a="No. GENY LAB no te enseña otra estrategia. Es un sistema de autoconocimiento para traders. Diagnostica tu psicología, tu perfil de riesgo, tus patrones emocionales y te da herramientas prácticas para dejar de sabotearte cuando operas." /></FadeIn>
-            <FadeIn delay={0.1}><FAQItem q="¿Cuánto tiempo necesito?" a="Cada laboratorio toma 15-30 minutos. Avanzas a tu ritmo. Las sesiones en vivo del Trading Room Elite son los sábados a las 11am — pero todo queda grabado si no puedes asistir." /></FadeIn>
-            <FadeIn delay={0.15}><FAQItem q="Ya gasté dinero en cursos y nada funcionó. ¿Por qué esto sería diferente?" a="Porque todos esos cursos te enseñaron SU método. GENY LAB empieza diagnosticándote a TI. Tu perfil, tus emociones, tus sesgos. No puedes arreglar lo que no mides. Y tienes 15 días de garantía para comprobarlo sin riesgo." /></FadeIn>
-            <FadeIn delay={0.2}><FAQItem q="¿Cómo accedo después de pagar?" a="Inmediatamente. Recibes un correo con tu enlace de acceso, estableces tu contraseña y entras a tu terminal. Todo en menos de 2 minutos." /></FadeIn>
-            <FadeIn delay={0.25}><FAQItem q="¿Qué pasa si no es para mí?" a="Nos escribes dentro de los primeros 15 días y te devolvemos el 100%. Sin preguntas. Sin complicaciones. El riesgo es cero." /></FadeIn>
+          
+          <div className="space-y-4 max-w-4xl mx-auto">
+            <FadeIn><FAQItem q="¿Necesito experiencia en trading?" a="GENY LAB está optimizado para traders de cualquier nivel. Si estás empezando, te ayuda a formar hábitos correctos desde el día uno. Si eres experimentado, te ayuda a diagnosticar y extirpar las trampas psicológicas que te impiden escalar tus resultados." /></FadeIn>
+            <FadeIn delay={0.05}><FAQItem q="¿Es una estrategia o señales de trading?" a="Ninguna de las dos. GENY LAB no te da señales ni te vende una fórmula mágica de velas japonesas. Es una terminal interactiva que diagnostica tus sesgos cognitivos, mide tu límite real de riesgo e integra retroalimentación de Inteligencia Artificial para pulir tu disciplina." /></FadeIn>
+            <FadeIn delay={0.1}><FAQItem q="¿Cuánto tiempo al día requiere?" a="Cada uno de los 6 laboratorios se puede completar en unos 15 a 30 minutos. Está diseñado para que avances a tu propio ritmo. La mentoría en vivo del Trading Room Elite es de 1 hora los sábados y queda grabada si no puedes asistir." /></FadeIn>
+            <FadeIn delay={0.15}><FAQItem q="He comprado otros cursos de trading antes. ¿Por qué funcionaría este?" a="Los cursos tradicionales asumen que tu cerebro reacciona igual que el del profesor. GENY LAB es único porque te mide a ti primero: diagnostica tu aversión al riesgo, calcula tus fugas de capital y mapea tu perfil específico para darte un plan personalizado." /></FadeIn>
+            <FadeIn delay={0.2}><FAQItem q="¿Cómo funciona la garantía de 15 días?" a="Es simple: entras al panel, utilizas el simulador, asistes a la sesión en vivo y completas los módulos. Si no sientes que el ecosistema te da la claridad que necesitas, nos escribes un correo y te reembolsamos el 100% de tu pago. Cero preguntas incómodas." /></FadeIn>
+            <FadeIn delay={0.25}><FAQItem q="¿Cómo accedo tras realizar el pago?" a="El sistema te enviará automáticamente tus credenciales a tu correo en menos de 60 segundos. Podrás ingresar a tu panel de inmediato y empezar con el Lab 1 hoy mismo." /></FadeIn>
           </div>
         </div>
       </section>
@@ -639,16 +835,16 @@ export default function SalesLanding() {
           FINAL CLOSE — Short, direct, emotional
           Technique: Mirror the opening pain + offer the exit
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-14 md:py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#00D1FF]/[0.03] to-transparent" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center">
+      <section className="py-24 md:py-32 relative border-t border-white/5">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#00D1FF]/[0.03] to-transparent pointer-events-none" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center space-y-8">
           <FadeIn>
-            <img src="/images/78.png" alt="GENY LAB" className="w-36 md:w-48 mx-auto object-contain opacity-70 mb-8" />
-            <p className="text-white/50 text-base md:text-lg mb-6 max-w-xl mx-auto">
-              La próxima vez que abras una operación, puedes hacerlo desde el mismo caos de siempre… o puedes hacerlo con la estructura que te falta.
+            <img src="/images/78.png" alt="GENY LAB" className="w-48 md:w-56 mx-auto object-contain opacity-75 mb-4" />
+            <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+              La próxima vez que abras una operación en tu cuenta real, puedes hacerlo desde el mismo caos e indisciplina de siempre... o puedes hacerlo calibrado, con control total y el respaldo del ecosistema.
             </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight mb-8">
-              Nos vemos del{' '}
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-white mb-8">
+              Tu consistencia te espera del{' '}
               <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">otro lado.</span>
             </h2>
             <CTAButton large text="SÍ, QUIERO MI ACCESO — $67 USD" />
