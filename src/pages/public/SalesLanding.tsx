@@ -107,10 +107,10 @@ export default function SalesLanding() {
           HERO — Pattern Interrupt + Video
           Technique: Identity-based headline that makes them feel SEEN
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="relative pt-8 pb-16 md:pt-12 md:pb-24">
+      <section className="relative pt-8 pb-12 md:pt-12 md:pb-16">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-[#00D1FF]/[0.04] rounded-full blur-[150px] -translate-y-1/2" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-8 md:mb-10">
             <img src="/images/78.png" alt="GENY LAB" className="w-48 md:w-64 mx-auto object-contain" />
           </div>
@@ -147,57 +147,57 @@ export default function SalesLanding() {
           AGITATION — Make them FEEL the pain (not just read it)
           Technique: Scenario-based agitation + micro-commitments ("¿Te suena?")
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-16 md:py-24 relative">
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
-          <FadeIn>
-            <div className="space-y-6">
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                Abriste la operación con un plan claro. Sabías dónde entrar, dónde poner el stop, dónde tomar ganancias.
-              </p>
-              <p className="text-white/70 text-base md:text-lg leading-relaxed">
-                Pero el mercado se movió en tu contra y algo <em>cambió</em> dentro de ti. El plan desapareció. Moviste el stop. O cerraste antes de tiempo. O peor: abriste otra operación para "recuperar".
-              </p>
-              <p className="text-white/80 text-lg md:text-xl leading-relaxed font-medium">
-                Y después, viendo el gráfico en frío, te preguntaste: <strong className="text-white">"¿Cómo puedo ser tan estúpido si sabía lo que tenía que hacer?"</strong>
-              </p>
-            </div>
-          </FadeIn>
+      <section className="py-10 md:py-14 relative">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+            {/* Story column */}
+            <FadeIn>
+              <div className="space-y-5">
+                <p className="text-white/70 text-base md:text-lg leading-relaxed">
+                  Abriste la operación con un plan claro. Sabías dónde entrar, dónde poner el stop, dónde tomar ganancias.
+                </p>
+                <p className="text-white/70 text-base md:text-lg leading-relaxed">
+                  Pero el mercado se movió en tu contra y algo <em>cambió</em> dentro de ti. El plan desapareció. Moviste el stop. O cerraste antes de tiempo. O peor: abriste otra operación para "recuperar".
+                </p>
+                <p className="text-white/80 text-lg md:text-xl leading-relaxed font-medium">
+                  Y después, viendo el gráfico en frío, te preguntaste: <strong className="text-white">"¿Cómo puedo ser tan estúpido si sabía lo que tenía que hacer?"</strong>
+                </p>
+                <Callout color="#ef4444">
+                  <p className="text-red-300/80 text-sm md:text-base leading-relaxed">
+                    <strong className="text-red-300">Eso no es estupidez. Es algo completamente diferente.</strong><br />
+                    Tu cerebro llegó a su límite de tolerancia al riesgo. Y cuando eso pasa, dejas de razonar y empiezas a <em>sobrevivir</em>. No piensas. Reaccionas.
+                  </p>
+                </Callout>
+              </div>
+            </FadeIn>
 
-          <FadeIn delay={0.15}>
-            <Callout color="#ef4444">
-              <p className="text-red-300/80 text-sm md:text-base leading-relaxed">
-                <strong className="text-red-300">Eso no es estupidez. Es algo completamente diferente.</strong><br />
-                Tu cerebro llegó a su límite de tolerancia al riesgo. Y cuando eso pasa, dejas de razonar y empiezas a <em>sobrevivir</em>. No piensas. Reaccionas.
-              </p>
-            </Callout>
-          </FadeIn>
-
-          <FadeIn delay={0.2}>
-            <p className="text-white/60 text-base md:text-lg leading-relaxed">
-              El <strong className="text-white">95% de los traders pierde dinero</strong> no por falta de estrategia, sino porque operan desde el <strong className="text-[#00D1FF]">caos mental</strong>. Pierden el control emocional, dudan de sus setups, y nunca logran construir consistencia real.
-            </p>
-          </FadeIn>
-
-          <FadeIn delay={0.25}>
-            <div className="flex flex-col gap-3 mt-8">
-              {[
-                'Tienes más estrategias guardadas de las que puedes contar',
-                'Sabes la regla, pero la rompes cuando el mercado te presiona',
-                'Ya gastaste dinero en cursos que no cambiaron nada',
-                'Sientes que el problema eres tú, no el método',
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="mt-1 w-5 h-5 rounded-md bg-red-500/15 border border-red-500/25 flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={12} className="text-red-400" />
-                  </div>
-                  <p className="text-white/60 text-sm md:text-base">{item}</p>
+            {/* Checklist column */}
+            <FadeIn delay={0.15}>
+              <div className="space-y-5">
+                <p className="text-white/60 text-base md:text-lg leading-relaxed">
+                  El <strong className="text-white">95% de los traders pierde dinero</strong> no por falta de estrategia, sino porque operan desde el <strong className="text-[#00D1FF]">caos mental</strong>. Pierden el control emocional, dudan de sus setups, y nunca logran construir consistencia real.
+                </p>
+                <div className="flex flex-col gap-3">
+                  {[
+                    'Tienes más estrategias guardadas de las que puedes contar',
+                    'Sabes la regla, pero la rompes cuando el mercado te presiona',
+                    'Ya gastaste dinero en cursos que no cambiaron nada',
+                    'Sientes que el problema eres tú, no el método',
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="mt-1 w-5 h-5 rounded-md bg-red-500/15 border border-red-500/25 flex items-center justify-center shrink-0">
+                        <CheckCircle2 size={12} className="text-red-400" />
+                      </div>
+                      <p className="text-white/60 text-sm md:text-base">{item}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </FadeIn>
+              </div>
+            </FadeIn>
+          </div>
 
           <FadeIn delay={0.3}>
-            <p className="text-[#00D1FF] text-lg md:text-xl font-bold text-center mt-10">
+            <p className="text-[#00D1FF] text-lg md:text-xl font-bold text-center mt-8">
               Si marcaste aunque sea uno, sigue leyendo. Lo que viene después te va a cambiar la perspectiva.
             </p>
           </FadeIn>
@@ -208,8 +208,8 @@ export default function SalesLanding() {
           POLARIZATION — Filter & elevate the reader
           Technique: Exclusion creates desire. "Not for you" = "I NEED this"
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-12 md:py-16 relative">
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+      <section className="py-8 md:py-10 relative">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="rounded-2xl p-7 md:p-8 border border-red-500/15 bg-red-500/[0.03] backdrop-blur-sm">
               <p className="text-red-400 text-sm font-bold uppercase tracking-widest mb-4">⛔ Antes de seguir:</p>
@@ -227,9 +227,9 @@ export default function SalesLanding() {
       {/* ══════════════════════════════════════════════════════════════════
           THE SHIFT — Reframe the problem
           Technique: "The real problem isn't what you think"
-      <section className="py-20 md:py-28 relative">
+      <section className="py-12 md:py-16 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00D1FF]/[0.015] to-transparent" />
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-center mb-8">
               El problema nunca fue<br />la estrategia.
@@ -254,9 +254,9 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section id="solucion" className="py-20 md:py-32 relative">
+      <section id="solucion" className="py-12 md:py-16 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00D1FF]/[0.02] to-transparent" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="text-center mb-10">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
@@ -276,7 +276,7 @@ export default function SalesLanding() {
           </FadeIn>
 
           <FadeIn delay={0.15}>
-            <div className="space-y-5 max-w-3xl mx-auto mt-6">
+            <div className="space-y-5 max-w-4xl mx-auto mt-6">
               <p className="text-white/70 text-base md:text-lg leading-relaxed">
                 No es otro curso de análisis técnico. <strong className="text-white">No es una estrategia mágica.</strong>
               </p>
@@ -307,8 +307,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 relative">
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+      <section className="py-8 md:py-10 relative">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="rounded-2xl p-7 md:p-8 border border-[#00E676]/15 bg-[#00E676]/[0.02] backdrop-blur-sm text-center">
               <p className="text-white/70 text-base md:text-lg leading-relaxed">
@@ -319,8 +319,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 relative">
-        <div className="relative z-10 max-w-5xl mx-auto px-4">
+      <section className="py-12 md:py-16 relative">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="text-center mb-10">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight mb-3">
@@ -331,7 +331,7 @@ export default function SalesLanding() {
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               {
                 emoji: '🧠', title: 'Investor DNA Blueprint', hook: '¿Por qué operas como operas?', color: '#3b82f6',
@@ -374,7 +374,7 @@ export default function SalesLanding() {
           </div>
 
           <FadeIn>
-            <div className="rounded-xl p-5 border border-[#00D1FF]/15 bg-[#00D1FF]/[0.02] text-center max-w-2xl mx-auto mt-8">
+            <div className="rounded-xl p-5 border border-[#00D1FF]/15 bg-[#00D1FF]/[0.02] text-center max-w-3xl mx-auto mt-8">
               <p className="text-white/70 text-sm md:text-base leading-relaxed">
                 Todo conectado por <strong className="text-[#00D1FF]">Nodos de Validación</strong> — el sistema te obliga a aplicar lo aprendido para desbloquear el siguiente nivel. <strong className="text-white">No avanzas hasta que demuestras que lo entendiste.</strong>
               </p>
@@ -383,8 +383,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 relative">
-        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
+      <section className="py-10 md:py-14 relative">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center">
           <FadeIn>
             <p className="text-white/40 text-lg md:text-xl italic mb-4">
               Y sé lo que estás pensando:
@@ -406,8 +406,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 relative">
-        <div className="relative z-10 max-w-5xl mx-auto px-4">
+      <section className="py-8 md:py-10 relative">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[1, 2, 3].map((i) => (
               <FadeIn key={i} delay={i * 0.1}>
@@ -428,8 +428,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 relative">
-        <div className="relative z-10 max-w-4xl mx-auto px-4">
+      <section className="py-10 md:py-14 relative">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -459,9 +459,9 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-20 md:py-32 relative" id="precio" ref={pricingRef}>
+      <section className="py-14 md:py-20 relative" id="precio" ref={pricingRef}>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E676]/[0.02] to-transparent" />
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="rounded-3xl overflow-hidden border border-[#00E676]/20 shadow-[0_0_80px_rgba(0,230,118,0.08)] bg-white/[0.02] backdrop-blur-sm">
               <div className="h-1.5 bg-gradient-to-r from-[#00D1FF] via-[#00E676] to-[#f59e0b]" />
@@ -548,8 +548,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-16 md:py-20 relative">
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+      <section className="py-10 md:py-14 relative">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <FadeIn>
               <div className="rounded-2xl p-6 h-full border border-red-500/10 bg-red-500/[0.02] space-y-3">
@@ -575,8 +575,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-16 md:py-20 relative">
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+      <section className="py-10 md:py-14 relative">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="rounded-2xl p-8 md:p-10 border border-[#00E676]/15 bg-[#00E676]/[0.02] space-y-5">
               <h3 className="text-xl md:text-2xl font-black text-center">
@@ -602,8 +602,8 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 relative">
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+      <section className="py-12 md:py-16 relative">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black">
@@ -626,9 +626,9 @@ export default function SalesLanding() {
           FINAL CLOSE — Short, direct, emotional
           Technique: Mirror the opening pain + offer the exit
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-20 md:py-32 relative">
+      <section className="py-14 md:py-20 relative">
         <div className="absolute inset-0 bg-gradient-to-t from-[#00D1FF]/[0.03] to-transparent" />
-        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center">
           <FadeIn>
             <img src="/images/78.png" alt="GENY LAB" className="w-36 md:w-48 mx-auto object-contain opacity-70 mb-8" />
             <p className="text-white/50 text-base md:text-lg mb-6 max-w-xl mx-auto">
