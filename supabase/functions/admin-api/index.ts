@@ -701,6 +701,70 @@ Deno.serve(async (req: Request) => {
         return json({ data });
       }
 
+      if (
+        method === "POST" &&
+        segments.length === 3 &&
+        segments[2] === "test"
+      ) {
+        const webhookId = segments[1];
+        
+        const { data: wh, error: whErr } = await supabase
+          .from("admin_webhooks")
+          .select("*")
+          .eq("id", webhookId)
+          .single();
+          
+        if (whErr || !wh) return json({ error: "Webhook not found" }, 404);
+
+        const testPayload = {
+          event: "test_connection",
+          user: {
+            name: "Usuario de Prueba",
+            email: "prueba@genylab.com",
+          },
+          activity: "test_activity",
+          timestamp: new Date().toISOString(),
+          is_test: true,
+        };
+
+        const headers: Record<string, string> = {
+          "Content-Type": "application/json",
+        };
+        if (wh.secret) headers["x-webhook-secret"] = wh.secret;
+
+        try {
+          const res = await fetch(wh.url, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(testPayload),
+          });
+
+          const success = res.ok;
+          const status = res.status;
+
+          await supabase.from("webhook_delivery_log").insert({
+            webhook_id: wh.id,
+            event: "test_connection",
+            payload: testPayload,
+            response_status: status,
+            success,
+          });
+
+          return json({ success, status });
+        } catch (e: any) {
+          await supabase.from("webhook_delivery_log").insert({
+            webhook_id: wh.id,
+            event: "test_connection",
+            payload: testPayload,
+            response_status: 500,
+            success: false,
+            error_message: e.message,
+          });
+
+          return json({ success: false, error: e.message }, 500);
+        }
+      }
+
       if (method === "PATCH" && segments.length === 2) {
         const whId = segments[1];
         const body = await req.json();

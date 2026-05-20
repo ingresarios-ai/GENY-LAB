@@ -116,6 +116,9 @@ export const deleteWebhook = (id: string) =>
 export const getWebhookDeliveries = (id: string) =>
   api(`webhooks/${id}/deliveries`);
 
+export const testWebhook = (id: string) =>
+  api(`webhooks/${id}/test`, { method: 'POST' });
+
 // Admin Users
 export const getAdminUsers = () => api('admins');
 

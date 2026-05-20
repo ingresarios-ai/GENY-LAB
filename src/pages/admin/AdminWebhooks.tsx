@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Plus, X, Trash2, CheckCircle2, XCircle, Power } from 'lucide-react';
-import { getWebhooks, createWebhook, updateWebhook, deleteWebhook, getWebhookDeliveries } from '../../lib/adminApi';
+import { Plus, X, Trash2, CheckCircle2, XCircle, Power, Send } from 'lucide-react';
+import { getWebhooks, createWebhook, updateWebhook, deleteWebhook, getWebhookDeliveries, testWebhook } from '../../lib/adminApi';
 
 const ACTIVITIES = [
   { id: 'all', label: '🌐 Todas' },
@@ -20,6 +20,7 @@ export default function AdminWebhooks() {
   const [showAdd, setShowAdd] = useState(false);
   const [selectedWh, setSelectedWh] = useState<any>(null);
   const [deliveries, setDeliveries] = useState<any[]>([]);
+  const [testing, setTesting] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -55,6 +56,20 @@ export default function AdminWebhooks() {
     await deleteWebhook(id);
     setSelectedWh(null);
     load();
+  };
+
+  const handleTest = async (wh: any) => {
+    setTesting(true);
+    try {
+      await testWebhook(wh.id);
+      alert('Webhook de prueba enviado correctamente.');
+      handleSelect(wh);
+    } catch (e: any) {
+      alert(`Error al enviar la prueba: ${e.message}`);
+      handleSelect(wh);
+    } finally {
+      setTesting(false);
+    }
   };
 
   return (
@@ -209,6 +224,19 @@ export default function AdminWebhooks() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <button
+                  onClick={() => handleTest(selectedWh)}
+                  disabled={testing}
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-[12px] font-semibold transition-all disabled:opacity-50"
+                  style={{
+                    background: 'rgba(0,209,255,0.1)',
+                    border: '1px solid rgba(0,209,255,0.2)',
+                    color: '#00D1FF',
+                  }}
+                  title="Enviar webhook de prueba"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                </button>
                 <button
                   onClick={() => handleToggle(selectedWh)}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-[12px] font-semibold transition-all"
