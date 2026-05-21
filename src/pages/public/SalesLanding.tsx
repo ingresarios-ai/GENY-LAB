@@ -661,7 +661,7 @@ export default function SalesLanding() {
                 <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-2">Diagnóstico Privado de Consistencia</h3>
                 <p className="text-sm font-mono text-white/50 uppercase tracking-widest mb-4">Análisis Personalizado 1-a-1</p>
                 <p className="text-base text-white/80 leading-relaxed mb-6">
-                  Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental y te trazamos un plan de salida.
+                  Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental y te trazamos un plan de acción.
                 </p>
                 <div className="pt-4 border-t border-white/5 flex items-center justify-between text-sm text-white/40">
                   <span>Valor Comercial: <span className="line-through">$1,000 USD</span></span>
