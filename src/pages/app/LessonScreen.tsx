@@ -8,7 +8,7 @@ import { ArrowLeft, Play, Check, Lock, Sparkles, ChevronRight } from 'lucide-rea
 import { LESSONS, getLevelForXp, TOTAL_LESSONS } from '../../lib/lessons';
 import { 
   getProgress, isLessonUnlocked,
-  markVideoCompleted, markActivityCompleted, getCompletedCount,
+  markVideoCompleted, markActivityCompleted, getCompletedCount, isAllCompleted,
 } from '../../lib/progressStore';
 
 export default function LessonScreen() {
@@ -99,7 +99,12 @@ export default function LessonScreen() {
           setTimeout(() => setXpAnimation(null), 1500);
         }
 
-        if (result.leveledUp) {
+        // Check if ALL lessons are now complete (last lesson finished)
+        if (isAllCompleted()) {
+          setTimeout(() => {
+            navigate('/app/diagnostico');
+          }, 1500);
+        } else if (result.leveledUp) {
           setTimeout(() => {
             setLevelUpData({ name: result.newLevel.name, emoji: result.newLevel.emoji });
             setShowLevelUp(true);
@@ -138,6 +143,11 @@ export default function LessonScreen() {
           setLevelUpData({ name: result.newLevel.name, emoji: result.newLevel.emoji });
           setShowLevelUp(true);
         }, 800);
+      } else if (isAllCompleted()) {
+        // Last lesson completed via fallback path
+        setTimeout(() => {
+          navigate('/app/diagnostico');
+        }, 1500);
       } else {
         const nextL = LESSONS.find(l => l.order === lesson.order + 1);
         if (nextL) {
@@ -347,6 +357,24 @@ export default function LessonScreen() {
                     </span>
                   </div>
                 )}
+              </div>
+            ) : activityDone && isAllCompleted() ? (
+              <div className="text-sm font-medium flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#F2C500]/10 flex shrink-0 items-center justify-center text-[#F2C500] border border-[#F2C500]/30 shadow-[0_0_20px_rgba(242,197,0,0.3)]">
+                    <span className="text-lg">🏆</span>
+                  </div>
+                  <div>
+                    <p className="text-[#F2C500] font-mono text-[10px] uppercase tracking-widest mb-0.5">¡Sistema Completado!</p>
+                    <p className="text-white font-bold text-sm">Tu Diagnóstico Privado está listo</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate('/app/diagnostico')}
+                  className="w-full bg-[#F2C500]/10 border border-[#F2C500]/40 text-[#F2C500] py-3.5 px-6 rounded-lg text-xs font-mono tracking-widest uppercase hover:bg-[#F2C500]/20 hover:shadow-[0_0_20px_rgba(242,197,0,0.4)] transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                  Reclamar Mi Diagnóstico <ChevronRight size={14} />
+                </button>
               </div>
             ) : (
               <div className="text-xs font-mono text-center text-brand-gold p-3 bg-brand-gold/5 rounded-lg border border-brand-gold/20">

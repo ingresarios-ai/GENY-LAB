@@ -9,6 +9,8 @@ import { ArrowLeft, Trophy, Shield, Brain, Target, Sparkles, CheckCircle2 } from
 import { isAllCompleted } from '../../lib/progressStore';
 import { Logo } from '../../components/Logo';
 import { Footer } from '../../components/Footer';
+import Confetti from '../../components/Confetti';
+import confetti from 'canvas-confetti';
 
 export default function DiagnosticoBooking() {
   const navigate = useNavigate();
@@ -20,6 +22,22 @@ export default function DiagnosticoBooking() {
       navigate('/app', { replace: true });
     }
   }, [navigate]);
+
+  // Celebration confetti burst on mount
+  useEffect(() => {
+    // Big center burst
+    confetti({
+      particleCount: 200,
+      spread: 100,
+      origin: { y: 0.4 },
+      colors: ['#F2C500', '#FFD700', '#f59e0b', '#00E676', '#00D1FF', '#8b5cf6']
+    });
+    // Delayed side bursts
+    setTimeout(() => {
+      confetti({ particleCount: 80, angle: 60, spread: 70, origin: { x: 0, y: 0.5 }, colors: ['#F2C500', '#FFD700'] });
+      confetti({ particleCount: 80, angle: 120, spread: 70, origin: { x: 1, y: 0.5 }, colors: ['#F2C500', '#FFD700'] });
+    }, 500);
+  }, []);
 
   // Dynamically load the booking widget script
   useEffect(() => {
@@ -45,6 +63,9 @@ export default function DiagnosticoBooking() {
 
   return (
     <div className="min-h-screen bg-[#05080f] relative overflow-hidden">
+      {/* Confetti side sprays */}
+      <Confetti />
+
       {/* Background effects */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#F2C500]/[0.03] rounded-full blur-[200px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#8b5cf6]/[0.02] rounded-full blur-[150px] pointer-events-none" />
