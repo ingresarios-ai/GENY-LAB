@@ -11,3 +11,8 @@ scratch/
 # Video project render outputs & caches
 vsl-video/renders/
 vsl-video/.thumbnails/
+
+# Python Virtual Environments
+venv/
+.venv/
+
