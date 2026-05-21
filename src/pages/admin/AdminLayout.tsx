@@ -46,7 +46,8 @@ export default function AdminLayout() {
   useEffect(() => {
     if (!isAdminAuthenticated() || !adminInfo) {
       logoutAdmin();
-      navigate('/admin/login', { replace: true });
+      const nextParam = encodeURIComponent(window.location.pathname + window.location.search);
+      navigate(`/admin/login?next=${nextParam}`, { replace: true });
       return;
     }
 

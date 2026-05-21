@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Shield, Eye, EyeOff, AlertCircle, User, Lock } from 'lucide-react';
 import { adminLogin } from '../../lib/adminApi';
 
@@ -10,6 +10,7 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +19,8 @@ export default function AdminLogin() {
     try {
       const ok = await adminLogin(username, password);
       if (ok) {
-        navigate('/admin');
+        const next = searchParams.get('next') || '/admin';
+        navigate(next, { replace: true });
       } else {
         setError('Credenciales incorrectas');
       }

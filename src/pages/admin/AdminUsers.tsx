@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw, Edit } from 'lucide-react';
 import { getUsers, createUser, updateUser, deleteUser, getUserActivity, resendMagicLink } from '../../lib/adminApi';
 
@@ -135,6 +136,7 @@ const COUNTRY_CODES = [
 ];
 
 export default function AdminUsers() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -433,6 +435,19 @@ export default function AdminUsers() {
 
               {/* Magic Link */}
               <MagicLinkSection user={selectedUser} onUpdated={(url) => setSelectedUser({ ...selectedUser, magic_link_url: url })} />
+
+              {/* consolidated results button */}
+              <button
+                onClick={() => navigate(`/resultados/${selectedUser.id}`)}
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-semibold transition-all hover:bg-[#00D1FF]/20"
+                style={{
+                  background: 'rgba(0,209,255,0.06)',
+                  border: '1px solid rgba(0,209,255,0.15)',
+                  color: '#00D1FF',
+                }}
+              >
+                Ver Resultados Consolidados
+              </button>
 
               {/* Activity Timeline */}
               <div>

@@ -12,6 +12,7 @@ const ACTIVITIES = [
   { id: 'sombra', label: '🤯 Emociones' },
   { id: 'flow', label: '⚡ Flow' },
   { id: 'geny', label: '🎯 Geny Options' },
+  { id: 'all_completed', label: '✅ Todo Completado' },
 ];
 
 export default function AdminWebhooks() {

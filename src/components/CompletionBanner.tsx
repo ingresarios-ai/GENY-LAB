@@ -1,7 +1,8 @@
-import { forwardRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, Lock } from 'lucide-react';
 import { isLessonCompleted } from '../lib/progressStore';
+import { syncActivityToSupabase } from '../lib/activitySync';
 
 interface CompletionBannerProps {
   lessonId: string;
@@ -13,6 +14,12 @@ const CompletionBanner = forwardRef<HTMLDivElement, CompletionBannerProps>(
   ({ lessonId, disabled = false, progressLabel }, ref) => {
     const navigate = useNavigate();
     const completed = isLessonCompleted(lessonId);
+
+    useEffect(() => {
+      if (completed) {
+        syncActivityToSupabase(lessonId);
+      }
+    }, [completed, lessonId]);
 
     const handleAction = () => {
       if (disabled) return;
@@ -60,7 +67,7 @@ const CompletionBanner = forwardRef<HTMLDivElement, CompletionBannerProps>(
             {disabled ? (
               <>
                 <Lock className="w-4 h-4" />
-                Completa los 10 días
+                Completar Actividad
               </>
             ) : !completed ? (
               <>

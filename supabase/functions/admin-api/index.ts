@@ -254,6 +254,34 @@ Deno.serve(async (req: Request) => {
     }
   }
 
+  // ── PUBLIC RESULTS ENDPOINT (no token needed) ──
+  if (segments[0] === "public-results" && method === "GET" && segments.length === 2) {
+    const userId = segments[1];
+    
+    // Fetch user and activities using service_role key
+    const { data: user, error: userError } = await supabase
+      .from("enrolled_users")
+      .select("id, name, email, phone, country_name, created_at, status")
+      .eq("id", userId)
+      .single();
+
+    if (userError || !user) {
+      return json({ error: "User not found" }, 404);
+    }
+
+    const { data: activities, error: actError } = await supabase
+      .from("user_activity_log")
+      .select("*")
+      .eq("user_id", userId)
+      .order("completed_at", { ascending: false });
+
+    if (actError) {
+      return json({ error: actError.message }, 500);
+    }
+
+    return json({ user, activities });
+  }
+
   // All other endpoints require auth
   const token = req.headers.get("x-admin-secret");
   if (!token) return unauthorized();
@@ -395,6 +423,22 @@ Deno.serve(async (req: Request) => {
             : enriched;
 
         return json({ data: filtered, count: filtered.length });
+      }
+
+      // GET /users/:id — retrieve single user details
+      if (method === "GET" && segments.length === 2) {
+        const userId = segments[1];
+        const { data, error } = await supabase
+          .from("enrolled_users")
+          .select("*")
+          .eq("id", userId)
+          .single();
+
+        if (error) {
+          console.error("Error retrieving user:", error);
+          return json({ error: error.message }, 404);
+        }
+        return json({ data });
       }
 
       // POST /users — create manual user

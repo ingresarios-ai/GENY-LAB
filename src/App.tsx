@@ -10,6 +10,7 @@ import Achievements from './pages/app/Achievements';
 import AuthGuard from './components/AuthGuard';
 import SharedResult from './pages/public/SharedResult';
 import InlineResult from './pages/public/InlineResult';
+import PublicResultsView from './pages/public/PublicResultsView';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -58,6 +59,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/inscripcion-exitosa" element={<InscripcionExitosa />} />
         <Route path="/establecer-contrasena" element={<EstablecerContrasena />} />
+        <Route path="/resultados/:userId" element={<PublicResultsView />} />
 
         {/* App Routes */}
         <Route path="/app" element={<AuthGuard><AppLayout /></AuthGuard>}>
