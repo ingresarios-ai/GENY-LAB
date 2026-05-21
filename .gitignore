@@ -3,3 +3,11 @@ dist
 .env
 .DS_Store
 *.log
+
+# Agent files & scratchpads
+.agents/
+scratch/
+
+# Video project render outputs & caches
+vsl-video/renders/
+vsl-video/.thumbnails/

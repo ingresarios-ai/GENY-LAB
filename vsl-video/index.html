@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #080c14; /* Color oscuro base de la aplicación */
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #ffffff;
+      }
+
+      /* Contenedor principal de la composición */
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+
+      /* Cuadrícula de fondo tecnológico */
+      .bg-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1920px;
+        height: 1080px;
+        background-image: 
+          linear-gradient(rgba(0, 209, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 209, 255, 0.02) 1px, transparent 1px);
+        background-size: 60px 60px;
+        z-index: 0;
+      }
+
+      /* Efectos de resplandor radial (Glows) */
+      .glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.15;
+        z-index: 0;
+        mix-blend-mode: screen;
+      }
+      .glow-blue {
+        background: #00D1FF;
+        width: 800px;
+        height: 800px;
+        top: -200px;
+        left: -200px;
+      }
+      .glow-green {
+        background: #01E47E;
+        width: 700px;
+        height: 700px;
+        bottom: -200px;
+        right: -200px;
+      }
+      .glow-gold {
+        background: #FFD700;
+        width: 600px;
+        height: 600px;
+        top: 300px;
+        left: 600px;
+      }
+
+      /* Texto fantasma flotante de fondo */
+      .ghost-text {
+        position: absolute;
+        font-family: 'Outfit', sans-serif;
+        font-size: 150px;
+        font-weight: 800;
+        color: rgba(0, 209, 255, 0.02);
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .ghost-text-1 {
+        top: 40px;
+        right: -100px;
+      }
+      .ghost-text-2 {
+        bottom: 40px;
+        left: -100px;
+      }
+
+      /* Estructura general de las escenas */
+      .scene {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        padding: 90px 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 1;
+      }
+
+      #scene1 {
+        z-index: 10;
+      }
+
+      #scene2 {
+        z-index: 5;
+        opacity: 0;
+      }
+
+      /* Cabecera de escena */
+      .scene-header {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .scene-tag {
+        font-family: 'Outfit', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: #00D1FF;
+      }
+      #scene2 .scene-tag {
+        color: #01E47E;
+      }
+
+      .scene-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 72px;
+        font-weight: 800;
+        line-height: 1.1;
+        color: #ffffff;
+      }
+
+      .scene-divider {
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, rgba(0, 209, 255, 0.3) 0%, rgba(0, 209, 255, 0) 100%);
+      }
+      #scene2 .scene-divider {
+        background: linear-gradient(90deg, rgba(0, 209, 255, 0) 0%, rgba(1, 228, 126, 0.3) 100%);
+      }
+
+      /* Contenedor para las tarjetas apiladas */
+      .activity-cards-wrapper {
+        position: relative;
+        width: 1360px;
+        height: 520px;
+        margin: 60px auto 0 auto;
+      }
+
+      /* Tarjeta de actividad (Glassmorphism) */
+      .activity-card {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(10, 15, 26, 0.7);
+        backdrop-filter: blur(16px);
+        border: 2px solid rgba(0, 209, 255, 0.15);
+        border-radius: 24px;
+        padding: 50px 60px;
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #scene2 .activity-card {
+        border-color: rgba(1, 228, 126, 0.15);
+      }
+
+      /* Resplandor interno de la tarjeta */
+      .activity-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 209, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+      }
+      #scene2 .activity-card::before {
+        background: linear-gradient(135deg, rgba(1, 228, 126, 0.05) 0%, transparent 50%);
+      }
+
+      .card-icon-wrapper {
+        flex-shrink: 0;
+        width: 180px;
+        height: 180px;
+        border-radius: 36px;
+        background: rgba(0, 209, 255, 0.1);
+        border: 2px solid rgba(0, 209, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+        box-shadow: 0 0 30px rgba(0, 209, 255, 0.12);
+      }
+      #scene2 .card-icon-wrapper {
+        background: rgba(1, 228, 126, 0.1);
+        border-color: rgba(1, 228, 126, 0.25);
+        box-shadow: 0 0 30px rgba(1, 228, 126, 0.12);
+      }
+
+      .card-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .card-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 48px;
+        font-weight: 800;
+        color: #ffffff;
+      }
+
+      .card-description {
+        font-size: 32px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      /* Detalles de pie de página de escena (Acento Monospace) */
+      .scene-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 24px;
+        border-top: 2px solid rgba(255, 255, 255, 0.05);
+        padding-top: 20px;
+      }
+
+      .metadata-text {
+        font-family: 'Outfit', sans-serif;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.55);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .tech-dots {
+        display: flex;
+        gap: 8px;
+      }
+
+      .tech-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .tech-dot.active-1 {
+        background: #00D1FF;
+        box-shadow: 0 0 8px #00D1FF;
+      }
+      .tech-dot.active-2 {
+        background: #01E47E;
+        box-shadow: 0 0 8px #01E47E;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- CONTENEDOR DE LA COMPOSICIÓN (20 segundos en total, 10s por bloque) -->
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Capa de Cuadrícula y Luces de Fondo (Dentro del root para que se capturen correctamente) -->
+      <div class="bg-grid"></div>
+      <div class="glow glow-blue glow-1"></div>
+      <div class="glow glow-green glow-2"></div>
+      <div class="glow glow-gold glow-3"></div>
+      <div class="ghost-text ghost-text-1" data-layout-allow-overflow>GENY LAB SYSTEM</div>
+      <div class="ghost-text ghost-text-2" data-layout-allow-overflow>V3 RETO INGRESARIOS</div>
+      
+      <!-- ESCENA 1: CALIBRACIÓN MENTAL Y PSICOLÓGICA -->
+      <div id="scene1" class="scene">
+        <div class="scene-header">
+          <div id="s1-indicator" class="scene-tag">Fase 01 // Autodiagnóstico</div>
+          <h1 id="s1-title" class="scene-title">Calibración Mental y Psicológica</h1>
+          <div id="s1-divider" class="scene-divider"></div>
+        </div>
+
+        <!-- Envoltura de tarjetas apiladas para presentación una a una -->
+        <div class="activity-cards-wrapper">
+          
+          <div class="activity-card s1-card" id="card-adn">
+            <div class="card-icon-wrapper">🧬</div>
+            <div class="card-content">
+              <h2 class="card-title">ADN Financiero</h2>
+              <p class="card-description">
+                Diagnóstico interactivo potenciado por Inteligencia Artificial. Identifica tu arquetipo de relación con el dinero en un chat guiado de 7 a 10 preguntas.
+              </p>
+            </div>
+          </div>
+
+          <div class="activity-card s1-card" id="card-trampas">
+            <div class="card-header">
+              <div class="card-icon-wrapper">🧠</div>
+              <div class="card-content">
+                <h2 class="card-title">Trampas del Dinero</h2>
+                <p class="card-description">
+                  Evaluación práctica de sesgos cognitivos inconscientes. Detecta los errores de pensamiento sistemáticos que sabotean la acumulación de tu capital.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-card s1-card" id="card-sombra">
+            <div class="card-icon-wrapper">🤯</div>
+            <div class="card-content">
+              <h2 class="card-title">Reto Sombra</h2>
+              <p class="card-description">
+                Auditoría emocional profunda y transformadora. Descubre y reprograma las creencias limitantes de escasez heredadas de tu entorno y experiencias previas.
+              </p>
+            </div>
+          </div>
+
+          <div class="activity-card s1-card" id="card-termostato">
+            <div class="card-icon-wrapper">🌡️</div>
+            <div class="card-content">
+              <h2 class="card-title">Termostato Financiero</h2>
+              <p class="card-description">
+                Mecanismo de calibración subconsciente. Evalúa tu límite térmico de ingresos y amplía conscientemente tu capacidad para retener y multiplicar dinero.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="scene-footer">
+          <div class="metadata-text">GENY LAB · 2026 · MENTAL CALIBRATION MODULE</div>
+          <div class="tech-dots">
+            <div class="tech-dot active-1"></div>
+            <div class="tech-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESCENA 2: ESTRATEGIA Y PLANIFICACIÓN PRÁCTICA -->
+      <div id="scene2" class="scene">
+        <div class="scene-header">
+          <div id="s2-indicator" class="scene-tag">Fase 02 // Acción Práctica</div>
+          <h1 id="s2-title" class="scene-title">Estrategia y Planificación Práctica</h1>
+          <div id="s2-divider" class="scene-divider"></div>
+        </div>
+
+        <!-- Envoltura de tarjetas apiladas para presentación una a una -->
+        <div class="activity-cards-wrapper">
+          
+          <div class="activity-card s2-card" id="card-hormiga">
+            <div class="card-icon-wrapper">🐜</div>
+            <div class="card-content">
+              <h2 class="card-title">Gastos Hormiga</h2>
+              <p class="card-description">
+                Calculadora inteligente y visualizador de fugas financieras. Observa de manera impactante la proyección de tus consumos invisibles a corto y largo plazo.
+              </p>
+            </div>
+          </div>
+
+          <div class="activity-card s2-card" id="card-pedem">
+            <div class="card-icon-wrapper">📋</div>
+            <div class="card-content">
+              <h2 class="card-title">Mi Primer PEDEM</h2>
+              <p class="card-description">
+                Guía y planificador estructurado paso a paso. Aplica el marco de Propósito, Enfoque, Diseño, Ejecución y Medición para materializar tus objetivos.
+              </p>
+            </div>
+          </div>
+
+          <div class="activity-card s2-card" id="card-flow">
+            <div class="card-icon-wrapper">⚡</div>
+            <div class="card-content">
+              <h2 class="card-title">Reto Flow</h2>
+              <p class="card-description">
+                Entrenamiento avanzado de productividad y enfoque. Diseña bloques de trabajo y optimiza tu concentración al máximo al operar en los mercados.
+              </p>
+            </div>
+          </div>
+
+          <div class="activity-card s2-card" id="card-opciones">
+            <div class="card-icon-wrapper">📈</div>
+            <div class="card-content">
+              <h2 class="card-title">GENY Opciones</h2>
+              <p class="card-description">
+                Simulador interactivo y modelador financiero. Desarrolla habilidades tácticas para plantear escenarios, gestionar riesgos y simular contratos de opciones.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="scene-footer">
+          <div class="metadata-text">GENY LAB · 2026 · STRATEGY & PLANNING MODULE</div>
+          <div class="tech-dots">
+            <div class="tech-dot"></div>
+            <div class="tech-dot active-2"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DEFINICIÓN DE ANIMACIONES CON GSAP -->
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // Selectores scoped para evitar colisiones en bundles
+      const rootSel = '[data-composition-id="main"]';
+
+      // Bucles de Fondo Ambientes (Ajustados exactamente a la duración total de 20s)
+      tl.to(`${rootSel} .glow-1`, { scale: 1.25, duration: 5, ease: "sine.inOut", repeat: 3, yoyo: true }, 0);
+      tl.to(`${rootSel} .glow-2`, { scale: 1.25, duration: 4, ease: "sine.inOut", repeat: 4, yoyo: true }, 0);
+      tl.to(`${rootSel} .glow-3`, { scale: 1.25, duration: 5, ease: "sine.inOut", repeat: 3, yoyo: true }, 0);
+      tl.to(`${rootSel} .ghost-text-1`, { x: 80, duration: 20, ease: "sine.inOut" }, 0);
+      tl.to(`${rootSel} .ghost-text-2`, { x: -80, duration: 20, ease: "sine.inOut" }, 0);
+
+      // --- ENTRADA CABECERA ESCENA 1 (T = 0s a 10s) ---
+      tl.from(`${rootSel} #s1-indicator`, { y: -30, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.2);
+      tl.from(`${rootSel} #s1-title`, { x: -60, opacity: 0, duration: 0.7, ease: "power3.out" }, 0.3);
+      tl.from(`${rootSel} #s1-divider`, { scaleX: 0, transformOrigin: "left center", duration: 0.8, ease: "power3.inOut" }, 0.4);
+      
+      // --- SECUENCIA DE TARJETAS INDIVIDUALES - ESCENA 1 (Calibración Mental) ---
+      
+      // Aplicación 1: ADN Financiero (T = 0.8s a 2.8s)
+      tl.set(`${rootSel} #card-adn`, { visibility: "visible" }, 0.8);
+      tl.fromTo(`${rootSel} #card-adn`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        0.8
+      );
+      tl.to(`${rootSel} #card-adn`, { x: -120, opacity: 0, scale: 0.95, duration: 0.5, ease: "power3.in" }, 2.8);
+      tl.set(`${rootSel} #card-adn`, { visibility: "hidden" }, 3.3);
+
+      // Aplicación 2: Trampas del Dinero (T = 3.3s a 5.3s)
+      tl.set(`${rootSel} #card-trampas`, { visibility: "visible" }, 3.3);
+      tl.fromTo(`${rootSel} #card-trampas`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        3.3
+      );
+      tl.to(`${rootSel} #card-trampas`, { x: -120, opacity: 0, scale: 0.95, duration: 0.5, ease: "power3.in" }, 5.3);
+      tl.set(`${rootSel} #card-trampas`, { visibility: "hidden" }, 5.8);
+
+      // Aplicación 3: Reto Sombra (T = 5.8s a 7.8s)
+      tl.set(`${rootSel} #card-sombra`, { visibility: "visible" }, 5.8);
+      tl.fromTo(`${rootSel} #card-sombra`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        5.8
+      );
+      tl.to(`${rootSel} #card-sombra`, { x: -120, opacity: 0, scale: 0.95, duration: 0.5, ease: "power3.in" }, 7.8);
+      tl.set(`${rootSel} #card-sombra`, { visibility: "hidden" }, 8.3);
+
+      // Aplicación 4: Termostato Financiero (T = 8.3s a 9.4s)
+      tl.set(`${rootSel} #card-termostato`, { visibility: "visible" }, 8.3);
+      tl.fromTo(`${rootSel} #card-termostato`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        8.3
+      );
+      // Se desvanece de salida junto con la transición del scene1 completo
+
+      // --- TRANSICIÓN: ESCENA 1 A ESCENA 2 (T = 9.4s a 10.0s) ---
+      // Blur crossfade (Desvanecimiento con desenfoque de salida y escala)
+      tl.to(`${rootSel} #scene1`, { 
+        filter: "blur(15px)", 
+        scale: 1.05, 
+        opacity: 0, 
+        duration: 0.6, 
+        ease: "power2.inOut" 
+      }, 9.4);
+      
+      // Desvanecimiento con desenfoque de entrada y escala de Scene 2
+      tl.fromTo(`${rootSel} #scene2`, 
+        { filter: "blur(15px)", scale: 0.95, opacity: 0 },
+        { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.6, ease: "power2.inOut" }, 
+        9.4
+      );
+
+      // Desactivar visibilidad del scene1 al final de la transición para optimizar render
+      tl.set(`${rootSel} #scene1`, { visibility: "hidden" }, 10.0);
+
+      // --- ENTRADA CABECERA ESCENA 2 (T = 10.0s a 20.0s) ---
+      tl.from(`${rootSel} #s2-indicator`, { y: -30, opacity: 0, duration: 0.5, ease: "power2.out" }, 10.1);
+      tl.from(`${rootSel} #s2-title`, { x: -60, opacity: 0, duration: 0.7, ease: "power3.out" }, 10.2);
+      tl.from(`${rootSel} #s2-divider`, { scaleX: 0, transformOrigin: "left center", duration: 0.8, ease: "power3.inOut" }, 10.3);
+
+      // --- SECUENCIA DE TARJETAS INDIVIDUALES - ESCENA 2 (Estrategia Práctica) ---
+
+      // Aplicación 5: Gastos Hormiga (T = 10.8s a 12.8s)
+      tl.set(`${rootSel} #card-hormiga`, { visibility: "visible" }, 10.8);
+      tl.fromTo(`${rootSel} #card-hormiga`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        10.8
+      );
+      tl.to(`${rootSel} #card-hormiga`, { x: -120, opacity: 0, scale: 0.95, duration: 0.5, ease: "power3.in" }, 12.8);
+      tl.set(`${rootSel} #card-hormiga`, { visibility: "hidden" }, 13.3);
+
+      // Aplicación 6: Mi Primer PEDEM (T = 13.3s a 15.3s)
+      tl.set(`${rootSel} #card-pedem`, { visibility: "visible" }, 13.3);
+      tl.fromTo(`${rootSel} #card-pedem`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        13.3
+      );
+      tl.to(`${rootSel} #card-pedem`, { x: -120, opacity: 0, scale: 0.95, duration: 0.5, ease: "power3.in" }, 15.3);
+      tl.set(`${rootSel} #card-pedem`, { visibility: "hidden" }, 15.8);
+
+      // Aplicación 7: Reto Flow (T = 15.8s a 17.8s)
+      tl.set(`${rootSel} #card-flow`, { visibility: "visible" }, 15.8);
+      tl.fromTo(`${rootSel} #card-flow`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        15.8
+      );
+      tl.to(`${rootSel} #card-flow`, { x: -120, opacity: 0, scale: 0.95, duration: 0.5, ease: "power3.in" }, 17.8);
+      tl.set(`${rootSel} #card-flow`, { visibility: "hidden" }, 18.3);
+
+      // Aplicación 8: GENY Opciones (T = 18.3s a 19.4s)
+      tl.set(`${rootSel} #card-opciones`, { visibility: "visible" }, 18.3);
+      tl.fromTo(`${rootSel} #card-opciones`, 
+        { x: 120, opacity: 0, scale: 0.95 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 
+        18.3
+      );
+
+      // --- OUTRO / FUNDIDO A NEGRO FINAL (T = 19.4s a 20.0s) ---
+      tl.to(`${rootSel} #scene2`, { opacity: 0, duration: 0.6, ease: "power2.inOut" }, 19.4);
+      tl.set(`${rootSel} #scene2`, { visibility: "hidden" }, 20.0);
+
+      // Registrar línea de tiempo principal
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
