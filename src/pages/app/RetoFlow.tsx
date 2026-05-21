@@ -479,7 +479,7 @@ export default function RetoFlow() {
 
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
-        <CompletionBanner lessonId="flow" />
+        <CompletionBanner lessonId="flow" disabled={completedCount < totalDays} progressLabel={`${completedCount} de ${totalDays} días completados`} />
 
         {/* ── Header Card ── */}
         <div className="glass-card p-6 md:p-8 border-t-2 border-t-brand-green/50 relative overflow-hidden">
