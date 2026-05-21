@@ -66,10 +66,10 @@ export default function DiagnosticoBooking() {
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
           <button
             onClick={() => navigate('/app')}
-            className="flex items-center gap-2 text-white/40 hover:text-white/80 transition-colors text-sm font-mono"
+            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-xs font-mono uppercase tracking-widest px-3 py-2 -ml-3 rounded-lg hover:bg-white/5"
           >
-            <ArrowLeft size={16} />
-            <span className="hidden sm:inline">Volver al Mapa</span>
+            <ArrowLeft size={18} />
+            <span>Volver</span>
           </button>
           <Logo imgClassName="h-6 md:h-8 w-auto object-contain" />
           <div className="flex items-center gap-2 text-[#F2C500] font-mono text-[10px] uppercase tracking-widest">
