@@ -92,6 +92,20 @@ export default function SalesLanding() {
     return () => window.removeEventListener('scroll', h);
   }, []);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://scripts.converteai.net/6f88db54-0f9b-4a7c-af05-9ae2f56f3fdf/players/6a0e15b7dfe15804e60fc51a/v4/player.js";
+    script.async = true;
+    document.head.appendChild(script);
+    
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
+
   const pad = (n: number) => String(n).padStart(2, '0');
   const [spots] = useState(() => {
     const s = localStorage.getItem('geny_spots');
@@ -124,23 +138,14 @@ export default function SalesLanding() {
             <img src="/images/78.png" alt="GENY LAB" className="w-56 md:w-72 mx-auto object-contain drop-shadow-[0_0_20px_rgba(0,209,255,0.25)]" />
           </div>
 
-          {/* Video VSL Player mockup */}
+          {/* Video VSL Player */}
           <div className="relative w-full max-w-4xl mx-auto mb-12 md:mb-16">
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#00D1FF]/30 via-[#00E676]/20 to-[#00D1FF]/30 -z-10 blur-md opacity-75" />
-            <div className="aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(0,209,255,0.18)] bg-[#070b13] relative group cursor-pointer hover:scale-[1.01] transition-transform duration-300">
-              <div className="w-full h-full flex flex-col items-center justify-center gap-5 bg-gradient-to-br from-[#0a0f1d] via-[#05080f] to-[#0a0f1d]">
-                <div className="relative flex items-center justify-center">
-                  <div className="absolute w-24 h-24 rounded-full bg-[#00D1FF]/20 animate-ping opacity-60 pointer-events-none" />
-                  <div className="absolute w-20 h-20 rounded-full bg-[#00E676]/10 animate-pulse border border-[#00E676]/30 pointer-events-none" />
-                  <div className="w-20 h-20 rounded-full bg-[#00D1FF]/15 border border-[#00D1FF]/55 flex items-center justify-center shadow-[0_0_40px_rgba(0,209,255,0.4)] relative z-10 hover:bg-[#00D1FF]/25 hover:scale-105 transition-all duration-300">
-                    <Play size={32} className="text-[#00D1FF] ml-1 fill-[#00D1FF]/20" />
-                  </div>
-                </div>
-                <div className="text-center space-y-2">
-                  <p className="text-white font-mono text-sm sm:text-base uppercase tracking-[0.25em] font-black">MIRA EL VIDEO EXPLICATIVO (4 MIN)</p>
-                  <p className="text-white/60 text-sm sm:text-base font-medium">Asegúrate de encender tu volumen 🔊 · El video comenzará a reproducirse</p>
-                </div>
-              </div>
+            <div className="rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(0,209,255,0.18)] bg-[#070b13]">
+              <vturb-smartplayer 
+                id="vid-6a0e15b7dfe15804e60fc51a" 
+                style={{ display: 'block', margin: '0 auto', width: '100%' }}
+              />
             </div>
             
             {/* Secure payment logos below video */}
