@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { Lock, ShieldCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Footer } from '../../components/Footer';
+import { Logo } from '../../components/Logo';
 
 export default function EstablecerContrasena() {
   const navigate = useNavigate();
@@ -132,7 +133,7 @@ export default function EstablecerContrasena() {
           className="w-full max-w-md space-y-8 relative z-10"
         >
           <div className="text-center space-y-3">
-            <img src="/images/78.png" alt="GENY LAB" className="w-36 md:w-44 object-contain mx-auto" />
+            <Logo imgClassName="w-36 md:w-44 object-contain" />
           </div>
 
           <div className="glass-panel p-8 space-y-6 border border-brand-blue/15 shadow-[0_0_30px_rgba(0,209,255,0.03)]">

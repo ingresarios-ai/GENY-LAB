@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap, GraduationCap } from 'lucide-react';
 import { LESSONS, getLevelForXp, getXpProgressInLevel, PHASE_LABELS, type Lesson } from '../../lib/lessons';
 import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted } from '../../lib/progressStore';
+import { Logo } from '../../components/Logo';
 
 export default function PathMap() {
   const navigate = useNavigate();
@@ -215,7 +216,7 @@ export default function PathMap() {
           <span className="truncate">CONEXIÓN: ESTABLE // SINCRONIZACIÓN: ACTIVA</span>
         </div>
         <div className="mb-2">
-          <img src="/images/78.png" alt="App Logo" className="h-12 md:h-20 w-auto object-contain" />
+          <Logo imgClassName="h-12 md:h-20 w-auto object-contain" />
         </div>
         <p className="text-white/50 text-xs md:text-sm mt-3 w-full font-mono leading-relaxed h-[3em] md:h-[2.5em]">
           <span className="text-[#00D1FF]/70">&gt;</span> {displayedText}<span className="inline-block w-[2px] h-[1em] bg-[#00D1FF]/70 ml-0.5 align-middle animate-pulse" />

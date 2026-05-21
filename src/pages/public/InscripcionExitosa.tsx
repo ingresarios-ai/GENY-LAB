@@ -4,6 +4,7 @@ import { Mail, CheckCircle2, AlertTriangle } from 'lucide-react';
 import Confetti from '../../components/Confetti';
 import confetti from 'canvas-confetti';
 import { Footer } from '../../components/Footer';
+import { Logo } from '../../components/Logo';
 
 export default function InscripcionExitosa() {
   
@@ -36,7 +37,7 @@ export default function InscripcionExitosa() {
         >
           {/* LOGO — above everything, bigger */}
           <div className="text-center mb-8">
-            <img src="/images/78.png" alt="GENY LAB" className="w-52 md:w-72 object-contain mx-auto" />
+            <Logo imgClassName="w-52 md:w-72 object-contain" />
           </div>
 
           {/* GLASS PANEL CONTAINER */}

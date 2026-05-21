@@ -10,6 +10,7 @@ import {
   AlertTriangle, TrendingDown, X, Eye, Target, Flame
 } from 'lucide-react';
 import { Footer } from '../../components/Footer';
+import { Logo } from '../../components/Logo';
 
 /* ── Utilities ─────────────────────────────────────────────────────────── */
 
@@ -135,7 +136,7 @@ export default function SalesLanding() {
       <section className="relative pt-12 pb-16 md:pt-16 md:pb-24">
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-10 md:mb-12">
-            <img src="/images/78.png" alt="GENY LAB" className="w-56 md:w-72 mx-auto object-contain drop-shadow-[0_0_20px_rgba(0,209,255,0.25)]" />
+            <Logo imgClassName="w-56 md:w-72 object-contain drop-shadow-[0_0_20px_rgba(0,209,255,0.25)]" />
           </div>
 
           {/* Video VSL Player */}
@@ -853,7 +854,7 @@ export default function SalesLanding() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#00D1FF]/[0.05] to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-8 text-center space-y-10">
           <FadeIn>
-            <img src="/images/78.png" alt="GENY LAB" className="w-56 md:w-64 mx-auto object-contain opacity-75 mb-6" />
+            <Logo imgClassName="w-56 md:w-64 object-contain opacity-75" className="mb-6" />
             <p className="text-white/80 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
               La próxima vez que abras una operación en tu cuenta real, puedes hacerlo desde el mismo caos e indisciplina de siempre... o puedes hacerlo calibrado, con control total y el respaldo del ecosistema.
             </p>

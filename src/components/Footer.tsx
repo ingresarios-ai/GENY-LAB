@@ -1,4 +1,5 @@
 import React from 'react';
+import { Logo } from './Logo';
 
 export const Footer = () => {
   return (
@@ -7,7 +8,7 @@ export const Footer = () => {
         <div className="text-center space-y-6">
           <div className="space-y-5">
             <div className="flex justify-center">
-              <img src="/images/78.png" alt="GENY LAB" className="h-4 md:h-6 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" loading="lazy" />
+              <Logo imgClassName="h-4 md:h-6 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" taglineClassName="text-[7px]" />
             </div>
             <p className="text-[10px] md:text-[11px] text-white/30 leading-relaxed tracking-normal" style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}>
               Nota Obligatoria: El trading de activos financieros implica un riesgo real de pérdida. Los resultados mostrados son educativos y no garantizan ganancias futuras. Operativa real sujeta a riesgo de mercado.

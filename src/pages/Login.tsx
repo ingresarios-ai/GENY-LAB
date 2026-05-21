@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { Logo } from '../components/Logo';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function Login() {
         className="w-full max-w-sm space-y-8"
       >
         <div className="text-center space-y-3">
-          <img src="/images/78.png" alt="GENY LAB" className="w-36 md:w-44 object-contain mx-auto" />
+          <Logo imgClassName="w-36 md:w-44 object-contain" />
           <p className="text-brand-text-muted text-sm">{forgotMode ? 'Recupera tu contraseña' : 'Ingresa para continuar'}</p>
         </div>
 

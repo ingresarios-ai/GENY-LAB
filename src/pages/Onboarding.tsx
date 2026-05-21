@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Play, Target, Unlock } from 'lucide-react';
 import { Footer } from '../components/Footer';
+import { Logo } from '../components/Logo';
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function Onboarding() {
           transition={{ delay: 0.2 }}
           className="mb-12 flex flex-col items-center"
         >
-          <img src="/images/78.png" alt="GENY LAB Logo" className="w-32 md:w-40 object-contain mb-6" />
+          <Logo imgClassName="w-32 md:w-40 object-contain" className="mb-6" />
           <h1 className="text-4xl sm:text-5xl font-bold uppercase tracking-tight mb-4 text-white leading-none">
             Conexión a<br/><span className="text-[#00D1FF] font-light">GENY LAB</span>
           </h1>

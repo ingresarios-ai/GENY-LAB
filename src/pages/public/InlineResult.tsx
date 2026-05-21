@@ -258,7 +258,10 @@ export default function InlineResult() {
       <div className="border-b border-white/10 bg-brand-bg/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/images/78.png" alt="GENY LAB" className="h-8 md:h-10 w-auto object-contain" />
+            <div className="inline-flex flex-col items-center">
+              <img src="/images/78.png" alt="GENY LAB" className="h-8 md:h-10 w-auto object-contain" />
+              <span className="text-[7px] font-bold uppercase tracking-[0.3em] text-white/25 mt-0.5">by Ingresarios</span>
+            </div>
             <div className="h-6 w-px bg-white/10" />
             <div className="flex items-center gap-2">
               <span className="text-lg">{ACTIVITY_EMOJI[activity] || '📊'}</span>
