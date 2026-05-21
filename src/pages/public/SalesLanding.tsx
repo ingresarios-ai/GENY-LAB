@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'motion/react';
 import {
   Play, CheckCircle2, ArrowRight, ChevronDown, ChevronUp,
-  ArrowDown, Lock, Zap, Shield, Star, Clock, Users, Gift,
+  ArrowDown, Lock, Shield, Star, Clock, Users, Gift,
   AlertTriangle, TrendingDown, X, Eye, Target, Flame
 } from 'lucide-react';
 import { Footer } from '../../components/Footer';
@@ -507,7 +507,6 @@ export default function SalesLanding() {
                   
                   <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-white/40">
                     <span>ESTADO: DISPONIBLE</span>
-                    <span className="flex items-center gap-1.5"><Zap size={12} className="text-[#00E676]" /> 100% LISTO</span>
                   </div>
                 </div>
               </FadeIn>
