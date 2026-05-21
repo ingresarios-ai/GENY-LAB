@@ -21,7 +21,7 @@ export const Logo: React.FC<LogoProps> = ({
     <img src="/images/78.png" alt="GENY LAB" className={imgClassName} />
     {showTagline && (
       <span
-        className={`text-[9px] font-bold uppercase tracking-[0.3em] text-white/25 mt-1 ${taglineClassName}`}
+        className={`text-[9px] font-bold uppercase tracking-[0.3em] text-white mt-1 ${taglineClassName}`}
       >
         by Ingresarios
       </span>

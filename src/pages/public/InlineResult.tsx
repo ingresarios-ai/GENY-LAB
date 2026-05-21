@@ -260,7 +260,7 @@ export default function InlineResult() {
           <div className="flex items-center gap-3">
             <div className="inline-flex flex-col items-center">
               <img src="/images/78.png" alt="GENY LAB" className="h-8 md:h-10 w-auto object-contain" />
-              <span className="text-[7px] font-bold uppercase tracking-[0.3em] text-white/25 mt-0.5">by Ingresarios</span>
+              <span className="text-[7px] font-bold uppercase tracking-[0.3em] text-white mt-0.5">by Ingresarios</span>
             </div>
             <div className="h-6 w-px bg-white/10" />
             <div className="flex items-center gap-2">
