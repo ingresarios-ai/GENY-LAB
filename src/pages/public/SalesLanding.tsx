@@ -882,7 +882,7 @@ export default function SalesLanding() {
             <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
               <div className="hidden sm:flex items-center gap-4">
                 <span className="text-white/30 text-base line-through font-bold font-mono">$3,000</span>
-                <span className="text-3xl font-black bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent font-mono">$67</span>
+                <span className="text-4xl font-black bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent font-mono">USD $67</span>
                 <span className="text-sm text-[#f59e0b] font-mono font-black bg-[#f59e0b]/5 border border-[#f59e0b]/20 px-3 py-1 rounded-full uppercase tracking-wider">{pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}</span>
               </div>
               <a href={CTA_URL} target="_blank" rel="noopener noreferrer"
