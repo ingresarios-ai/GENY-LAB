@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Lock, ShieldCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Lock, ShieldCheck, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -15,6 +15,8 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState(false);
   const [email, setEmail] = useState('');
   const [checked, setChecked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleUserSession = (user: any) => {
     if (checked) return;
@@ -166,27 +168,45 @@ export default function ResetPassword() {
             {/* New Password */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-white/50">Nueva contraseña</label>
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
-                placeholder="Mínimo 6 caracteres"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-4 pr-10 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
+                  placeholder="Mínimo 6 caracteres"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors cursor-pointer"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
 
             {/* Confirm Password */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-white/50">Confirmar contraseña</label>
-              <input
-                type="password"
-                value={confirm}
-                onChange={e => setConfirm(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
-                placeholder="Repite la contraseña"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  value={confirm}
+                  onChange={e => setConfirm(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-4 pr-10 py-3 text-white text-sm outline-none focus:border-brand-blue/50 transition-all"
+                  placeholder="Repite la contraseña"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors cursor-pointer"
+                >
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
 
             {error && (
