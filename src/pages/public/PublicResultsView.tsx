@@ -107,7 +107,11 @@ export default function PublicResultsView() {
     // 2. Fetch Data via public endpoint in admin-api
     const fetchResults = async () => {
       try {
-        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-api/public-results/${userId}`);
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-api/public-results/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          }
+        });
         if (!res.ok) throw new Error('Resultados no disponibles o usuario inválido.');
         const json = await res.json();
         setData(json);
