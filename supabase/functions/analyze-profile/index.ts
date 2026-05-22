@@ -184,6 +184,17 @@ Analiza toda esta información cruzada y genera el informe de aptitud.`;
       }
     }
 
+    // Normalize field names for backward compatibility
+    if (analysis.gancho_apertura && !analysis.gancho_personalizado) {
+      analysis.gancho_personalizado = analysis.gancho_apertura;
+    }
+    if (analysis.gancho_personalizado && !analysis.gancho_apertura) {
+      analysis.gancho_apertura = analysis.gancho_personalizado;
+    }
+    if (analysis.objeciones?.precio && !analysis.objecion_precio) {
+      analysis.objecion_precio = analysis.objeciones.precio;
+    }
+
     return new Response(JSON.stringify({ analysis }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200
