@@ -24,7 +24,7 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
   );
 }
 
-const CTA_URL = 'https://whop.com/ingresarios/geny-lab/';
+const CTA_URL = 'https://whop.com/checkout/plan_cnokB2HmtC1kG';
 
 function CTAButton({ large = false, className = '', text = 'QUIERO MI ACCESO AHORA' }: { large?: boolean; className?: string; text?: React.ReactNode }) {
   return (
