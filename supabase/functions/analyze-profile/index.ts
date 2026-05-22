@@ -132,7 +132,7 @@ Analiza toda esta información cruzada y genera el informe de aptitud.`;
           { role: "user", content: userPrompt }
         ],
         max_tokens: 1200,
-        temperature: 0.3
+        temperature: 0
       })
     });
 
