@@ -51,6 +51,13 @@ Genera un BRIEFING DE CIERRE completo con:
 4. Manejo de objeciones anticipadas usando sus datos como evidencia
 5. Script de apertura y cierre personalizado
 
+REGLAS CRÍTICAS DE DETALLE:
+- Cada campo de texto debe tener MÍNIMO 2-3 oraciones completas y sustanciales. NO des respuestas cortas.
+- Usa NÚMEROS EXACTOS del usuario (su fuga mensual, su puntaje de termostato, su arquetipo).
+- Las objeciones deben ser párrafos completos, no frases sueltas.
+- El perfil_resumen debe ser una radiografía DETALLADA, no un resumen genérico.
+- El script_cierre debe ser un párrafo COMPLETO listo para usar.
+
 TONO: Directo, estratégico, basado en datos. Sin florituras. Como un brief de inteligencia para un closer profesional.
 
 Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, sin markdown, sin backticks.
@@ -157,7 +164,7 @@ Analiza toda esta información cruzada y genera el informe de aptitud.`;
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userPrompt }
         ],
-        max_tokens: 2500,
+        max_tokens: 4000,
         temperature: 0
       })
     });
