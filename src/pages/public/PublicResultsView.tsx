@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Shield, ChevronDown, ChevronUp, CheckCircle2, User as UserIcon, Calendar, MapPin, Phone, Mail, FileJson, Activity, Lock } from 'lucide-react';
+import { Shield, ChevronDown, ChevronUp, CheckCircle2, User as UserIcon, Calendar, MapPin, Phone, Mail, FileJson, Activity, Lock, Brain, Sparkles, Target, AlertTriangle, DollarSign, MessageSquare, TrendingUp, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -90,6 +90,11 @@ export default function PublicResultsView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [data, setData] = useState<{ user: any, activities: any[] } | null>(null);
+  
+  // AI Analysis state
+  const [analysis, setAnalysis] = useState<any>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState('');
 
   useEffect(() => {
     // 1. Prevent Indexing dynamically
@@ -123,6 +128,32 @@ export default function PublicResultsView() {
     };
     if (userId) fetchResults();
   }, [userId]);
+
+  const generateAnalysis = async () => {
+    if (!data) return;
+    setAnalyzing(true);
+    setAnalysisError('');
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/analyze-profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({
+          user: data.user,
+          activities: data.activities
+        })
+      });
+      if (!res.ok) throw new Error('Error al generar análisis');
+      const json = await res.json();
+      setAnalysis(json.analysis);
+    } catch (err: any) {
+      setAnalysisError(err.message);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -158,6 +189,18 @@ export default function PublicResultsView() {
   activities.forEach(a => { acts[a.activity_id] = a; });
 
   const coreTotal = ["adn", "gastos", "termostato", "trampas", "pedem", "sombra", "flow"].filter(id => acts[id]).length;
+
+  const scoreColor = (score: number) => {
+    if (score >= 8) return '#00E676';
+    if (score >= 6) return '#F2C500';
+    return '#FF5252';
+  };
+
+  const verdictColor = (verdict: string) => {
+    if (verdict === 'ALTAMENTE RECOMENDADO') return '#00E676';
+    if (verdict === 'RECOMENDADO') return '#00D1FF';
+    return '#F2C500';
+  };
 
   return (
     <div className="min-h-screen bg-[#060910] text-white selection:bg-[#00D1FF]/30 pb-32 font-sans">
@@ -220,6 +263,167 @@ export default function PublicResultsView() {
               <div className="text-3xl font-black text-[#00E676]">{coreTotal}<span className="text-lg text-white/20">/7</span></div>
               <div className="text-[10px] uppercase tracking-widest text-white/40 mt-1 font-bold">Actividades<br/>Core</div>
             </div>
+          </div>
+        </motion.div>
+
+        {/* ═══════════════════════════════════════════════════════ */}
+        {/* AI ANALYSIS PANEL */}
+        {/* ═══════════════════════════════════════════════════════ */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="rounded-3xl border overflow-hidden"
+          style={{ 
+            borderColor: analysis ? 'rgba(139,92,246,0.3)' : 'rgba(139,92,246,0.15)',
+            background: 'linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(6,9,16,1) 100%)'
+          }}
+        >
+          <div className="p-6 md:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.15)' }}>
+                  <Brain className="w-6 h-6 text-purple-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-wide">Análisis AI del Perfil</h2>
+                  <p className="text-xs text-purple-400 font-bold uppercase tracking-widest mt-0.5">Powered by DeepSeek</p>
+                </div>
+              </div>
+            </div>
+
+            {!analysis && !analyzing && (
+              <div className="text-center py-8">
+                <p className="text-white/50 text-sm mb-6 max-w-md mx-auto">
+                  Genera un análisis cruzado de todas las actividades del usuario para determinar su aptitud y plan de pago recomendado para el Método Ingresarios.
+                </p>
+                <button 
+                  onClick={generateAnalysis}
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105"
+                  style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', color: '#fff' }}
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Generar Análisis con AI
+                </button>
+                {analysisError && (
+                  <p className="text-red-400 text-xs mt-4">{analysisError}</p>
+                )}
+              </div>
+            )}
+
+            {analyzing && (
+              <div className="text-center py-12">
+                <Loader2 className="w-10 h-10 text-purple-400 animate-spin mx-auto mb-4" />
+                <p className="text-purple-300 text-sm font-bold uppercase tracking-widest animate-pulse">
+                  Analizando perfil financiero...
+                </p>
+                <p className="text-white/30 text-xs mt-2">Cruzando datos de {activities.length} actividades</p>
+              </div>
+            )}
+
+            {analysis && (
+              <div className="space-y-6">
+                {/* Score + Verdict + Plan */}
+                <div className="grid sm:grid-cols-3 gap-4">
+                  <div className="bg-black/40 rounded-2xl p-5 border border-white/5 text-center">
+                    <div className="text-5xl font-black" style={{ color: scoreColor(analysis.score) }}>{analysis.score}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/40 mt-2 font-bold">Score de Aptitud</div>
+                    <div className="text-[9px] text-white/20 mt-1">de 10</div>
+                  </div>
+                  <div className="bg-black/40 rounded-2xl p-5 border border-white/5 text-center flex flex-col justify-center">
+                    <div className="text-sm font-black uppercase tracking-wider" style={{ color: verdictColor(analysis.verdict) }}>
+                      {analysis.verdict}
+                    </div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/40 mt-2 font-bold">Veredicto</div>
+                  </div>
+                  <div className="bg-black/40 rounded-2xl p-5 border border-white/5 text-center flex flex-col justify-center">
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <DollarSign className="w-5 h-5 text-[#00E676]" />
+                      <span className="text-lg font-black text-[#00E676]">{analysis.plan_precio}</span>
+                    </div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/40 mt-1 font-bold">Plan Sugerido</div>
+                  </div>
+                </div>
+
+                {/* Plan Argument */}
+                <div className="bg-black/30 rounded-2xl p-6 border border-[#00E676]/10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Target className="w-4 h-4 text-[#00E676]" />
+                    <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Por qué este plan</span>
+                  </div>
+                  <p className="text-sm text-white/80 leading-relaxed">{analysis.plan_argumento}</p>
+                </div>
+
+                {/* Profile Summary */}
+                <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <UserIcon className="w-4 h-4 text-[#00D1FF]" />
+                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">Resumen del Perfil</span>
+                  </div>
+                  <p className="text-sm text-white/80 leading-relaxed">{analysis.perfil_resumen}</p>
+                </div>
+
+                {/* Strengths + Attention Areas */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <TrendingUp className="w-4 h-4 text-[#00E676]" />
+                      <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Fortalezas</span>
+                    </div>
+                    <ul className="space-y-2">
+                      {analysis.fortalezas?.map((f: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-white/70">
+                          <CheckCircle2 className="w-4 h-4 text-[#00E676] mt-0.5 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <AlertTriangle className="w-4 h-4 text-[#F2C500]" />
+                      <span className="text-xs font-bold text-[#F2C500] uppercase tracking-widest">Áreas de Atención</span>
+                    </div>
+                    <ul className="space-y-2">
+                      {analysis.areas_atencion?.map((a: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-white/70">
+                          <AlertTriangle className="w-4 h-4 text-[#F2C500] mt-0.5 shrink-0" />
+                          {a}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Opening Hook */}
+                <div className="bg-black/30 rounded-2xl p-6 border border-purple-500/15">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MessageSquare className="w-4 h-4 text-purple-400" />
+                    <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">Gancho de Apertura para el Agente</span>
+                  </div>
+                  <p className="text-base text-white/90 leading-relaxed italic">"{analysis.gancho_personalizado}"</p>
+                </div>
+
+                {/* Investment Argument */}
+                <div className="rounded-2xl p-6 border border-[#00D1FF]/15" style={{ background: 'linear-gradient(135deg, rgba(0,209,255,0.03), rgba(0,230,118,0.03))' }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <DollarSign className="w-4 h-4 text-[#00D1FF]" />
+                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">Argumento de Inversión</span>
+                  </div>
+                  <p className="text-sm text-white/80 leading-relaxed">{analysis.argumento_inversion}</p>
+                </div>
+
+                {/* Regenerate button */}
+                <div className="text-center pt-2">
+                  <button 
+                    onClick={generateAnalysis}
+                    className="text-xs text-white/30 hover:text-purple-400 transition-colors font-bold uppercase tracking-widest"
+                  >
+                    ↻ Regenerar Análisis
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
 
@@ -310,3 +514,4 @@ export default function PublicResultsView() {
     </div>
   );
 }
+
