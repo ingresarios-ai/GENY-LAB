@@ -1,5 +1,5 @@
 import { NavLink, Outlet, Link } from 'react-router-dom';
-import { Map, Trophy, MessageCircle, Target, Lock, User } from 'lucide-react';
+import { Map, Trophy, MessageCircle, Target, Lock, User, Video } from 'lucide-react';
 import { Footer } from '../../components/Footer';
 import { getCompletedCount } from '../../lib/progressStore';
 import toast from 'react-hot-toast';
@@ -9,6 +9,7 @@ export default function AppLayout() {
 
   const navItems = [
     { to: "/app", icon: Map, label: "Mi Ruta", end: true },
+    { to: "/app/en-vivo", icon: Video, label: "Sesiones", end: false },
     { 
       to: "/app/geny-opciones", 
       icon: Target, 
