@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Shield, ChevronDown, ChevronUp, CheckCircle2, User as UserIcon, Calendar, MapPin, Phone, Mail, FileJson, Activity, Lock, Brain, Sparkles, Target, AlertTriangle, DollarSign, MessageSquare, TrendingUp, Loader2 } from 'lucide-react';
+import { Shield, ChevronDown, ChevronUp, CheckCircle2, User as UserIcon, Calendar, MapPin, Phone, Mail, FileJson, Activity, Lock, Brain, Sparkles, Target, AlertTriangle, DollarSign, MessageSquare, TrendingUp, Loader2, Zap, Heart, Clock, BookX, ShieldAlert } from 'lucide-react';
 import { motion } from 'motion/react';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -346,22 +346,42 @@ export default function PublicResultsView() {
                   </div>
                 </div>
 
-                {/* Plan Argument */}
-                <div className="bg-black/30 rounded-2xl p-6 border border-[#00E676]/10">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Target className="w-4 h-4 text-[#00E676]" />
-                    <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Por qué este plan</span>
+                {/* Impact Data Point */}
+                {analysis.dato_impacto && (
+                  <div className="rounded-2xl p-5 text-center border border-[#FF5252]/20" style={{ background: 'rgba(255,82,82,0.04)' }}>
+                    <Zap className="w-6 h-6 text-[#FF5252] mx-auto mb-2" />
+                    <p className="text-base font-black text-white/90">{analysis.dato_impacto}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-[#FF5252] mt-2 font-bold">Dato de Impacto — Usar en la Sesión</p>
                   </div>
-                  <p className="text-sm text-white/80 leading-relaxed">{analysis.plan_argumento}</p>
-                </div>
+                )}
 
                 {/* Profile Summary */}
                 <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
                   <div className="flex items-center gap-2 mb-3">
                     <UserIcon className="w-4 h-4 text-[#00D1FF]" />
-                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">Resumen del Perfil</span>
+                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">Radiografía Ejecutiva</span>
                   </div>
                   <p className="text-sm text-white/80 leading-relaxed">{analysis.perfil_resumen}</p>
+                </div>
+
+                {/* Pain Point */}
+                {analysis.dolor_principal && (
+                  <div className="bg-black/30 rounded-2xl p-6 border border-red-500/10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Heart className="w-4 h-4 text-red-400" />
+                      <span className="text-xs font-bold text-red-400 uppercase tracking-widest">Dolor Principal del Usuario</span>
+                    </div>
+                    <p className="text-sm text-white/80 leading-relaxed">{analysis.dolor_principal}</p>
+                  </div>
+                )}
+
+                {/* Plan Argument */}
+                <div className="bg-black/30 rounded-2xl p-6 border border-[#00E676]/10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Target className="w-4 h-4 text-[#00E676]" />
+                    <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Por qué este Plan</span>
+                  </div>
+                  <p className="text-sm text-white/80 leading-relaxed">{analysis.plan_argumento}</p>
                 </div>
 
                 {/* Strengths + Attention Areas */}
@@ -369,7 +389,7 @@ export default function PublicResultsView() {
                   <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
                     <div className="flex items-center gap-2 mb-3">
                       <TrendingUp className="w-4 h-4 text-[#00E676]" />
-                      <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Fortalezas</span>
+                      <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Anclas Positivas</span>
                     </div>
                     <ul className="space-y-2">
                       {analysis.fortalezas?.map((f: string, i: number) => (
@@ -383,7 +403,7 @@ export default function PublicResultsView() {
                   <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
                     <div className="flex items-center gap-2 mb-3">
                       <AlertTriangle className="w-4 h-4 text-[#F2C500]" />
-                      <span className="text-xs font-bold text-[#F2C500] uppercase tracking-widest">Áreas de Atención</span>
+                      <span className="text-xs font-bold text-[#F2C500] uppercase tracking-widest">Puntos de Resistencia</span>
                     </div>
                     <ul className="space-y-2">
                       {analysis.areas_atencion?.map((a: string, i: number) => (
@@ -397,31 +417,61 @@ export default function PublicResultsView() {
                 </div>
 
                 {/* Opening Hook */}
-                <div className="bg-black/30 rounded-2xl p-6 border border-purple-500/15">
+                <div className="rounded-2xl p-6 border border-purple-500/20" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.05), rgba(6,9,16,1))' }}>
                   <div className="flex items-center gap-2 mb-3">
                     <MessageSquare className="w-4 h-4 text-purple-400" />
-                    <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">Gancho de Apertura para el Agente</span>
+                    <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">🎯 Gancho de Apertura</span>
                   </div>
-                  <p className="text-base text-white/90 leading-relaxed italic">"{analysis.gancho_personalizado}"</p>
+                  <p className="text-base text-white/90 leading-relaxed italic border-l-2 border-purple-500/30 pl-4">"{analysis.gancho_apertura || analysis.gancho_personalizado}"</p>
                 </div>
 
                 {/* Investment Argument */}
                 <div className="rounded-2xl p-6 border border-[#00D1FF]/15" style={{ background: 'linear-gradient(135deg, rgba(0,209,255,0.03), rgba(0,230,118,0.03))' }}>
                   <div className="flex items-center gap-2 mb-3">
                     <DollarSign className="w-4 h-4 text-[#00D1FF]" />
-                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">Argumento de Inversión</span>
+                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">💰 Argumento de Inversión</span>
                   </div>
                   <p className="text-sm text-white/80 leading-relaxed">{analysis.argumento_inversion}</p>
                 </div>
 
-                {/* Price Objection Handler */}
-                {analysis.objecion_precio && (
-                  <div className="rounded-2xl p-6 border border-[#F2C500]/15" style={{ background: 'rgba(242,197,0,0.02)' }}>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Shield className="w-4 h-4 text-[#F2C500]" />
-                      <span className="text-xs font-bold text-[#F2C500] uppercase tracking-widest">Manejo de Objeción de Precio</span>
+                {/* Objection Handlers */}
+                {analysis.objeciones && (
+                  <div className="rounded-2xl border border-[#F2C500]/15 overflow-hidden" style={{ background: 'rgba(242,197,0,0.02)' }}>
+                    <div className="p-6 pb-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <ShieldAlert className="w-5 h-5 text-[#F2C500]" />
+                        <span className="text-sm font-black text-[#F2C500] uppercase tracking-widest">Manejo de Objeciones</span>
+                      </div>
+                      <p className="text-[10px] text-white/30 uppercase tracking-widest mt-1">Respuestas anticipadas basadas en los datos del usuario</p>
                     </div>
-                    <p className="text-sm text-white/80 leading-relaxed">{analysis.objecion_precio}</p>
+                    <div className="divide-y divide-white/5">
+                      {[
+                        { key: 'precio', label: '"Está muy caro"', icon: <DollarSign className="w-3.5 h-3.5" />, color: '#FF5252' },
+                        { key: 'tiempo', label: '"No tengo tiempo"', icon: <Clock className="w-3.5 h-3.5" />, color: '#00D1FF' },
+                        { key: 'ya_compre_cursos', label: '"Ya compré otros cursos"', icon: <BookX className="w-3.5 h-3.5" />, color: '#8b5cf6' },
+                        { key: 'necesito_pensarlo', label: '"Necesito pensarlo"', icon: <Brain className="w-3.5 h-3.5" />, color: '#F2C500' },
+                        { key: 'no_tengo_dinero', label: '"No tengo dinero"', icon: <AlertTriangle className="w-3.5 h-3.5" />, color: '#FF5252' },
+                      ].filter(o => analysis.objeciones[o.key]).map((obj) => (
+                        <div key={obj.key} className="px-6 py-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span style={{ color: obj.color }}>{obj.icon}</span>
+                            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: obj.color }}>{obj.label}</span>
+                          </div>
+                          <p className="text-sm text-white/70 leading-relaxed pl-5">{analysis.objeciones[obj.key]}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Closing Script */}
+                {analysis.script_cierre && (
+                  <div className="rounded-2xl p-6 border border-[#00E676]/20" style={{ background: 'linear-gradient(135deg, rgba(0,230,118,0.04), rgba(0,209,255,0.02))' }}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Zap className="w-4 h-4 text-[#00E676]" />
+                      <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">🔒 Script de Cierre</span>
+                    </div>
+                    <p className="text-sm text-white/85 leading-relaxed border-l-2 border-[#00E676]/30 pl-4 italic">{analysis.script_cierre}</p>
                   </div>
                 )}
 
