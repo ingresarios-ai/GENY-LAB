@@ -1,6 +1,6 @@
 // Ingresarios Lab — Lesson Screen (Video + Activity)
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Play, Check, Lock, Sparkles, ChevronRight } from 'lucide-react';
@@ -10,6 +10,42 @@ import {
   getProgress, isLessonUnlocked,
   markVideoCompleted, markActivityCompleted, getCompletedCount, isAllCompleted,
 } from '../../lib/progressStore';
+
+const CONVERTEAI_ACCOUNT = '6f88db54-0f9b-4a7c-af05-9ae2f56f3fdf';
+
+/** VTurb / Converteai Smart Player embed */
+function VTurbPlayer({ playerId }: { playerId: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Clear previous content
+    containerRef.current.innerHTML = '';
+
+    // Create the custom element
+    const player = document.createElement('vturb-smartplayer');
+    player.id = `vid-${playerId}`;
+    player.style.display = 'block';
+    player.style.margin = '0 auto';
+    player.style.width = '100%';
+    containerRef.current.appendChild(player);
+
+    // Load the script
+    const script = document.createElement('script');
+    script.src = `https://scripts.converteai.net/${CONVERTEAI_ACCOUNT}/players/${playerId}/v4/player.js`;
+    script.async = true;
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup on unmount
+      try { document.head.removeChild(script); } catch { /* already removed */ }
+      if (containerRef.current) containerRef.current.innerHTML = '';
+    };
+  }, [playerId]);
+
+  return <div ref={containerRef} className="w-full h-full" />;
+}
 
 export default function LessonScreen() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -213,12 +249,7 @@ export default function LessonScreen() {
             <div className="glass-panel p-2 md:p-3 rounded-xl relative overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/10">
               <div className="aspect-video bg-black rounded-lg relative overflow-hidden flex items-center justify-center">
                 {lesson.videoUrl ? (
-                  <iframe
-                    src={lesson.videoUrl}
-                    className="w-full h-full border-none"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                  <VTurbPlayer playerId={lesson.videoUrl} />
                 ) : (
                   <div className="text-center text-white/20 flex flex-col items-center">
                     <Play size={64} className="mb-4 opacity-50" />

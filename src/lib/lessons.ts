@@ -7,7 +7,7 @@ export interface Lesson {
   title: string;
   subtitle: string;
   description: string;
-  videoUrl: string; // YouTube embed URL (to be filled)
+  videoUrl: string; // VTurb smart player ID (e.g. '6a10b3f088023169d89d4f75')
   activityRoute: string; // Route to the interactive activity
   xpVideo: number;
   xpActivity: number;
@@ -61,7 +61,7 @@ export const LESSONS: Lesson[] = [
     title: 'Tu ADN\nFinanciero',
     subtitle: 'Descubre qué tipo de inversionista eres',
     description: 'Cada persona tiene un perfil financiero único. Este test revela el tuyo para que tomes decisiones alineadas con tu naturaleza.',
-    videoUrl: '', // To be filled
+    videoUrl: '6a10b3f088023169d89d4f75',
     activityRoute: '/app/adn',
     xpVideo: 30,
     xpActivity: 100,
@@ -75,7 +75,7 @@ export const LESSONS: Lesson[] = [
     title: 'Gastos\nHormiga',
     subtitle: 'Las fugas invisibles que devoran tu capital',
     description: 'Descubre cuánto dinero pierdes al año en gastos que ni sabías que tenías. El resultado te va a sorprender.',
-    videoUrl: '',
+    videoUrl: '6a10b3e968915ee7ada8b8eb',
     activityRoute: '/app/gastos',
     xpVideo: 30,
     xpActivity: 100,
@@ -89,7 +89,7 @@ export const LESSONS: Lesson[] = [
     title: 'Termostato\nFinanciero',
     subtitle: 'Tu techo invisible de riqueza',
     description: 'Todos tenemos un "termostato" que limita cuánto dinero podemos ganar y conservar. Descubre dónde está el tuyo.',
-    videoUrl: '',
+    videoUrl: '6a10b3e670a79c09bac95e18',
     activityRoute: '/app/termostato',
     xpVideo: 30,
     xpActivity: 100,
@@ -103,7 +103,7 @@ export const LESSONS: Lesson[] = [
     title: 'Trampas\ndel Dinero',
     subtitle: '5 sesgos cognitivos que te cuestan dinero',
     description: 'Tu cerebro te engaña con el dinero. Identifica los sesgos que sabotean tus decisiones financieras.',
-    videoUrl: '',
+    videoUrl: '6a10b3eca41e48882e55b9b8',
     activityRoute: '/app/trampas',
     xpVideo: 30,
     xpActivity: 100,
@@ -117,7 +117,7 @@ export const LESSONS: Lesson[] = [
     title: 'Mi Primer\nPEDEM',
     subtitle: 'El método que separa al 5% del 95%',
     description: 'PEDEM es el framework de planificación que usan los traders consistentes. Construye el tuyo paso a paso.',
-    videoUrl: '',
+    videoUrl: '6a10b3e2a41da65f002652ea',
     activityRoute: '/app/pedem',
     xpVideo: 30,
     xpActivity: 100,
@@ -131,7 +131,7 @@ export const LESSONS: Lesson[] = [
     title: 'Mis\nEmociones',
     subtitle: 'Tu saboteador interior: detectarlo y desactivarlo',
     description: 'El mayor obstáculo entre tú y la consistencia no es la estrategia — son tus emociones. Es hora de enfrentarlas.',
-    videoUrl: '',
+    videoUrl: '6a10b3f31aa4c28d68dbc5fb',
     activityRoute: '/app/sombra',
     xpVideo: 30,
     xpActivity: 100,
@@ -145,7 +145,7 @@ export const LESSONS: Lesson[] = [
     title: 'Reto del\nFlow',
     subtitle: 'El estado de máximo rendimiento financiero',
     description: 'El Flow es el estado mental donde todo fluye. Aprende a activarlo cada vez que operas.',
-    videoUrl: '',
+    videoUrl: '6a10b3f6a41da65f0026530c',
     activityRoute: '/app/flow',
     xpVideo: 30,
     xpActivity: 100,
