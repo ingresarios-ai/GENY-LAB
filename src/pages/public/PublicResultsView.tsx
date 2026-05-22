@@ -341,6 +341,7 @@ export default function PublicResultsView() {
                       <DollarSign className="w-5 h-5 text-[#00E676]" />
                       <span className="text-lg font-black text-[#00E676]">{analysis.plan_precio}</span>
                     </div>
+                    <div className="text-xs font-bold text-white/70 mt-1">{analysis.plan_nombre}</div>
                     <div className="text-[10px] uppercase tracking-widest text-white/40 mt-1 font-bold">Plan Sugerido</div>
                   </div>
                 </div>
@@ -412,6 +413,17 @@ export default function PublicResultsView() {
                   </div>
                   <p className="text-sm text-white/80 leading-relaxed">{analysis.argumento_inversion}</p>
                 </div>
+
+                {/* Price Objection Handler */}
+                {analysis.objecion_precio && (
+                  <div className="rounded-2xl p-6 border border-[#F2C500]/15" style={{ background: 'rgba(242,197,0,0.02)' }}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Shield className="w-4 h-4 text-[#F2C500]" />
+                      <span className="text-xs font-bold text-[#F2C500] uppercase tracking-widest">Manejo de Objeción de Precio</span>
+                    </div>
+                    <p className="text-sm text-white/80 leading-relaxed">{analysis.objecion_precio}</p>
+                  </div>
+                )}
 
                 {/* Regenerate button */}
                 <div className="text-center pt-2">
