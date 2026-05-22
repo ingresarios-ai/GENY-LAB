@@ -47,7 +47,7 @@ Deno.serve(async (req: Request) => {
     // Find user by email
     const { data: user } = await supabase
       .from("enrolled_users")
-      .select("id, name, email")
+      .select("id, name, email, phone")
       .eq("email", email.toLowerCase().trim())
       .single();
 
@@ -113,6 +113,34 @@ Deno.serve(async (req: Request) => {
     const CORE_ACTIVITIES = ["adn", "gastos", "termostato", "trampas", "pedem", "sombra", "flow"];
     const allCompleted = CORE_ACTIVITIES.every(actId => completedSet.has(actId));
 
+    // Build progress tracking object
+    const completedCore = CORE_ACTIVITIES.filter(actId => completedSet.has(actId));
+    const remainingCore = CORE_ACTIVITIES.filter(actId => !completedSet.has(actId));
+    const progress = {
+      completed: completedCore.length,
+      total: CORE_ACTIVITIES.length,
+      remaining: remainingCore.length,
+      completed_activities: completedCore,
+      remaining_activities: remainingCore,
+      next_activity: remainingCore.length > 0 ? remainingCore[0] : null,
+      next_activity_name: remainingCore.length > 0 ? (ACTIVITY_NAMES[remainingCore[0]] || remainingCore[0]) : null,
+      percentage: Math.round((completedCore.length / CORE_ACTIVITIES.length) * 100),
+    };
+
+    // Extract key metrics from metadata for CRM custom fields
+    const md = metadata || {};
+    const key_metrics: Record<string, any> = {};
+    if (activity_id === "adn") {
+      key_metrics.arquetipo = md.adn || null;
+      key_metrics.sombra = md.sombra || null;
+    } else if (activity_id === "gastos") {
+      key_metrics.fuga_mensual = md.total || 0;
+      key_metrics.fuga_anual = Math.round((md.total || 0) * 12);
+    } else if (activity_id === "termostato") {
+      key_metrics.puntaje_termostato = md.puntaje_global || null;
+      key_metrics.temperatura_label = md.temperatura_label || null;
+    }
+
     // Dispatch outgoing webhooks
     const { data: webhooks } = await supabase
       .from("admin_webhooks")
@@ -123,19 +151,23 @@ Deno.serve(async (req: Request) => {
       (w: any) => w.events.includes("all") || w.events.includes(activity_id)
     );
 
+    const SITE_URL = Deno.env.get("SITE_URL") || "https://genylab.ingresarios.net";
+
     const payload = {
       event: "activity_completed",
-      user: { name: user.name, email: user.email },
+      user: { name: user.name, email: user.email, phone: user.phone || null },
       activity: { id: activity_id, name: activityName },
+      progress,
+      key_metrics,
       completed_at: now,
-      metadata: metadata || {},
+      metadata: md,
     };
 
     let allCompletedWebhooks: any[] = [];
-    const SITE_URL = Deno.env.get("SITE_URL") || "https://genylab.ingresarios.net";
     const allCompletedPayload = {
       event: "all_completed",
-      user: { name: user.name, email: user.email },
+      user: { name: user.name, email: user.email, phone: user.phone || null },
+      progress,
       results_url: `${SITE_URL}/resultados/${user.id}`,
       completed_at: now,
     };
