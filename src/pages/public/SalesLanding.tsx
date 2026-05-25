@@ -96,7 +96,7 @@ export default function SalesLanding() {
   useEffect(() => {
     const script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = "https://scripts.converteai.net/6f88db54-0f9b-4a7c-af05-9ae2f56f3fdf/players/6a0f2741abad088400434909/v4/player.js";
+    script.src = "https://scripts.converteai.net/6f88db54-0f9b-4a7c-af05-9ae2f56f3fdf/players/6a10c9bb50cc34e76b55f967/v4/player.js";
     script.async = true;
     document.head.appendChild(script);
     
@@ -144,7 +144,7 @@ export default function SalesLanding() {
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#00D1FF]/30 via-[#00E676]/20 to-[#00D1FF]/30 -z-10 blur-md opacity-75" />
             <div className="rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(0,209,255,0.18)] bg-[#070b13]">
               <vturb-smartplayer 
-                id="vid-6a0f2741abad088400434909" 
+                id="vid-6a10c9bb50cc34e76b55f967" 
                 style={{ display: 'block', margin: '0 auto', width: '100%' }}
               />
             </div>
