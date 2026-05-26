@@ -379,8 +379,8 @@ export const DAYS: DayData[] = [
         exercises: [
           { type: "journal", icon: "✍️", title: "Tabla de Transmutación", time: "25 min", inst: "Para cada 'defecto', encuentra el don oculto: Indecisión → Capacidad de evaluar opciones. Impaciencia → Sentido de urgencia. Miedo → Radar de peligro. Procrastinación → Filtro contra decisiones precipitadas. Escribe la versión 'oro' de tus 5 peores defectos." },
           { type: "meditation", icon: "🧘", title: "Visualización Alquímica", time: "15 min", inst: "Imagina un caldero dorado (un recipiente resistente al fuego para fundir metales). Coloca tu peor defecto adentro. Observa cómo el fuego lo transforma: oscuro → dorado. ¿En qué se convirtió? Repite con 2 más." },
-          { type: "practice", icon: "🎯", title: "Usar el Oro", time: "Durante el día", inst: "Elige tu 'defecto transmutado' más poderoso. Hoy, úsalo conscientemente. Si transmutaste 'miedo' → 'prudencia inteligente': toma una decisión con precaución calculada, no parálisis. Siente la diferencia." },
-          { type: "reflection", icon: "🔍", title: "El Oro Encontrado", time: "5 min", inst: "¿Qué descubriste al usar tu defecto transmutado? Escribe la lección en UNA frase para siempre." },
+          { type: "practice", icon: "🎯", title: "Usar el Oro", time: "Durante el día", inst: "Elige tu 'defecto transmutado (transformado)' más poderoso. Hoy, úsalo conscientemente. Si transmutaste (transformaste) 'miedo' → 'prudencia inteligente': toma una decisión con precaución calculada, no parálisis. Siente la diferencia." },
+          { type: "reflection", icon: "🔍", title: "El Oro Encontrado", time: "5 min", inst: "¿Qué descubriste al usar tu defecto transmutado (transformado)? Escribe la lección en UNA frase para siempre." },
         ],
       },
       operador: {
@@ -388,8 +388,8 @@ export const DAYS: DayData[] = [
         exercises: [
           { type: "journal", icon: "✍️", title: "Tabla de Transmutación Trader", time: "25 min", inst: "Impulsividad → Ejecución rápida cuando el setup es claro. Miedo → Risk management intuitivo. Codicia → Capacidad de dejar correr ganadores. Perfeccionismo → Ojo para entradas precisas. Para CADA defecto: ¿cómo lo aplico mañana?" },
           { type: "meditation", icon: "🧘", title: "Visualización Alquímica", time: "15 min", inst: "Visualiza frente a ti un caldero alquímico (un recipiente resistente al fuego para fundir metales). Coloca tu peor defecto de trading adentro y observa cómo el fuego lo transmuta. ¿En qué habilidad positiva se convierte? Repite con 2 más." },
-          { type: "practice", icon: "📊", title: "Operar con el Oro", time: "Durante tu sesión", inst: "Elige tu defecto transmutado más poderoso. Hoy ÚSALO. Si transmutaste impulsividad → ejecución rápida: busca un setup que requiera acción inmediata y ejecútalo con convicción. Operas DESDE tu sombra dorada." },
-          { type: "reflection", icon: "🔍", title: "Nueva Habilidad", time: "10 min", inst: "¿Tu defecto transmutado funcionó mejor de lo esperado? Escribe la lección en UNA frase que puedas leer antes de cada sesión." },
+          { type: "practice", icon: "📊", title: "Operar con el Oro", time: "Durante tu sesión", inst: "Elige tu defecto transmutado (transformado) más poderoso. Hoy ÚSALO. Si transmutaste (transformaste) impulsividad → ejecución rápida: busca un setup que requiera acción inmediata y ejecútalo con convicción. Operas desde tu sombra dorada." },
+          { type: "reflection", icon: "🔍", title: "Nueva Habilidad", time: "10 min", inst: "¿Tu defecto transmutado (transformado) funcionó mejor de lo esperado? Escribe la lección en una frase que puedas leer antes de cada sesión." },
         ],
       },
     },
