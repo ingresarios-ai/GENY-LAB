@@ -158,10 +158,10 @@ export default function LessonScreen() {
     }
   }, [searchParams, lesson, activityDone, setSearchParams]);
 
-  const handleStartActivity = () => {
+  const handleStartActivity = (isRepeat = false) => {
     if (!lesson) return;
     if (lesson.activityRoute) {
-      navigate(lesson.activityRoute);
+      navigate(isRepeat ? `${lesson.activityRoute}?reset=true` : lesson.activityRoute);
     } else {
       // Fallback: If no activityRoute, just mark as complete instantly
       if (activityDone) return;
@@ -310,7 +310,7 @@ export default function LessonScreen() {
                     onClick={() => setShowRepeatAlert(true)}
                     className="w-full rounded-lg py-3 font-mono tracking-widest text-xs cursor-pointer transition-all duration-300 bg-transparent border border-white/10 text-white/50 hover:bg-white/5 hover:text-white/80 uppercase"
                   >
-                    Repetir validación
+                    Repetir Actividad
                   </button>
                 </div>
               ) : (
@@ -561,7 +561,7 @@ export default function LessonScreen() {
                 <button
                   onClick={() => {
                     setShowRepeatAlert(false);
-                    handleStartActivity();
+                    handleStartActivity(true);
                   }}
                   className="w-full py-4 rounded-xl font-black tracking-widest text-xs cursor-pointer transition-all duration-300 bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30 hover:bg-brand-emerald hover:text-black"
                 >

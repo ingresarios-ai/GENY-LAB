@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { TrendingUp, ChevronRight, ChevronLeft, ArrowLeft, ArrowRight, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
 import { Category, Currency, Projection } from './gastos-hormiga/types';
@@ -40,6 +40,7 @@ const INSTRUMENT_DESCRIPTIONS: Record<string, string> = {
 export const GastosHormiga = () => {
   const user = { id: 'local-user' };
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [step, setStep] = useState(0);
   const [amounts, setAmounts] = useState<Record<string, string>>(
     Object.fromEntries(CATEGORIES.map(c => [c.id, '']))
@@ -126,6 +127,11 @@ export const GastosHormiga = () => {
   // ── Load saved progress ──────────────────────────────────────────────────
   useEffect(() => {
     try {
+      if (searchParams.get('reset') === 'true') {
+        localStorage.removeItem('gastos-hormiga-progress');
+        setSearchParams({}, { replace: true });
+        return;
+      }
       const saved = localStorage.getItem('gastos-hormiga-progress');
       if (saved) {
         const r = JSON.parse(saved);
@@ -140,7 +146,7 @@ export const GastosHormiga = () => {
       console.error('Error loading gastos progress:', e);
     }
     setLoading(false);
-  }, []);
+  }, [searchParams, setSearchParams]);
 
   // ── Fetch user name ───────────────────────────────────────────────────
   useEffect(() => {
