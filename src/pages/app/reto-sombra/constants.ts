@@ -189,7 +189,7 @@ export const DAYS: DayData[] = [
         context: "Ya tienes una 'persona financiera' aunque no operes. Es la imagen que muestras sobre tu relación con el dinero. La pregunta incómoda: ¿quién hay debajo?",
         exercises: [
           { type: "journal", icon: "✍️", title: "Retrato Dual", time: "20 min", inst: "Hoja en 2 columnas. IZQUIERDA: 'Mi yo financiero ideal' — quién quieres parecer. DERECHA: 'Mi yo financiero real' — quién aparece cuando hay estrés económico. La distancia entre las dos = tamaño de tu Saboteador." },
-          { type: "meditation", icon: "🧘", title: "Cara a Cara con la Máscara", time: "12 min", inst: "Visualiza tu 'persona financiera' como personaje frente a ti. Ahora dale la vuelta. ¿Qué hay detrás? Box breathing 4-4-4-4 si la ansiedad sube. NO huyas." },
+          { type: "meditation", icon: "🧘", title: "Cara a Cara con la Máscara", time: "12 min", inst: "Visualiza tu 'persona financiera' como personaje frente a ti. Ahora dale la vuelta. ¿Qué hay detrás? Aplica respiración cuadrada (inhala 4s, retén 4s, exhala 4s, retén vacío 4s) si la ansiedad sube. NO huyas." },
           { type: "practice", icon: "🎯", title: "Diario de Emociones $", time: "Durante el día", inst: "Cada vez que toques dinero hoy, escribe: 'Me siento ___ porque ___'. Mínimo 5 registros. La emoción más repetida es lo que tu Saboteador usa de combustible." },
           { type: "reflection", icon: "🔍", title: "La Pregunta del Espejo", time: "5 min", inst: "Si alguien que respetas viera TODAS tus decisiones financieras de 6 meses — incluyendo las impulsivas — ¿qué sentirías? Esa sensación alimenta a tu Saboteador." },
         ],
@@ -270,7 +270,7 @@ export const DAYS: DayData[] = [
         context: "Si nunca has hecho esto, va a sentirse raro. Aguanta. Lo que tu Saboteador te dirá hoy puede ahorrarte años de pérdidas futuras.",
         exercises: [
           { type: "journal", icon: "✍️", title: "Diálogo con el Saboteador", time: "25 min", inst: "Escribe un diálogo. YO: '¿Qué quieres de mí?' SABOTEADOR: (escribe lo PRIMERO que venga sin censura). Continúa 2+ páginas. Preguntas: '¿Por qué me frenas?', '¿Qué necesitas?'. NO controles las respuestas." },
-          { type: "meditation", icon: "🧘", title: "Encuentro Visualizado", time: "15 min", inst: "Imagina un espacio seguro. Invita a tu Saboteador. Obsérvalo: ¿qué aspecto tiene? ¿Qué edad? Pregúntale qué quiere mostrarte. Box breathing 4-4-4-4 si la ansiedad sube." },
+          { type: "meditation", icon: "🧘", title: "Encuentro Visualizado", time: "15 min", inst: "Imagina un espacio seguro. Invita a tu Saboteador. Obsérvalo: ¿qué aspecto tiene? ¿Qué edad? Pregúntale qué quiere mostrarte. Aplica respiración cuadrada (inhala 4s, retén 4s, exhala 4s, retén vacío 4s) si la ansiedad sube." },
           { type: "practice", icon: "🎯", title: "Doble Check de Decisiones", time: "Durante el día", inst: "Antes de cada decisión importante: '¿Es MÍA o de mi Saboteador?'. Si dudas: 3 líneas. YO quiere ___ porque ___. SABOTEADOR quiere ___ porque ___. DECIDO: ___." },
           { type: "reflection", icon: "🔍", title: "El Mensaje Central", time: "5 min", inst: "Tu Saboteador te dijo algo hoy que no esperabas. Escríbelo en UNA frase. Ponla donde la veas cada mañana." },
         ],
