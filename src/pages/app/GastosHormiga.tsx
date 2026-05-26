@@ -511,9 +511,9 @@ export const GastosHormiga = () => {
               <div className="relative group">
                 <button 
                   onClick={() => scrollSlider('left')}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 md:-ml-3 z-10 bg-[#0a0c14] p-1.5 md:p-2 rounded-full border border-white/10 text-white/70 hover:text-white transition-all flex shadow-[0_0_15px_rgba(0,0,0,0.8)] hover:scale-110"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -ml-1 sm:-ml-3 z-10 bg-[#0a0c14] p-2 rounded-full border border-white/20 text-white/90 hover:text-white transition-all flex shadow-[0_0_15px_rgba(0,0,0,0.8)] hover:scale-110"
                 >
-                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                  <ChevronLeft className="w-5 h-5" />
                 </button>
 
                 <div 
@@ -543,9 +543,9 @@ export const GastosHormiga = () => {
 
                 <button 
                   onClick={() => scrollSlider('right')}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 md:-mr-3 z-10 bg-[#0a0c14] p-1.5 md:p-2 rounded-full border border-white/10 text-white/70 hover:text-white transition-all flex shadow-[0_0_15px_rgba(0,0,0,0.8)] hover:scale-110"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 -mr-1 sm:-mr-3 z-10 bg-[#0a0c14] p-2 rounded-full border border-white/20 text-white/90 hover:text-white transition-all flex shadow-[0_0_15px_rgba(0,0,0,0.8)] hover:scale-110"
                 >
-                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+                  <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
 
