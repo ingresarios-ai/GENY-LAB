@@ -270,9 +270,7 @@ export const GastosHormiga = () => {
               <ChevronRight className="w-5 h-5" />
             </button>
 
-            <p className="text-white/20 text-xs font-black uppercase tracking-widest">
-              100% gratis · Sin registro · Solo para ti
-            </p>
+
           </div>
 
           {/* Steps preview */}
