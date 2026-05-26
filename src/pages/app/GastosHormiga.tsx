@@ -3,9 +3,10 @@ import { motion } from 'motion/react';
 import { TrendingUp, ChevronRight, ChevronLeft, ArrowLeft, ArrowRight, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
 
 import { Category, Currency, Projection } from './gastos-hormiga/types';
-import { CATEGORIES, CURRENCIES, ANNUAL_RATE, getRecommendation } from './gastos-hormiga/constants';
+import { CATEGORIES, CURRENCIES, EXCHANGE_RATES, ANNUAL_RATE, getRecommendation } from './gastos-hormiga/constants';
 import Confetti from '../../components/Confetti';
 import ShareModule from '../../components/ShareModule';
 import ResultActions from '../../components/ResultActions';
@@ -56,6 +57,27 @@ export const GastosHormiga = () => {
     () => Object.values(amounts).reduce((s: number, v) => s + (parseFloat(v as string) || 0), 0),
     [amounts]
   );
+
+  const handleCurrencyChange = (newCurrency: Currency) => {
+    if (newCurrency.id === currency.id) return;
+    
+    const ratePrev = EXCHANGE_RATES[currency.id] || 1;
+    const rateNew = EXCHANGE_RATES[newCurrency.id] || 1;
+    const multiplier = rateNew / ratePrev;
+
+    const newAmounts: Record<string, string> = {};
+    for (const [key, val] of Object.entries(amounts)) {
+      const num = parseFloat(val);
+      if (!isNaN(num) && num > 0) {
+        // Drop decimals for COP, keep 2 for USD/MXN if small, but let's just keep it whole numbers for simplicity as it's expenses
+        newAmounts[key] = Math.round(num * multiplier).toString();
+      } else {
+        newAmounts[key] = '';
+      }
+    }
+    setAmounts(newAmounts);
+    setCurrency(newCurrency);
+  };
 
   const chartRef = React.useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -126,27 +148,44 @@ export const GastosHormiga = () => {
 
   // ── Load saved progress ──────────────────────────────────────────────────
   useEffect(() => {
-    try {
-      if (searchParams.get('reset') === 'true') {
-        localStorage.removeItem('gastos-hormiga-progress');
-        setSearchParams({}, { replace: true });
-        return;
-      }
-      const saved = localStorage.getItem('gastos-hormiga-progress');
-      if (saved) {
-        const r = JSON.parse(saved);
-        if (r.amounts) setAmounts(r.amounts);
-        if (r.currencyId) {
-          const found = CURRENCIES.find(c => c.id === r.currencyId);
-          if (found) setCurrency(found);
+    (async () => {
+      try {
+        if (searchParams.get('reset') === 'true') {
+          await clearActivityProgressDB('gastos');
+          setSearchParams({}, { replace: true });
+          setLoading(false);
+          return;
         }
-        if (r.completed) setStep(2);
+        const saved = await loadActivityProgressDB('gastos');
+        if (saved && saved.metadata) {
+          const r = saved.metadata;
+          if (r.amounts) setAmounts(r.amounts);
+          if (r.currencyId) {
+            const found = CURRENCIES.find(c => c.id === r.currencyId);
+            if (found) setCurrency(found);
+          }
+          if (r.completed || saved.completed) setStep(2);
+        }
+      } catch (e) {
+        console.error('Error loading gastos progress:', e);
       }
-    } catch (e) {
-      console.error('Error loading gastos progress:', e);
-    }
-    setLoading(false);
+      setLoading(false);
+    })();
   }, [searchParams, setSearchParams]);
+
+  // Auto-save progress
+  useEffect(() => {
+    if (loading) return;
+    const timer = setTimeout(() => {
+      const dataToSave = {
+        amounts,
+        currencyId: currency.id,
+        completed: step === 2,
+      };
+      saveActivityProgressDB('gastos', dataToSave, false).catch(console.error);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [amounts, currency.id, step, loading]);
 
   // ── Fetch user name ───────────────────────────────────────────────────
   useEffect(() => {
@@ -166,11 +205,11 @@ export const GastosHormiga = () => {
     setStep(2);
     setShowConfetti(true);
     try {
-      localStorage.setItem('gastos-hormiga-progress', JSON.stringify({
+      await saveActivityProgressDB('gastos', {
         amounts,
         currencyId: currency.id,
         completed: true,
-      }));
+      }, true);
     } catch (e) {
       console.error('Error saving gastos progress:', e);
     }
@@ -180,10 +219,10 @@ export const GastosHormiga = () => {
     setStep(1);
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     setAmounts(Object.fromEntries(CATEGORIES.map(c => [c.id, ''])));
     setStep(0);
-    localStorage.removeItem('gastos-hormiga-progress');
+    await clearActivityProgressDB('gastos');
   };
 
   // ── Share ────────────────────────────────────────────────────────────────
@@ -348,7 +387,7 @@ export const GastosHormiga = () => {
             {CURRENCIES.map(c => (
               <button
                 key={c.id}
-                onClick={() => setCurrency(c)}
+                onClick={() => handleCurrencyChange(c)}
                 className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all border ${
                   currency.id === c.id
                     ? 'bg-brand-blue/10 border-brand-blue/30 text-brand-blue'
@@ -447,7 +486,7 @@ export const GastosHormiga = () => {
               {CURRENCIES.map(c => (
                 <button
                   key={c.id}
-                  onClick={() => setCurrency(c)}
+                  onClick={() => handleCurrencyChange(c)}
                   className={`px-2 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all border ${
                     currency.id === c.id
                       ? 'bg-brand-blue/10 border-brand-blue/30 text-brand-blue'
@@ -474,7 +513,7 @@ export const GastosHormiga = () => {
                     <span className="text-white">{fmt(total * 12, currency)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm md:text-base font-black uppercase tracking-widest text-brand-text-muted">
-                    <span className="text-white/40">En 10 años <span className="text-[10px]">(Sin invertir)</span>:</span>
+                    <span className="text-white/40 flex items-center gap-1">En 10 años <span className="text-[9px] md:text-[10px] whitespace-nowrap hidden sm:inline">(Sin invertir)</span>:</span>
                     <span className="text-white">{fmt(total * 120, currency)}</span>
                   </div>
                 </div>

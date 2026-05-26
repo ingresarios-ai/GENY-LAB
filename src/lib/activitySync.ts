@@ -10,55 +10,77 @@ const ACTIVITY_KEYS: Record<string, string> = {
   flow: 'reto-flow-progress',
 };
 
-export async function syncActivityToSupabase(activityId: string) {
+export async function saveActivityProgressDB(activityId: string, data: any, isCompleted: boolean = false) {
   try {
-    const key = ACTIVITY_KEYS[activityId];
-    if (!key) return { success: false, error: 'Unknown activity' };
-
-    const rawData = localStorage.getItem(key);
-    if (!rawData) return { success: false, error: 'No local data found' };
-
-    const data = JSON.parse(rawData);
-
-    // Get current authenticated user
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !user.email) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
-    console.log(`Syncing ${activityId} to Supabase for ${user.email}...`);
+    if (!user || !user.email) return { success: false, error: 'User not authenticated' };
 
     const { data: res, error } = await supabase.functions.invoke('activity-completed', {
       body: {
         email: user.email,
         activity_id: activityId,
         metadata: data,
+        is_completed: isCompleted,
       },
     });
 
-    if (error) {
-      console.error(`Error syncing ${activityId}:`, error);
-      return { success: false, error: error.message };
-    }
-
-    console.log(`Successfully synced ${activityId}:`, res);
+    if (error) throw error;
     return { success: true, data: res };
   } catch (err: any) {
-    console.error(`Exception syncing ${activityId}:`, err);
-    return { success: false, error: err.message || String(err) };
+    console.error(`Error saving ${activityId} to DB:`, err);
+    return { success: false, error: err.message };
   }
 }
 
-export async function syncAllCompletedActivities() {
-  const activities = Object.keys(ACTIVITY_KEYS);
-  console.log('Starting sync of all completed activities...');
-  const results = [];
-  for (const act of activities) {
-    const key = ACTIVITY_KEYS[act];
-    if (localStorage.getItem(key)) {
-      const res = await syncActivityToSupabase(act);
-      results.push({ activityId: act, ...res });
+export async function loadActivityProgressDB(activityId: string) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from('user_activity_log')
+      .select('metadata, completed_at')
+      .eq('user_id', user.id)
+      .eq('activity_id', activityId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 means no rows found, which is expected for new activities
+      console.error(`Error loading ${activityId} from DB:`, error);
+      return null;
     }
+
+    if (data) {
+      return { metadata: data.metadata, completed: !!data.completed_at };
+    }
+    return null;
+  } catch (err) {
+    console.error(`Exception loading ${activityId}:`, err);
+    return null;
   }
-  return results;
+}
+
+export async function clearActivityProgressDB(activityId: string) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase
+      .from('user_activity_log')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('activity_id', activityId);
+  } catch (err) {
+    console.error(`Exception clearing ${activityId}:`, err);
+  }
+}
+
+export async function syncActivityToSupabase(activityId: string) {
+  // Legacy function for backwards compatibility
+  return { success: true };
+}
+
+export async function syncAllCompletedActivities() {
+  // Legacy function for backwards compatibility
+  return [];
 }

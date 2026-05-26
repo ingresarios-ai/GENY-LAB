@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   try {
-    const { email, activity_id, metadata } = await req.json();
+    const { email, activity_id, metadata, is_completed = true } = await req.json();
 
     if (!email || !activity_id) {
       return json({ error: "email and activity_id required" }, 400);
@@ -74,31 +74,40 @@ Deno.serve(async (req: Request) => {
 
     if (existing && existing.length > 0) {
       // Update existing activity log
+      const updateData: any = { metadata: metadata || {} };
+      if (is_completed) {
+        updateData.completed_at = now;
+      }
       const { error } = await supabase
         .from("user_activity_log")
-        .update({
-          metadata: metadata || {},
-          completed_at: now,
-        })
+        .update(updateData)
         .eq("id", existing[0].id);
       logError = error;
     } else {
       // Insert new activity log
+      const insertData: any = {
+        user_id: user.id,
+        activity_id,
+        activity_name: activityName,
+        metadata: metadata || {},
+      };
+      if (is_completed) {
+        insertData.completed_at = now;
+      }
       const { error } = await supabase
         .from("user_activity_log")
-        .insert({
-          user_id: user.id,
-          activity_id,
-          activity_name: activityName,
-          metadata: metadata || {},
-          completed_at: now,
-        });
+        .insert(insertData);
       logError = error;
     }
 
     if (logError) {
       console.error("Activity log error:", logError);
       return json({ error: logError.message }, 500);
+    }
+
+    // If it's just a progress save, don't trigger webhooks
+    if (!is_completed) {
+      return json({ success: true, saved_progress: true });
     }
 
     // Count distinct core activities completed by this user to check for all_completed

@@ -5,7 +5,8 @@ import {
   ChevronLeft, CheckCircle, Share2,    Copy, Check,
   Lock, Unlock, Zap, Brain, AlertTriangle, ArrowRight, ChevronRight
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
 import { jsPDF } from "jspdf";
 import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 
@@ -29,6 +30,7 @@ function cx(...classes: (string | boolean | undefined | null)[]) {
 export default function MisEmociones() {
   const user = { id: "local-user" };
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const userName = 'Trader'?.split(" ")[0] || "Trader";
 
   // ── State ──────────────────────────────────────────────────────────────
@@ -58,55 +60,60 @@ export default function MisEmociones() {
 
   // ── Load saved progress ────────────────────────────────────────────────
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('reto-sombra-progress');
-      if (saved) {
-        const r = JSON.parse(saved);
-        if (r.route) setRoute(r.route);
-        if (r.tasksDone) setTasksDone(r.tasksDone);
-        if (r.completedDays) setCompletedDays(r.completedDays);
-        if (r.diagAns) {
-          setDiagAns(r.diagAns);
-          if (r.diagAns.length >= 4 && !r.route) setView('result');
+    (async () => {
+      try {
+        if (searchParams.get('reset') === 'true') {
+          await clearActivityProgressDB('sombra');
+          setSearchParams({}, { replace: true });
+          setLoading(false);
+          return;
         }
-        
-        // Auto-redirect logic
-        if (r.route) {
-          const compDays = r.completedDays || {};
-          let next = 1;
-          for (let i = 1; i <= 10; i++) {
-            if (!compDays[i]) {
-              next = i;
-              break;
-            }
-            if (i === 10) next = 10; // If all 10 are somehow true but next wasn't found, default to 10
+        const saved = await loadActivityProgressDB('sombra');
+        if (saved && saved.metadata) {
+          const r = saved.metadata;
+          if (r.route) setRoute(r.route);
+          if (r.tasksDone) setTasksDone(r.tasksDone);
+          if (r.completedDays) setCompletedDays(r.completedDays);
+          if (r.diagAns) {
+            setDiagAns(r.diagAns);
+            if (r.diagAns.length >= 4 && !r.route) setView('result');
           }
-          const completedCount = Object.values(compDays).filter(Boolean).length;
           
-          if (completedCount === 10 || r.view === 'home') {
-             // If completely finished, or explicitly requested home, let them see the dashboard. 
-             // Actually, the user asked to always redirect them to where they left off. If completedCount === 10, they left off at the end.
-             // Let's redirect to 'day' view unless they completed all 10, then 'home' is better so they see the victory screen.
-             if (completedCount === 10) {
-               setView('home');
-             } else {
-               setView('day');
-               setSelDay(next);
-             }
+          // Auto-redirect logic
+          if (r.route) {
+            const compDays = r.completedDays || {};
+            let next = 1;
+            for (let i = 1; i <= 10; i++) {
+              if (!compDays[i]) {
+                next = i;
+                break;
+              }
+              if (i === 10) next = 10; // If all 10 are somehow true but next wasn't found, default to 10
+            }
+            const completedCount = Object.values(compDays).filter(Boolean).length;
+            
+            if (completedCount === 10 || r.view === 'home') {
+               if (completedCount === 10) {
+                 setView('home');
+               } else {
+                 setView('day');
+                 setSelDay(next);
+               }
+            } else if (r.view) {
+              setView(r.view);
+            }
           } else if (r.view) {
             setView(r.view);
           }
-        } else if (r.view) {
-          setView(r.view);
         }
+      } catch (e) {
+        console.error('Error loading sombra progress:', e);
       }
-    } catch (e) {
-      console.error('Error loading sombra progress:', e);
-    }
-    setLoading(false);
-  }, []);
+      setLoading(false);
+    })();
+  }, [searchParams, setSearchParams]);
 
-  // ── Persist to localStorage ───────────────────────────────────────────
+  // ── Persist to DB ───────────────────────────────────────────
   const saveState = async (
     newRoute = route,
     newTasks = tasksDone,
@@ -115,13 +122,15 @@ export default function MisEmociones() {
     newView?: string,
   ) => {
     try {
-      localStorage.setItem('reto-sombra-progress', JSON.stringify({
+      const dataToSave = {
         route: newRoute,
         tasksDone: newTasks,
         completedDays: newDays,
         diagAns: newDiagAns,
         view: newView || (newRoute ? 'home' : undefined),
-      }));
+      };
+      const isCompleted = Object.keys(newDays).length === DAYS.length && Object.values(newDays).every(Boolean);
+      await saveActivityProgressDB('sombra', dataToSave, isCompleted);
     } catch (e) {
       console.error('Error saving sombra progress:', e);
     }

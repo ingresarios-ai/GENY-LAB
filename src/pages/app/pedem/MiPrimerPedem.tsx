@@ -1,9 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
-
-
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
 import confetti from 'canvas-confetti';
 import type { PedemPath } from './constants';
 import { PATH_LABELS } from './constants';
@@ -18,30 +17,52 @@ type Screen = 'choose' | 'operator-sub' | 'novice' | 'routine' | 'trade' | 'resu
 
 export default function MiPrimerPedem() {
   
+  const [searchParams, setSearchParams] = useSearchParams();
   const [screen, setScreen] = useState<Screen>('choose');
   const [path, setPath] = useState<PedemPath | null>(null);
   const [data, setData] = useState<Record<string, any>>({});
   const [history, setHistory] = useState<Screen[]>(['choose']);
   const [loading, setLoading] = useState(true);
 
-  // Restore completed PEDEM from localStorage on mount
+  // Restore completed PEDEM from DB on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('pedem-progress');
-      if (saved) {
-        const r = JSON.parse(saved);
-        if (r.path) setPath(r.path);
-        if (r.data) setData(r.data);
-        if (r.completed) {
-          setScreen('result');
-          setHistory(['choose', 'result']);
+    (async () => {
+      try {
+        if (searchParams.get('reset') === 'true') {
+          await clearActivityProgressDB('pedem');
+          setSearchParams({}, { replace: true });
+          setLoading(false);
+          return;
         }
+        const saved = await loadActivityProgressDB('pedem');
+        if (saved && saved.metadata) {
+          const r = saved.metadata;
+          if (r.path) setPath(r.path);
+          if (r.data) setData(r.data);
+          if (r.completed || saved.completed) {
+            setScreen('result');
+            setHistory(['choose', 'result']);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading PEDEM progress:', e);
       }
-    } catch (e) {
-      console.error('Error loading PEDEM progress:', e);
-    }
-    setLoading(false);
-  }, []);
+      setLoading(false);
+    })();
+  }, [searchParams, setSearchParams]);
+
+  // Auto-save progress
+  useEffect(() => {
+    if (loading || !path) return;
+    const timer = setTimeout(() => {
+      saveActivityProgressDB('pedem', {
+        path,
+        data,
+        completed: screen === 'result'
+      }, false).catch(console.error);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [data, path, screen, loading]);
 
   const navigate = useCallback((s: Screen) => {
     setHistory(prev => [...prev, s]);
@@ -67,11 +88,11 @@ export default function MiPrimerPedem() {
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#00E676', '#00D1FF', '#FF6321', '#FEDD04'] });
     navigate('result');
     try {
-      localStorage.setItem('pedem-progress', JSON.stringify({
+      await saveActivityProgressDB('pedem', {
         path: p,
         data,
         completed: true,
-      }));
+      }, true);
     } catch (e) {
       console.error('Error saving PEDEM progress:', e);
     }
@@ -122,7 +143,7 @@ export default function MiPrimerPedem() {
         {screen === 'novice' && <PedemNovice key="nov" data={data} onChange={onChange} onFinish={() => finish('novice')} onBack={goBack} />}
         {screen === 'routine' && <PedemRoutine key="rou" data={data} onChange={onChange} onFinish={() => finish('routine')} onBack={goBack} />}
         {screen === 'trade' && <PedemTrade key="tra" data={data} onChange={onChange} onFinish={() => finish('trade')} onBack={goBack} />}
-        {screen === 'result' && path && <PedemResult key="res" path={path} data={data} onRestart={() => { setData({}); setPath(null); setHistory(['choose']); setScreen('choose'); localStorage.removeItem('pedem-progress'); }} />}
+        {screen === 'result' && path && <PedemResult key="res" path={path} data={data} onRestart={async () => { setData({}); setPath(null); setHistory(['choose']); setScreen('choose'); await clearActivityProgressDB('pedem'); }} />}
       </AnimatePresence>
     </div>
   );

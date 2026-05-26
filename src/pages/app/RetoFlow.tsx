@@ -5,8 +5,8 @@ import {
   ChevronLeft, CheckCircle, Share2,    Copy, Check,
   Lock, Unlock, Zap, Brain, BookOpen, Search, ChevronRight
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
 import confetti from "canvas-confetti";
 import {
   DAYS, PHASES, TRACKS, ARQUETIPOS, EMOCIONES, GLOSARIO, TIPO_COLOR,
@@ -41,6 +41,7 @@ function Badge({ tipo }: { tipo: string }) {
 export default function RetoFlow() {
   const user = { id: "local-user" };
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const userName = 'Trader'?.split(" ")[0] || "Trader";
 
   // State
@@ -57,24 +58,32 @@ export default function RetoFlow() {
 
   // ── Load saved progress ─────────────────────────────────────────────────
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('reto-flow-progress');
-      if (saved) {
-        const r = JSON.parse(saved);
-        if (r.route) setRoute(r.route);
-        if (r.arquetipo) setArquetipo(r.arquetipo);
-        if (r.tasksDone) setTasksDone(r.tasksDone);
-        if (r.completedDays) setCompletedDays(r.completedDays);
-        if (r.emociones) setEmociones(r.emociones);
-        if (r.view) setView(r.view);
+    (async () => {
+      try {
+        if (searchParams.get('reset') === 'true') {
+          await clearActivityProgressDB('flow');
+          setSearchParams({}, { replace: true });
+          setLoading(false);
+          return;
+        }
+        const saved = await loadActivityProgressDB('flow');
+        if (saved && saved.metadata) {
+          const r = saved.metadata;
+          if (r.route) setRoute(r.route);
+          if (r.arquetipo) setArquetipo(r.arquetipo);
+          if (r.tasksDone) setTasksDone(r.tasksDone);
+          if (r.completedDays) setCompletedDays(r.completedDays);
+          if (r.emociones) setEmociones(r.emociones);
+          if (r.view) setView(r.view);
+        }
+      } catch (e) {
+        console.error('Error loading flow progress:', e);
       }
-    } catch (e) {
-      console.error('Error loading flow progress:', e);
-    }
-    setLoading(false);
-  }, []);
+      setLoading(false);
+    })();
+  }, [searchParams, setSearchParams]);
 
-  // ── Persist to localStorage ────────────────────────────────────────────
+  // ── Persist to DB ────────────────────────────────────────────────────────
   const saveState = async (
     newRoute = route,
     newArq = arquetipo,
@@ -84,14 +93,16 @@ export default function RetoFlow() {
     newView?: string,
   ) => {
     try {
-      localStorage.setItem('reto-flow-progress', JSON.stringify({
+      const dataToSave = {
         route: newRoute,
         arquetipo: newArq,
         tasksDone: newTasks,
         completedDays: newDays,
         emociones: newEmo,
         view: newView || (newRoute ? 'home' : undefined),
-      }));
+      };
+      const isCompleted = Object.keys(newDays).length === DAYS.length && Object.values(newDays).every(Boolean);
+      await saveActivityProgressDB('flow', dataToSave, isCompleted);
     } catch (e) {
       console.error('Error saving flow progress:', e);
     }

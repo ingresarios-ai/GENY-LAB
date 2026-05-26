@@ -8,6 +8,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../../lib/activitySync';
 import { Thermometer3D, getTempLevel, CAT_LABELS, RADAR_KEYS, TEMP_LEVELS } from './helpers';
 import ShareModule from '../../../components/ShareModule';
 import ResultActions from '../../../components/ResultActions';
@@ -33,13 +34,20 @@ export default function TermostatoFinanciero() {
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (searchParams.get('view') === 'results') {
-      try {
-        const saved = localStorage.getItem('termostato-diagnosis');
-        if (saved) { setDiagnosis(JSON.parse(saved)); setScreen('result'); }
-      } catch(e) { console.error(e); }
-    }
-  }, []);
+    (async () => {
+      if (searchParams.get('reset') === 'true') {
+        await clearActivityProgressDB('termostato');
+        setSearchParams({}, { replace: true });
+        return;
+      }
+      if (searchParams.get('view') === 'results') {
+        try {
+          const saved = await loadActivityProgressDB('termostato');
+          if (saved && saved.metadata) { setDiagnosis(saved.metadata); setScreen('result'); }
+        } catch(e) { console.error(e); }
+      }
+    })();
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [messages, loading]);
   useEffect(() => { if (screen==='chat'&&!loading&&!analyzing) setTimeout(()=>inputRef.current?.focus({preventScroll:true}),100); }, [screen,loading,analyzing]);
@@ -88,13 +96,13 @@ export default function TermostatoFinanciero() {
             if (match) jsonStr = match[1];
             const parsed = JSON.parse(jsonStr.trim());
             setDiagnosis(parsed);
-            localStorage.setItem('termostato-diagnosis',JSON.stringify(parsed));
+            await saveActivityProgressDB('termostato', parsed, true);
             setScreen('result');
             setTimeout(()=>confetti({particleCount:120,spread:70,origin:{y:0.5},colors:['#00D4FF','#FFD700','#f97316','#ef4444']}),300);
           } catch(e) {
             console.error('Diagnosis Error:',e);
             const fb = {puntaje_global:45,temperatura_label:'Templado',categorias:{programacion:40,setpoint:50,neuronas_espejo:45,adaptacion:42,merecimiento:48,disciplina:44},arquetipo:'El Niño Inocente',arquetipo_desc:'Busca seguridad y evita el riesgo por miedo a perder lo poco que tiene.',tags_patron:['#escasez','#miedo_al_riesgo','#zona_de_confort'],fortalezas:['Conciencia de sus limitaciones','Deseo genuino de mejorar'],sombras:['Miedo paralizante ante decisiones financieras','Creencia de no merecer abundancia','Dependencia de validación externa'],diagnostico_breve:'Tu termostato financiero está calibrado en modo supervivencia. Aunque tienes la capacidad de crecer, tu programación de origen te mantiene en un rango cómodo pero limitante.',primer_paso:'Esta semana, escribe 3 creencias sobre el dinero que escuchaste en tu infancia y junto a cada una escribe una versión opuesta que te empodere.'};
-            setDiagnosis(fb); localStorage.setItem('termostato-diagnosis',JSON.stringify(fb));
+            setDiagnosis(fb); await saveActivityProgressDB('termostato', fb, true);
             setScreen('result'); setTimeout(()=>confetti({particleCount:100,spread:70}),300);
           }
           setAnalyzing(false);

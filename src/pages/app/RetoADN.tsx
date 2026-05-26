@@ -7,6 +7,7 @@ import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUt
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { supabase } from "../../lib/supabase";
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
 import ShareModule from "../../components/ShareModule";
 import ResultActions from "../../components/ResultActions";
 import CompletionBanner from "../../components/CompletionBanner";
@@ -74,7 +75,7 @@ const PROFILE_COLORS: Record<string, string> = {
 
 export default function RetoADN() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [screen, setScreen] = useState<"welcome" | "loading-ai" | "chat" | "result">("welcome");
   const [messages, setMessages] = useState<any[]>([]);
@@ -90,18 +91,32 @@ export default function RetoADN() {
 
   // Load saved results if coming from "Ver mis resultados"
   useEffect(() => {
-    if (searchParams.get('view') === 'results') {
-      try {
-        const saved = localStorage.getItem('adn-diagnosis');
-        if (saved) {
-          setDiagnosis(JSON.parse(saved));
-          setScreen('result');
-        }
-      } catch (e) {
-        console.error('Error loading saved diagnosis:', e);
+    (async () => {
+      if (searchParams.get('reset') === 'true') {
+        await clearActivityProgressDB('adn');
+        setSearchParams({}, { replace: true });
+        setScreen("welcome");
+        setMessages([]);
+        setInput("");
+        setLoading(false);
+        setAnalyzing(false);
+        setDiagnosis(null);
+        setTurns(0);
+        return;
       }
-    }
-  }, []);
+      if (searchParams.get('view') === 'results') {
+        try {
+          const saved = await loadActivityProgressDB('adn');
+          if (saved && saved.metadata) {
+            setDiagnosis(saved.metadata);
+            setScreen('result');
+          }
+        } catch (e) {
+          console.error('Error loading saved diagnosis:', e);
+        }
+      }
+    })();
+  }, [searchParams, setSearchParams]);
 
   // Scroll chat container to bottom (not the page)
   useEffect(() => {
@@ -191,7 +206,7 @@ export default function RetoADN() {
             
             const parsed = JSON.parse(jsonStr.trim());
             setDiagnosis(parsed);
-            localStorage.setItem('adn-diagnosis', JSON.stringify(parsed));
+            await saveActivityProgressDB('adn', parsed, true);
             
             setScreen("result");
             setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.5 }, colors: ['#00D1FF', '#00E676', '#FEDD04', '#f59e0b'] }), 300);
@@ -207,7 +222,7 @@ export default function RetoADN() {
               activacion: "El sistema perfecto que nunca se ejecuta vale menos que el imperfecto que sí lo hace."
             };
             setDiagnosis(fallback);
-            localStorage.setItem('adn-diagnosis', JSON.stringify(fallback));
+            await saveActivityProgressDB('adn', fallback, true);
             setScreen("result");
             setTimeout(() => confetti({ particleCount: 100, spread: 70 }), 300);
           }

@@ -19,6 +19,12 @@ export const CURRENCIES: Currency[] = [
   { id: 'usd', name: 'Dólares',           symbol: '$', flag: '🇺🇸', locale: 'en-US' },
 ];
 
+export const EXCHANGE_RATES: Record<string, number> = {
+  usd: 1,
+  cop: 4000,
+  mxn: 20,
+};
+
 export const ANNUAL_RATE = 0.07; // 7% ETF promedio
 
 export function getRecommendation(monthlyTotal: number, currencyId: string): Recommendation {

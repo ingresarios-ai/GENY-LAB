@@ -1,4 +1,4 @@
-// GENY LAB — User progress store (localStorage for now, Supabase later)
+// GENY LAB — User progress store (In-memory, synced from Supabase)
 
 import { LESSONS, getLevelForXp, type Lesson } from './lessons';
 
@@ -16,30 +16,25 @@ export interface UserProgress {
   lastActivityDate?: string;
 }
 
-const STORAGE_KEY = 'geny_lab_progress';
-
 const defaultProgress: UserProgress = {
   lessonProgress: {},
   totalXp: 0,
   streak: 0,
 };
 
+// In-memory store
+let memoryStore: UserProgress = { ...defaultProgress };
+
 // ============================================
 // Read / Write
 // ============================================
 
 export const getProgress = (): UserProgress => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...defaultProgress };
-    return JSON.parse(raw) as UserProgress;
-  } catch {
-    return { ...defaultProgress };
-  }
+  return memoryStore;
 };
 
 const saveProgress = (progress: UserProgress) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  memoryStore = { ...progress };
 };
 
 // ============================================
@@ -180,6 +175,8 @@ export const markActivityCompleted = (lessonId: string): {
 };
 
 export const syncFromDB = (activityIds: string[]) => {
+  // We re-initialize from scratch to avoid duplicate increments
+  memoryStore = { ...defaultProgress, lessonProgress: {} };
   const progress = getProgress();
   let changed = false;
 

@@ -5,8 +5,9 @@ import {
   ChevronLeft, ChevronRight, CheckCircle, Brain,
   Share2, Copy, Check,   
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { jsPDF } from 'jspdf';
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
 import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 
 import ShareModule from "../../components/ShareModule";
@@ -147,6 +148,7 @@ const TYPE_STYLES: Record<
 export default function TrampasDinero() {
   const user = { id: "local-user" };
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const userName = 'Trader'?.split(" ")[0] || "Trader";
 
   // ── State ──
@@ -164,33 +166,55 @@ export default function TrampasDinero() {
 
   // ── Load saved progress ──
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('trampas-dinero-progress');
-      if (saved) {
-        const r = JSON.parse(saved);
-        if (r.responses) setResponses(r.responses);
-        if (r.completed) setView('completed');
+    (async () => {
+      try {
+        if (searchParams.get('reset') === 'true') {
+          await clearActivityProgressDB('trampas');
+          setSearchParams({}, { replace: true });
+          setResponses({});
+          setView("questions");
+          setLoading(false);
+          return;
+        }
+        const saved = await loadActivityProgressDB('trampas');
+        if (saved && saved.metadata) {
+          const r = saved.metadata;
+          if (r.responses) setResponses(r.responses);
+          if (r.completed || saved.completed) setView('completed');
+        }
+      } catch (e) {
+        console.error('Error loading trampas progress:', e);
       }
-    } catch (e) {
-      console.error('Error loading trampas progress:', e);
-    }
-    setLoading(false);
-  }, []);
+      setLoading(false);
+    })();
+  }, [searchParams, setSearchParams]);
+
+  // ── Auto-save progress ──
+  useEffect(() => {
+    if (loading) return;
+    const timer = setTimeout(() => {
+      saveActivityProgressDB('trampas', {
+        responses,
+        completed: view === 'completed'
+      }, false).catch(console.error);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [responses, view, loading]);
 
   const update = (i: number, v: string) =>
     setResponses((prev) => ({ ...prev, [i]: v }));
 
   const handleStart = () => { setView("questions"); };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setView("completed");
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ["#FF3EB0", "#00FF94", "#FFD93D", "#00D2FF"] });
     setTimeout(() => contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }), 100);
     try {
-      localStorage.setItem('trampas-dinero-progress', JSON.stringify({
+      await saveActivityProgressDB('trampas', {
         responses,
         completed: true,
-      }));
+      }, true);
     } catch (e) {
       console.error('Error saving trampas progress:', e);
     }
@@ -229,10 +253,10 @@ export default function TrampasDinero() {
     window.open(links[platform], "_blank");
   };
 
-  const reset = () => {
+  const reset = async () => {
     setResponses({});
     setView("questions");
-    localStorage.removeItem('trampas-dinero-progress');
+    await clearActivityProgressDB('trampas');
   };
 
   const generatePDF = async () => {
