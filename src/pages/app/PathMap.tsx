@@ -7,6 +7,7 @@ import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap, Gr
 import { LESSONS, getLevelForXp, getXpProgressInLevel, PHASE_LABELS, type Lesson } from '../../lib/lessons';
 import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted } from '../../lib/progressStore';
 import { Logo } from '../../components/Logo';
+import { loadAllActivitiesProgressDB } from '../../lib/activitySync';
 
 export default function PathMap() {
   const navigate = useNavigate();
@@ -43,6 +44,91 @@ export default function PathMap() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
     return localStorage.getItem('geny_lab_hide_welcome') !== 'true';
   });
+  const [pendingActivity, setPendingActivity] = useState<{
+    id: string;
+    title: string;
+    emoji: string;
+    route: string;
+    statusText: string;
+  } | null>(null);
+  const [showPendingModal, setShowPendingModal] = useState(false);
+
+  // Scan for pending/unfinished activities
+  useEffect(() => {
+    const hasShown = sessionStorage.getItem('geny_lab_pending_reminder_shown') === 'true';
+    if (hasShown) return;
+
+    (async () => {
+      try {
+        const progressList = await loadAllActivitiesProgressDB();
+        if (!progressList || progressList.length === 0) return;
+
+        const pendingItems: Array<{
+          id: string;
+          title: string;
+          emoji: string;
+          route: string;
+          statusText: string;
+          order: number;
+        }> = [];
+
+        for (const item of progressList) {
+          if (item.completed_at) continue;
+
+          const lesson = LESSONS.find(l => l.id === item.activity_id);
+          if (!lesson) continue;
+
+          if (!isLessonUnlocked(lesson.order)) continue;
+
+          const meta = item.metadata;
+          if (!meta) continue;
+
+          let statusText = '';
+          if (item.activity_id === 'sombra' || item.activity_id === 'flow') {
+            const compDays = meta.completedDays || {};
+            let next = 1;
+            for (let i = 1; i <= 10; i++) {
+              if (!compDays[i]) {
+                next = i;
+                break;
+              }
+              if (i === 10) next = 10;
+            }
+            statusText = `Día ${next} de 10`;
+          } else if (item.activity_id === 'trampas') {
+            const count = Object.keys(meta.responses || {}).length;
+            statusText = `Pregunta ${Math.min(count + 1, 10)} de 10`;
+          } else if (item.activity_id === 'gastos') {
+            statusText = 'En progreso';
+          } else if (item.activity_id === 'pedem') {
+            statusText = 'Armando bitácora';
+          } else {
+            statusText = 'En progreso';
+          }
+
+          pendingItems.push({
+            id: item.activity_id,
+            title: lesson.title.replace('\n', ' '),
+            emoji: lesson.emoji,
+            route: lesson.activityRoute,
+            statusText,
+            order: lesson.order
+          });
+        }
+
+        if (pendingItems.length > 0) {
+          pendingItems.sort((a, b) => b.order - a.order);
+          setPendingActivity(pendingItems[0]);
+          setTimeout(() => {
+            setShowPendingModal(true);
+            sessionStorage.setItem('geny_lab_pending_reminder_shown', 'true');
+          }, 2500);
+        }
+      } catch (err) {
+        console.error('Error fetching pending activities:', err);
+      }
+    })();
+  }, []);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   // ── Typewriter quotes ────────────────────────────────────────────────
@@ -202,6 +288,93 @@ export default function PathMap() {
                   className="w-full py-4 rounded-lg font-mono tracking-widest uppercase text-[#00D1FF] bg-[#00D1FF]/10 border border-[#00D1FF]/30 hover:bg-[#00D1FF]/20 transition-colors flex items-center justify-center gap-2"
                 >
                   <Zap size={16} /> INICIAR SECUENCIA
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Pending Activity Reminder Modal */}
+      <AnimatePresence>
+        {showPendingModal && pendingActivity && (
+          <div className="fixed inset-0 z-[101] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/85 backdrop-blur-md"
+              onClick={() => setShowPendingModal(false)}
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="relative w-full max-w-md glass-panel rounded-3xl p-6 md:p-8 flex flex-col border border-brand-yellow/30 shadow-[0_0_50px_rgba(242,197,0,0.15)] overflow-hidden text-center"
+            >
+              {/* Background ambient glow */}
+              <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-brand-yellow/10 blur-[50px] pointer-events-none" />
+
+              <button 
+                onClick={() => setShowPendingModal(false)}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="mb-6 mt-4 flex flex-col items-center">
+                <motion.div 
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                  className="w-16 h-16 rounded-2xl bg-brand-yellow/15 border border-brand-yellow/30 flex items-center justify-center text-3xl mb-6 shadow-[0_0_20px_rgba(242,197,0,0.1)]"
+                >
+                  {pendingActivity.emoji}
+                </motion.div>
+                
+                <span className="bg-brand-yellow/20 text-brand-yellow px-3 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-widest border border-brand-yellow/30 mb-3">
+                  ⚠️ RETO EN PROGRESO
+                </span>
+                
+                <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-3">
+                  ¿Continuamos tu entrenamiento?
+                </h2>
+                
+                <p className="text-slate-400 text-sm leading-relaxed mb-6 font-medium max-w-sm">
+                  Dejaste inconclusa la actividad de <span className="text-white font-bold">{pendingActivity.title}</span>. Mantén tu racha de aprendizaje para consolidar los conceptos:
+                </p>
+
+                {/* Progress Card */}
+                <div className="w-full bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{pendingActivity.emoji}</span>
+                    <div className="text-left">
+                      <h4 className="text-white font-bold text-sm leading-none mb-1">{pendingActivity.title}</h4>
+                      <p className="text-slate-500 text-[10px] uppercase font-mono tracking-wider">Actividad de Aprendizaje</p>
+                    </div>
+                  </div>
+                  <div className="bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow px-3 py-1 rounded-lg text-xs font-mono font-bold">
+                    {pendingActivity.statusText}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => {
+                    setShowPendingModal(false);
+                    navigate(pendingActivity.route);
+                  }}
+                  className="w-full cursor-pointer py-4 rounded-xl font-mono text-xs tracking-widest uppercase font-black text-black bg-brand-yellow hover:bg-yellow-400 active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(242,197,0,0.3)]"
+                >
+                  ⚡ CONTINUAR RETO
+                </button>
+                <button 
+                  onClick={() => setShowPendingModal(false)}
+                  className="w-full cursor-pointer py-3.5 rounded-xl font-mono text-xs tracking-widest uppercase font-bold text-slate-400 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10 active:scale-[0.98] transition-all"
+                >
+                  Más tarde
                 </button>
               </div>
             </motion.div>

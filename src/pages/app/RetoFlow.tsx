@@ -55,6 +55,7 @@ export default function RetoFlow() {
   const [selDay, setSelDay] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState(false);
   const [glosarioQuery, setGlosarioQuery] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // ── Load saved progress ─────────────────────────────────────────────────
   useEffect(() => {
@@ -493,6 +494,27 @@ export default function RetoFlow() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
         <CompletionBanner lessonId="flow" disabled={completedCount < totalDays} progressLabel={`${completedCount} de ${totalDays} días completados`} />
 
+        {completedCount === totalDays && (
+          <div className="glass-card p-8 text-center border-t-2 border-t-brand-green/50 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-green/10 via-transparent to-transparent pointer-events-none" />
+            <div className="relative z-10 space-y-4">
+              <div className="text-6xl">👑</div>
+              <h2 className="text-3xl font-black text-brand-green uppercase tracking-wider">¡Felicidades, Master del Flow!</h2>
+              <p className="text-slate-300 text-lg">Has completado los 10 días del Reto del Flow. Has integrado tu mentalidad con el mercado.</p>
+              
+              <div className="max-w-md mx-auto py-6 border-t border-b border-white/5 my-6">
+                <p className="text-xs text-brand-green font-black uppercase tracking-widest mb-3">Comparte tu victoria</p>
+                <ShareModule 
+                  activity="flow" 
+                  title="Reto 10 Días al Flow" 
+                  resultData={{ selDay: 10, title: "Reto Completado" }}
+                  shareMessage={`¡He completado con éxito los 10 días del Reto del Flow en GENY LAB! ⚡ Mente en calma, operativa consistente. Únete al reto.`}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Header Card ── */}
         <div className="glass-card p-6 md:p-8 border-t-2 border-t-brand-green/50 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-brand-green/10 via-transparent to-brand-blue/5 pointer-events-none" />
@@ -798,60 +820,81 @@ export default function RetoFlow() {
                 DÍA {selDay} COMPLETADO
               </h3>
               <p className="text-slate-400">
-                Has avanzado en tu entrenamiento de Flow. Comparte tu progreso para afianzar el proceso.
+                Tu mente está un paso más cerca del Flow absoluto. Continúa con tu entrenamiento diario.
               </p>
             </div>
 
-            {/* Sharing Section */}
-            <div className="mt-8 space-y-6">
-              <ResultActions 
-                onDownloadPDF={async () => {
-                  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-                  const W=210,M=18; let y=20;
-                  
-                  doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-                  doc.setFillColor(139,92,246); doc.rect(0,0,W,3,'F'); // brand-purple
-                  
-                  doc.setTextColor(139,92,246); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
-                  doc.setTextColor(100); doc.text('RETO FLOW',W-M,y,{align:'right'}); y+=16;
-                  
-                  doc.setTextColor(255); doc.setFontSize(28); 
-                  doc.text(`DÍA ${selDay} COMPLETADO`,M,y); y+=12;
+            <div className="flex flex-col items-center gap-4 mt-8">
+              <button
+                onClick={async () => {
+                  setIsGenerating(true);
+                  try {
+                    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+                    const W=210,M=18; let y=20;
+                    
+                    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
+                    doc.setFillColor(139,92,246); doc.rect(0,0,W,3,'F'); // brand-purple
+                    
+                    doc.setTextColor(139,92,246); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
+                    doc.setTextColor(100); doc.text('RETO FLOW',W-M,y,{align:'right'}); y+=16;
+                    
+                    doc.setTextColor(255); doc.setFontSize(28); 
+                    doc.text(`DÍA ${selDay} COMPLETADO`,M,y); y+=12;
 
-                  doc.setTextColor(200); doc.setFontSize(14);
-                  const titleLines = doc.splitTextToSize(dayData.title, W-2*M);
-                  doc.text(titleLines, M, y); y+=titleLines.length*6 + 10;
-                  
-                  doc.setTextColor(255); doc.setFontSize(14);
-                  doc.text('EJERCICIOS COMPLETADOS', M, y); y+=10;
+                    doc.setTextColor(200); doc.setFontSize(14);
+                    const titleLines = doc.splitTextToSize(dayData.title, W-2*M);
+                    doc.text(titleLines, M, y); y+=titleLines.length*6 + 10;
+                    
+                    doc.setTextColor(255); doc.setFontSize(14);
+                    doc.text('EJERCICIOS COMPLETADOS', M, y); y+=10;
 
-                  exercises.forEach((ex, i) => {
-                    if (y > 270) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y=20; }
-                    doc.setTextColor(139,92,246); doc.setFontSize(9); 
-                    doc.text(`EJERCICIO ${i+1} (~${ex.time})`, M, y); y+=6;
-                    doc.setTextColor(255); doc.setFontSize(11);
-                    const qLines = doc.splitTextToSize(ex.title, W-2*M);
-                    doc.text(qLines, M, y); y+=qLines.length*6+2;
-                    doc.setTextColor(200); doc.setFontSize(10); doc.setFont('helvetica', 'italic');
-                    const ansLines = doc.splitTextToSize(ex.inst, W-2*M);
-                    doc.text(ansLines, M, y); y+=ansLines.length*6+6;
-                    doc.setFont('helvetica', 'normal');
-                  });
+                    exercises.forEach((ex, i) => {
+                      if (y > 270) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y=20; }
+                      doc.setTextColor(139,92,246); doc.setFontSize(9); 
+                      doc.text(`EJERCICIO ${i+1} (~${ex.time})`, M, y); y+=6;
+                      doc.setTextColor(255); doc.setFontSize(11);
+                      const qLines = doc.splitTextToSize(ex.title, W-2*M);
+                      doc.text(qLines, M, y); y+=qLines.length*6+2;
+                      doc.setTextColor(200); doc.setFontSize(10); doc.setFont('helvetica', 'italic');
+                      const ansLines = doc.splitTextToSize(ex.inst, W-2*M);
+                      doc.text(ansLines, M, y); y+=ansLines.length*6+6;
+                      doc.setFont('helvetica', 'normal');
+                    });
 
-                  doc.save(`reto-flow-dia-${selDay}.pdf`);
-                }} 
-                onReset={() => setView("home")} 
-                resetLabel="Volver al mapa"
-              />
+                    doc.save(`reto-flow-dia-${selDay}.pdf`);
+                  } catch (err) {
+                    console.error(err);
+                  } finally {
+                    setIsGenerating(false);
+                  }
+                }}
+                disabled={isGenerating}
+                className="w-full sm:w-auto cursor-pointer inline-flex items-center justify-center gap-2 px-8 py-3 bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 transition-all disabled:opacity-50 text-xs font-mono uppercase tracking-widest rounded-xl"
+              >
+                {isGenerating ? "Generando PDF..." : "📥 Descargar PDF de hoy"}
+              </button>
 
-              <ShareModule 
-                activity="flow" 
-                title="Reto 10 Días al Flow" 
-                resultData={{ selDay, title: dayData.title }}
-                shareMessage={`Acabo de completar el Día ${selDay}: "${dayData.title}" del Reto 10 Días al Flow. ⚡ Otro día dominando mi estado mental.`}
-              />
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full pt-4">
+                {selDay < 10 && (
+                  <button
+                    onClick={() => {
+                      setSelDay(selDay + 1);
+                      setView("day");
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(139,92,246,0.25)] hover:shadow-[0_0_25px_rgba(139,92,246,0.4)]"
+                  >
+                    Ir al siguiente día →
+                  </button>
+                )}
+                <button
+                  onClick={() => setView("home")}
+                  className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"
+                >
+                  {selDay < 10 ? "Continuar mañana" : "Volver al mapa"}
+                </button>
+              </div>
             </div>
-
           </motion.div>
         )}
       </div>

@@ -84,3 +84,24 @@ export async function syncAllCompletedActivities() {
   // Legacy function for backwards compatibility
   return [];
 }
+
+export async function loadAllActivitiesProgressDB() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase
+      .from('user_activity_log')
+      .select('activity_id, metadata, completed_at')
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error loading all activities progress:', error);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.error('Exception loading all activities progress:', err);
+    return [];
+  }
+}

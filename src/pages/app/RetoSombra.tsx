@@ -875,6 +875,17 @@ export default function MisEmociones() {
                 <h2 className="text-3xl font-black text-emerald-500 uppercase tracking-wider">¡Saboteador Desactivado!</h2>
                 <p className="text-slate-300 text-lg">Has completado el protocolo de 10 días. Eres otro trader.</p>
                 
+                {/* Final Share Module */}
+                <div className="max-w-md mx-auto py-6 border-t border-b border-white/5 my-6">
+                  <p className="text-xs text-emerald-400 font-black uppercase tracking-widest mb-3">Comparte tu victoria</p>
+                  <ShareModule 
+                    activity="sombra" 
+                    title="Reto de la Sombra" 
+                    resultData={{ selDay: 10, title: "Reto Completado" }}
+                    shareMessage={`¡He completado los 10 días del Reto de la Sombra (Mis Emociones) en GENY LAB! ⚔️ Sombra integrada, autosabotaje neutralizado. Únete al reto.`}
+                  />
+                </div>
+
                 <div className="pt-6">
                   <p className="text-sm font-medium text-slate-400 mb-4">
                     El siguiente paso: descubrir <span className="text-orange-400 font-bold">por qué o de dónde vienen tus trampas de dinero</span>.
@@ -1179,25 +1190,28 @@ export default function MisEmociones() {
                 DÍA {selDay} COMPLETADO
               </h3>
               <p className="text-slate-400">
-                Le ganaste otra batalla a tu Saboteador. Comparte tu progreso para afianzar este proceso y reclutar aliados.
+                Le ganaste otra batalla a tu Saboteador. Continúa con tu entrenamiento diario.
               </p>
             </div>
 
-            {/* Sharing Section */}
-            <div className="mt-8 space-y-6">
-              <ShareModule 
-                activity="sombra" 
-                title="Reto de la Sombra" 
-                resultData={{ selDay, title: dayData.title }}
-                shareMessage={`Acabo de completar el Día ${selDay}: "${dayData.title}" de Mis Emociones. ⚔️ Otro día dominando a mi Saboteador.`}
-              />
-            </div>
-            <div className="pt-4">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+              {selDay < 10 && (
+                <button
+                  onClick={() => {
+                    setSelDay(selDay + 1);
+                    setView("day");
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.25)] hover:shadow-[0_0_25px_rgba(220,38,38,0.4)]"
+                >
+                  Ir al siguiente día →
+                </button>
+              )}
               <button
                 onClick={() => setView("home")}
-                className="btn-primary py-3 px-8 text-sm tracking-widest rounded-xl"
+                className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"
               >
-                VOLVER AL MAPA
+                {selDay < 10 ? "Continuar mañana" : "Volver al mapa"}
               </button>
             </div>
           </motion.div>
