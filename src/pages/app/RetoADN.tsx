@@ -228,7 +228,7 @@ export default function RetoADN() {
             setTimeout(() => confetti({ particleCount: 100, spread: 70 }), 300);
           }
           setAnalyzing(false);
-        }, 3500);
+        }, 6000);
       }
     } catch (e) {
       console.error(e);
