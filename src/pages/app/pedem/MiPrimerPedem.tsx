@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
-import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
+import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../../lib/activitySync';
 import confetti from 'canvas-confetti';
 import type { PedemPath } from './constants';
 import { PATH_LABELS } from './constants';
