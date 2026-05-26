@@ -811,7 +811,7 @@ export default function RetoFlow() {
                     </span>
                   </div>
                   <p className={cx(
-                    "text-slate-400 text-sm md:text-base",
+                    "text-slate-400 text-sm md:text-base whitespace-pre-line",
                     isDone ? "opacity-50" : ""
                   )}>
                     {ex.inst}
