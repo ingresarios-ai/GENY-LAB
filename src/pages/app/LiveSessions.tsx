@@ -115,9 +115,15 @@ export default function LiveSessions() {
               </p>
             </div>
             {!isExpired && (
-              <div className="shrink-0 bg-[#00D1FF]/10 border border-[#00D1FF]/30 px-4 py-2 rounded-xl text-center">
-                <p className="text-[#00D1FF] text-xs font-mono tracking-widest uppercase mb-1">Sesión Actual</p>
-                <p className="text-white font-bold text-xl">{sessionCount} <span className="text-white/40 text-sm">/ 3</span></p>
+              <div className="shrink-0 flex flex-col gap-2">
+                <div className="bg-[#00D1FF]/10 border border-[#00D1FF]/30 px-5 py-3 rounded-xl text-center shadow-[0_0_20px_rgba(0,209,255,0.1)]">
+                  <p className="text-[#00D1FF] text-[10px] font-mono tracking-widest uppercase mb-1">Sesión Actual</p>
+                  <p className="text-white font-black text-2xl leading-none">{sessionCount} <span className="text-white/40 text-sm font-bold">/ 3</span></p>
+                </div>
+                <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-center">
+                  <p className="text-white/50 text-[9px] font-mono uppercase tracking-widest mb-0.5">Restantes</p>
+                  <p className="text-white/90 text-sm font-bold">{4 - sessionCount}</p>
+                </div>
               </div>
             )}
           </div>
