@@ -23,6 +23,15 @@ export const CAT_LABELS: Record<string, string> = {
   disciplina: 'Disciplina y Hábitos',
 };
 
+export const CAT_DESCRIPTIONS: Record<string, string> = {
+  programacion: 'Creencias financieras instaladas en la infancia por figuras de autoridad.',
+  setpoint: 'El rango de dinero con el que tu sistema nervioso se siente "a salvo".',
+  neuronas_espejo: 'Qué tanto absorbes y replicas los hábitos financieros de tu entorno.',
+  adaptacion: 'Tu tendencia a aumentar gastos al mismo ritmo que aumentan tus ingresos.',
+  merecimiento: 'Tu capacidad psicológica para recibir y retener abundancia sin sabotearla.',
+  disciplina: 'La consistencia real entre lo que quieres lograr y lo que haces a diario.',
+};
+
 export const RADAR_KEYS = ['programacion', 'setpoint', 'neuronas_espejo', 'adaptacion', 'merecimiento', 'disciplina'];
 
 export function Thermometer3D({ score = 0, color = '#00D4FF', height = 320, animated = true, idle = false }: { score?: number; color?: string; height?: number; animated?: boolean; idle?: boolean }) {

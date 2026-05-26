@@ -9,7 +9,7 @@ import html2canvas from 'html2canvas';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../../lib/activitySync';
-import { Thermometer3D, getTempLevel, CAT_LABELS, RADAR_KEYS, TEMP_LEVELS } from './helpers';
+import { Thermometer3D, getTempLevel, CAT_LABELS, CAT_DESCRIPTIONS, RADAR_KEYS, TEMP_LEVELS } from './helpers';
 import ShareModule from '../../../components/ShareModule';
 import ResultActions from '../../../components/ResultActions';
 import CompletionBanner from '../../../components/CompletionBanner';
@@ -192,15 +192,21 @@ export default function TermostatoFinanciero() {
     y += 4;
     
     Object.entries(d.categorias||{}).forEach(([k,v])=>{
-      y = checkPageBreak(doc, y, 10);
-      doc.setTextColor(100, 116, 139); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+      y = checkPageBreak(doc, y, 16);
+      doc.setTextColor(100, 116, 139); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
       doc.text(CAT_LABELS[k]||k, M, y);
       doc.text(`${v}°`, W-M, y, {align:'right'});
       doc.setFillColor(226, 232, 240); doc.rect(M, y+2, W-2*M, 3, 'F'); // slate-200 background
       doc.setFillColor(0, 212, 255); doc.rect(M, y+2, (W-2*M)*(v as number)/100, 3, 'F');
-      y += 10;
+      y += 8;
+      
+      const desc = CAT_DESCRIPTIONS[k] || '';
+      if (desc) {
+        y = addPdfText(doc, `* ${desc}`, y, { fontSize: 8, color: [148, 163, 184], lineHeight: 4 });
+      }
+      y += 6;
     });
-    y += 6;
+    y += 4;
 
     y = addPdfText(doc, 'FORTALEZAS', y, { fontSize: 10, color: [16, 185, 129], fontStyle: 'bold' });
     y += 4;
@@ -399,11 +405,12 @@ export default function TermostatoFinanciero() {
         {/* Bars */}
         <div className="glass-card p-8 mb-12">
           <p className="text-xs font-mono text-cyan-400 tracking-widest mb-6 uppercase">↓ Desglose por Dimensión</p>
-          <div className="grid md:grid-cols-2 gap-x-10 gap-y-5">
+          <div className="grid md:grid-cols-2 gap-x-10 gap-y-7">
             {RADAR_KEYS.map(k=>{const v=(d.categorias||{})[k]||0;const c=getTempLevel(v).color;return(
               <div key={k}>
                 <div className="flex justify-between mb-1.5"><span className="text-xs font-mono text-white/50 uppercase tracking-wider">{CAT_LABELS[k]}</span><span className="text-sm font-mono text-white font-semibold">{v}°</span></div>
                 <div className="h-1.5 bg-white/5 rounded-full overflow-hidden"><div className="h-full rounded-full transition-all duration-1000" style={{width:`${v}%`,background:c,boxShadow:`0 0 8px ${c}80`}}/></div>
+                <p className="text-[11px] text-white/40 mt-2 font-medium leading-relaxed">* {CAT_DESCRIPTIONS[k]}</p>
               </div>
             );})}
           </div>
