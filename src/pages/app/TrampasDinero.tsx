@@ -37,22 +37,29 @@ const RETO = {
       type: "comprensión" as const,
       question:
         "¿Por qué tu cerebro evolucionó para sabotear tus decisiones financieras modernas?",
-      hint: "Recuerda: evolucionó para la sabana, no para el mercado",
-      placeholder: "Porque...",
+      context:
+        "Nuestra mente inconsciente opera bajo un software evolutivo diseñado hace miles de años para la supervivencia en la sabana africana. En ese entorno de escasez constante, la gratificación debía ser inmediata. El mercado financiero moderno, sin embargo, nos exige pensar a largo plazo, lo cual va totalmente en contra de nuestros instintos biológicos básicos.",
+      hint: "Explica la contradicción entre sobrevivir en la naturaleza antigua y operar en la economía moderna.",
+      placeholder: "Porque nuestro cerebro busca asegurar...",
       rows: 3,
     },
     {
       type: "comprensión" as const,
       question:
         "Según Kahneman & Tversky: ¿cuántas veces más duele perder $100 que el placer de ganar $100?",
-      hint: "El dato exacto que vimos en la lección",
-      placeholder: "",
+      context:
+        "Los psicólogos Daniel Kahneman y Amos Tversky descubrieron la 'aversión a la pérdida', revelando que el dolor psicológico que experimentamos al perder dinero es asimétrico y mucho más severo que la alegría de ganar la misma cantidad.",
+      hint: "Introduce el factor multiplicador aproximado documentado por la psicología conductual (suele estar entre 2 y 2.5).",
+      placeholder: "2",
       inputType: "number" as const,
+      suffix: "veces más",
     },
     {
       type: "aplicación" as const,
       question:
         "Piensa en tu último trade ganador: ¿lo cerraste antes del target o esperaste?",
+      context:
+        "La aversión a la pérdida nos tienta a cerrar prematuramente los trades ganadores para 'asegurar' una pequeña ganancia, debido a la ansiedad o miedo de que el mercado se dé la vuelta y nos la arrebate.",
       placeholder: "Cerré en +$X antes del target porque sentí...",
       rows: 3,
     },
@@ -60,6 +67,8 @@ const RETO = {
       type: "aplicación" as const,
       question:
         "Piensa en tu último trade perdedor: ¿esperaste más de lo que debías? ¿Por qué?",
+      context:
+        "A la inversa, cuando una operación va en contra, la aversión a la pérdida nos empuja a retener posiciones perdedoras esperando 'recuperar' para no hacer real la pérdida, asumiendo un riesgo desmedido.",
       placeholder: "Debí salir en $X pero no lo hice porque...",
       rows: 3,
     },
@@ -67,39 +76,50 @@ const RETO = {
       type: "comprensión" as const,
       question:
         "¿Qué es gratificación instantánea en trading (descuento hiperbólico)?",
-      hint: "Cuando prefieres $50 hoy sobre $200 mañana",
-      placeholder: "Es cuando...",
+      context:
+        "El descuento hiperbólico es nuestra tendencia natural a valorar más las recompensas pequeñas pero inmediatas (por ejemplo, asegurar $50 hoy) frente a recompensas mucho más grandes pero futuras (por ejemplo, $200 siguiendo el plan). En el trading, esto genera impaciencia y rompe la consistencia.",
+      hint: "Define cómo esta inclinación por lo inmediato sabotea el plan a largo plazo.",
+      placeholder: "Es cuando preferimos la recompensa inmediata porque...",
       rows: 3,
     },
     {
       type: "aplicación" as const,
       question:
         "Si tu target promedio es $200 y cierras en $50: ¿cuánto dejas en la mesa al año? (100 trades)",
-      hint: "Calcula: (200-50) × 100 × % que alcanzarían target",
-      placeholder: "$",
+      context:
+        "Al ceder sistemáticamente a la gratificación instantánea y salir antes de tiempo, saboteas tu esperanza matemática. Aunque tu tasa de acierto sea alta, el volumen de ganancias que sacrificas a largo plazo es destructivo.",
+      hint: "Calcula la pérdida acumulada en 100 operaciones por no aguantar al target: ($200 - $50) × 100.",
+      placeholder: "0",
       inputType: "number" as const,
+      prefix: "$",
     },
     {
       type: "comprensión" as const,
       question:
         "¿Cuál es la combinación mortal de FOMO + Costo Hundido?",
-      hint: "Lo expliqué en el bloque de trampas #3 y #4",
-      placeholder: "FOMO te hace entrar..., Costo hundido te hace...",
+      context:
+        "El FOMO (miedo a quedarse fuera) te incita a entrar tarde e impulsivamente en un trade. Una vez dentro de esa mala posición, el Costo Hundido te impide aceptar el error y salir de ella, justificando que 'ya invertiste dinero y esperanza' en esa entrada.",
+      hint: "Explica cómo interactúan estas dos fuerzas para crear la tormenta perfecta que quema cuentas.",
+      placeholder: "El FOMO nos hace entrar por emoción, y el costo hundido...",
       rows: 4,
     },
     {
       type: "aplicación" as const,
       question:
         "Tu último FOMO trade: ¿qué viste, qué hiciste, cómo terminó?",
+      context:
+        "El FOMO se activa con la dopamina cuando vemos velas grandes subiendo rápido o a otros operadores celebrando ganancias. Reconocer tus propios detonantes emocionales es el primer paso para no volver a caer.",
       placeholder:
-        "Vi que [ticker/grupo] estaba moviendo, entré sin plan, terminé...",
+        "Vi que el mercado estaba subiendo rápido, entré sin confirmación, terminé...",
       rows: 4,
     },
     {
       type: "aplicación" as const,
       question:
         "Después de 3 trades ganadores seguidos: ¿qué cambias en tu trading (tamaño, frecuencia, plan)?",
-      hint: "Sé brutalmente honesto — ahí está tu exceso de confianza",
+      context:
+        "El exceso de confianza tras una racha ganadora (euforia) nos ciega. Creemos que el mercado es fácil y que tenemos 'el toque de Midas'. Es el punto más peligroso de la curva emocional, donde solemos aumentar el riesgo y violar el plan.",
+      hint: "Sé brutalmente honesto — identifica tu tendencia al exceso de confianza.",
       placeholder: "Cuando tengo racha buena, empiezo a...",
       rows: 4,
     },
@@ -107,7 +127,9 @@ const RETO = {
       type: "acción" as const,
       question:
         "Escribe 1 regla anti-trampa para tu TRAMPA DOMINANTE (la que más te afecta). Ejemplo: 'Después de 2 trades ganadores seguidos, bajo tamaño 50% por 3 trades.'",
-      hint: "Esta regla va a tu plan de trading desde hoy",
+      context:
+        "Las reglas anti-trampas actúan como cortafuegos mecánicos que protegen tu capital de tus propios sesgos cuando la emoción toma las riendas del ratón.",
+      hint: "Define una regla accionable que puedas incorporar a tu plan desde hoy.",
       placeholder:
         "Mi trampa dominante es [X]. Mi regla: cuando detecte...",
       rows: 5,
@@ -492,6 +514,17 @@ export default function TrampasDinero() {
                     {q.question}
                   </h3>
 
+                  {/* Context Block */}
+                  {q.context && (
+                    <div className="bg-white/[0.02] border border-white/5 rounded-lg p-3.5 mb-4 text-xs text-white/70 leading-relaxed flex gap-2.5 items-start">
+                      <Brain className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold text-white block mb-0.5">Concepto clave:</span>
+                        {q.context}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Hint */}
                   {q.hint && (
                     <p className="text-sm text-brand-text-muted leading-relaxed mb-4">
@@ -502,9 +535,11 @@ export default function TrampasDinero() {
                   {/* Input */}
                   {q.inputType === "number" ? (
                     <div className="flex items-center gap-3 mt-4">
-                      <span className={`text-xl font-mono font-bold ${style.color}`}>
-                        $
-                      </span>
+                      {q.prefix && (
+                        <span className={`text-xl font-mono font-bold ${style.color}`}>
+                          {q.prefix}
+                        </span>
+                      )}
                       <input
                         type="number"
                         value={responses[i] || ""}
@@ -512,6 +547,11 @@ export default function TrampasDinero() {
                         placeholder="0"
                         className="w-48 bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-lg font-mono font-bold tabular-nums focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15"
                       />
+                      {q.suffix && (
+                        <span className="text-sm font-mono font-bold text-white/50">
+                          {q.suffix}
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <textarea
