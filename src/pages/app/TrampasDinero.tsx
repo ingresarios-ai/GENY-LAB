@@ -1354,10 +1354,41 @@ export default function TrampasDinero() {
           <div className="flex flex-col h-full justify-center space-y-8">
             <div className="glass-card p-10 space-y-8 flex-grow flex flex-col justify-center relative overflow-hidden">
               
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Rule anti-trampa */}
+                <div className="text-left space-y-2">
+                  <span className="text-[10px] tracking-[0.25em] font-mono text-[#00D4FF] font-bold uppercase block">
+                    Tu Cortafuegos Personal
+                  </span>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                    Tu Regla Anti-Trampa:
+                  </h3>
+                  <div className="p-4 rounded-xl border border-[#FF3EB0]/30 bg-[#FF3EB0]/5 text-sm md:text-base leading-relaxed text-white font-mono italic relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-2 opacity-5">
+                      <Brain className="w-16 h-16 text-[#FF3EB0]" />
+                    </div>
+                    "{responses[9] || 'No definida'}"
+                  </div>
+                </div>
+
+                {/* Calculator results */}
+                {responses[5] && (
+                  <div className="text-left space-y-2 pt-4 border-t border-white/5">
+                    <span className="text-[10px] tracking-[0.25em] font-mono text-brand-yellow font-bold uppercase block">
+                      Cálculo de Impacto
+                    </span>
+                    <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                      Tu Fuga Financiera:
+                    </h3>
+                    <p className="text-sm md:text-base text-brand-yellow font-mono leading-relaxed bg-brand-yellow/5 border border-brand-yellow/20 p-4 rounded-xl">
+                      {responses[5]}
+                    </p>
+                  </div>
+                )}
               </div>
+
               {/* Share Section */}
-              <div className="pt-8 border-t border-white/5 space-y-6">
+              <div className="pt-6 border-t border-white/5 space-y-6">
                 <ShareModule 
                   activity="trampas" 
                   title="Las Trampas del Dinero" 
