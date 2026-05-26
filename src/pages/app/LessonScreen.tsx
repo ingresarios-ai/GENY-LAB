@@ -10,6 +10,7 @@ import {
   getProgress, isLessonUnlocked,
   markVideoCompleted, markActivityCompleted, getCompletedCount, isAllCompleted,
 } from '../../lib/progressStore';
+import { loadActivityProgressDB } from '../../lib/activitySync';
 
 const CONVERTEAI_ACCOUNT = '6f88db54-0f9b-4a7c-af05-9ae2f56f3fdf';
 
@@ -70,6 +71,7 @@ export default function LessonScreen() {
   const [showRepeatAlert, setShowRepeatAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showVideoAlert, setShowVideoAlert] = useState(false);
+  const [dbActivity, setDbActivity] = useState<{ started: boolean; completed: boolean } | null>(null);
 
   // Sync state when lessonId changes (prevent stale state from previous lesson)
   useEffect(() => {
@@ -81,6 +83,24 @@ export default function LessonScreen() {
     setActivityDone(lp?.activityCompleted ?? false);
     setShowRepeatAlert(false);
     setShowVideoAlert(false);
+
+    if (lessonId) {
+      setDbActivity(null);
+      (async () => {
+        const dbProgress = await loadActivityProgressDB(lessonId);
+        if (dbProgress) {
+          setDbActivity({
+            started: true,
+            completed: dbProgress.completed
+          });
+        } else {
+          setDbActivity({
+            started: false,
+            completed: false
+          });
+        }
+      })();
+    }
 
     // Show a loading screen for a short duration to make the transition obvious
     setIsLoading(true);
@@ -108,6 +128,29 @@ export default function LessonScreen() {
   const remaining = TOTAL_LESSONS - completedCount;
   const progressPercent = (completedCount / TOTAL_LESSONS) * 100;
 
+  const isCompleted = dbActivity ? dbActivity.completed : activityDone;
+  const isInProgress = dbActivity ? (dbActivity.started && !dbActivity.completed) : false;
+
+  let borderClass = 'border-brand-emerald/20';
+  let badgeText = 'VALIDACIÓN PRÁCTICA';
+  let badgeColor = 'text-brand-emerald';
+  let badgeBullet = 'bg-brand-emerald';
+  let cardBgGradient = '';
+
+  if (isCompleted) {
+    borderClass = 'border-brand-emerald/20';
+    badgeText = 'VALIDACIÓN EXITOSA';
+    badgeColor = 'text-brand-emerald';
+    badgeBullet = 'bg-brand-emerald';
+    cardBgGradient = 'from-brand-emerald/5 via-transparent to-brand-cyan/5';
+  } else if (isInProgress) {
+    borderClass = 'border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.05)]';
+    badgeText = 'ACTIVIDAD EN CURSO';
+    badgeColor = 'text-amber-500';
+    badgeBullet = 'bg-amber-500';
+    cardBgGradient = 'from-amber-500/5 via-transparent to-orange-500/5';
+  }
+
   const handleMarkVideo = () => {
     if (videoMarked) return;
     const result = markVideoCompleted(lesson.id);
@@ -128,6 +171,7 @@ export default function LessonScreen() {
       if (!activityDone) {
         const result = markActivityCompleted(lesson.id);
         setActivityDone(true);
+        setDbActivity({ started: true, completed: true });
         setProgress(getProgress());
 
         if (result.xpEarned > 0) {
@@ -271,15 +315,15 @@ export default function LessonScreen() {
             initial={{ opacity: 0, x: 20 }} 
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className={`glass-panel p-6 md:p-8 rounded-xl relative overflow-hidden transition-all duration-500 border border-brand-emerald/20 bg-[#0A0B10]`}
+            className={`glass-panel p-6 md:p-8 rounded-xl relative overflow-hidden transition-all duration-500 border ${borderClass} bg-[#0A0B10]`}
           >
-            {/* Subtle animated gradient background when completed */}
-            {activityDone && (
-              <div className="absolute inset-0 bg-gradient-to-br from-brand-emerald/5 via-transparent to-brand-cyan/5 pointer-events-none" />
+            {/* Subtle animated gradient background when completed or in progress */}
+            {cardBgGradient && (
+              <div className={`absolute inset-0 bg-gradient-to-br ${cardBgGradient} pointer-events-none`} />
             )}
 
-            <div className="text-[10px] md:text-xs font-mono text-brand-emerald mb-4 uppercase tracking-widest relative z-10 flex items-center gap-2">
-              <span className="w-2 h-2 bg-brand-emerald rounded-sm animate-pulse"></span> VALIDACIÓN PRÁCTICA
+            <div className={`text-[10px] md:text-xs font-mono ${badgeColor} mb-4 uppercase tracking-widest relative z-10 flex items-center gap-2`}>
+              <span className={`w-2 h-2 ${badgeBullet} rounded-sm animate-pulse`}></span> {badgeText}
             </div>
             
             <div className="relative z-10">
@@ -287,7 +331,12 @@ export default function LessonScreen() {
                 {lesson.subtitle}
               </p>
 
-              {activityDone ? (
+              {dbActivity === null ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="w-8 h-8 border-2 border-brand-cyan border-t-transparent rounded-full animate-spin mb-2" />
+                  <p className="text-xs text-white/40 font-mono">Cargando estado...</p>
+                </div>
+              ) : isCompleted ? (
                 <div className="space-y-3">
                   {/* Success celebration */}
                   <div className="flex flex-col items-center text-center py-4 mb-2">
@@ -310,7 +359,37 @@ export default function LessonScreen() {
                     onClick={() => setShowRepeatAlert(true)}
                     className="w-full rounded-lg py-3 font-mono tracking-widest text-xs cursor-pointer transition-all duration-300 bg-transparent border border-white/10 text-white/50 hover:bg-white/5 hover:text-white/80 uppercase"
                   >
-                    Repetir Actividad
+                    Reiniciar actividad
+                  </button>
+                </div>
+              ) : isInProgress ? (
+                <div className="space-y-3">
+                  {/* In progress block */}
+                  <div className="flex flex-col items-center text-center py-4 mb-2">
+                    <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-4 shadow-[0_0_40px_rgba(245,158,11,0.2)]">
+                      <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                    <p className="text-amber-500 font-mono text-sm tracking-widest uppercase mb-1">Actividad en Curso</p>
+                    <p className="text-white/40 text-xs font-mono">Tienes un progreso guardado incompleto</p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (!videoMarked) {
+                        handleMarkVideo();
+                      }
+                      handleStartActivity();
+                    }}
+                    className="w-full rounded-lg py-3.5 font-mono tracking-widest text-xs cursor-pointer transition-all duration-300 bg-amber-500/10 border border-amber-500/40 text-amber-500 hover:bg-amber-500/20 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] uppercase flex items-center justify-center gap-2"
+                  >
+                    <Play size={14} className="fill-amber-500 stroke-none" /> Continuar con la actividad
+                  </button>
+
+                  <button
+                    onClick={() => setShowRepeatAlert(true)}
+                    className="w-full rounded-lg py-3 font-mono tracking-widest text-xs cursor-pointer transition-all duration-300 bg-transparent border border-white/10 text-white/50 hover:bg-white/5 hover:text-white/80 uppercase"
+                  >
+                    Reiniciar actividad
                   </button>
                 </div>
               ) : (
@@ -563,9 +642,13 @@ export default function LessonScreen() {
                 <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4 border border-red-500/20 text-red-400">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
                 </div>
-                <h3 className="text-xl font-black uppercase tracking-tight text-white">¿Repetir Actividad?</h3>
+                <h3 className="text-xl font-black uppercase tracking-tight text-white">
+                  {isCompleted ? "¿Repetir Actividad?" : "¿Reiniciar Actividad?"}
+                </h3>
                 <p className="text-brand-text-muted text-sm font-medium leading-relaxed">
-                  Si decides repetir esta actividad, los datos de tu intento anterior podrían perderse o sobrescribirse. ¿Estás seguro de que quieres continuar?
+                  {isCompleted 
+                    ? "Si decides repetir esta actividad, los datos de tu intento anterior podrían perderse o sobrescribirse. ¿Estás seguro de que quieres continuar?"
+                    : "Si decides reiniciar esta actividad, todo tu progreso actual de este intento se perderá. ¿Estás seguro de que quieres continuar?"}
                 </p>
               </div>
               <div className="flex flex-col gap-3">
@@ -576,7 +659,7 @@ export default function LessonScreen() {
                   }}
                   className="w-full py-4 rounded-xl font-black tracking-widest text-xs cursor-pointer transition-all duration-300 bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30 hover:bg-brand-emerald hover:text-black"
                 >
-                  SÍ, QUIERO REPETIRLA
+                  {isCompleted ? "SÍ, QUIERO REPETIRLA" : "SÍ, QUIERO REINICIARLA"}
                 </button>
                 <button
                   onClick={() => setShowRepeatAlert(false)}

@@ -17,11 +17,12 @@ async function doSyncInBackground(email: string) {
     
     const { data: acts } = await supabase
       .from('user_activity_log')
-      .select('activity_id')
+      .select('activity_id, completed_at')
       .eq('user_id', user.id);
       
     if (acts && acts.length > 0) {
-      syncFromDB(acts.map((a: any) => a.activity_id));
+      const completedIds = acts.filter((a: any) => a.completed_at).map((a: any) => a.activity_id);
+      syncFromDB(completedIds);
     }
   } catch (err) {
     console.error('Error syncing progress from DB', err);

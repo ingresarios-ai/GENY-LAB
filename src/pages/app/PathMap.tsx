@@ -44,6 +44,7 @@ export default function PathMap() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
     return localStorage.getItem('geny_lab_hide_welcome') !== 'true';
   });
+  const [dbActivities, setDbActivities] = useState<any[]>([]);
   const [pendingActivity, setPendingActivity] = useState<{
     id: string;
     title: string;
@@ -55,12 +56,16 @@ export default function PathMap() {
 
   // Scan for pending/unfinished activities
   useEffect(() => {
-    const hasShown = sessionStorage.getItem('geny_lab_pending_reminder_shown') === 'true';
-    if (hasShown) return;
-
     (async () => {
       try {
         const progressList = await loadAllActivitiesProgressDB();
+        if (progressList) {
+          setDbActivities(progressList);
+        }
+
+        const hasShown = sessionStorage.getItem('geny_lab_pending_reminder_shown') === 'true';
+        if (hasShown) return;
+
         if (!progressList || progressList.length === 0) return;
 
         const pendingItems: Array<{
@@ -442,6 +447,10 @@ export default function PathMap() {
           }
 
           // Expanded current card
+          const actProgress = dbActivities.find(a => a.activity_id === lesson.id);
+          const actStarted = !!actProgress;
+          const actCompleted = !!actProgress?.completed_at;
+
           return (
             <motion.div
               key={lesson.id}
@@ -452,29 +461,53 @@ export default function PathMap() {
               onClick={() => handleNodeClick(lesson)}
               className="relative rounded-xl overflow-hidden tech-panel-active cursor-pointer active:scale-[0.98] transition-transform"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/15 via-transparent to-blue-600/15 opacity-20" />
+              <div className={`absolute inset-0 bg-gradient-to-b ${
+                actStarted && !actCompleted
+                  ? 'from-amber-500/15 via-transparent to-orange-600/15'
+                  : 'from-cyan-500/15 via-transparent to-blue-600/15'
+              } opacity-20`} />
               <div className="relative z-10 p-5 flex flex-col gap-4">
                 <div className="flex justify-between items-start">
-                  <div className="w-16 h-16 rounded-xl flex items-center justify-center bg-cyan-500/10 border border-cyan-500/30 shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                  <div className={`w-16 h-16 rounded-xl flex items-center justify-center border transition-all duration-300 ${
+                    actStarted && !actCompleted
+                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.2)]'
+                      : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.2)]'
+                  }`}>
                     <span className="text-3xl drop-shadow-md">{lesson.emoji}</span>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-1.5 text-[#00D1FF] font-mono text-[9px] uppercase tracking-widest border border-[#00D1FF]/30 bg-[#00D1FF]/10 px-2 py-1 rounded-sm">
-                      <div className="w-1.5 h-1.5 rounded-sm bg-[#00D1FF] animate-pulse" />
-                      EN PROGRESO
+                    <div className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest border px-2 py-1 rounded-sm ${
+                      actStarted && !actCompleted
+                        ? 'text-amber-500 border-amber-500/30 bg-amber-500/10'
+                        : 'text-[#00D1FF] border-[#00D1FF]/30 bg-[#00D1FF]/10'
+                    }`}>
+                      <div className={`w-1.5 h-1.5 rounded-sm animate-pulse ${
+                        actStarted && !actCompleted ? 'bg-amber-500' : 'bg-[#00D1FF]'
+                      }`} />
+                      {actStarted && !actCompleted ? 'EN CURSO' : 'EN PROGRESO'}
                     </div>
-                    <div className="px-3 py-1 rounded-sm border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[10px] font-mono tracking-widest uppercase">
+                    <div className={`px-3 py-1 rounded-sm border text-[10px] font-mono tracking-widest uppercase ${
+                      actStarted && !actCompleted
+                        ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                        : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-400'
+                    }`}>
                       {PHASE_LABELS[lesson.phase]}
                     </div>
                   </div>
                 </div>
                 <div>
                   <p className="text-[10px] font-mono tracking-widest text-white/50 mb-1 uppercase">NODO {lesson.order}</p>
-                  <h2 className="text-xl font-semibold tracking-[0.12em] leading-tight mb-2 text-[#00D1FF]">{lesson.title}</h2>
+                  <h2 className={`text-xl font-semibold tracking-[0.12em] leading-tight mb-2 ${
+                    actStarted && !actCompleted ? 'text-amber-400' : 'text-[#00D1FF]'
+                  }`}>{lesson.title}</h2>
                   <p className="text-xs font-mono text-white/60 leading-relaxed mb-4">&gt; {lesson.description}</p>
                 </div>
-                <div className="inline-flex items-center gap-2 px-4 py-3 rounded-md bg-[#00D1FF]/10 border border-[#00D1FF]/40 text-[#00D1FF] font-mono text-xs uppercase tracking-wider w-full justify-center">
-                  INICIAR NODO <Play size={14} className="fill-[#00D1FF]" />
+                <div className={`inline-flex items-center gap-2 px-4 py-3 rounded-md font-mono text-xs uppercase tracking-wider w-full justify-center ${
+                  actStarted && !actCompleted
+                    ? 'bg-amber-500/10 border border-amber-500/40 text-amber-500 hover:bg-amber-500/20'
+                    : 'bg-[#00D1FF]/10 border border-[#00D1FF]/40 text-[#00D1FF] hover:bg-[#00D1FF]/20'
+                }`}>
+                  {actStarted && !actCompleted ? 'CONTINUAR ACTIVIDAD' : 'INICIAR NODO'} <Play size={14} className={actStarted && !actCompleted ? 'fill-amber-500 stroke-none' : 'fill-[#00D1FF]'} />
                 </div>
               </div>
             </motion.div>
@@ -526,6 +559,11 @@ export default function PathMap() {
             const unlocked = isLessonUnlocked(lesson.order);
             const completed = isLessonCompleted(lesson.id);
             const isCurrent = unlocked && !completed;
+
+            const actProgress = dbActivities.find(a => a.activity_id === lesson.id);
+            const actStarted = !!actProgress;
+            const actCompleted = !!actProgress?.completed_at;
+
             let gradient = 'from-white/5 to-white/5';
             let iconBg = 'bg-white/5 border-white/10 text-white/40';
             let badgeClass = 'border-white/10 bg-white/5 text-white/40';
@@ -534,9 +572,15 @@ export default function PathMap() {
               iconBg = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_30px_rgba(52,211,153,0.2)]';
               badgeClass = 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400';
             } else if (isCurrent) {
-              gradient = 'from-cyan-500/15 via-transparent to-blue-600/15';
-              iconBg = 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.2)]';
-              badgeClass = 'border-cyan-500/30 bg-cyan-500/10 text-cyan-400';
+              if (actStarted && !actCompleted) {
+                gradient = 'from-amber-500/15 via-transparent to-orange-600/15';
+                iconBg = 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.2)]';
+                badgeClass = 'border-amber-500/30 bg-amber-500/10 text-amber-400';
+              } else {
+                gradient = 'from-cyan-500/15 via-transparent to-blue-600/15';
+                iconBg = 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.2)]';
+                badgeClass = 'border-cyan-500/30 bg-cyan-500/10 text-cyan-400';
+              }
             }
             return (
               <motion.div key={lesson.id} ref={isCurrent ? desktopCurrentCardRef : null} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: idx * 0.1 }} onClick={() => handleNodeClick(lesson)}
@@ -549,19 +593,36 @@ export default function PathMap() {
                       {unlocked ? <span className="text-3xl drop-shadow-md">{lesson.emoji}</span> : <Lock size={22} />}
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      {isCurrent && (<div className="flex items-center gap-1.5 text-[#00D1FF] font-mono text-[9px] uppercase tracking-widest border border-[#00D1FF]/30 bg-[#00D1FF]/10 px-2 py-1 rounded-sm"><div className="w-1.5 h-1.5 rounded-sm bg-[#00D1FF] animate-pulse" />EN PROGRESO</div>)}
+                      {isCurrent && (
+                        <div className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest border px-2 py-1 rounded-sm ${
+                          actStarted && !actCompleted
+                            ? 'text-amber-500 border-amber-500/30 bg-amber-500/10'
+                            : 'text-[#00D1FF] border-[#00D1FF]/30 bg-[#00D1FF]/10'
+                        }`}>
+                          <div className={`w-1.5 h-1.5 rounded-sm animate-pulse ${
+                            actStarted && !actCompleted ? 'bg-amber-500' : 'bg-[#00D1FF]'
+                          }`} />
+                          {actStarted && !actCompleted ? 'EN CURSO' : 'EN PROGRESO'}
+                        </div>
+                      )}
                       {completed && (<div className="flex items-center gap-1.5 text-[#00E676] font-mono text-[9px] uppercase tracking-widest border border-[#00E676]/30 bg-[#00E676]/10 px-2 py-1 rounded-sm"><Check size={10} /> VERIFICADO</div>)}
                       <div className={`px-3 py-1 rounded-sm border text-[10px] font-mono tracking-widest uppercase ${badgeClass}`}>{PHASE_LABELS[lesson.phase]}</div>
                     </div>
                   </div>
                   <div className="mt-auto">
                     <div className="text-xs font-mono tracking-widest text-white/50 mb-2 uppercase">NODO {lesson.order}</div>
-                    <h2 className={`min-h-[60px] whitespace-pre-line line-clamp-2 text-2xl font-semibold tracking-[0.12em] leading-tight mb-2 transition-colors duration-300 ${isCurrent ? 'text-[#00D1FF]' : completed ? 'text-white/90' : 'text-white/40'}`}>{lesson.title}</h2>
+                    <h2 className={`min-h-[60px] whitespace-pre-line line-clamp-2 text-2xl font-semibold tracking-[0.12em] leading-tight mb-2 transition-colors duration-300 ${isCurrent ? (actStarted && !actCompleted ? 'text-amber-400' : 'text-[#00D1FF]') : completed ? 'text-white/90' : 'text-white/40'}`}>{lesson.title}</h2>
                     <p className={`text-sm font-mono mb-6 line-clamp-3 leading-relaxed ${isCurrent ? 'text-white/60' : 'text-white/30'}`}>&gt; {lesson.description}</p>
                     {completed ? (
                       <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-[#00E676]/10 border border-[#00E676]/30 text-[#00E676] font-mono text-xs uppercase tracking-wider w-full justify-center">ESTADO: COMPLETADO <Check size={14} /></div>
                     ) : isCurrent ? (
-                      <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-[#00D1FF]/10 border border-[#00D1FF]/40 text-[#00D1FF] font-mono text-xs uppercase tracking-wider hover:bg-[#00D1FF]/20 transition-colors duration-300 w-full justify-center">INICIAR NODO <Play size={14} className="fill-[#00D1FF]" /></div>
+                      <div className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md font-mono text-xs uppercase tracking-wider transition-colors duration-300 w-full justify-center ${
+                        actStarted && !actCompleted
+                          ? 'bg-amber-500/10 border border-amber-500/40 text-amber-500 hover:bg-amber-500/20'
+                          : 'bg-[#00D1FF]/10 border border-[#00D1FF]/40 text-[#00D1FF] hover:bg-[#00D1FF]/20'
+                      }`}>
+                        {actStarted && !actCompleted ? 'CONTINUAR ACTIVIDAD' : 'INICIAR NODO'} <Play size={14} className={actStarted && !actCompleted ? 'fill-amber-500 stroke-none' : 'fill-[#00D1FF]'} />
+                      </div>
                     ) : (
                       <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-white/5 border border-white/10 text-white/40 font-mono text-xs uppercase tracking-wider w-full justify-center">BLOQUEADO <Lock size={14} /></div>
                     )}
