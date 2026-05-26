@@ -4,6 +4,7 @@ import { ChevronLeft, Loader2 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../../lib/activitySync';
 import confetti from 'canvas-confetti';
+import { markActivityCompleted } from '../../../lib/progressStore';
 import type { PedemPath } from './constants';
 import { PATH_LABELS } from './constants';
 import { PedemScreen1 } from './PedemScreen1';
@@ -42,6 +43,7 @@ export default function MiPrimerPedem() {
           if (r.completed || saved.completed) {
             setScreen('result');
             setHistory(['choose', 'result']);
+            markActivityCompleted('pedem');
           }
         }
       } catch (e) {
@@ -94,6 +96,7 @@ export default function MiPrimerPedem() {
         data,
         completed: true,
       }, true);
+      markActivityCompleted('pedem');
     } catch (e) {
       console.error('Error saving PEDEM progress:', e);
     }

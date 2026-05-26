@@ -79,7 +79,7 @@ export function PedemRoutine({ data, onChange, onFinish, onBack }: Props) {
       </div>
       <DayBlock time="30 min antes" title="Estado físico" id="rou_body" placeholder='Ej: "Agua, respiración 4-7-8, 10 sentadillas"' value={data.rou_body || ''} onChangeValue={onChange} />
       <DayBlock time="20 min antes" title="Análisis de mercado" id="rou_analysis" placeholder='Ej: "Revisar niveles clave SPX/ES, noticias, VIX"' value={data.rou_analysis || ''} onChangeValue={onChange} />
-      <DayBlock time="5 min antes" title="Intención del día" id="rou_intention" placeholder='Ej: "Hoy opero solo si veo mi setup A. Máximo 2 trades."' value={data.rou_intention || ''} onChangeValue={onChange} />
+      <DayBlock time="5 min antes" title="Intención del día" id="rou_intention" placeholder='Ej: "Hoy opero solo si veo mi setup (configuración o patrón gráfico de entrada) A. Máximo 2 trades."' value={data.rou_intention || ''} onChangeValue={onChange} />
 
       <div className="text-xs tracking-[0.2em] uppercase text-brand-text-muted font-black flex items-center gap-3 pt-4">
         <span className="w-6 h-px bg-brand-orange" /> EJECUTAR · No abrir el gráfico si...
@@ -104,7 +104,7 @@ export function PedemRoutine({ data, onChange, onFinish, onBack }: Props) {
       <div className="text-xs tracking-[0.2em] uppercase text-brand-text-muted font-black flex items-center gap-3 pt-4">
         <span className="w-6 h-px bg-brand-green" /> MEJORAR
       </div>
-      <FormField label="¿Qué mejora quieres ver en 21 días?" id="rou_improvement" placeholder='Ej: "Operar solo mi setup A, respetar mi stop 10 de 10 veces"' req rows={3} value={data.rou_improvement || ''} onChangeValue={onChange} />
+      <FormField label="¿Qué mejora quieres ver en 21 días?" id="rou_improvement" placeholder='Ej: "Operar solo mi setup (configuración o patrón gráfico de entrada) A, respetar mi stop 10 de 10 veces"' req rows={3} value={data.rou_improvement || ''} onChangeValue={onChange} />
 
       <div className="flex gap-3 pt-4 pb-8">
         <button onClick={onBack} className="btn-secondary px-6 py-3.5 rounded-xl text-sm font-black uppercase tracking-widest cursor-pointer">← Atrás</button>

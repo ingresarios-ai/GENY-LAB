@@ -13,6 +13,7 @@ import ResultActions from '../../components/ResultActions';
 import CompletionBanner from '../../components/CompletionBanner';
 import html2canvas from 'html2canvas-pro';
 import { jsPDF } from 'jspdf';
+import { markActivityCompleted } from '../../lib/progressStore';
 import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 
 
@@ -164,7 +165,10 @@ export const GastosHormiga = () => {
             const found = CURRENCIES.find(c => c.id === r.currencyId);
             if (found) setCurrency(found);
           }
-          if (r.completed || saved.completed) setStep(2);
+           if (r.completed || saved.completed) {
+            setStep(2);
+            markActivityCompleted('gastos');
+          }
         }
       } catch (e) {
         console.error('Error loading gastos progress:', e);
@@ -205,12 +209,13 @@ export const GastosHormiga = () => {
   const handleComplete = async () => {
     setStep(2);
     setShowConfetti(true);
-    try {
+     try {
       await saveActivityProgressDB('gastos', {
         amounts,
         currencyId: currency.id,
         completed: true,
       }, true);
+      markActivityCompleted('gastos');
     } catch (e) {
       console.error('Error saving gastos progress:', e);
     }
@@ -224,60 +229,6 @@ export const GastosHormiga = () => {
     setAmounts(Object.fromEntries(CATEGORIES.map(c => [c.id, ''])));
     setStep(0);
     await clearActivityProgressDB('gastos');
-  };
-
-  // ── Share ────────────────────────────────────────────────────────────────
-  const shareText = useMemo(() => {
-    if (proj.length < 4) return '';
-    return `💰 Hice el diagnóstico de Gastos Hormiga de GENY LAB y descubrí que gasto ${fmt(total, currency)}/mes en pequeñeces. Si los invirtiera, en 10 años tendría ${fmt(proj[3].val, currency)}. ¡Hazlo tú también! 🐜`;
-  }, [total, currency, proj]);
-
-  const getShareUrl = useCallback(() => {
-    if (!user) return '';
-    const payload = {
-      n: userName,
-      t: 'gastos',
-      s: proj[3]?.val || 0,
-      c: {
-        'Gasto Mensual': total,
-        'Capital 10 años': proj[3]?.val || 0,
-        'Capital 20 años': proj[4]?.val || 0,
-        'Moneda': currency.id.toUpperCase(),
-      },
-    };
-    const encoded = btoa(JSON.stringify(payload));
-    return `https://genylab.ingresarios.net/resultado/${encoded}`;
-  }, [user, total, proj, currency]);
-
-  const handleShare = (platform: string) => {
-    const url = getShareUrl();
-    const text = encodeURIComponent(shareText);
-    const encodedUrl = encodeURIComponent(url);
-    const urls: Record<string, string> = {
-      whatsapp: `https://api.whatsapp.com/send?text=${text}%20${encodedUrl}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${text}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`,
-    };
-    if (urls[platform]) window.open(urls[platform], '_blank', 'noopener,noreferrer,width=600,height=400');
-  };
-
-  const handleCopyLink = async () => {
-    const url = getShareUrl();
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      const input = document.createElement('input');
-      input.value = url;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
   };
 
   // ── Loading ──────────────────────────────────────────────────────────────
@@ -434,7 +385,7 @@ export const GastosHormiga = () => {
 
         {/* Total bar */}
         <div className="glass-card mt-6 p-6 md:p-8 text-center border-brand-yellow/20 bg-brand-yellow/[0.03]">
-          <div className="text-xs font-black text-brand-text-muted uppercase tracking-[0.2em]">Total mensual detectado</div>
+          <div className="text-xs font-black text-brand-text-muted uppercase tracking-[0.2em] font-black">Total mensual detectado</div>
           <div className="text-4xl md:text-5xl font-black text-brand-yellow tracking-tighter mt-2">{fmt(total, currency)}</div>
           <div className="mt-3 flex items-center justify-center gap-3">
             <span className="text-sm font-black text-brand-text-muted">{fmt(total * 12, currency)}</span>
@@ -649,17 +600,34 @@ export const GastosHormiga = () => {
 
 
 
-        <div className="mb-6">
-          <ShareModule 
-            activity="gastos" 
-            title="Gastos Hormiga" 
-            resultData={{
-              gastos: [{ desc: rec.desc, highlight: rec.highlight }],
-              total,
-              proyeccion: proj[3].val
-            }}
-            shareMessage={`Hice el diagnóstico de Gastos Hormiga de GENY LAB y descubrí que gasto ${fmt(total, currency)}/mes en pequeñeces. Si los invirtiera, en 10 años tendría ${fmt(proj[3].val, currency)}. ¡Hazlo tú también! 🐜`}
-          />
+         <div className="mt-8 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card p-8 border border-[#01E47E]/30 bg-[#0a1f14]/50 relative overflow-hidden text-center space-y-6"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+              <span className="text-8xl">🌡️</span>
+            </div>
+            <div className="space-y-2">
+              <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-green/20 text-[#01E47E] uppercase">
+                ¡Nivel Desbloqueado!
+              </span>
+              <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                Siguiente Módulo: Termóstato Financiero
+              </h3>
+              <p className="text-sm text-slate-300 max-w-md mx-auto">
+                Mide tu techo invisible de riqueza y calibra tu mente para ganar y conservar más dinero.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/app/termostato')}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#01E47E] text-black font-black uppercase tracking-widest text-xs hover:bg-[#01E47E]/90 hover:scale-[1.02] transition-all"
+            >
+              Ir a Termóstato Financiero
+              <ChevronRight className="w-4 h-4 text-black stroke-[3px]" />
+            </button>
+          </motion.div>
         </div>
       </motion.div>
     </div>

@@ -11,6 +11,7 @@ import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB
 import ShareModule from "../../components/ShareModule";
 import ResultActions from "../../components/ResultActions";
 import CompletionBanner from "../../components/CompletionBanner";
+import { markActivityCompleted } from "../../lib/progressStore";
 
 function TypewriterMessage({ content, onUpdate }: { content: string, onUpdate: () => void }) {
   const [displayed, setDisplayed] = useState("");
@@ -129,6 +130,7 @@ export default function RetoADN() {
           if (saved && saved.metadata) {
             setDiagnosis(saved.metadata);
             setScreen('result');
+            markActivityCompleted('adn');
           }
         } catch (e) {
           console.error('Error loading saved diagnosis:', e);
@@ -234,6 +236,7 @@ export default function RetoADN() {
             const parsed = JSON.parse(jsonStr.trim());
             setDiagnosis(parsed);
             await saveActivityProgressDB('adn', parsed, true);
+            markActivityCompleted('adn');
             
             setScreen("result");
             setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.5 }, colors: ['#00D1FF', '#00E676', '#FEDD04', '#f59e0b'] }), 300);
@@ -250,6 +253,7 @@ export default function RetoADN() {
             };
             setDiagnosis(fallback);
             await saveActivityProgressDB('adn', fallback, true);
+            markActivityCompleted('adn');
             setScreen("result");
             setTimeout(() => confetti({ particleCount: 100, spread: 70 }), 300);
           }
@@ -655,8 +659,34 @@ export default function RetoADN() {
               </p>
             </motion.div>
 
-            <div className="pt-4">
-              <ShareModule activity="adn" title="ADN Financiero" resultData={diagnosis} />
+             <div className="pt-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-card p-8 border border-[#01E47E]/30 bg-[#0a1f14]/50 relative overflow-hidden text-center space-y-6"
+              >
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                  <span className="text-8xl">🐜</span>
+                </div>
+                <div className="space-y-2">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-green/20 text-[#01E47E] uppercase">
+                    ¡Nivel Desbloqueado!
+                  </span>
+                  <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                    Siguiente Módulo: Gastos Hormiga
+                  </h3>
+                  <p className="text-sm text-slate-300 max-w-md mx-auto">
+                    Descubre las fugas invisibles que devoran tu capital y aprende a redireccionarlas hacia el mercado.
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate('/app/gastos')}
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#01E47E] text-black font-black uppercase tracking-widest text-xs hover:bg-[#01E47E]/90 hover:scale-[1.02] transition-all"
+                >
+                  Ir a Gastos Hormiga
+                  <ChevronRight className="w-4 h-4 text-black stroke-[3px]" />
+                </button>
+              </motion.div>
             </div>
           </div>
         </div>

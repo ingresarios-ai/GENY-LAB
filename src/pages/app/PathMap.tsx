@@ -404,8 +404,8 @@ export default function PathMap() {
       {/* ══════ MOBILE: Vertical Feed ══════ */}
       <div className="md:hidden w-full px-4 mb-16 flex flex-col gap-3">
         {LESSONS.map((lesson, idx) => {
-          const unlocked = isLessonUnlocked(lesson.order);
           const completed = isLessonCompleted(lesson.id);
+          const unlocked = isLessonUnlocked(lesson.order) || completed;
           const isCurrent = unlocked && !completed;
 
           // Compact card for completed/locked
@@ -556,8 +556,8 @@ export default function PathMap() {
 
         <div ref={carouselRef} onScroll={checkScroll} className="flex overflow-x-auto gap-6 snap-x snap-mandatory hide-scrollbar pb-8 pt-4 px-[calc(50vw-160px)]">
           {LESSONS.map((lesson, idx) => {
-            const unlocked = isLessonUnlocked(lesson.order);
             const completed = isLessonCompleted(lesson.id);
+            const unlocked = isLessonUnlocked(lesson.order) || completed;
             const isCurrent = unlocked && !completed;
 
             const actProgress = dbActivities.find(a => a.activity_id === lesson.id);

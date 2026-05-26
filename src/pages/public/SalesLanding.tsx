@@ -212,7 +212,7 @@ export default function SalesLanding() {
 
                   <div className="flex flex-col gap-4">
                     {[
-                      'Dudas de tus setups y entras tarde o dejas pasar la oportunidad.',
+                      'Dudas de tus setups (configuraciones o patrones gráficos de entrada) y entras tarde o dejas pasar la oportunidad.',
                       'Mueves el stop-loss en pánico creyendo que el mercado se recuperará.',
                       'Cierras operaciones ganadoras antes de tiempo por miedo a perderlas.',
                       'Operas por venganza para recuperar lo que perdiste en el trade anterior.'
@@ -298,7 +298,7 @@ export default function SalesLanding() {
               </p>
               <h3 className="text-xl md:text-2xl font-black uppercase text-white mb-3">Esto NO es para todo el mundo</h3>
               <p className="text-white/60 text-sm md:text-base leading-relaxed mb-4">
-                Si buscas un grupo de señales de Telegram para copiar setups, un robot automático que opere milagrosamente por ti, o el secreto para hacerte millonario este fin de semana... <strong>por favor, cierra esta pestaña.</strong>
+                Si buscas un grupo de señales de Telegram para copiar setups (configuraciones o patrones gráficos de entrada), un robot automático que opere milagrosamente por ti, o el secreto para hacerte millonario este fin de semana... <strong>por favor, cierra esta pestaña.</strong>
               </p>
               <p className="text-white/65 text-sm md:text-base leading-relaxed">
                 GENY LAB es un sistema de entrenamiento estricto para traders que ya se cansaron de perder capital por indisciplina y están listos para profesionalizar su mentalidad. <strong>Si eres de los que hacen el trabajo duro, bienvenido.</strong>
@@ -543,7 +543,7 @@ export default function SalesLanding() {
                 Es un escepticismo completamente sano. De hecho, si yo estuviera en tu lugar, pensaría exactamente lo mismo.
               </p>
               <p className="text-white/80 text-base sm:text-lg leading-relaxed">
-                Pero analízalo de esta manera: todos los mentores anteriores te pidieron que te adaptaras a <em>su</em> estrategia, forzándote a ejecutar setups que van en contra de tu límite emocional y termostato biológico.
+                Pero analízalo de esta manera: todos los mentores anteriores te pidieron que te adaptaras a <em>su</em> estrategia, forzándote a ejecutar setups (configuraciones o patrones gráficos de entrada) que van en contra de tu límite emocional y termostato biológico.
               </p>
               <p className="text-white/95 text-lg sm:text-xl font-black leading-relaxed">
                 GENY LAB es el único ecosistema que empieza por diagnosticarte a TI antes de enseñarte a operar. No puedes arreglar lo que no mides.

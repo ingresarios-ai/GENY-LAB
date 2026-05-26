@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
+import { markActivityCompleted } from "../../lib/progressStore";
 import { jsPDF } from "jspdf";
 import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 
@@ -83,6 +84,10 @@ export default function MisEmociones() {
           }
           if (r.view) setView(r.view);
           if (r.selDay) setSelDay(r.selDay);
+          const isCompleted = Object.keys(r.completedDays || {}).length === DAYS.length && Object.values(r.completedDays || {}).every(Boolean);
+          if (isCompleted || saved.completed) {
+            markActivityCompleted('sombra');
+          }
         }
       } catch (e) {
         console.error('Error loading sombra progress:', e);
@@ -112,6 +117,9 @@ export default function MisEmociones() {
       };
       const isCompleted = Object.keys(newDays).length === DAYS.length && Object.values(newDays).every(Boolean);
       await saveActivityProgressDB('sombra', dataToSave, isCompleted);
+      if (isCompleted) {
+        markActivityCompleted('sombra');
+      }
     } catch (e) {
       console.error('Error saving sombra progress:', e);
     }
@@ -867,36 +875,32 @@ export default function MisEmociones() {
           ) : (
             <div className="glass-card p-8 text-center border-t-2 border-t-emerald-500/50 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
-              <div className="relative z-10 space-y-4">
+              <div className="relative z-10 space-y-6">
                 <div className="text-6xl">👑</div>
                 <h2 className="text-3xl font-black text-emerald-500 uppercase tracking-wider">¡Saboteador Desactivado!</h2>
-                <p className="text-slate-300 text-lg">Has completado el protocolo de 10 días. Eres otro trader.</p>
+                <p className="text-slate-300 text-lg">Has completado el protocolo de 10 días. Sombra integrada, autosabotaje neutralizado.</p>
                 
-                {/* Final Share Module */}
-                <div className="max-w-md mx-auto py-6 border-t border-b border-white/5 my-6">
-                  <p className="text-xs text-emerald-400 font-black uppercase tracking-widest mb-3">Comparte tu victoria</p>
-                  <ShareModule 
-                    activity="sombra" 
-                    title="Reto de la Sombra" 
-                    resultData={{ selDay: 10, title: "Reto Completado" }}
-                    shareMessage={`¡He completado los 10 días del Reto de la Sombra (Mis Emociones) en GENY LAB! ⚔️ Sombra integrada, autosabotaje neutralizado. Únete al reto.`}
-                  />
-                </div>
-
-                <div className="pt-6">
-                  <p className="text-sm font-medium text-slate-400 mb-4">
-                    El siguiente paso: entrar en el estado de fluidez, concentración y consistencia operativa con el <span className="text-emerald-400 font-bold">Reto del Flow</span>.
-                  </p>
+                <div className="glass-card p-8 border border-[#01E47E]/30 bg-[#0a1f14]/50 relative overflow-hidden text-center space-y-6 max-w-2xl mx-auto">
+                  <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                    <span className="text-8xl">⚡</span>
+                  </div>
+                  <div className="space-y-2">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-green/20 text-[#01E47E] uppercase">
+                      ¡Nivel Desbloqueado!
+                    </span>
+                    <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                      Siguiente Módulo: Reto del Flow
+                    </h3>
+                    <p className="text-sm text-slate-300 max-w-md mx-auto">
+                      Entra en la zona de rendimiento óptimo: opera sin miedo, sin ego y con concentración absoluta.
+                    </p>
+                  </div>
                   <Link
                     to="/app/flow"
-                    className="btn-premium-emerald inline-flex py-4 px-8 rounded-xl text-sm font-black uppercase tracking-widest transition-transform hover:scale-105"
-                    style={{
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                      color: '#fff',
-                      boxShadow: '0 0 20px rgba(16,185,129,0.3)',
-                    }}
+                    className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#01E47E] text-black font-black uppercase tracking-widest text-xs hover:bg-[#01E47E]/90 hover:scale-[1.02] transition-all cursor-pointer"
                   >
-                    SIGUIENTE RETO <ArrowRight className="w-5 h-5 ml-2" />
+                    Ir a Reto del Flow
+                    <ChevronRight className="w-4 h-4 text-black stroke-[3px]" />
                   </Link>
                 </div>
               </div>

@@ -222,7 +222,7 @@ export const DAYS: DayData[] = [
         ],
       },
       operador: {
-        context: "Tu Saboteador tiene un curriculum brillante: overtrading, revenge trading, mover stops, parálisis ante setups perfectos. Hoy le hacemos ficha policial.",
+        context: "Tu Saboteador tiene un curriculum brillante: overtrading, revenge trading, mover stops, parálisis ante setups (configuraciones o patrones gráficos de entrada) perfectos. Hoy le hacemos ficha policial.",
         exercises: [
           { type: "journal", icon: "✍️", title: "Ficha Policial del Saboteador", time: "20 min", inst: "NOMBRE: dáselo. VOZ: ¿qué dice? ('Recupera eso YA', 'Un trade más'). MODUS OPERANDI: ¿después de cuántas pérdidas se activa? ¿En qué horario es más peligroso? Lo que no puedes nombrar te sigue dominando." },
           { type: "meditation", icon: "🧘", title: "Respiración Anti-Sabotaje", time: "8 min", inst: "Aplica la respiración anti-sabotaje usando la técnica 5-5-7 para liberar la tensión y calmar tu mente:\n1. Inhala en 5 segundos.\n2. Retén el aire durante 5 segundos.\n3. Exhala lentamente durante 7 segundos.\nRepite este proceso por 6 ciclos.\n\nCon cada exhalación, repite mentalmente: 'Te veo. No te necesito ahora.' Esta es tu primera línea de defensa para recuperar la calma entre trades. Memorízala." },
@@ -278,7 +278,7 @@ export const DAYS: DayData[] = [
       operador: {
         context: "Tu Saboteador opera contigo en cada sesión. Hoy lo sientas frente a ti. Vas a descubrir por qué sigues repitiendo errores que sabes que son errores.",
         exercises: [
-          { type: "journal", icon: "✍️", title: "Diálogo con tu Saboteador Trader", time: "25 min", inst: "Establece una conversación directa y por escrito con tu Saboteador en tu diario de trading. Usa formato de diálogo continuo y escribe al menos 2 páginas para romper las barreras del ego y ver su verdadera intención:\n\n1. Inicia preguntando tú:\nYO: '¿Por qué me saboteas y me haces romper las reglas en mis mejores setups?'\n2. Responde desde su perspectiva sin filtros:\nSABOTEADOR: (Escribe lo primero que sientas, aunque suene irracional o doloroso).\n3. Continúa el diálogo usando estas preguntas de guía:\n• '¿Qué necesitas de mí cuando operamos?'\n• '¿De qué me proteges al hacerme perder o evitar entrar al mercado?'\n• '¿Cuándo y por qué apareciste por primera vez?'\n\nIMPORTANTE: No controles la escritura, escribe de forma automática y rápida. Las respuestas te revelarán tu verdadero punto ciego en el trading." },
+          { type: "journal", icon: "✍️", title: "Diálogo con tu Saboteador Trader", time: "25 min", inst: "Establece una conversación directa y por escrito con tu Saboteador en tu diario de trading. Usa formato de diálogo continuo y escribe al menos 2 páginas para romper las barreras del ego y ver su verdadera intención:\n\n1. Inicia preguntando tú:\nYO: '¿Por qué me saboteas y me haces romper las reglas en mis mejores setups (configuraciones o patrones gráficos de entrada)?'\n2. Responde desde su perspectiva sin filtros:\nSABOTEADOR: (Escribe lo primero que sientas, aunque suene irracional o doloroso).\n3. Continúa el diálogo usando estas preguntas de guía:\n• '¿Qué necesitas de mí cuando operamos?'\n• '¿De qué me proteges al hacerme perder o evitar entrar al mercado?'\n• '¿Cuándo y por qué apareciste por primera vez?'\n\nIMPORTANTE: No controles la escritura, escribe de forma automática y rápida. Las respuestas te revelarán tu verdadero punto ciego en el trading." },
           { type: "meditation", icon: "🧘", title: "Encuentro en tu Estación", time: "15 min", inst: "Visualiza tu estación de trading. Hay alguien sentado en TU silla. Es tu Saboteador. Obsérvalo operar: ¿qué trades toma? ¿Cómo gestiona? Pregúntale POR QUÉ." },
           { type: "practice", icon: "📊", title: "Filtro Pre-Operación Obligatorio", time: "Durante tu sesión", inst: "Antes de cada operación (trade) hoy, realiza una validación obligatoria:\nPregúntate: '¿Esta entrada viene de mi análisis técnico o es impulsada por mi Saboteador?'\n\nSi notas que más de la mitad de tus intenciones de entrada son generadas por el Saboteador, detén la sesión por hoy para proteger tu cuenta." },
           { type: "reflection", icon: "🔍", title: "Lo que Confesó", time: "5 min", inst: "Escribe en UNA frase la confesión más importante de tu Saboteador hoy. Ponla AL LADO DE TU PANTALLA. Léela antes de cada sesión." },
@@ -303,7 +303,7 @@ export const DAYS: DayData[] = [
         ],
       },
       operador: {
-        context: "Tu miedo nuclear ES la razón oculta de tus peores trades. Mover el stop, cerrar el ganador a +20%, no tomar el setup perfecto — todo viene de la misma raíz.",
+        context: "Tu miedo nuclear ES la razón oculta de tus peores trades. Mover el stop, cerrar el ganador a +20%, no tomar el setup (configuración o patrón gráfico de entrada) perfecto — todo viene de la misma raíz.",
         exercises: [
           { type: "journal", icon: "✍️", title: "Los 5 Por Qué del Trader", time: "20 min", inst: "Toma tu peor patrón. ¿Por qué muevo el stop? → Porque no quiero confirmar la pérdida → Porque perder me hace sentir tonto → Porque mi padre me llamaba tonto → MIEDO: Soy un fracaso. Encuentra TU cadena. Va al hueso." },
           { type: "meditation", icon: "🧘", title: "Exposición Controlada", time: "12 min", inst: "Imagina la PEOR sesión posible. Déjate sentir todo: vergüenza, rabia, impotencia. Respira 5s/7s. Quédate 5 minutos. 'Puedo sentir esto y seguir operando mañana'." },
@@ -386,9 +386,9 @@ export const DAYS: DayData[] = [
       operador: {
         context: "Tu impulsividad, miedo, codicia — NO son enemigos. Son materia prima de tu edge. Hoy los conviertes en herramientas operativas.",
         exercises: [
-          { type: "journal", icon: "✍️", title: "Tabla de Transmutación Trader", time: "25 min", inst: "Impulsividad → Ejecución rápida cuando el setup es claro. Miedo → Risk management intuitivo. Codicia → Capacidad de dejar correr ganadores. Perfeccionismo → Ojo para entradas precisas. Para CADA defecto: ¿cómo lo aplico mañana?" },
+          { type: "journal", icon: "✍️", title: "Tabla de Transmutación Trader", time: "25 min", inst: "Impulsividad → Ejecución rápida cuando el setup (configuración o patrón gráfico de entrada) es claro. Miedo → Risk management intuitivo. Codicia → Capacidad de dejar correr ganadores. Perfeccionismo → Ojo para entradas precisas. Para CADA defecto: ¿cómo lo aplico mañana?" },
           { type: "meditation", icon: "🧘", title: "Visualización Alquímica", time: "15 min", inst: "Visualiza frente a ti un caldero alquímico (un recipiente resistente al fuego para fundir metales). Coloca tu peor defecto de trading adentro y observa cómo el fuego lo transmuta. ¿En qué habilidad positiva se convierte? Repite con 2 más." },
-          { type: "practice", icon: "📊", title: "Operar con el Oro", time: "Durante tu sesión", inst: "Elige tu defecto transmutado (transformado) más poderoso. Hoy ÚSALO. Si transmutaste (transformaste) impulsividad → ejecución rápida: busca un setup que requiera acción inmediata y ejecútalo con convicción. Operas desde tu sombra dorada." },
+          { type: "practice", icon: "📊", title: "Operar con el Oro", time: "Durante tu sesión", inst: "Elige tu defecto transmutado (transformado) más poderoso. Hoy ÚSALO. Si transmutaste (transformaste) impulsividad → ejecución rápida: busca un setup (configuración o patrón gráfico de entrada) que requiera acción inmediata y ejecútalo con convicción. Operas desde tu sombra dorada." },
           { type: "reflection", icon: "🔍", title: "Nueva Habilidad", time: "10 min", inst: "¿Tu defecto transmutado (transformado) funcionó mejor de lo esperado? Escribe la lección en una frase que puedas leer antes de cada sesión." },
         ],
       },
@@ -411,11 +411,11 @@ export const DAYS: DayData[] = [
         ],
       },
       operador: {
-        context: "En 10 días has transformado tu trading desde la raíz. Hoy operas tu mejor setup como un trader integrado. Y luego compartes el reto.",
+        context: "En 10 días has transformado tu trading desde la raíz. Hoy operas tu mejor setup (configuración o patrón gráfico de entrada) como un trader integrado. Y luego compartes el reto.",
         exercises: [
           { type: "journal", icon: "✍️", title: "Antes y Después del Trader", time: "20 min", inst: "MI TRADING HACE 10 DÍAS: ¿Cómo operaba? ¿Qué me controlaba? MI TRADING HOY: ¿Cómo opero ahora? ¿Qué integré? Evidencia concreta. La prueba de que ya no eres el mismo." },
           { type: "meditation", icon: "🧘", title: "Ceremonia de Cierre", time: "15 min", inst: "Antes de iniciar tu visualización final, realiza la respiración de calma 4-7-8 por 5 ciclos:\n• Inhala en 4 segundos.\n• Retén el aire durante 7 segundos.\n• Exhala lento durante 8 segundos.\n\nAl terminar, visualiza a tu Saboteador trader frente a ti. Estrecha su mano y declara con firmeza: 'Somos uno. Operamos y gestionamos desde la totalidad'. Abre los ojos sintiendo tu integración." },
-          { type: "practice", icon: "📊", title: "El Trade de Individuación", time: "Durante tu sesión", inst: "Opera tu mejor setup con TODO: ritual pre-trading, conciencia de Saboteador, PEDEM 2.0, flow activado. NO importa el resultado — importa la calidad del proceso. Es tu declaración pública." },
+          { type: "practice", icon: "📊", title: "El Trade de Individuación", time: "Durante tu sesión", inst: "Opera tu mejor setup (configuración o patrón gráfico de entrada) con TODO: ritual pre-trading, conciencia de Saboteador, PEDEM 2.0, flow activado. NO importa el resultado — importa la calidad del proceso. Es tu declaración pública." },
           { type: "reflection", icon: "🔍", title: "Manifiesto + Invitación", time: "15 min", inst: "Escribe tu Manifiesto del Trader Integrado en primera persona. Luego: ¿qué trader específico necesita este reto? Compártelo AHORA." },
         ],
       },

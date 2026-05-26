@@ -65,7 +65,7 @@ export function PedemTrade({ data, onChange, onFinish, onBack }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-xs tracking-[0.2em] uppercase text-brand-text-muted font-black flex items-center gap-2">Setup en una frase <span className="text-brand-orange">*</span></label>
+        <label className="text-xs tracking-[0.2em] uppercase text-brand-text-muted font-black flex items-center gap-2">Setup (configuración o patrón gráfico de entrada) en una frase <span className="text-brand-orange">*</span></label>
         <input type="text" value={data.tra_setup || ''} onChange={e => onChange('tra_setup', e.target.value)}
           placeholder='Ej: "Rechazo del POC con Geny Trend alineado en 4H"' className="input-field" />
       </div>

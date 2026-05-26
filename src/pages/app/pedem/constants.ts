@@ -42,7 +42,7 @@ export const SHADOW_OPTIONS = [
   { id: 'controlador', name: 'Controlador', desc: 'Todo movimiento, en todo' },
   { id: 'saboteador', name: 'Saboteador', desc: 'Cambio el plan al último' },
   { id: 'apostador', name: 'Apostador', desc: 'Una más y recupero todo' },
-  { id: 'perfeccionista', name: 'Perfeccionista', desc: 'Espero el setup perfecto' },
+  { id: 'perfeccionista', name: 'Perfeccionista', desc: 'Espero el setup (configuración o patrón gráfico de entrada) perfecto' },
 ];
 
 export const ASSET_OPTIONS = [

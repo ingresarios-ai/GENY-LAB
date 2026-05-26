@@ -15,6 +15,7 @@ import ResultActions from "../../components/ResultActions";
 import CompletionBanner from '../../components/CompletionBanner';
 import html2canvas from 'html2canvas-pro';
 import confetti from "canvas-confetti";
+import { markActivityCompleted } from "../../lib/progressStore";
 
 // ── Question Data ──────────────────────────────────────────────────────────
 
@@ -173,7 +174,7 @@ const QUESTIONS_TRADER: Question[] = [
     controlType: "checklist",
     checklistProps: [
       "Aumento el tamaño de mi lote o posición (exceso de confianza)",
-      "Opero con más frecuencia o tomo setups dudosos (sobreoperación)",
+      "Opero con más frecuencia o tomo setups (configuraciones o patrones gráficos de entrada) dudosos (sobreoperación)",
       "Ignoro mis filtros de entrada o relajo mis reglas de gestión de riesgo",
       "Mantengo la calma y respeto el plan, entiendo que es solo varianza estadística"
     ],
@@ -722,7 +723,10 @@ export default function TrampasDinero() {
           const r = saved.metadata;
           if (r.responses) setResponses(r.responses);
           if (r.profile) setProfile(r.profile);
-          if (r.completed || saved.completed) setView('completed');
+          if (r.completed || saved.completed) {
+            setView('completed');
+            markActivityCompleted('trampas');
+          }
         }
       } catch (e) {
         console.error('Error loading trampas progress:', e);
@@ -760,6 +764,7 @@ export default function TrampasDinero() {
         profile,
         completed: true,
       }, true);
+      markActivityCompleted('trampas');
     } catch (e) {
       console.error('Error saving trampas progress:', e);
     }
@@ -1387,13 +1392,35 @@ export default function TrampasDinero() {
                 )}
               </div>
 
-              {/* Share Section */}
+              {/* Next Activity Redirect Card instead of ShareModule */}
               <div className="pt-6 border-t border-white/5 space-y-6">
-                <ShareModule 
-                  activity="trampas" 
-                  title="Las Trampas del Dinero" 
-                  resultData={{ responses }} 
-                />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass-card p-6 border border-[#01E47E]/30 bg-[#0a1f14]/50 relative overflow-hidden text-center space-y-6"
+                >
+                  <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                    <span className="text-6xl">📋</span>
+                  </div>
+                  <div className="space-y-2">
+                    <span className="px-3 py-1 rounded-full text-[9px] font-black tracking-widest bg-brand-green/20 text-[#01E47E] uppercase">
+                      ¡Nivel Desbloqueado!
+                    </span>
+                    <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                      Siguiente Módulo: Mi Primer PEDEM
+                    </h3>
+                    <p className="text-xs text-slate-300 max-w-sm mx-auto">
+                      Aprende el método estructurado de planificación que separa al 5% consistente del 95% que improvisa.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => navigate('/app/pedem')}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#01E47E] text-black font-black uppercase tracking-widest text-[10px] hover:bg-[#01E47E]/90 hover:scale-[1.02] transition-all cursor-pointer"
+                  >
+                    Ir a Mi Primer PEDEM
+                    <ChevronRight className="w-4 h-4 text-black stroke-[3px]" />
+                  </button>
+                </motion.div>
               </div>
             </div>
           </div>

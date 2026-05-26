@@ -232,7 +232,7 @@ export const DAYS: FlowDay[] = [
         context: "Ejecutar PEDEM con consciencia es operar desde el Self y no desde el ego reactivo. Hoy cada parte del ciclo se hace con presencia total.",
         exercises: [
           { type: "pedem", icon: "📋", title: "PLANEAR con Claridad", time: "15 min",
-            inst: "Antes de la sesión: define 3 setups, niveles de entrada, stop loss y target. SIN ambigüedad. Si no hay setup claro, el plan es NO operar." },
+            inst: "Antes de la sesión: define 3 setups (configuraciones o patrones gráficos de entrada), niveles de entrada, stop loss y target. SIN ambigüedad. Si no hay setup claro, el plan es NO operar." },
           { type: "pedem", icon: "📊", title: "EJECUTAR desde el Self", time: "40 min",
             inst: "Ejecuta tu plan con plena consciencia. Cada decisión pregúntate: ¿esto lo decide mi análisis o mi emoción? Opera desde la claridad." },
           { type: "pedem", icon: "📝", title: "DOCUMENTAR sin Ego", time: "15 min",
@@ -294,7 +294,7 @@ export const DAYS: FlowDay[] = [
           { type: "práctica", icon: "📊", title: "Sesión Sin Interrupciones", time: "45 min",
             inst: "Sesión completa sin móvil, sin redes, sin interrupciones. Registra cada distracción que surja. ¿Desde dónde operaste hoy?" },
           { type: "ritual", icon: "⏱️", title: "Protocolo de Foco del Trader", time: "10 min",
-            inst: "Documenta: ¿Qué condiciones ambientales y mentales necesitas para tu concentración máxima? Este es tu setup no-técnico más importante." },
+            inst: "Documenta: ¿Qué condiciones ambientales y mentales necesitas para tu concentración máxima? Este es tu setup (configuración o preparación) no-técnico más importante." },
           { type: "reflexión", icon: "📝", title: "Ratio Flow/Ruido", time: "10 min",
             inst: "¿Cuántos minutos estuviste en flow real vs. ruido mental? Calcula tu ratio. ¿Es mejor que la semana pasada?" },
         ]
@@ -322,7 +322,7 @@ export const DAYS: FlowDay[] = [
         context: "7 días de observación no mienten. Ya sabes cuándo entras en flow y cuándo no. Hoy lo conviertes en un sistema replicable.",
         exercises: [
           { type: "pedem", icon: "⚙️", title: "Sistema de Flow del Trader", time: "25 min",
-            inst: "Documenta exactamente qué condiciones internas y externas garantizan tu estado óptimo. Hora, setup, ritual, nivel de riesgo, estado emocional. Este es tu protocolo." },
+            inst: "Documenta exactamente qué condiciones internas y externas garantizan tu estado óptimo. Hora, setup (configuración o patrón gráfico de entrada), ritual, nivel de riesgo, estado emocional. Este es tu protocolo." },
           { type: "práctica", icon: "📊", title: "Sesión con Sistema Completo", time: "30 min",
             inst: "Activa TODOS tus protocolos: ritual de entrada, condiciones ambientales, gestión de riesgo. Opera desde el sistema, no desde el impulso." },
           { type: "reflexión", icon: "📝", title: "Evaluación del Sistema", time: "10 min",
@@ -382,7 +382,7 @@ export const DAYS: FlowDay[] = [
         context: "Hoy operas como el Trader en Flow. Todos los protocolos, la sombra integrada, el PEDEM consciente — todo se activa. Este es tu día.",
         exercises: [
           { type: "ritual", icon: "🏆", title: "Protocolo Ceremonial Completo", time: "15 min",
-            inst: "Activa TODOS tus rituales: respiración, intención, setup, revisión del sesgo. Hoy es la versión final de tu protocolo. Ejecútalo con presencia total." },
+            inst: "Activa TODOS tus rituales: respiración, intención, setup (configuración o preparación), revisión del sesgo. Hoy es la versión final de tu protocolo. Ejecútalo con presencia total." },
           { type: "práctica", icon: "⚡", title: "Sesión de Trading en Flow Total", time: "60 min",
             inst: "Opera con PEDEM consciente, decide desde el Self, integra la sombra cuando aparezca. Esta sesión no es para ganar dinero — es para ser quien ya eres." },
           { type: "reflexión", icon: "🌟", title: "Manifiesto del Trader en Flow", time: "15 min",

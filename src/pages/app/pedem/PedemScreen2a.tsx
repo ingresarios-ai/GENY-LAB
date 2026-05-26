@@ -29,7 +29,7 @@ export function PedemScreen2a({ onRoutine, onTrade, onBack }: Props) {
         <button onClick={onTrade} className="glass-card p-6 text-center hover:border-[#00D2FF]/30 transition-all cursor-pointer">
           <span className="text-3xl mb-3 block">🎯</span>
           <div className="text-base font-black uppercase tracking-tight mb-1">Mi plan<br/>de trade</div>
-          <p className="text-xs text-brand-text-muted">Un trade específico con setup, entrada, stop y target.</p>
+          <p className="text-xs text-brand-text-muted">Un trade específico con setup (configuración o patrón gráfico de entrada), entrada, stop y target.</p>
         </button>
       </div>
 

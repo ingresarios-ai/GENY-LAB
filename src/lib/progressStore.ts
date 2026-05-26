@@ -44,6 +44,14 @@ const saveProgress = (progress: UserProgress) => {
 export const isLessonUnlocked = (lessonOrder: number): boolean => {
   if (lessonOrder === 1) return true; // First lesson always unlocked
   const progress = getProgress();
+
+  // If the lesson itself is already completed, it is unlocked
+  const currentLesson = LESSONS.find(l => l.order === lessonOrder);
+  if (currentLesson) {
+    const lp = progress.lessonProgress[currentLesson.id];
+    if (lp?.videoCompleted && lp?.activityCompleted) return true;
+  }
+
   // Previous lesson must be fully completed
   const prevLesson = LESSONS.find(l => l.order === lessonOrder - 1);
   if (!prevLesson) return false;
@@ -142,8 +150,11 @@ export const markActivityCompleted = (lessonId: string): {
   const prevLevel = getLevelForXp(progress.totalXp);
 
   let xpEarned = lesson.xpActivity;
-  // Bonus if video was also completed (full lesson completion)
-  if (progress.lessonProgress[lessonId].videoCompleted) {
+  // Auto-complete video if not already completed
+  if (!progress.lessonProgress[lessonId].videoCompleted) {
+    progress.lessonProgress[lessonId].videoCompleted = true;
+    xpEarned += lesson.xpVideo + lesson.xpBonus;
+  } else {
     xpEarned += lesson.xpBonus;
   }
 

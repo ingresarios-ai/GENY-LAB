@@ -244,21 +244,134 @@ function PedemResultView({ d }: { d: any }) {
   );
 }
 
+const SOMBRA_TRACKS: Record<string, string> = {
+  novato: "Principiante / No Operador",
+  operador: "Trader Activo / Operador",
+};
+
+const SOMBRA_DIAG_R: Record<string, Record<string, { title: string; color: string; message: string }>> = {
+  operador: {
+    silencio: {
+      title: "Saboteador en Silencio",
+      color: "#10b981",
+      message: "Pero está esperando. Cada trader exitoso lo descubrió tarde — y pagó caro. Tú tienes la oportunidad de blindarte antes de que despierte.",
+    },
+    acechando: {
+      title: "Saboteador al Acecho",
+      color: "#f59e0b",
+      message: "Ya hace ruido. Aún no controla — pero está ganando terreno. Detenerlo ahora cuesta días. En 6 meses costará miles.",
+    },
+    operando: {
+      title: "Saboteador Operando Contigo",
+      color: "#f97316",
+      message: "Y tú estás pagando la cuenta. Cada trade es 50% tuyo, 50% suyo. La diferencia entre perder y ganar consistentemente está en desactivarlo. AHORA.",
+    },
+    alMando: {
+      title: "Saboteador al Mando",
+      color: "#ea580c",
+      message: "Esto es una emergencia. No es tu culpa — pero SÍ es tu responsabilidad. Cada día que esperas, le das más poder.",
+    },
+  },
+  novato: {
+    silencio: {
+      title: "Saboteador en Silencio",
+      color: "#10b981",
+      message: "La impulsividad y el autosabotaje financiero suelen despertarse en momentos inesperados. Tienes la oportunidad de blindar tu mente y tu relación con el dinero antes de empezar a arriesgar capital.",
+    },
+    acechando: {
+      title: "Saboteador al Acecho",
+      color: "#f59e0b",
+      message: "Ya hace ruido en tus finanzas. Pequeños gastos emocionales o la procrastinación para tomar decisiones clave están ganando terreno.",
+    },
+    operando: {
+      title: "Saboteador Tomando las Riendas",
+      color: "#f97316",
+      message: "La impulsividad o el miedo al fracaso dictan tus pasos, afectando tu capacidad de ahorro y tu libertad financiera. Es hora de desactivarlo.",
+    },
+    alMando: {
+      title: "Saboteador con el Control",
+      color: "#ea580c",
+      message: "Esto requiere tu atención inmediata. Sientes parálisis ante las oportunidades o tomas decisiones por puro impulso emocional.",
+    },
+  }
+};
+
+const FLOW_TRACKS: Record<string, { nombre: string; emoji: string; tagline: string; desc: string }> = {
+  novato: {
+    nombre: "Novato al Flow",
+    emoji: "🌱",
+    tagline: "No necesitas saber de trading. Solo necesitas conocerte.",
+    desc: "Para personas que quieren dominar su mente y emociones antes de operar.",
+  },
+  trader: {
+    nombre: "Trader en Flow",
+    emoji: "⚡",
+    tagline: "Ya operas. Ahora hazlo desde el estado óptimo.",
+    desc: "Para traders activos que quieren activar su zona de máximo rendimiento.",
+  },
+};
+
+const FLOW_ARQUETIPOS: Record<string, { nombre: string; emoji: string; desc: string }> = {
+  explorador: { nombre: "El Explorador", emoji: "🧭", desc: "Tu flow llega con la novedad y el descubrimiento. Aprendes haciendo." },
+  estratega:  { nombre: "El Estratega",  emoji: "♟️", desc: "Tu flow emerge cuando el plan se ejecuta con precisión." },
+  artesano:   { nombre: "El Artesano",   emoji: "⚒️", desc: "Tu flow vive en la práctica deliberada y el dominio progresivo." },
+  guardian:   { nombre: "El Guardián",   emoji: "🛡️", desc: "Tu flow viene de la consistencia y la disciplina sostenida." },
+  visionario: { nombre: "El Visionario", emoji: "🔭", desc: "Tu flow surge en la síntesis y la visión de largo plazo." },
+};
+
 function SombraResult({ d }: { d: any }) {
   const day = d.selDay || d.d || 1;
   const phase = day <= 3 ? 'Detectar' : day <= 7 ? 'Desactivar' : 'Dominar';
   const phaseColor = day <= 3 ? '#f97316' : day <= 7 ? '#f59e0b' : '#10b981';
   const name = getName(d);
+
+  const routeName = d.route ? SOMBRA_TRACKS[d.route] : null;
+  const diagInfo = d.route && d.diagLevel && SOMBRA_DIAG_R[d.route] ? SOMBRA_DIAG_R[d.route][d.diagLevel] : null;
+  const showScore = typeof d.diagScore === 'number';
+
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">🎭</motion.div>
         <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Saboteador Interior · Día {day}/10</p>
-        <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
-          {name ? `${name} está enfrentando a su Saboteador` : (d.title ? `"${d.title}"` : `Fase ${phase} Activada`)}
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight text-balance">
+          {name ? `${name} completó el Reto de la Sombra` : (d.title ? `"${d.title}"` : `Fase ${phase} Activada`)}
         </h1>
         <p className="text-slate-400 text-base max-w-md mx-auto">Todos tenemos un <span className="text-white font-bold">Saboteador Interior</span> — una voz que nos hace cerrar trades ganadores antes de tiempo, mover el stop loss, o entrar por venganza.</p>
       </div>
+
+      {/* Sombra Diagnostic info */}
+      {(routeName || showScore || diagInfo) && (
+        <div className="glass-card p-6 border-t-2 border-t-red-500/50 space-y-6 bg-gradient-to-b from-red-500/10 to-transparent">
+          <p className="text-xs font-black uppercase tracking-widest text-red-400">Diagnóstico de Autosabotaje</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {routeName && (
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Ruta del Estudiante</p>
+                <p className="text-base font-black text-white">{routeName}</p>
+              </div>
+            )}
+            
+            {showScore && (
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Nivel de Sabotaje Detectado</p>
+                <p className="text-base font-black text-red-400">{d.diagScore}%</p>
+              </div>
+            )}
+          </div>
+
+          {diagInfo && (
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: diagInfo.color }} />
+                <p className="text-sm font-black uppercase tracking-wider text-white">{diagInfo.title}</p>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">{diagInfo.message}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* The shocking stat */}
       <div className="glass-card p-8 text-center border-t-2" style={{ borderTopColor: phaseColor }}>
@@ -269,7 +382,9 @@ function SombraResult({ d }: { d: any }) {
       {/* What they discovered */}
       <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: phaseColor }}>
         <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>{name ? `Lo que descubrió ${name}` : 'Lo que descubrió'}</p>
-        <p className="text-base text-white leading-relaxed">{name || 'Este trader'} completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del reto más difícil: enfrentar su propia psicología de trading. La mayoría abandona en el día 3.</p>
+        <p className="text-base text-white leading-relaxed">
+          {name || 'Este trader'} completó con éxito <span className="font-black" style={{ color: phaseColor }}>los 10 días de entrenamiento</span> del Reto de la Sombra. Enfrentando y domesticando su propia psicología de trading.
+        </p>
       </div>
 
       <BlurredSection label="Tu perfil de Saboteador · Diario emocional" />
@@ -287,16 +402,50 @@ function FlowResult({ d }: { d: any }) {
   const day = d.selDay || d.d || 1;
   const phaseColor = day <= 3 ? '#3b82f6' : day <= 6 ? '#f59e0b' : '#10b981';
   const name = getName(d);
+
+  const routeInfo = d.route ? FLOW_TRACKS[d.route] : null;
+  const arqInfo = d.arquetipo ? FLOW_ARQUETIPOS[d.arquetipo] : null;
+
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} className="text-8xl">⚡</motion.div>
         <p className="text-xs font-black uppercase tracking-widest" style={{ color: phaseColor }}>Reto del Flow · Día {day}/10</p>
-        <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight">
-          {name ? `${name} está activando su estado de Flow` : (d.title ? `"${d.title}"` : 'Estado de Flow Activado')}
+        <h1 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight text-balance">
+          {name ? `${name} completó el Reto del Flow` : (d.title ? `"${d.title}"` : 'Estado de Flow Activado')}
         </h1>
         <p className="text-slate-400 text-base max-w-md mx-auto">El <span className="text-white font-bold">estado de Flow</span> es cuando tu mente opera a su máximo rendimiento — sin miedo, sin ego, concentración absoluta.</p>
       </div>
+
+      {/* Track & Archetype Information if available */}
+      {(routeInfo || arqInfo) && (
+        <div className="glass-card p-6 border-t-2 border-t-brand-blue/50 space-y-6 bg-gradient-to-b from-brand-blue/10 to-transparent">
+          <p className="text-xs font-black uppercase tracking-widest text-brand-blue">Perfil de Rendimiento</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {routeInfo && (
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{routeInfo.emoji}</span>
+                  <span className="text-sm font-black uppercase tracking-wider text-white">{routeInfo.nombre}</span>
+                </div>
+                <p className="text-xs text-brand-yellow font-medium italic">"{routeInfo.tagline}"</p>
+                <p className="text-xs text-slate-400 leading-relaxed">{routeInfo.desc}</p>
+              </div>
+            )}
+            
+            {arqInfo && (
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{arqInfo.emoji}</span>
+                  <span className="text-sm font-black uppercase tracking-wider text-white">{arqInfo.nombre}</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">{arqInfo.desc}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="glass-card p-8 text-center border-t-2" style={{ borderTopColor: phaseColor }}>
         <p className="text-6xl font-black text-brand-blue mb-2">5%</p>
@@ -305,7 +454,11 @@ function FlowResult({ d }: { d: any }) {
 
       <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: phaseColor }}>
         <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: phaseColor }}>{name ? `Lo que descubrió ${name}` : 'Lo que descubrió'}</p>
-        <p className="text-base text-white leading-relaxed">{name || 'Este trader'} completó <span className="font-black" style={{ color: phaseColor }}>el día {day} de 10</span> del entrenamiento de Flow para traders. Concentración absoluta. Rendimiento máximo.</p>
+        <p className="text-base text-white leading-relaxed">
+          {name || 'Este trader'} completó con éxito <span className="font-black" style={{ color: phaseColor }}>el entrenamiento de 10 días</span> del Reto del Flow. 
+          {routeInfo ? ` Siguió la ruta de ${routeInfo.nombre} para integrar la mentalidad óptima.` : ''}
+          {arqInfo ? ` Operando desde su arquetipo de personalidad natural: ${arqInfo.nombre}.` : ''}
+        </p>
       </div>
 
       <BlurredSection label="Tu perfil de Flow · Ritual pre-trading" />

@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft, CheckCircle, Share2,    Copy, Check,
-  Lock, Unlock, Zap, Brain, BookOpen, Search, ChevronRight
+  Lock, Unlock, Zap, Brain, BookOpen, Search, ChevronRight, ArrowRight
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
+import { markActivityCompleted } from "../../lib/progressStore";
 import confetti from "canvas-confetti";
 import {
   DAYS, PHASES, TRACKS, ARQUETIPOS, EMOCIONES, GLOSARIO, TIPO_COLOR,
@@ -43,6 +44,7 @@ export default function RetoFlow() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const userName = 'Trader'?.split(" ")[0] || "Trader";
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   // State
   const [loading, setLoading] = useState(true);
@@ -77,6 +79,10 @@ export default function RetoFlow() {
           if (r.emociones) setEmociones(r.emociones);
           if (r.view) setView(r.view);
           if (r.selDay) setSelDay(r.selDay);
+          const isCompleted = Object.keys(r.completedDays || {}).length === DAYS.length && Object.values(r.completedDays || {}).every(Boolean);
+          if (isCompleted || saved.completed) {
+            markActivityCompleted('flow');
+          }
         }
       } catch (e) {
         console.error('Error loading flow progress:', e);
@@ -108,6 +114,9 @@ export default function RetoFlow() {
       };
       const isCompleted = Object.keys(newDays).length === DAYS.length && Object.values(newDays).every(Boolean);
       await saveActivityProgressDB('flow', dataToSave, isCompleted);
+      if (isCompleted) {
+        markActivityCompleted('flow');
+      }
     } catch (e) {
       console.error('Error saving flow progress:', e);
     }
@@ -159,6 +168,23 @@ export default function RetoFlow() {
 
     setCompletedDays(newDays);
     await saveState(route, arquetipo, newTasks, newDays, emociones, view, selDay);
+
+    // Auto-redirect to home view if all 10 days are completed
+    const allDaysComplete = Object.values(newDays).filter(Boolean).length >= DAYS.length;
+    if (allDaysComplete) {
+      setTimeout(() => {
+        setView("home");
+        setTimeout(() => {
+          bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          confetti({
+            particleCount: 300,
+            spread: 120,
+            origin: { y: 0.4 },
+            colors: ["#01E47E", "#00D1FF", "#7c3aed"],
+          });
+        }, 600);
+      }, 1500);
+    }
   };
 
   // ── Share ──────────────────────────────────────────────────────────────
@@ -498,7 +524,7 @@ export default function RetoFlow() {
 
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
-        <CompletionBanner lessonId="flow" disabled={completedCount < totalDays} progressLabel={`${completedCount} de ${totalDays} días completados`} />
+        <CompletionBanner ref={bannerRef} lessonId="flow" disabled={completedCount < totalDays} progressLabel={`${completedCount} de ${totalDays} días completados`} />
 
         {completedCount === totalDays && (
           <div className="glass-card p-8 text-center border-t-2 border-t-brand-green/50 relative overflow-hidden">
@@ -513,7 +539,7 @@ export default function RetoFlow() {
                 <ShareModule 
                   activity="flow" 
                   title="Reto 10 Días al Flow" 
-                  resultData={{ selDay: 10, title: "Reto Completado" }}
+                  resultData={{ selDay: 10, title: "Reto Completado", route, arquetipo }}
                   shareMessage={`¡He completado con éxito los 10 días del Reto del Flow en GENY LAB! ⚡ Mente en calma, operativa consistente. Únete al reto.`}
                 />
               </div>
@@ -914,15 +940,15 @@ export default function RetoFlow() {
                       setSelDay(nextD);
                       setView("day");
                       await saveState(route, arquetipo, tasksDone, completedDays, emociones, "day", nextD);
+                      navigate("/app");
                     } else {
                       setView("home");
                       await saveState(route, arquetipo, tasksDone, completedDays, emociones, "home", selDay);
                     }
-                    navigate("/app");
                   }}
                   className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"
                 >
-                  {selDay < 10 ? "Continuar mañana" : "Volver al mapa"}
+                  {selDay < 10 ? "Continuar mañana" : "Ver resultados"}
                 </button>
               </div>
             </div>

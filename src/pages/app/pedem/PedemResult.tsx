@@ -151,7 +151,7 @@ export function PedemResult({ path, data, onRestart }: Props) {
     } else if (path === 'trade') {
       rows.push({label: 'ACTIVO', value: data.tra_asset || ''});
       rows.push({label: 'DIRECCIÓN', value: DIRECTION_MAP[data.tra_direction] || data.tra_direction || ''});
-      rows.push({label: 'SETUP', value: data.tra_setup || ''});
+      rows.push({label: 'SETUP (CONFIGURACIÓN)', value: data.tra_setup || ''});
       rows.push({label: 'ENTRADA', value: data.tra_entry || ''});
       rows.push({label: 'STOP LOSS', value: data.tra_stop || ''});
       rows.push({label: 'TARGET', value: data.tra_target || ''});
@@ -226,7 +226,7 @@ export function PedemResult({ path, data, onRestart }: Props) {
               {path === 'trade' && <>
                 <Row label="Activo" value={data.tra_asset} color="text-brand-blue" />
                 <Row label="Dirección" value={DIRECTION_MAP[data.tra_direction] || ''} />
-                <Row label="Setup" value={data.tra_setup} />
+                <Row label="Setup (Configuración)" value={data.tra_setup} />
                 <Row label="Entrada" value={`$${data.tra_entry}`} color="text-brand-blue" />
                 <Row label="Stop" value={`$${data.tra_stop}`} color="text-brand-orange" />
                 <Row label="Target" value={`$${data.tra_target}`} color="text-brand-green" />
@@ -252,13 +252,35 @@ export function PedemResult({ path, data, onRestart }: Props) {
 
             </div>
 
-            {/* ── Share Section (same as TrampasDinero / RetoADN) ── */}
-            <div className="pt-8 border-t border-white/5 space-y-4 text-center">
-              <ShareModule 
-                activity="pedem" 
-                title="Mi Primer PEDEM" 
-                resultData={{ path, data }} 
-              />
+            {/* Next Activity Redirect Card instead of ShareModule */}
+            <div className="pt-8 border-t border-white/5 space-y-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-card p-6 border border-[#01E47E]/30 bg-[#0a1f14]/50 relative overflow-hidden text-center space-y-6"
+              >
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                  <span className="text-6xl">🎭</span>
+                </div>
+                <div className="space-y-2">
+                  <span className="px-3 py-1 rounded-full text-[9px] font-black tracking-widest bg-brand-green/20 text-[#01E47E] uppercase">
+                    ¡Nivel Desbloqueado!
+                  </span>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                    Siguiente Módulo: Mis Emociones (Reto Sombra)
+                  </h3>
+                  <p className="text-xs text-slate-300 max-w-sm mx-auto">
+                    Conoce y neutraliza a tu Saboteador Interior para evitar tomar decisiones irracionales en tu operativa.
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate('/app/sombra')}
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#01E47E] text-black font-black uppercase tracking-widest text-[10px] hover:bg-[#01E47E]/90 hover:scale-[1.02] transition-all cursor-pointer"
+                >
+                  Ir a Mis Emociones
+                  <ChevronRight className="w-4 h-4 text-black stroke-[3px]" />
+                </button>
+              </motion.div>
             </div>
           </div>
         </div>

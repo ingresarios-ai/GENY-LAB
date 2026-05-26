@@ -14,6 +14,7 @@ import ShareModule from '../../../components/ShareModule';
 import ResultActions from '../../../components/ResultActions';
 import CompletionBanner from '../../../components/CompletionBanner';
 import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../../utils/pdfUtils';
+import { markActivityCompleted } from '../../../lib/progressStore';
 
 function TypewriterMessage({ content, onUpdate }: { content: string, onUpdate: () => void }) {
   const [displayed, setDisplayed] = useState("");
@@ -62,7 +63,11 @@ export default function TermostatoFinanciero() {
       if (searchParams.get('view') === 'results') {
         try {
           const saved = await loadActivityProgressDB('termostato');
-          if (saved && saved.metadata) { setDiagnosis(saved.metadata); setScreen('result'); }
+          if (saved && saved.metadata) { 
+            setDiagnosis(saved.metadata); 
+            setScreen('result'); 
+            markActivityCompleted('termostato');
+          }
         } catch(e) { console.error(e); }
       }
       setLoading(false);
@@ -125,15 +130,17 @@ export default function TermostatoFinanciero() {
             let jsonStr = diagText;
             const match = diagText.match(/```json([\s\S]*?)```/);
             if (match) jsonStr = match[1];
-            const parsed = JSON.parse(jsonStr.trim());
+            const parsed = JSON.parse(jsonStr);
             setDiagnosis(parsed);
             await saveActivityProgressDB('termostato', parsed, true);
+            markActivityCompleted('termostato');
             setScreen('result');
             setTimeout(()=>confetti({particleCount:120,spread:70,origin:{y:0.5},colors:['#00D4FF','#FFD700','#f97316','#ef4444']}),300);
           } catch(e) {
             console.error('Diagnosis Error:',e);
             const fb = {puntaje_global:45,temperatura_label:'Templado',categorias:{programacion:40,setpoint:50,neuronas_espejo:45,adaptacion:42,merecimiento:48,disciplina:44},arquetipo:'El Niño Inocente',arquetipo_desc:'Busca seguridad y evita el riesgo por miedo a perder lo poco que tiene.',tags_patron:['#escasez','#miedo_al_riesgo','#zona_de_confort'],fortalezas:['Conciencia de sus limitaciones','Deseo genuino de mejorar'],sombras:['Miedo paralizante ante decisiones financieras','Creencia de no merecer abundancia','Dependencia de validación externa'],diagnostico_breve:'Tu termostato financiero está calibrado en modo supervivencia. Aunque tienes la capacidad de crecer, tu programación de origen te mantiene en un rango cómodo pero limitante.',primer_paso:'Esta semana, escribe 3 creencias sobre el dinero que escuchaste en tu infancia y junto a cada una escribe una versión opuesta que te empodere.'};
             setDiagnosis(fb); await saveActivityProgressDB('termostato', fb, true);
+            markActivityCompleted('termostato');
             setScreen('result'); setTimeout(()=>confetti({particleCount:100,spread:70}),300);
           }
           setAnalyzing(false);
@@ -173,7 +180,6 @@ export default function TermostatoFinanciero() {
     y = addPdfText(doc, d.diagnostico_breve, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
     y += 8;
     
-    // Attempt to capture the radar chart
     if (chartRef.current) {
       try {
         const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#ffffff' });
@@ -198,7 +204,7 @@ export default function TermostatoFinanciero() {
       doc.setTextColor(100, 116, 139); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
       doc.text(CAT_LABELS[k]||k, M, y);
       doc.text(`${v}°`, W-M, y, {align:'right'});
-      doc.setFillColor(226, 232, 240); doc.rect(M, y+2, W-2*M, 3, 'F'); // slate-200 background
+      doc.setFillColor(226, 232, 240); doc.rect(M, y+2, W-2*M, 3, 'F');
       doc.setFillColor(0, 212, 255); doc.rect(M, y+2, (W-2*M)*(v as number)/100, 3, 'F');
       y += 8;
       
@@ -304,7 +310,6 @@ export default function TermostatoFinanciero() {
   if (screen==='chat') {
     return (
       <div className="fixed inset-x-0 top-0 md:top-16 bottom-[72px] md:bottom-0 z-[45] bg-[#080c14] flex flex-col">
-        {/* Top bar */}
         <div className="max-w-3xl w-full mx-auto px-4 pt-8 pb-2">
           <button onClick={reset} className="inline-flex items-center gap-2 text-brand-text-muted hover:text-white transition-colors uppercase font-black text-xs tracking-[0.2em]">
             <ArrowLeft className="w-4 h-4"/> Volver a Actividades
@@ -313,7 +318,6 @@ export default function TermostatoFinanciero() {
 
         <div className="flex-1 max-w-3xl w-full mx-auto px-4 pb-4 flex flex-col min-h-0">
         <div className="flex-1 flex flex-col glass-card relative overflow-hidden min-h-0">
-          {/* Chat Header */}
           <div className="px-5 py-4 border-b border-white/10 flex items-center gap-4 bg-white/5 shrink-0 z-10">
             <div className="w-10 h-10 rounded-full bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-xl shrink-0">🌡️</div>
             <div className="flex-1">
@@ -325,7 +329,6 @@ export default function TermostatoFinanciero() {
             </div>
           </div>
 
-          {/* Chat Messages */}
           <div ref={chatRef} className="flex-1 overflow-y-auto p-5 space-y-5">
             {messages.map((m,i)=>(
               <motion.div key={i} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}>
@@ -346,7 +349,6 @@ export default function TermostatoFinanciero() {
             <div ref={bottomRef} className="h-2"/>
           </div>
 
-          {/* Input Area */}
           {!analyzing&&(
             <div className="p-4 border-t border-white/10 bg-[#0d1117] shrink-0 z-10 flex gap-3 items-end">
               <textarea ref={inputRef} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}} placeholder="Escribe tu respuesta aquí..." disabled={loading||analyzing} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-[15px] text-white resize-none outline-none focus:border-brand-blue/50 focus:bg-brand-blue/5 transition-all disabled:opacity-50 min-h-[52px] max-h-[120px]" rows={1}/>
@@ -367,15 +369,12 @@ export default function TermostatoFinanciero() {
     const radarData = RADAR_KEYS.map(k=>({axis:CAT_LABELS[k]||k,value:(d.categorias||{})[k]||0}));
     return (
       <div className="max-w-5xl mx-auto px-4 pb-20">
-
-
         <CompletionBanner lessonId="termostato" />
 
         <ResultActions 
           onDownloadPDF={generatePDF} 
           onReset={reset} 
         />
-        {/* Hero */}
         <div className="grid md:grid-cols-[auto_1fr] gap-12 items-center mb-16">
           <div className="flex justify-center"><Thermometer3D score={d.puntaje_global} color={tl.color} height={320}/></div>
           <div>
@@ -388,7 +387,6 @@ export default function TermostatoFinanciero() {
             <p className="text-white/70 text-base leading-relaxed">{d.diagnostico_breve}</p>
           </div>
         </div>
-        {/* Arquetipo + Radar */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="glass-card p-8 border-t-2 border-t-[#FFD700]/40">
             <p className="text-xs font-mono text-[#FFD700] tracking-widest mb-4 uppercase">↓ Arquetipo Junguiano</p>
@@ -404,7 +402,6 @@ export default function TermostatoFinanciero() {
             </div>
           </div>
         </div>
-        {/* Bars */}
         <div className="glass-card p-8 mb-12">
           <p className="text-xs font-mono text-cyan-400 tracking-widest mb-6 uppercase">↓ Desglose por Dimensión</p>
           <div className="grid md:grid-cols-2 gap-x-10 gap-y-7">
@@ -417,7 +414,6 @@ export default function TermostatoFinanciero() {
             );})}
           </div>
         </div>
-        {/* Fortalezas + Sombras */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="glass-card p-8 border-t-2 border-t-emerald-500/40">
             <p className="text-xs font-mono text-emerald-400 tracking-widest mb-5 uppercase">↑ Fortalezas</p>
@@ -428,14 +424,39 @@ export default function TermostatoFinanciero() {
             {(d.sombras||[]).map((s:string,i:number)=>(<div key={i} className="flex gap-4 mb-4"><span className="text-sm font-mono text-red-400">0{i+1}</span><span className="text-base text-white/80 leading-relaxed">{s}</span></div>))}
           </div>
         </div>
-        {/* Primer paso */}
         <div className="glass-card p-10 border-t-2 border-t-cyan-500/40 bg-gradient-to-br from-cyan-500/5 to-[#FFD700]/5 mb-12">
           <p className="text-xs font-mono text-cyan-400 tracking-widest mb-4 uppercase">→ Primer Paso esta Semana</p>
           <p className="text-xl md:text-2xl font-semibold text-white leading-relaxed">{d.primer_paso}</p>
         </div>
 
-        <div className="mb-12">
-          <ShareModule activity="termostato" title="Termóstato Financiero" resultData={diagnosis} />
+        <div className="mt-8 mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card p-8 border border-[#01E47E]/30 bg-[#0a1f14]/50 relative overflow-hidden text-center space-y-6"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+              <span className="text-8xl">🧠</span>
+            </div>
+            <div className="space-y-2">
+              <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-green/20 text-[#01E47E] uppercase">
+                ¡Nivel Desbloqueado!
+              </span>
+              <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                Siguiente Módulo: Trampas del Dinero
+              </h3>
+              <p className="text-sm text-slate-300 max-w-md mx-auto">
+                Identifica los sesgos cognitivos que sabotean tus decisiones financieras cotidianas y desactívalos.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/app/trampas')}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#01E47E] text-black font-black uppercase tracking-widest text-xs hover:bg-[#01E47E]/90 hover:scale-[1.02] transition-all"
+            >
+              Ir a Trampas del Dinero
+              <ChevronRight className="w-4 h-4 text-black stroke-[3px]" />
+            </button>
+          </motion.div>
         </div>
 
         <div className="text-center"><p className="text-[9px] font-mono text-white/20 tracking-widest uppercase">INGRESARIOS · GENY LAB · TERMÓSTATO FINANCIERO<br/>T. HARV EKER · CARL JUNG · RIZZOLATTI · BRICKMAN & CAMPBELL · SCHULTZ</p></div>
