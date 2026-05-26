@@ -207,7 +207,8 @@ export const syncFromDB = (activityIds: string[]) => {
     }
   }
 
-  if (changed) {
-    saveProgress(progress);
+  saveProgress(progress);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('progress-synced'));
   }
 };

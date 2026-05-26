@@ -885,15 +885,15 @@ export default function MisEmociones() {
 
                 <div className="pt-6">
                   <p className="text-sm font-medium text-slate-400 mb-4">
-                    El siguiente paso: descubrir <span className="text-orange-400 font-bold">por qué o de dónde vienen tus trampas de dinero</span>.
+                    El siguiente paso: entrar en el estado de fluidez, concentración y consistencia operativa con el <span className="text-emerald-400 font-bold">Reto del Flow</span>.
                   </p>
                   <Link
-                    to="/app/trampas-dinero"
-                    className="btn-premium-orange inline-flex py-4 px-8 rounded-xl text-sm font-black uppercase tracking-widest transition-transform hover:scale-105"
+                    to="/app/flow"
+                    className="btn-premium-emerald inline-flex py-4 px-8 rounded-xl text-sm font-black uppercase tracking-widest transition-transform hover:scale-105"
                     style={{
-                      background: 'linear-gradient(135deg, #f97316 0%, #f59e0b 100%)',
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                       color: '#fff',
-                      boxShadow: '0 0 20px rgba(249,115,22,0.3)',
+                      boxShadow: '0 0 20px rgba(16,185,129,0.3)',
                     }}
                   >
                     SIGUIENTE RETO <ArrowRight className="w-5 h-5 ml-2" />
@@ -1224,15 +1224,15 @@ export default function MisEmociones() {
                     setSelDay(nextD);
                     setView("day");
                     await saveState(route, tasksDone, completedDays, diagAns, "day", nextD);
+                    navigate("/app");
                   } else {
                     setView("home");
                     await saveState(route, tasksDone, completedDays, diagAns, "home", selDay);
                   }
-                  navigate("/app");
                 }}
                 className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"
               >
-                {selDay < 10 ? "Continuar mañana" : "Volver al mapa"}
+                {selDay < 10 ? "Continuar mañana" : "Finalizar Reto"}
               </button>
             </div>
           </motion.div>

@@ -111,6 +111,20 @@ export default function LessonScreen() {
     return () => clearTimeout(timer);
   }, [lessonId]);
 
+  // Listen for progress synced event from AuthGuard
+  useEffect(() => {
+    const handleSync = () => {
+      const p = getProgress();
+      setProgress(p);
+      const lp = p.lessonProgress[lessonId || ''];
+      setVideoMarked(lp?.videoCompleted ?? false);
+      setActivityDone(lp?.activityCompleted ?? false);
+    };
+
+    window.addEventListener('progress-synced', handleSync);
+    return () => window.removeEventListener('progress-synced', handleSync);
+  }, [lessonId]);
+
   if (!lesson || !isLessonUnlocked(lesson.order)) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-5 bg-[#070b14]">
