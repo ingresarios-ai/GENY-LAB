@@ -380,11 +380,11 @@ function InteractiveSlider({
           onChange={(e) => update(i, e.target.value)}
           className="flex-1 accent-[#FF3EB0] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
         />
-        <span className={`text-2xl font-mono font-bold w-20 text-right ${isTargetRange ? "text-brand-green" : style.color}`}>
+        <span className={`text-3xl font-mono font-black w-24 text-right ${isTargetRange ? "text-brand-green" : style.color}`}>
           {val.toFixed(1)}x
         </span>
       </div>
-      <div className={`p-4 rounded-xl border text-xs leading-relaxed font-mono ${
+      <div className={`p-4 rounded-xl border text-base leading-relaxed font-mono ${
         isTargetRange
           ? "bg-brand-green/5 border-brand-green/30 text-brand-green"
           : "bg-white/[0.02] border-white/5 text-white/50"
@@ -397,6 +397,170 @@ function InteractiveSlider({
     </div>
   );
 }
+
+function formatNumberLocale(val: number, curr: string): string {
+  if (curr === 'USD') {
+    return val.toLocaleString('en-US');
+  }
+  // For COP and MXN, use spanish locale formatting (dot as thousands separator)
+  return val.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function formatCurrencyValue(value: number, curr: string): string {
+  const prefix = "$";
+  const formattedNum = formatNumberLocale(value, curr);
+  
+  if (curr === 'COP') {
+    if (value >= 1000000) {
+      const millions = value / 1000000;
+      const formattedMillions = Number(millions.toFixed(1)).toString().replace('.', ',');
+      const text = millions === 1 ? '1 millón' : `${formattedMillions} millones`;
+      return `${prefix}${formattedNum} COP (${text})`;
+    } else if (value >= 1000) {
+      const thousands = Math.round(value / 1000);
+      return `${prefix}${formattedNum} COP (${thousands} mil)`;
+    }
+    return `${prefix}${formattedNum} COP`;
+  }
+  
+  if (curr === 'MXN') {
+    return `${prefix}${formattedNum} MXN`;
+  }
+  
+  // USD
+  return `${prefix}${formattedNum} USD`;
+}
+
+const CURRENCY_CONFIGS: Record<string, {
+  label: string;
+  prefix: string;
+  suffix: string;
+  min1: number;
+  max1: number;
+  step1: number;
+  min2: number;
+  max2: number;
+  step2: number;
+  defaultVal1: number;
+  defaultVal2: number;
+  formatFormula: (monthly: number, years: number) => string;
+}> = {
+  USD: {
+    label: "Dólares (USD)",
+    prefix: "$",
+    suffix: " USD",
+    min1: 10,
+    max1: 500,
+    step1: 10,
+    min2: 1,
+    max2: 10,
+    step2: 1,
+    defaultVal1: 150,
+    defaultVal2: 5,
+    formatFormula: (monthly, years) => {
+      const totalSavedNoInterest = monthly * 12 * years;
+      let totalWithInterest = 0;
+      for(let i=0; i<years * 12; i++) {
+        totalWithInterest = (totalWithInterest + monthly) * (1 + 0.10/12);
+      }
+      return `Dejas de acumular aproximadamente ${formatCurrencyValue(Math.round(totalWithInterest), 'USD')} en ${years} años (con 10% de rendimiento anual estimado). Sin intereses, serían ${formatCurrencyValue(totalSavedNoInterest, 'USD')}.`;
+    }
+  },
+  COP: {
+    label: "Pesos Colombianos (COP)",
+    prefix: "$",
+    suffix: " COP",
+    min1: 50000,
+    max1: 2000000,
+    step1: 50000,
+    min2: 1,
+    max2: 10,
+    step2: 1,
+    defaultVal1: 500000,
+    defaultVal2: 5,
+    formatFormula: (monthly, years) => {
+      const totalSavedNoInterest = monthly * 12 * years;
+      let totalWithInterest = 0;
+      for(let i=0; i<years * 12; i++) {
+        totalWithInterest = (totalWithInterest + monthly) * (1 + 0.10/12);
+      }
+      return `Dejas de acumular aproximadamente ${formatCurrencyValue(Math.round(totalWithInterest), 'COP')} en ${years} años (con 10% de rendimiento anual estimado). Sin intereses, serían ${formatCurrencyValue(totalSavedNoInterest, 'COP')}.`;
+    }
+  },
+  MXN: {
+    label: "Pesos Mexicanos (MXN)",
+    prefix: "$",
+    suffix: " MXN",
+    min1: 200,
+    max1: 10000,
+    step1: 200,
+    min2: 1,
+    max2: 10,
+    step2: 1,
+    defaultVal1: 3000,
+    defaultVal2: 5,
+    formatFormula: (monthly, years) => {
+      const totalSavedNoInterest = monthly * 12 * years;
+      let totalWithInterest = 0;
+      for(let i=0; i<years * 12; i++) {
+        totalWithInterest = (totalWithInterest + monthly) * (1 + 0.10/12);
+      }
+      return `Dejas de acumular aproximadamente ${formatCurrencyValue(Math.round(totalWithInterest), 'MXN')} en ${years} años (con 10% de rendimiento anual estimado). Sin intereses, serían ${formatCurrencyValue(totalSavedNoInterest, 'MXN')}.`;
+    }
+  }
+};
+
+const TRADER_CURRENCY_CONFIGS: Record<string, {
+  label: string;
+  prefix: string;
+  suffix: string;
+  min1: number;
+  max1: number;
+  step1: number;
+  min2: number;
+  max2: number;
+  step2: number;
+  defaultVal1: number;
+  defaultVal2: number;
+  formatFormula: (target: number, actual: number) => string;
+}> = {
+  USD: {
+    label: "Dólares (USD)",
+    prefix: "$",
+    suffix: " USD",
+    min1: 100,
+    max1: 2000,
+    step1: 50,
+    min2: 10,
+    max2: 1000,
+    step2: 10,
+    defaultVal1: 200,
+    defaultVal2: 50,
+    formatFormula: (target, actual) => {
+      const diff = Math.max(0, target - actual);
+      const anual = diff * 100;
+      return `Estás dejando ir aproximadamente ${formatCurrencyValue(anual, 'USD')} al año por trade (calculado sobre un promedio de 100 operaciones). Esto destruye tu esperanza matemática.`;
+    }
+  },
+  COP: {
+    label: "Pesos Colombianos (COP)",
+    prefix: "$",
+    suffix: " COP",
+    min1: 400000,
+    max1: 8000000,
+    step1: 200000,
+    min2: 40000,
+    max2: 4000000,
+    step2: 40000,
+    defaultVal1: 800000,
+    defaultVal2: 200000,
+    formatFormula: (target, actual) => {
+      const diff = Math.max(0, target - actual);
+      const anual = diff * 100;
+      return `Estás dejando ir aproximadamente ${formatCurrencyValue(anual, 'COP')} al año por trade (calculado sobre un promedio de 100 operaciones). Esto destruye tu esperanza matemática.`;
+    }
+  }
+};
 
 function InteractiveCalculator({
   q,
@@ -411,34 +575,78 @@ function InteractiveCalculator({
   setResponses: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   style: any;
 }) {
-  const props = q.calculatorProps!;
-  const [val1, setVal1] = useState(() => parseInt(responses[i + '_val1'] || String(props.min1)));
-  const [val2, setVal2] = useState(() => parseInt(responses[i + '_val2'] || String(props.min2)));
+  const isTraderCalc = q.calculatorProps?.min1 === 100;
+  
+  // Load saved currency or fallback
+  const [curr, setCurr] = useState<'USD' | 'COP' | 'MXN'>(() => {
+    return (responses[i + '_curr'] as any) || 'USD';
+  });
+
+  const config = isTraderCalc 
+    ? (TRADER_CURRENCY_CONFIGS[curr] || TRADER_CURRENCY_CONFIGS.USD)
+    : (CURRENCY_CONFIGS[curr] || CURRENCY_CONFIGS.USD);
+
+  const [val1, setVal1] = useState(() => {
+    const saved = parseInt(responses[i + '_val1'] || "");
+    return isNaN(saved) ? config.defaultVal1 : saved;
+  });
+  const [val2, setVal2] = useState(() => {
+    const saved = parseInt(responses[i + '_val2'] || "");
+    return isNaN(saved) ? config.defaultVal2 : saved;
+  });
+
+  // Whenever currency changes, update sliders to fit new currency ranges
+  useEffect(() => {
+    setVal1(config.defaultVal1);
+    setVal2(config.defaultVal2);
+  }, [curr]);
 
   useEffect(() => {
-    const text = props.calcFormula(val1, val2);
+    const text = config.formatFormula(val1, val2);
     setResponses(prev => ({
       ...prev,
       [i]: text,
       [i + '_val1']: String(val1),
-      [i + '_val2']: String(val2)
+      [i + '_val2']: String(val2),
+      [i + '_curr']: curr
     }));
-  }, [val1, val2]);
+  }, [val1, val2, curr]);
 
   return (
     <div className="mt-4 space-y-5 bg-white/[0.01] border border-white/5 rounded-xl p-5">
+      {/* Currency Selector */}
+      <div className="flex items-center justify-between pb-3 border-b border-white/5">
+        <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider">Selecciona tu moneda:</span>
+        <div className="flex gap-1 bg-white/5 p-0.5 rounded-lg">
+          {Object.keys(isTraderCalc ? TRADER_CURRENCY_CONFIGS : CURRENCY_CONFIGS).map((c) => (
+            <button
+              type="button"
+              key={c}
+              onClick={() => setCurr(c as any)}
+              className={`text-[10px] font-mono px-2.5 py-1 rounded-md transition-all ${
+                curr === c
+                  ? "bg-[#FF3EB0] text-white font-bold"
+                  : "text-white/60 hover:text-white"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="space-y-2">
-        <div className="flex justify-between text-xs font-mono text-white/50">
-          <span>{props.label1}</span>
-          <span className="font-bold text-white">
-            {props.prefix1 || ""}{val1}{props.suffix1 || ""}
+        <div className="flex justify-between text-base font-mono text-white/50">
+          <span>{isTraderCalc ? q.calculatorProps?.label1 : config.label.includes("Colombianos") ? "Gasto mensual promedio (COP)" : config.label.includes("Mexicanos") ? "Gasto mensual promedio (MXN)" : "Gasto mensual promedio (USD)"}</span>
+          <span className="font-bold text-white text-base md:text-lg">
+            {formatCurrencyValue(val1, curr)}
           </span>
         </div>
         <input
           type="range"
-          min={props.min1}
-          max={props.max1}
-          step={props.step1}
+          min={config.min1}
+          max={config.max1}
+          step={config.step1}
           value={val1}
           onChange={(e) => setVal1(parseInt(e.target.value))}
           className="w-full accent-[#FF3EB0] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
@@ -446,17 +654,17 @@ function InteractiveCalculator({
       </div>
 
       <div className="space-y-2">
-        <div className="flex justify-between text-xs font-mono text-white/50">
-          <span>{props.label2}</span>
-          <span className="font-bold text-white">
-            {props.prefix2 || ""}{val2}{props.suffix2 || ""}
+        <div className="flex justify-between text-base font-mono text-white/50">
+          <span>{isTraderCalc ? q.calculatorProps?.label2 : "Plazo de proyección"}</span>
+          <span className="font-bold text-white text-base md:text-lg">
+            {isTraderCalc ? formatCurrencyValue(val2, curr) : `${val2} años`}
           </span>
         </div>
         <input
           type="range"
-          min={props.min2}
-          max={Math.min(props.max2, val1)}
-          step={props.step2}
+          min={config.min2}
+          max={isTraderCalc ? Math.min(config.max2, val1) : config.max2}
+          step={config.step2}
           value={val2}
           onChange={(e) => setVal2(parseInt(e.target.value))}
           className="w-full accent-[#FF3EB0] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
@@ -464,10 +672,10 @@ function InteractiveCalculator({
       </div>
 
       <div className="pt-3 border-t border-white/5 flex gap-2.5 items-start">
-        <Calculator className="w-4 h-4 text-brand-yellow shrink-0 mt-0.5" />
-        <div className="text-xs text-brand-yellow font-mono leading-relaxed">
+        <Calculator className="w-5 h-5 text-brand-yellow shrink-0 mt-0.5" />
+        <div className="text-base text-brand-yellow font-mono leading-relaxed">
           <span className="font-bold block mb-1">Impacto Proyectado:</span>
-          {props.calcFormula(val1, val2)}
+          {config.formatFormula(val1, val2)}
         </div>
       </div>
     </div>
@@ -887,16 +1095,16 @@ export default function TrampasDinero() {
                   </div>
 
                   {/* Question text */}
-                  <h3 className="text-[17px] font-black text-white leading-snug mb-2">
+                  <h3 className="text-xl md:text-2xl font-black text-white leading-snug mb-3">
                     {q.question}
                   </h3>
 
                   {/* Context Block */}
                   {q.context && (
-                    <div className="bg-white/[0.02] border border-white/5 rounded-lg p-3.5 mb-4 text-xs text-white/70 leading-relaxed flex gap-2.5 items-start">
-                      <Brain className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                    <div className="bg-white/[0.02] border border-white/5 rounded-lg p-4 mb-4 text-base md:text-lg text-white/90 leading-relaxed flex gap-3.5 items-start">
+                      <Brain className="w-6 h-6 text-cyan-400 shrink-0 mt-0.5" />
                       <div>
-                        <span className="font-bold text-white block mb-0.5">Concepto clave:</span>
+                        <span className="font-bold text-white text-base md:text-lg block mb-1.5">Concepto clave:</span>
                         {q.context}
                       </div>
                     </div>
@@ -904,7 +1112,7 @@ export default function TrampasDinero() {
 
                   {/* Hint */}
                   {q.hint && (
-                    <p className="text-xs text-brand-text-muted leading-relaxed mb-4">
+                    <p className="text-base text-brand-text-muted leading-relaxed mb-4">
                       {q.hint}
                     </p>
                   )}
@@ -919,7 +1127,7 @@ export default function TrampasDinero() {
                             <button
                               type="button"
                               onClick={() => update(i, opt.value)}
-                              className={`w-full text-left p-3.5 rounded-xl border text-xs font-semibold transition-all flex justify-between items-center ${
+                              className={`w-full text-left p-4 rounded-xl border text-base md:text-lg font-bold transition-all flex justify-between items-center ${
                                 isSelected
                                   ? "bg-[#FF3EB0]/10 border-[#FF3EB0] text-white"
                                   : "bg-white/[0.01] border-white/5 text-white/70 hover:bg-white/[0.03] hover:text-white"
@@ -936,7 +1144,7 @@ export default function TrampasDinero() {
                               <motion.p
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: "auto" }}
-                                className="text-[11px] text-brand-green mt-2 ml-2 leading-relaxed font-mono font-bold"
+                                className="text-sm md:text-base text-brand-green mt-2.5 ml-2 leading-relaxed font-mono font-bold"
                               >
                                 ✓ {opt.feedback}
                               </motion.p>
@@ -947,13 +1155,13 @@ export default function TrampasDinero() {
 
                       {responses[i] && q.placeholder && (
                         <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
-                          <label className="text-[10px] font-mono text-white/35 uppercase tracking-widest block mb-1.5">↓ Escribe tu reflexión o justificación:</label>
+                          <label className="text-xs font-mono text-white/40 uppercase tracking-widest block mb-1.5">↓ Escribe tu reflexión o justificación:</label>
                           <textarea
                             value={responses[i + '_text'] || ""}
                             onChange={(e) => setResponses(prev => ({ ...prev, [i + '_text']: e.target.value }))}
                             placeholder={q.placeholder}
                             rows={q.rows || 3}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-sm leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
                           />
                         </motion.div>
                       )}
@@ -988,7 +1196,7 @@ export default function TrampasDinero() {
                             type="button"
                             key={item}
                             onClick={handleCheck}
-                            className={`w-full text-left p-3.5 rounded-xl border text-xs font-semibold transition-all flex items-center gap-3 ${
+                            className={`w-full text-left p-4 rounded-xl border text-base md:text-lg font-bold transition-all flex items-center gap-3 ${
                               isChecked
                                 ? "bg-white/[0.03] border-[#FF3EB0]/30 text-white"
                                 : "bg-white/[0.01] border-white/5 text-white/60 hover:bg-white/[0.02]"
@@ -1006,13 +1214,13 @@ export default function TrampasDinero() {
 
                       {responses[i] && (
                         <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
-                          <label className="text-[10px] font-mono text-white/35 uppercase tracking-widest block mb-1.5">↓ Escribe tu reflexión o justificación:</label>
+                          <label className="text-xs font-mono text-white/40 uppercase tracking-widest block mb-1.5">↓ Escribe tu reflexión o justificación:</label>
                           <textarea
                             value={responses[i + '_text'] || ""}
                             onChange={(e) => setResponses(prev => ({ ...prev, [i + '_text']: e.target.value }))}
                             placeholder={q.placeholder}
                             rows={q.rows || 3}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-sm leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
                           />
                         </motion.div>
                       )}
@@ -1023,13 +1231,13 @@ export default function TrampasDinero() {
                     <div className="space-y-3 mt-2">
                       {q.quickTemplates && (
                         <div className="flex flex-wrap gap-1.5 mb-1.5">
-                          <span className="text-[9px] font-mono text-white/35 uppercase tracking-wider w-full mb-0.5">Plantillas rápidas recomendadas:</span>
+                          <span className="text-xs font-mono text-white/45 uppercase tracking-wider w-full mb-0.5">Plantillas rápidas recomendadas:</span>
                           {q.quickTemplates.map((t) => (
                             <button
                               type="button"
                               key={t.label}
                               onClick={() => update(i, t.text)}
-                              className="text-[9px] font-mono bg-white/5 border border-white/10 rounded px-2 py-1 text-white/80 hover:bg-[#FF3EB0]/15 hover:border-[#FF3EB0]/40 hover:text-white transition-colors"
+                              className="text-xs font-mono bg-white/5 border border-white/10 rounded px-2.5 py-1 text-white/80 hover:bg-[#FF3EB0]/15 hover:border-[#FF3EB0]/40 hover:text-white transition-colors"
                             >
                               + {t.label}
                             </button>
@@ -1041,7 +1249,7 @@ export default function TrampasDinero() {
                         onChange={(e) => update(i, e.target.value)}
                         placeholder={q.placeholder}
                         rows={q.rows || 3}
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-sm leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
                       />
                     </div>
                   )}
