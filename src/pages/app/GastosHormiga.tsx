@@ -81,7 +81,7 @@ export const GastosHormiga = () => {
 
     if (chartRef.current) {
       try {
-        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#ffffff' });
+        const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: '#0a0c14' });
         const imgData = canvas.toDataURL('image/png');
         const imgProps = doc.getImageProperties(imgData);
         const pdfWidth = W - 2*M;
