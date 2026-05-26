@@ -500,22 +500,22 @@ export const GastosHormiga = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4 mt-4">
+              <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-4 mt-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {proj.map((p, i) => (
                   <motion.div
                     key={p.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + i * 0.1 }}
-                    className={`glass-card p-4 flex flex-col items-center justify-center text-center bg-white/[0.03] ${i === 4 ? 'col-span-2 sm:col-span-3 md:col-span-1 bg-brand-green/10 border-brand-green/30' : 'border-white/10'}`}
+                    className={`snap-center shrink-0 min-w-[160px] glass-card p-4 flex flex-col items-center justify-center text-center bg-white/[0.03] ${i === 4 ? 'bg-brand-green/10 border-brand-green/30' : 'border-white/10'}`}
                   >
                     <div className="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-widest mb-2">
                       {p.years} {p.years === 1 ? 'año' : 'años'}
                     </div>
-                    <div className={`text-brand-green font-black ${p.val > 99_999_999 ? 'text-[11px] md:text-xs' : p.val > 9_999_999 ? 'text-xs md:text-sm' : 'text-base md:text-lg'} leading-tight break-all`}>
+                    <div className={`text-brand-green font-black ${p.val > 99_999_999 ? 'text-sm' : 'text-base md:text-lg'} leading-tight whitespace-nowrap`}>
                       {fmt(p.val, currency)}
                     </div>
-                    <div className="text-white/40 text-[9px] md:text-[10px] font-bold mt-2 break-all">
+                    <div className="text-white/40 text-[10px] md:text-xs font-bold mt-2">
                       {fmt(p.invested, currency)} aportes
                     </div>
                   </motion.div>
