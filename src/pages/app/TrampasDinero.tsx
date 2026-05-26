@@ -698,8 +698,8 @@ export default function TrampasDinero() {
 
   const activeQuestions = profile === 'trader' ? QUESTIONS_TRADER : QUESTIONS_GENERAL;
 
-  const answered = Object.values(responses).filter(
-    (v) => v && String(v).trim()
+  const answered = activeQuestions.filter(
+    (_, idx) => responses[idx] && String(responses[idx]).trim()
   ).length;
   const progress = (answered / TOTAL_QUESTIONS) * 100;
   const allAnswered = answered === TOTAL_QUESTIONS;
