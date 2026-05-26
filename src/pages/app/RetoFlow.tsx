@@ -81,7 +81,8 @@ export default function RetoFlow() {
       }
       setLoading(false);
     })();
-  }, [searchParams, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Persist to DB ────────────────────────────────────────────────────────
   const saveState = async (

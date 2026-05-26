@@ -46,8 +46,10 @@ export default function TermostatoFinanciero() {
           if (saved && saved.metadata) { setDiagnosis(saved.metadata); setScreen('result'); }
         } catch(e) { console.error(e); }
       }
+      setLoading(false);
     })();
-  }, [searchParams, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [messages, loading]);
   useEffect(() => { if (screen==='chat'&&!loading&&!analyzing) setTimeout(()=>inputRef.current?.focus({preventScroll:true}),100); }, [screen,loading,analyzing]);

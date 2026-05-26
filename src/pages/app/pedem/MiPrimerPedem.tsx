@@ -49,7 +49,8 @@ export default function MiPrimerPedem() {
       }
       setLoading(false);
     })();
-  }, [searchParams, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Auto-save progress
   useEffect(() => {

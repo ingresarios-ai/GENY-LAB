@@ -39,7 +39,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       // Sync before setting ready
       if (newSession?.user?.email && !synced.current) {
         synced.current = true;
-        await doSyncInBackground(newSession.user.email);
+        await Promise.race([
+          doSyncInBackground(newSession.user.email),
+          new Promise(r => setTimeout(r, 1000))
+        ]);
       }
       setSession(newSession);
       setReady(true);
@@ -52,7 +55,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         if (!ready) {
           if (data.session?.user?.email && !synced.current) {
             synced.current = true;
-            await doSyncInBackground(data.session.user.email);
+            await Promise.race([
+              doSyncInBackground(data.session.user.email),
+              new Promise(r => setTimeout(r, 1000))
+            ]);
           }
           setSession(data.session);
           setReady(true);

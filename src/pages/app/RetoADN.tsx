@@ -116,7 +116,8 @@ export default function RetoADN() {
         }
       }
     })();
-  }, [searchParams, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Scroll chat container to bottom (not the page)
   useEffect(() => {
