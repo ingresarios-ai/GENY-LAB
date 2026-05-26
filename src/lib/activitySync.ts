@@ -35,12 +35,20 @@ export async function saveActivityProgressDB(activityId: string, data: any, isCo
 export async function loadActivityProgressDB(activityId: string) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    if (!user || !user.email) return null;
+
+    const { data: enrolledUser } = await supabase
+      .from('enrolled_users')
+      .select('id')
+      .eq('email', user.email)
+      .single();
+
+    if (!enrolledUser) return null;
 
     const { data, error } = await supabase
       .from('user_activity_log')
       .select('metadata, completed_at')
-      .eq('user_id', user.id)
+      .eq('user_id', enrolledUser.id)
       .eq('activity_id', activityId)
       .single();
 
@@ -63,12 +71,20 @@ export async function loadActivityProgressDB(activityId: string) {
 export async function clearActivityProgressDB(activityId: string) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user || !user.email) return;
+
+    const { data: enrolledUser } = await supabase
+      .from('enrolled_users')
+      .select('id')
+      .eq('email', user.email)
+      .single();
+
+    if (!enrolledUser) return;
 
     await supabase
       .from('user_activity_log')
       .delete()
-      .eq('user_id', user.id)
+      .eq('user_id', enrolledUser.id)
       .eq('activity_id', activityId);
   } catch (err) {
     console.error(`Exception clearing ${activityId}:`, err);
@@ -88,12 +104,20 @@ export async function syncAllCompletedActivities() {
 export async function loadAllActivitiesProgressDB() {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+    if (!user || !user.email) return [];
+
+    const { data: enrolledUser } = await supabase
+      .from('enrolled_users')
+      .select('id')
+      .eq('email', user.email)
+      .single();
+
+    if (!enrolledUser) return [];
 
     const { data, error } = await supabase
       .from('user_activity_log')
       .select('activity_id, metadata, completed_at')
-      .eq('user_id', user.id);
+      .eq('user_id', enrolledUser.id);
 
     if (error) {
       console.error('Error loading all activities progress:', error);

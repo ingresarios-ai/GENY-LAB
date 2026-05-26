@@ -74,29 +74,25 @@ Deno.serve(async (req: Request) => {
 
     if (existing && existing.length > 0) {
       // Update existing activity log
-      const updateData: any = { metadata: metadata || {} };
-      if (is_completed) {
-        updateData.completed_at = now;
-      }
       const { error } = await supabase
         .from("user_activity_log")
-        .update(updateData)
+        .update({
+          metadata: metadata || {},
+          completed_at: is_completed ? now : null,
+        })
         .eq("id", existing[0].id);
       logError = error;
     } else {
       // Insert new activity log
-      const insertData: any = {
-        user_id: user.id,
-        activity_id,
-        activity_name: activityName,
-        metadata: metadata || {},
-      };
-      if (is_completed) {
-        insertData.completed_at = now;
-      }
       const { error } = await supabase
         .from("user_activity_log")
-        .insert(insertData);
+        .insert({
+          user_id: user.id,
+          activity_id,
+          activity_name: activityName,
+          metadata: metadata || {},
+          completed_at: is_completed ? now : null,
+        });
       logError = error;
     }
 
