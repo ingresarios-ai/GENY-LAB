@@ -56,10 +56,7 @@ export default function MisEmociones() {
     : diagScore <= 50 ? "acechando"
     : diagScore <= 75 ? "operando"
     : "alMando";
-  const diagResult = route
-    ? DIAG_R[route][diagLevel]
-    : DIAG_R.operador[diagLevel];
-  const activeQuestions = route ? DIAG_Q[route] : DIAG_Q.operador;
+  const diagResult = DIAG_R[diagLevel];
 
   // ── Load saved progress ────────────────────────────────────────────────
   useEffect(() => {
@@ -151,15 +148,8 @@ export default function MisEmociones() {
   // ── Select route ──────────────────────────────────────────────────────
   const selectRoute = async (r: RouteType) => {
     setRoute(r);
-    if (diagAns.length < 4) {
-      setDiagStep(0);
-      setDiagAns([]);
-      setView("diag");
-      await saveState(r, tasksDone, completedDays, []);
-    } else {
-      setView("home");
-      await saveState(r, tasksDone, completedDays, diagAns);
-    }
+    setView("home");
+    await saveState(r, tasksDone, completedDays, diagAns);
   };
 
   // ── Answer diagnostic ─────────────────────────────────────────────────
@@ -272,10 +262,10 @@ export default function MisEmociones() {
   // ═══════════════════════════════════════════════════════════════════════
   if (view === "hero") {
     const symptoms = [
-      { icon: "🩸", text: "Mueves el stop loss o gastas dinero por impulso" },
-      { icon: "🎰", text: "Haces revenge trading o compras para calmar el estrés" },
-      { icon: "😰", text: "Cierras ganadores temprano o postergas el ahorro" },
-      { icon: "🧠", text: "Operas o decides contra tu propio plan financiero" },
+      { icon: "🩸", text: "Mueves el stop loss \"solo esta vez\"" },
+      { icon: "🎰", text: "Haces revenge trading después de perder" },
+      { icon: "😰", text: "Cierras ganadores demasiado pronto" },
+      { icon: "🧠", text: "Operas contra tu propio plan" },
     ];
     return (
       <div className="max-w-5xl mx-auto pb-12">
@@ -305,7 +295,7 @@ export default function MisEmociones() {
                   </span>
                 </h1>
                 <p className="text-brand-text-muted font-medium text-lg md:text-xl leading-relaxed max-w-md">
-                  Carl Jung descubrió que dentro de cada persona vive una segunda personalidad inconsciente: el Saboteador. Hoy sabrás cómo influye en tu dinero, tu trading y tus decisiones financieras.
+                  Carl Jung descubrió que dentro de cada persona vive una segunda personalidad inconsciente. Para los traders, esto significa que en tu silla hay DOS operadores — y solo uno tiene un plan.
                 </p>
               </div>
 
@@ -313,7 +303,7 @@ export default function MisEmociones() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => { setView("route"); }}
+                onClick={() => { setDiagStep(0); setDiagAns([]); setView("diag"); }}
                 className="w-full md:w-auto cursor-pointer rounded-2xl px-8 py-5 transition-all group relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 40%, #991b1b 100%)',
@@ -361,9 +351,9 @@ export default function MisEmociones() {
 
                   <blockquote className="border-l-4 border-red-500/40 pl-5 py-1">
                     <p className="text-sm md:text-base text-white font-medium leading-relaxed">
-                      ¿Por qué pierdes dinero cuando <span className="text-red-500 font-black">SABES</span> que deberías ganar?
+                      ¿Por qué pierdes cuando <span className="text-red-500 font-black">SABES</span> que vas a ganar?
                       <br />
-                      ¿Por qué saboteas tus planes cuando los <span className="text-emerald-500 font-black">DISEÑASTE</span> tú?
+                      ¿Por qué ignoras tu plan cuando lo <span className="text-emerald-500 font-black">DISEÑASTE</span> tú?
                     </p>
                   </blockquote>
 
@@ -402,7 +392,7 @@ export default function MisEmociones() {
   // VIEW: DIAGNOSTIC (4 questions)
   // ═══════════════════════════════════════════════════════════════════════
   if (view === "diag") {
-    const q = activeQuestions[diagStep];
+    const q = DIAG_Q[diagStep];
     const options = [
       { label: "Sí, lo he hecho", value: "si", color: "red-500" },
       { label: "A veces", value: "aveces", color: "amber-500" },
@@ -412,7 +402,7 @@ export default function MisEmociones() {
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto space-y-8 pb-12">
         <button
-          onClick={() => { setDiagAns([]); setDiagStep(0); setView("route"); }}
+          onClick={() => { setDiagAns([]); setDiagStep(0); setView("hero"); }}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors uppercase text-sm font-bold tracking-widest"
         >
           <ChevronLeft className="w-5 h-5" /> Volver
@@ -422,12 +412,12 @@ export default function MisEmociones() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm font-bold">
             <span className="text-red-400 uppercase tracking-widest text-xs">Diagnóstico del Saboteador</span>
-            <span className="text-brand-text-muted font-mono text-xs">{diagStep + 1} / {activeQuestions.length}</span>
+            <span className="text-brand-text-muted font-mono text-xs">{diagStep + 1} / {DIAG_Q.length}</span>
           </div>
           <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${((diagStep + 1) / activeQuestions.length) * 100}%` }}
+              animate={{ width: `${((diagStep + 1) / DIAG_Q.length) * 100}%` }}
               className="h-full bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500"
             />
           </div>
@@ -506,7 +496,7 @@ export default function MisEmociones() {
     y = addPdfText(doc, 'TUS RESPUESTAS', y, { fontSize: 14, color: [15, 23, 42], fontStyle: 'bold' });
     y += 6;
 
-    activeQuestions.forEach((q, i) => {
+    DIAG_Q.forEach((q, i) => {
       y = checkPageBreak(doc, y, 20);
       
       y = addPdfText(doc, `PREGUNTA ${i+1}`, y, { fontSize: 9, color: [239, 68, 68], fontStyle: 'bold' });
@@ -515,10 +505,7 @@ export default function MisEmociones() {
       y = addPdfText(doc, q, y, { fontSize: 11, color: [15, 23, 42], fontStyle: 'bold', lineHeight: 6 });
       y += 4;
       
-      const ansLabel = diagAns[i] === 'si' ? 'Sí'
-        : diagAns[i] === 'aveces' ? 'A veces'
-        : 'Nunca';
-      y = addPdfText(doc, ansLabel, y, { fontSize: 10, color: [100, 116, 139], fontStyle: 'italic', lineHeight: 6 });
+      y = addPdfText(doc, diagAns[i] === 'si' ? 'Sí' : 'No', y, { fontSize: 10, color: [100, 116, 139], fontStyle: 'italic', lineHeight: 6 });
       y += 6;
     });
 
@@ -607,7 +594,7 @@ export default function MisEmociones() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setView(route ? "home" : "route")}
+                  onClick={() => setView("route")}
                   className="w-full cursor-pointer rounded-2xl px-6 py-6 text-center transition-all group relative overflow-hidden mt-4"
                   style={{
                     background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 40%, #991b1b 100%)',
@@ -646,10 +633,10 @@ export default function MisEmociones() {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
         <button
-          onClick={() => setView(diagAns.length >= 4 ? "result" : "hero")}
+          onClick={() => setView("result")}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors uppercase text-sm font-bold tracking-widest"
         >
-          <ChevronLeft className="w-5 h-5" /> {diagAns.length >= 4 ? "Ver diagnóstico" : "Volver al inicio"}
+          <ChevronLeft className="w-5 h-5" /> Ver diagnóstico
         </button>
 
         <div className="text-center space-y-3">

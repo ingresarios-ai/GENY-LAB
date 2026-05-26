@@ -51,79 +51,43 @@ export const PHASES: Record<string, {
 
 // ── DIAGNOSTIC ─────────────────────────────────────────────────────────────
 
-export const DIAG_Q: Record<RouteType, string[]> = {
-  operador: [
-    "¿Has movido un stop loss aunque sabías que estaba bien?",
-    "¿Has hecho 'revenge trading' después de una pérdida grande?",
-    "¿Has cerrado un trade ganador demasiado pronto por miedo?",
-    "¿Sientes que 'algo' toma el control y operas contra tu plan?",
-  ],
-  novato: [
-    "¿Has comprado algo por impulso saliendo de tu presupuesto sólo para calmar el estrés o aburrimiento?",
-    "¿Has postergado revisar tus cuentas o deudas por miedo a ver tu realidad financiera?",
-    "¿Has dejado pasar una oportunidad de ahorrar, invertir o educarte por desidia o miedo al fracaso?",
-    "¿Sientes que 'algo' toma el control de tus finanzas y gastas de más aunque te propongas no hacerlo?",
-  ]
-};
+export const DIAG_Q = [
+  "¿Has movido un stop loss aunque sabías que estaba bien?",
+  "¿Has hecho 'revenge trading' después de una pérdida grande?",
+  "¿Has cerrado un trade ganador demasiado pronto por miedo?",
+  "¿Sientes que 'algo' toma el control y operas contra tu plan?",
+];
 
-export const DIAG_R: Record<RouteType, Record<string, {
+export const DIAG_R: Record<string, {
   title: string;
   color: string;
   glow: string;
   message: string;
-}>> = {
-  operador: {
-    silencio: {
-      title: "Tu Saboteador está EN SILENCIO",
-      color: "#10b981",
-      glow: "16,185,129",
-      message: "Pero está esperando. Cada trader exitoso lo descubrió tarde — y pagó caro. Tú tienes la oportunidad de blindarte ANTES de que despierte.",
-    },
-    acechando: {
-      title: "Tu Saboteador tiene PIE en la PUERTA",
-      color: "#f59e0b",
-      glow: "245,158,11",
-      message: "Ya hace ruido. Aún no controla — pero está ganando terreno. Detenerlo ahora cuesta días. En 6 meses costará miles.",
-    },
-    operando: {
-      title: "Tu Saboteador está OPERANDO contigo",
-      color: "#f97316",
-      glow: "249,115,22",
-      message: "Y tú estás pagando la cuenta. Cada trade es 50% tuyo, 50% suyo. La diferencia entre perder y ganar consistentemente está en desactivarlo. AHORA.",
-    },
-    alMando: {
-      title: "Tu Saboteador está al MANDO",
-      color: "#ea580c",
-      glow: "234,88,12",
-      message: "Esto es una emergencia. No es tu culpa — pero SÍ es tu responsabilidad. Cada día que esperas, le das más poder.",
-    },
+}> = {
+  silencio: {
+    title: "Tu Saboteador está EN SILENCIO",
+    color: "#10b981",
+    glow: "16,185,129",
+    message: "Pero está esperando. Cada trader exitoso lo descubrió tarde — y pagó caro. Tú tienes la oportunidad de blindarte ANTES de que despierte.",
   },
-  novato: {
-    silencio: {
-      title: "Tu Saboteador está EN SILENCIO",
-      color: "#10b981",
-      glow: "16,185,129",
-      message: "Pero está al acecho. La impulsividad y el autosabotaje financiero suelen despertarse en momentos inesperados. Tienes la oportunidad de blindar tu mente y tu relación con el dinero antes de empezar a arriesgar capital.",
-    },
-    acechando: {
-      title: "Tu Saboteador tiene PIE en la PUERTA",
-      color: "#f59e0b",
-      glow: "245,158,11",
-      message: "Ya hace ruido en tus finanzas. Pequeños gastos emocionales o la procrastinación para tomar decisiones clave están ganando terreno. Detenerlo ahora te ahorrará dolores de cabeza futuros.",
-    },
-    operando: {
-      title: "Tu Saboteador está TOMANDO las RIENDAS",
-      color: "#f97316",
-      glow: "249,115,22",
-      message: "Y tú estás pagando la cuenta con tus hábitos diarios. La impulsividad o el miedo al fracaso dictan tus pasos, afectando tu capacidad de ahorro y tu libertad financiera. Es hora de desactivarlo.",
-    },
-    alMando: {
-      title: "Tu Saboteador tiene el CONTROL de tus finanzas",
-      color: "#ea580c",
-      glow: "234,88,12",
-      message: "Esto requiere tu atención inmediata. Sientes parálisis ante las oportunidades o tomas decisiones por puro impulso emocional. No es tu culpa (es un patrón aprendido), pero sí es tu responsabilidad tomar el control hoy.",
-    },
-  }
+  acechando: {
+    title: "Tu Saboteador tiene PIE en la PUERTA",
+    color: "#f59e0b",
+    glow: "245,158,11",
+    message: "Ya hace ruido. Aún no controla — pero está ganando terreno. Detenerlo ahora cuesta días. En 6 meses costará miles.",
+  },
+  operando: {
+    title: "Tu Saboteador está OPERANDO contigo",
+    color: "#f97316",
+    glow: "249,115,22",
+    message: "Y tú estás pagando la cuenta. Cada trade es 50% tuyo, 50% suyo. La diferencia entre perder y ganar consistentemente está en desactivarlo. AHORA.",
+  },
+  alMando: {
+    title: "Tu Saboteador está al MANDO",
+    color: "#ea580c",
+    glow: "234,88,12",
+    message: "Esto es una emergencia. No es tu culpa — pero SÍ es tu responsabilidad. Cada día que esperas, le das más poder.",
+  },
 };
 
 // ── DAYS ───────────────────────────────────────────────────────────────────
