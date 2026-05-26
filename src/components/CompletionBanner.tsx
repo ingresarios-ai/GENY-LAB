@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, Lock } from 'lucide-react';
 import { isLessonCompleted } from '../lib/progressStore';
 import { syncActivityToSupabase } from '../lib/activitySync';
+import { LESSONS } from '../lib/lessons';
 
 interface CompletionBannerProps {
   lessonId: string;
@@ -21,12 +22,19 @@ const CompletionBanner = forwardRef<HTMLDivElement, CompletionBannerProps>(
       }
     }, [completed, lessonId]);
 
+    const currentLesson = LESSONS.find(l => l.id === lessonId);
+    const nextLesson = currentLesson ? LESSONS.find(l => l.order === currentLesson.order + 1) : null;
+
     const handleAction = () => {
       if (disabled) return;
       if (!completed) {
         navigate(`/app/leccion/${lessonId}?action=complete`);
       } else {
-        navigate(`/app/leccion/${lessonId}`);
+        if (nextLesson) {
+          navigate(`/app/leccion/${nextLesson.id}`);
+        } else {
+          navigate('/app/diagnostico');
+        }
       }
     };
 
@@ -74,9 +82,14 @@ const CompletionBanner = forwardRef<HTMLDivElement, CompletionBannerProps>(
                 Completar Actividad
                 <ChevronRight className="w-5 h-5" />
               </>
+            ) : nextLesson ? (
+              <>
+                Siguiente Módulo
+                <ChevronRight className="w-5 h-5" />
+              </>
             ) : (
               <>
-                Regresar
+                Ver Diagnóstico
                 <ChevronRight className="w-5 h-5" />
               </>
             )}

@@ -437,7 +437,15 @@ export default function LessonScreen() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setShowLevelUp(false)}
+            onClick={() => {
+              setShowLevelUp(false);
+              const nextL = LESSONS.find(l => l.order === lesson.order + 1);
+              if (nextL) {
+                setShowModuleUnlocked(true);
+              } else {
+                navigate('/app/diagnostico');
+              }
+            }}
             className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-md flex items-center justify-center flex-col cursor-pointer"
           >
             <motion.div
@@ -485,7 +493,10 @@ export default function LessonScreen() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setShowModuleUnlocked(false)}
+            onClick={() => {
+              setShowModuleUnlocked(false);
+              navigate(`/app/leccion/${nextLesson.id}`);
+            }}
             className="fixed inset-0 z-[300] bg-[#05080f]/95 backdrop-blur-md flex items-center justify-center flex-col cursor-pointer"
           >
             <motion.div
