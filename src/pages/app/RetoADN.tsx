@@ -215,9 +215,12 @@ export default function RetoADN() {
       if (isDone || newTurns >= 11) {
         // Add transition message so it doesn't feel abrupt
         const transitionMsg = "Perfecto. Ya tengo toda la información que necesito. Voy a activar el análisis profundo de tu ADN Financiero — dame unos segundos para procesar tus patrones, contradicciones y fortalezas.";
+        const delay1 = clean.length * 15 + 400;
+        const delay2 = delay1 + transitionMsg.length * 15 + 2500;
+        
         setTimeout(() => {
           setMessages(prev => [...prev, { role: "assistant", content: transitionMsg }]);
-        }, 800);
+        }, delay1);
 
         // Wait for the user to read the message, then start analysis
         setTimeout(async () => {
@@ -251,7 +254,7 @@ export default function RetoADN() {
             setTimeout(() => confetti({ particleCount: 100, spread: 70 }), 300);
           }
           setAnalyzing(false);
-        }, 6000);
+        }, delay2);
       }
     } catch (e) {
       console.error(e);

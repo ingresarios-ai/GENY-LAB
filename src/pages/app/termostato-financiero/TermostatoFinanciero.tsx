@@ -115,7 +115,9 @@ export default function TermostatoFinanciero() {
       setMessages([...updated,{role:'assistant',content:clean}]); setLoading(false);
       if (isDone||newTurns>=11) {
         const transMsg = 'Perfecto. Ya tengo toda la información que necesito. Voy a procesar tu perfil de termostato financiero — dame unos segundos para analizar tus patrones y generar el diagnóstico.';
-        setTimeout(()=>setMessages(prev=>[...prev,{role:'assistant',content:transMsg}]),800);
+        const delay1 = clean.length * 15 + 400;
+        const delay2 = delay1 + transMsg.length * 15 + 2500;
+        setTimeout(()=>setMessages(prev=>[...prev,{role:'assistant',content:transMsg}]), delay1);
         setTimeout(async()=>{
           setAnalyzing(true);
           try {
@@ -135,7 +137,7 @@ export default function TermostatoFinanciero() {
             setScreen('result'); setTimeout(()=>confetti({particleCount:100,spread:70}),300);
           }
           setAnalyzing(false);
-        },6000);
+        }, delay2);
       }
     } catch(e) {
       console.error(e);
