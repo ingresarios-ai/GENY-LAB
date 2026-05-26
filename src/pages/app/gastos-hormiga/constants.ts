@@ -46,9 +46,9 @@ export function getRecommendation(monthlyTotal: number, currencyId: string): Rec
     };
   }
   return {
-    title: 'Portafolio Income completo — metodología GENY LAB',
+    title: 'Portafolio de ingresos completo — metodología GENY LAB',
     instruments: ['JEPQ', 'SCHD', 'VCIT', 'BTAL'],
-    desc: 'Con este capital puedes construir el portafolio que Juan Fernando Villegas enseña: JEPQ (ingresos), SCHD (dividendos), VCIT (bonos), BTAL (cobertura anticrisis).',
+    desc: 'Cada activo cumple un rol dentro del sistema, y con este capital puedes construir el portafolio que Juan Fernando Villegas enseña.',
     highlight: 'Este es el portafolio real de GENY LAB. Únete para aprenderlo paso a paso con el método PEDEM.',
   };
 }

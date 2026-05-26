@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
-import { TrendingUp, ChevronRight, ChevronLeft, ArrowLeft, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { TrendingUp, ChevronRight, ChevronLeft, ArrowLeft, ArrowRight, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
@@ -27,6 +27,14 @@ function buildProjections(monthlyTotal: number): Projection[] {
     return { label: `${y}a`, years: y, val: Math.round(val), invested: Math.round(monthlyTotal * n) };
   });
 }
+
+const INSTRUMENT_DESCRIPTIONS: Record<string, string> = {
+  'JEPQ': 'Generar ingresos',
+  'SCHD': 'Pagar dividendos',
+  'VCIT': 'Dar estabilidad',
+  'BTAL': 'Proteger el capital',
+  'VTI': 'Crecimiento a largo plazo'
+};
 
 // ── Main Component ─────────────────────────────────────────────────────────
 export const GastosHormiga = () => {
@@ -566,14 +574,19 @@ export const GastosHormiga = () => {
               </div>
               <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white">{rec.title}</h3>
 
-              <div className="flex flex-wrap gap-2 md:gap-3">
+              <div className="flex flex-col gap-3">
                 {rec.instruments.map(ins => (
-                  <span
-                    key={ins}
-                    className="bg-brand-blue/15 text-brand-blue border border-brand-blue/30 rounded-xl px-4 py-2 text-xs md:text-sm font-black uppercase tracking-widest shadow-[0_0_15px_rgba(0,209,255,0.1)]"
-                  >
-                    {ins}
-                  </span>
+                  <div key={ins} className="flex items-center gap-3">
+                    <span className="bg-brand-blue/15 text-brand-blue border border-brand-blue/30 rounded-xl px-4 py-2 text-xs md:text-sm font-black uppercase tracking-widest shadow-[0_0_15px_rgba(0,209,255,0.1)] w-24 text-center shrink-0">
+                      {ins}
+                    </span>
+                    {INSTRUMENT_DESCRIPTIONS[ins] && (
+                      <div className="flex items-center gap-2">
+                        <ArrowRight className="w-4 h-4 text-white/40 shrink-0" />
+                        <span className="text-white/80 text-sm md:text-base font-medium">{INSTRUMENT_DESCRIPTIONS[ins]}</span>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
 
