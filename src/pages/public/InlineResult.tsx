@@ -272,7 +272,7 @@ export default function InlineResult() {
             to="/"
             className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-blue/10 border border-brand-blue/30 text-brand-blue text-[10px] font-black uppercase tracking-widest hover:bg-brand-blue/20 transition-all"
           >
-            Probar gratis <ArrowRight className="w-3 h-3" />
+            Conocer Geny Lab <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
       </div>
