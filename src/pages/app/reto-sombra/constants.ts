@@ -344,15 +344,15 @@ export const DAYS: DayData[] = [
   {
     day: 8, phase: "dominar", title: "Operar con tu Saboteador como Aliado", icon: "🤝",
     hook: "No vas a eliminarlo. Vas a contratarlo.",
-    quote: "\"La integración expande la consciencia y libera la energía que se gastaba en luchar contra ella.\" — IAAP",
+    quote: "\"La integración expande la conciencia y libera la energía que se gastaba en luchar contra ella.\" — IAAP",
     teaching: "NO vas a eliminar a tu Saboteador. Eso es imposible. Vas a CONTRATARLO. La energía que él usa para sabotearte se convierte en combustible cuando lo integras. Un trader completo NO es el que nunca siente miedo — es el que siente miedo Y opera con disciplina.",
     routes: {
       novato: {
         context: "Hoy no eliminas a tu Saboteador — lo conviertes en tu sistema de alarma temprana. Su miedo se vuelve tu prudencia. Su impulsividad, tu capacidad de acción rápida.",
         exercises: [
           { type: "journal", icon: "✍️", title: "Reglas de Vida Integradas", time: "25 min", inst: "Reescribe tus reglas financieras incluyendo a tu Saboteador como aliado. Antes: 'Nunca gastar por impulso'. Integrado: 'Cuando siento impulso, pauso 24h. El impulso me INFORMA pero no me gobierna'. Reescribe 5 reglas." },
-          { type: "meditation", icon: "🧘", title: "Ritual de Mañana Integrado", time: "10 min", inst: "Establece tu nuevo ritual diario realizando esta rutina en orden:\n\n1. Respiración 4-7-8 (calma tu sistema nervioso × 3 ciclos):\n   • Inhala en 4 segundos.\n   • Sostén durante 7 segundos.\n   • Exhala completamente en 8 segundos.\n2. Pregúntate: '¿Cómo está mi Saboteador hoy?' y escucha tu cuerpo.\n3. Pregúntate: '¿Mi máscara de yo ideal está demasiado rígida hoy?'\n4. Declara tu intención del día: 'Hoy actúo y decido desde mi totalidad'.\n\nPractica este ritual hoy y conviértelo en tu ancla matutina." },
-          { type: "practice", icon: "🎯", title: "Un Día Integrado", time: "Durante el día", inst: "Pasa cada decisión importante por un doble filtro de consciencia preguntándote:\n• ¿Viene de mi yo racional?\n• ¿Viene de mi Saboteador?\n• ¿O es una elección desde mi totalidad?\n\nAl final del día, anota cuántas decisiones de cada tipo tomaste en tu cuaderno. Tu objetivo es que la gran mayoría de tus elecciones sean integradas." },
+          { type: "meditation", icon: "🧘", title: "Ritual de Mañana Integrado", time: "10 min", inst: "Establece tu nuevo ritual diario realizando esta rutina en orden:\n\n1. Respiración 4-7-8 (calma tu sistema nervioso × 3 ciclos):\n   • Inhala en 4 segundos.\n   • Sostén durante 7 segundos.\n   • Exhala completamente en 8 segundos.\n2. Pregúntate: '¿Cómo está mi Saboteador hoy?' y escucha tu cuerpo.\n3. Pregúntate: '¿Mi máscara de \"yo ideal\" está demasiado rígida hoy?'\n4. Declara tu intención del día: 'Hoy actúo y decido desde mi totalidad'.\n\nPractica este ritual hoy y conviértelo en tu ancla matutina." },
+          { type: "practice", icon: "🎯", title: "Un Día Integrado", time: "Durante el día", inst: "Pasa cada decisión importante por un doble filtro de conciencia preguntándote:\n• ¿Viene de mi yo racional?\n• ¿Viene de mi Saboteador?\n• ¿O es una elección desde mi totalidad?\n\nAl final del día, anota cuántas decisiones de cada tipo tomaste en tu cuaderno. Tu objetivo es que la gran mayoría de tus elecciones sean integradas." },
           { type: "reflection", icon: "🔍", title: "% de Integración", time: "5 min", inst: "¿Qué porcentaje de tus decisiones de hoy fueron 'integradas'? Anota el número. Es tu nuevo KPI personal." },
         ],
       },
@@ -362,7 +362,7 @@ export const DAYS: DayData[] = [
           { type: "journal", icon: "✍️", title: "Reglas de Trading Integradas", time: "25 min", inst: "Reescribe TODAS tus reglas incluyendo al Saboteador como aliado. 'Reconozco mis emociones antes de cada trade. Si detecto Saboteador activo, pauso 15 min. Las emociones me INFORMAN pero no me gobiernan'. Este documento es tu nuevo edge." },
           { type: "meditation", icon: "🧘", title: "Ritual Pre-Trading Integrado", time: "10 min", inst: "Establece tu ritual de pre-trading antes de encender las pantallas:\n\n1. Respiración 4-7-8 (calma tu sistema nervioso × 3 ciclos):\n   • Inhala en 4 segundos.\n   • Sostén durante 7 segundos.\n   • Exhala completamente en 8 segundos.\n2. Pregúntate: '¿Cómo está mi Saboteador hoy?' y siente tu estado físico.\n3. Pregúntate: '¿Mi máscara de trader ideal está demasiado rígida?'\n4. Declara tu intención: 'Hoy opero y gestiono desde la totalidad'.\n5. Abre tu plataforma de trading de forma pausada.\n\nRepite esto al iniciar cada sesión de trading." },
           { type: "practice", icon: "📊", title: "PEDEM + Saboteador", time: "Durante tu sesión", inst: "Agrega columna 'Estado Saboteador' a tu PEDEM. Para cada trade: ¿estado emocional? ¿Saboteador activo? ¿Operé desde totalidad o desde máscara? Calcula tu % de trades integrados." },
-          { type: "reflection", icon: "🔍", title: "Score de Integración", time: "10 min", inst: "Cada trade puntúa 1-10: Consciencia / Ejecución / Manejo de Saboteador / Flow. Promedia. Meta: >7. Es el número que importa más que tu P&L diario." },
+          { type: "reflection", icon: "🔍", title: "Score de Integración", time: "10 min", inst: "Cada trade puntúa 1-10: Conciencia / Ejecución / Manejo de Saboteador / Flow. Promedia. Meta: >7. Es el número que importa más que tu P&L diario." },
         ],
       },
     },
@@ -415,7 +415,7 @@ export const DAYS: DayData[] = [
         exercises: [
           { type: "journal", icon: "✍️", title: "Antes y Después del Trader", time: "20 min", inst: "MI TRADING HACE 10 DÍAS: ¿Cómo operaba? ¿Qué me controlaba? MI TRADING HOY: ¿Cómo opero ahora? ¿Qué integré? Evidencia concreta. La prueba de que ya no eres el mismo." },
           { type: "meditation", icon: "🧘", title: "Ceremonia de Cierre", time: "15 min", inst: "Antes de iniciar tu visualización final, realiza la respiración de calma 4-7-8 por 5 ciclos:\n• Inhala en 4 segundos.\n• Retén el aire durante 7 segundos.\n• Exhala lento durante 8 segundos.\n\nAl terminar, visualiza a tu Saboteador trader frente a ti. Estrecha su mano y declara con firmeza: 'Somos uno. Operamos y gestionamos desde la totalidad'. Abre los ojos sintiendo tu integración." },
-          { type: "practice", icon: "📊", title: "El Trade de Individuación", time: "Durante tu sesión", inst: "Opera tu mejor setup con TODO: ritual pre-trading, consciencia de Saboteador, PEDEM 2.0, flow activado. NO importa el resultado — importa la calidad del proceso. Es tu declaración pública." },
+          { type: "practice", icon: "📊", title: "El Trade de Individuación", time: "Durante tu sesión", inst: "Opera tu mejor setup con TODO: ritual pre-trading, conciencia de Saboteador, PEDEM 2.0, flow activado. NO importa el resultado — importa la calidad del proceso. Es tu declaración pública." },
           { type: "reflection", icon: "🔍", title: "Manifiesto + Invitación", time: "15 min", inst: "Escribe tu Manifiesto del Trader Integrado en primera persona. Luego: ¿qué trader específico necesita este reto? Compártelo AHORA." },
         ],
       },
