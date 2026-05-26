@@ -12,6 +12,25 @@ import ShareModule from "../../components/ShareModule";
 import ResultActions from "../../components/ResultActions";
 import CompletionBanner from "../../components/CompletionBanner";
 
+function TypewriterMessage({ content, onUpdate }: { content: string, onUpdate: () => void }) {
+  const [displayed, setDisplayed] = useState("");
+  const updateRef = useRef(onUpdate);
+  updateRef.current = onUpdate;
+  
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      setDisplayed(content.slice(0, i + 1));
+      i++;
+      updateRef.current();
+      if (i >= content.length) clearInterval(timer);
+    }, 15);
+    return () => clearInterval(timer);
+  }, [content]);
+
+  return <>{displayed}</>;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    DNA CANVAS ANIMATION
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -119,11 +138,15 @@ export default function RetoADN() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Scroll chat container to bottom (not the page)
-  useEffect(() => {
+  const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
+  };
+
+  // Scroll chat container to bottom (not the page)
+  useEffect(() => {
+    scrollToBottom();
   }, [messages, loading]);
 
   // Focus input
@@ -418,7 +441,11 @@ export default function RetoADN() {
                     : "bg-[#0d1117] border border-white/10 rounded-2xl rounded-tl-sm text-slate-200"
                   }
                 `}>
-                  {m.content}
+                  {m.role === "user" ? (
+                    m.content
+                  ) : (
+                    <TypewriterMessage content={m.content} onUpdate={scrollToBottom} />
+                  )}
                 </div>
               </motion.div>
             ))}

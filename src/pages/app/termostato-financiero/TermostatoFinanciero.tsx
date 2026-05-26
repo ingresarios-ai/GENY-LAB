@@ -15,6 +15,25 @@ import ResultActions from '../../../components/ResultActions';
 import CompletionBanner from '../../../components/CompletionBanner';
 import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../../utils/pdfUtils';
 
+function TypewriterMessage({ content, onUpdate }: { content: string, onUpdate: () => void }) {
+  const [displayed, setDisplayed] = useState("");
+  const updateRef = useRef(onUpdate);
+  updateRef.current = onUpdate;
+  
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      setDisplayed(content.slice(0, i + 1));
+      i++;
+      updateRef.current();
+      if (i >= content.length) clearInterval(timer);
+    }, 15);
+    return () => clearInterval(timer);
+  }, [content]);
+
+  return <>{displayed}</>;
+}
+
 function Spinner() {
   return (<div className="flex items-center gap-1.5 py-1">{[0,1,2].map(i=>(<motion.div key={i} className="w-2 h-2 rounded-full bg-cyan-400" animate={{scale:[.8,1,.8],opacity:[.3,1,.3]}} transition={{repeat:Infinity,duration:1.2,delay:i*.2,ease:"easeInOut"}}/>))}</div>);
 }
@@ -51,7 +70,15 @@ export default function TermostatoFinanciero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [messages, loading]);
+  const scrollToBottom = () => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
   useEffect(() => { if (screen==='chat'&&!loading&&!analyzing) setTimeout(()=>inputRef.current?.focus({preventScroll:true}),100); }, [screen,loading,analyzing]);
 
   const callEdge = async (msgs: any[], mode: string) => {
@@ -295,7 +322,11 @@ export default function TermostatoFinanciero() {
             {messages.map((m,i)=>(
               <motion.div key={i} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}>
                 <div className={`max-w-[85%] px-5 py-3.5 text-[15px] leading-relaxed ${m.role==='user'?'bg-brand-blue/15 border border-brand-blue/30 rounded-2xl rounded-tr-sm text-white':'bg-[#0d1117] border border-white/10 rounded-2xl rounded-tl-sm text-slate-200'}`}>
-                  {m.content}
+                  {m.role === 'user' ? (
+                    m.content
+                  ) : (
+                    <TypewriterMessage content={m.content} onUpdate={scrollToBottom} />
+                  )}
                 </div>
               </motion.div>
             ))}
