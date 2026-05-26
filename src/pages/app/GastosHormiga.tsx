@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
-import { TrendingUp, ChevronRight, ArrowLeft, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { TrendingUp, ChevronRight, ChevronLeft, ArrowLeft, Wallet, Share2, RefreshCcw, Copy, Check, X as XIcon, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
@@ -49,6 +49,14 @@ export const GastosHormiga = () => {
   );
 
   const chartRef = React.useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scrollSlider = (direction: 'left' | 'right') => {
+    if (sliderRef.current) {
+      const scrollAmount = direction === 'left' ? -200 : 200;
+      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   const generatePDF = async () => {
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -500,26 +508,45 @@ export const GastosHormiga = () => {
                 </p>
               </div>
 
-              <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-4 mt-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {proj.map((p, i) => (
-                  <motion.div
-                    key={p.label}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1 }}
-                    className={`snap-center shrink-0 min-w-[160px] glass-card p-4 flex flex-col items-center justify-center text-center bg-white/[0.03] ${i === 4 ? 'bg-brand-green/10 border-brand-green/30' : 'border-white/10'}`}
-                  >
-                    <div className="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-widest mb-2">
-                      {p.years} {p.years === 1 ? 'año' : 'años'}
-                    </div>
-                    <div className={`text-brand-green font-black ${p.val > 99_999_999 ? 'text-sm' : 'text-base md:text-lg'} leading-tight whitespace-nowrap`}>
-                      {fmt(p.val, currency)}
-                    </div>
-                    <div className="text-white/40 text-[10px] md:text-xs font-bold mt-2">
-                      {fmt(p.invested, currency)} aportes
-                    </div>
-                  </motion.div>
-                ))}
+              <div className="relative group">
+                <button 
+                  onClick={() => scrollSlider('left')}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -ml-3 z-10 bg-[#0a0c14]/90 p-2 rounded-full border border-white/10 text-white/50 hover:text-white opacity-0 group-hover:opacity-100 transition-all hidden md:flex hover:scale-110"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                <div 
+                  ref={sliderRef}
+                  className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-4 mt-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+                >
+                  {proj.map((p, i) => (
+                    <motion.div
+                      key={p.label}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.1 }}
+                      className={`snap-center shrink-0 min-w-[160px] glass-card p-4 flex flex-col items-center justify-center text-center bg-white/[0.03] ${i === 4 ? 'bg-brand-green/10 border-brand-green/30' : 'border-white/10'}`}
+                    >
+                      <div className="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-widest mb-2">
+                        {p.years} {p.years === 1 ? 'año' : 'años'}
+                      </div>
+                      <div className={`text-brand-green font-black ${p.val > 99_999_999 ? 'text-sm' : 'text-base md:text-lg'} leading-tight whitespace-nowrap`}>
+                        {fmt(p.val, currency)}
+                      </div>
+                      <div className="text-white/40 text-[10px] md:text-xs font-bold mt-2">
+                        {fmt(p.invested, currency)} aportes
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <button 
+                  onClick={() => scrollSlider('right')}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 -mr-3 z-10 bg-[#0a0c14]/90 p-2 rounded-full border border-white/10 text-white/50 hover:text-white opacity-0 group-hover:opacity-100 transition-all hidden md:flex hover:scale-110"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
               </div>
 
               <div className="p-5 bg-brand-green/10 rounded-2xl border border-brand-green/20 mt-6 text-center shadow-[0_0_20px_rgba(1,228,126,0.1)]">
