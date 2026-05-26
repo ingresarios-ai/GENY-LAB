@@ -21,9 +21,12 @@ import confetti from "canvas-confetti";
 interface Question {
   type: "comprensión" | "aplicación" | "acción";
   question: string;
+  context?: string;
   hint?: string;
   placeholder: string;
   inputType?: "number";
+  prefix?: string;
+  suffix?: string;
   rows?: number;
 }
 
