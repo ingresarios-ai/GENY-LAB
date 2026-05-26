@@ -29,7 +29,7 @@ interface Question {
 
 const RETO = {
   name: "TRAMPAS DEL DINERO",
-  liveTitle: "Tu cerebro está diseñado para hacerte perder dinero",
+  subtitle: "Tu cerebro está diseñado para hacerte perder dinero",
   intro:
     "Acabas de conocer las 5 trampas cognitivas que sabotean cada decisión financiera están identificadas. Ahora toca bajarlas a tu realidad. Responde honesto — no es examen, es espejo.",
   questions: [
@@ -339,9 +339,8 @@ export default function TrampasDinero() {
                 </h1>
 
                 <p className="text-brand-text-muted text-sm md:text-base leading-relaxed mt-4">
-                  Post-LIVE:{" "}
                   <span className="text-white font-medium">
-                    "{RETO.liveTitle}"
+                    {RETO.subtitle}
                   </span>
                 </p>
               </div>
@@ -447,14 +446,13 @@ export default function TrampasDinero() {
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase text-brand-text-muted font-bold font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF3EB0]" />
-                POST-LIVE · APLICACIÓN INMEDIATA
+                RETO · APLICACIÓN INMEDIATA
               </div>
               <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
-                Bajemos el LIVE al papel.
+                Bajemos el contenido al papel.
               </h1>
               <p className="text-brand-text-muted text-sm leading-relaxed font-medium">
-                10 preguntas. Cada una hace click con algo que te dije en
-                vivo. Respóndelas con honestidad — son para ti.
+                10 preguntas. Cada una hace click con algo de lo que hemos visto. Respóndelas con honestidad — son para ti.
               </p>
             </div>
 
