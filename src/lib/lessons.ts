@@ -101,7 +101,7 @@ export const LESSONS: Lesson[] = [
     order: 4,
     emoji: '🧠',
     title: 'Trampas\ndel Dinero',
-    subtitle: '5 sesgos cognitivos que te cuestan dinero',
+    subtitle: 'Descubre los sesgos cognitivos que te cuestan dinero',
     description: 'Tu cerebro te engaña con el dinero. Identifica los sesgos que sabotean tus decisiones financieras.',
     videoUrl: '6a10b3eca41e48882e55b9b8',
     activityRoute: '/app/trampas',

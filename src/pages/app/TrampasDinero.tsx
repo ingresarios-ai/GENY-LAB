@@ -29,9 +29,9 @@ interface Question {
 
 const RETO = {
   name: "TRAMPAS DEL DINERO",
-  subtitle: "Tu cerebro está diseñado para hacerte perder dinero",
+  subtitle: "Tu cerebro está programado evolutivamente para tomar decisiones financieras equivocadas.",
   intro:
-    "Acabas de conocer las 5 trampas cognitivas que sabotean cada decisión financiera están identificadas. Ahora toca bajarlas a tu realidad. Responde honesto — no es examen, es espejo.",
+    "Las trampas cognitivas sabotean silenciosamente tus decisiones financieras. Este ejercicio te ayudará a identificar cómo te afectan en tu día a día para que puedas neutralizarlas. Responde con total honestidad: esto no es un examen, es un espejo.",
   questions: [
     {
       type: "comprensión" as const,
@@ -45,7 +45,7 @@ const RETO = {
       type: "comprensión" as const,
       question:
         "Según Kahneman & Tversky: ¿cuántas veces más duele perder $100 que el placer de ganar $100?",
-      hint: "El dato exacto que dije en el LIVE",
+      hint: "El dato exacto que vimos en la lección",
       placeholder: "",
       inputType: "number" as const,
     },
