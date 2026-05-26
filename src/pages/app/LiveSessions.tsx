@@ -47,7 +47,10 @@ export default function LiveSessions() {
         
         const now = new Date();
         
-        if (now > session3End) {
+        const searchParams = new URLSearchParams(window.location.search);
+        const forceExpired = searchParams.get('test') === 'expired';
+        
+        if (now > session3End || forceExpired) {
           setIsExpired(true);
           setSessionCount(3);
         } else if (now > session2) {
