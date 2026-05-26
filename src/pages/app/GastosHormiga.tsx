@@ -512,10 +512,10 @@ export const GastosHormiga = () => {
                     <div className="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-widest mb-2">
                       {p.years} {p.years === 1 ? 'año' : 'años'}
                     </div>
-                    <div className={`text-brand-green font-black ${p.val > 9_999_999 ? 'text-sm md:text-base' : 'text-base md:text-lg'} leading-tight`}>
+                    <div className={`text-brand-green font-black ${p.val > 99_999_999 ? 'text-[11px] md:text-xs' : p.val > 9_999_999 ? 'text-xs md:text-sm' : 'text-base md:text-lg'} leading-tight break-all`}>
                       {fmt(p.val, currency)}
                     </div>
-                    <div className="text-white/40 text-[10px] md:text-xs font-bold mt-2">
+                    <div className="text-white/40 text-[9px] md:text-[10px] font-bold mt-2 break-all">
                       {fmt(p.invested, currency)} aportes
                     </div>
                   </motion.div>
