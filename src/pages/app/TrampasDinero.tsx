@@ -846,13 +846,13 @@ export default function TrampasDinero() {
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase text-brand-text-muted font-bold font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF3EB0]" />
-                RETO · APLICACIÓN INMEDIATA
+                RETO · EVALUACIÓN CLAVE
               </div>
               <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
-                Bajemos el contenido al papel.
+                Identifica tus trampas del dinero.
               </h1>
               <p className="text-brand-text-muted text-sm leading-relaxed font-medium">
-                10 preguntas interactivas. Cada una hace click con algo de lo que hemos visto. Respóndelas con honestidad — son para ti.
+                10 preguntas interactivas diseñadas para revelar tus patrones de comportamiento inconscientes. Responde con total honestidad.
               </p>
             </div>
 
