@@ -76,6 +76,7 @@ export default function RetoFlow() {
           if (r.completedDays) setCompletedDays(r.completedDays);
           if (r.emociones) setEmociones(r.emociones);
           if (r.view) setView(r.view);
+          if (r.selDay) setSelDay(r.selDay);
         }
       } catch (e) {
         console.error('Error loading flow progress:', e);
@@ -93,6 +94,7 @@ export default function RetoFlow() {
     newDays = completedDays,
     newEmo = emociones,
     newView?: string,
+    newSelDay?: number,
   ) => {
     try {
       const dataToSave = {
@@ -101,7 +103,8 @@ export default function RetoFlow() {
         tasksDone: newTasks,
         completedDays: newDays,
         emociones: newEmo,
-        view: newView || (newRoute ? 'home' : undefined),
+        view: newView || view,
+        selDay: newSelDay !== undefined ? newSelDay : selDay,
       };
       const isCompleted = Object.keys(newDays).length === DAYS.length && Object.values(newDays).every(Boolean);
       await saveActivityProgressDB('flow', dataToSave, isCompleted);
@@ -118,16 +121,16 @@ export default function RetoFlow() {
     return "locked";
   };
 
-  // ── Select route ───────────────────────────────────────────────────────
-  const selectRoute = (r: RouteType) => {
+  const selectRoute = async (r: RouteType) => {
     setRoute(r);
     setView("arquetipo");
+    await saveState(r, arquetipo, tasksDone, completedDays, emociones, "arquetipo");
   };
 
   const selectArquetipo = async (arqId: string) => {
     setArquetipo(arqId);
     setView("home");
-    await saveState(route, arqId, tasksDone, completedDays, emociones);
+    await saveState(route, arqId, tasksDone, completedDays, emociones, "home");
   };
 
   // ── Toggle task ────────────────────────────────────────────────────────
@@ -155,7 +158,7 @@ export default function RetoFlow() {
     }
 
     setCompletedDays(newDays);
-    await saveState(route, arquetipo, newTasks, newDays, emociones);
+    await saveState(route, arquetipo, newTasks, newDays, emociones, view, selDay);
   };
 
   // ── Share ──────────────────────────────────────────────────────────────
@@ -428,7 +431,10 @@ export default function RetoFlow() {
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto pb-12 space-y-6">
         <button
-          onClick={() => setView("home")}
+          onClick={async () => {
+            setView("home");
+            await saveState(route, arquetipo, tasksDone, completedDays, emociones, "home");
+          }}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors uppercase text-sm font-bold tracking-widest"
         >
           <ChevronLeft className="w-5 h-5" /> Volver
@@ -533,7 +539,12 @@ export default function RetoFlow() {
                   </span>
                 )}
                 <button
-                  onClick={() => { setRoute(null); setArquetipo(null); setView("route"); }}
+                  onClick={async () => {
+                    setRoute(null);
+                    setArquetipo(null);
+                    setView("route");
+                    await saveState(null, null, tasksDone, completedDays, emociones, "route");
+                  }}
                   className="text-xs text-brand-yellow hover:text-white underline transition font-bold"
                 >
                   Cambiar
@@ -563,7 +574,10 @@ export default function RetoFlow() {
 
         {/* ── Glosario Button ── */}
         <button
-          onClick={() => setView("glosario")}
+          onClick={async () => {
+            setView("glosario");
+            await saveState(route, arquetipo, tasksDone, completedDays, emociones, "glosario");
+          }}
           className="w-full glass-card p-4 flex items-center gap-4 text-left border-l-4 border-l-brand-green/30 hover:bg-white/[0.04] transition-all group"
         >
           <BookOpen className="w-6 h-6 text-brand-green group-hover:scale-110 transition-transform" />
@@ -632,10 +646,11 @@ export default function RetoFlow() {
                         key={dayObj.day}
                         whileHover={!isLocked ? { scale: 1.02 } : {}}
                         whileTap={!isLocked ? { scale: 0.98 } : {}}
-                        onClick={() => {
+                        onClick={async () => {
                           if (!isLocked) {
                             setSelDay(dayObj.day);
                             setView("day");
+                            await saveState(route, arquetipo, tasksDone, completedDays, emociones, "day", dayObj.day);
                           }
                         }}
                         disabled={isLocked}
@@ -709,7 +724,10 @@ export default function RetoFlow() {
       className="max-w-3xl mx-auto pb-16"
     >
       <button
-        onClick={() => setView("home")}
+        onClick={async () => {
+          setView("home");
+          await saveState(route, arquetipo, tasksDone, completedDays, emociones, "home", selDay);
+        }}
         className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6 group uppercase text-sm font-bold tracking-widest"
       >
         <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -877,10 +895,12 @@ export default function RetoFlow() {
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full pt-4">
                 {selDay < 10 && (
                   <button
-                    onClick={() => {
-                      setSelDay(selDay + 1);
+                    onClick={async () => {
+                      const nextD = selDay + 1;
+                      setSelDay(nextD);
                       setView("day");
                       window.scrollTo({ top: 0, behavior: 'smooth' });
+                      await saveState(route, arquetipo, tasksDone, completedDays, emociones, "day", nextD);
                     }}
                     className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(139,92,246,0.25)] hover:shadow-[0_0_25px_rgba(139,92,246,0.4)]"
                   >
@@ -888,7 +908,18 @@ export default function RetoFlow() {
                   </button>
                 )}
                 <button
-                  onClick={() => setView("home")}
+                  onClick={async () => {
+                    if (selDay < 10) {
+                      const nextD = selDay + 1;
+                      setSelDay(nextD);
+                      setView("day");
+                      await saveState(route, arquetipo, tasksDone, completedDays, emociones, "day", nextD);
+                    } else {
+                      setView("home");
+                      await saveState(route, arquetipo, tasksDone, completedDays, emociones, "home", selDay);
+                    }
+                    navigate("/app");
+                  }}
                   className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"
                 >
                   {selDay < 10 ? "Continuar mañana" : "Volver al mapa"}

@@ -81,33 +81,8 @@ export default function MisEmociones() {
             setDiagAns(r.diagAns);
             if (r.diagAns.length >= 4 && !r.route) setView('result');
           }
-          
-          // Auto-redirect logic
-          if (r.route) {
-            const compDays = r.completedDays || {};
-            let next = 1;
-            for (let i = 1; i <= 10; i++) {
-              if (!compDays[i]) {
-                next = i;
-                break;
-              }
-              if (i === 10) next = 10; // If all 10 are somehow true but next wasn't found, default to 10
-            }
-            const completedCount = Object.values(compDays).filter(Boolean).length;
-            
-            if (completedCount === 10 || r.view === 'home') {
-               if (completedCount === 10) {
-                 setView('home');
-               } else {
-                 setView('day');
-                 setSelDay(next);
-               }
-            } else if (r.view) {
-              setView(r.view);
-            }
-          } else if (r.view) {
-            setView(r.view);
-          }
+          if (r.view) setView(r.view);
+          if (r.selDay) setSelDay(r.selDay);
         }
       } catch (e) {
         console.error('Error loading sombra progress:', e);
@@ -124,6 +99,7 @@ export default function MisEmociones() {
     newDays = completedDays,
     newDiagAns = diagAns,
     newView?: string,
+    newSelDay?: number,
   ) => {
     try {
       const dataToSave = {
@@ -131,7 +107,8 @@ export default function MisEmociones() {
         tasksDone: newTasks,
         completedDays: newDays,
         diagAns: newDiagAns,
-        view: newView || (newRoute ? 'home' : undefined),
+        view: newView || view,
+        selDay: newSelDay !== undefined ? newSelDay : selDay,
       };
       const isCompleted = Object.keys(newDays).length === DAYS.length && Object.values(newDays).every(Boolean);
       await saveActivityProgressDB('sombra', dataToSave, isCompleted);
@@ -155,10 +132,10 @@ export default function MisEmociones() {
       setDiagStep(0);
       setDiagAns([]);
       setView("diag");
-      await saveState(r, tasksDone, completedDays, []);
+      await saveState(r, tasksDone, completedDays, [], "diag");
     } else {
       setView("home");
-      await saveState(r, tasksDone, completedDays, diagAns);
+      await saveState(r, tasksDone, completedDays, diagAns, "home");
     }
   };
 
@@ -170,7 +147,7 @@ export default function MisEmociones() {
       setDiagStep(diagStep + 1);
     } else {
       setView("result");
-      await saveState(route, tasksDone, completedDays, newAns);
+      await saveState(route, tasksDone, completedDays, newAns, "result");
     }
   };
 
@@ -313,7 +290,10 @@ export default function MisEmociones() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => { setView("route"); }}
+                onClick={async () => {
+                  setView("route");
+                  await saveState(route, tasksDone, completedDays, diagAns, "route");
+                }}
                 className="w-full md:w-auto cursor-pointer rounded-2xl px-8 py-5 transition-all group relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 40%, #991b1b 100%)',
@@ -412,7 +392,12 @@ export default function MisEmociones() {
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto space-y-8 pb-12">
         <button
-          onClick={() => { setDiagAns([]); setDiagStep(0); setView("route"); }}
+          onClick={async () => {
+            setDiagAns([]);
+            setDiagStep(0);
+            setView("route");
+            await saveState(route, tasksDone, completedDays, [], "route");
+          }}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors uppercase text-sm font-bold tracking-widest"
         >
           <ChevronLeft className="w-5 h-5" /> Volver
@@ -607,7 +592,11 @@ export default function MisEmociones() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setView(route ? "home" : "route")}
+                  onClick={async () => {
+                    const targetView = route ? "home" : "route";
+                    setView(targetView);
+                    await saveState(route, tasksDone, completedDays, diagAns, targetView);
+                  }}
                   className="w-full cursor-pointer rounded-2xl px-6 py-6 text-center transition-all group relative overflow-hidden mt-4"
                   style={{
                     background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 40%, #991b1b 100%)',
@@ -646,7 +635,11 @@ export default function MisEmociones() {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8 pb-12">
         <button
-          onClick={() => setView(diagAns.length >= 4 ? "result" : "hero")}
+          onClick={async () => {
+            const targetView = diagAns.length >= 4 ? "result" : "hero";
+            setView(targetView);
+            await saveState(route, tasksDone, completedDays, diagAns, targetView);
+          }}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors uppercase text-sm font-bold tracking-widest"
         >
           <ChevronLeft className="w-5 h-5" /> {diagAns.length >= 4 ? "Ver diagnóstico" : "Volver al inicio"}
@@ -834,7 +827,11 @@ export default function MisEmociones() {
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              onClick={() => { setSelDay(nextDayData.day); setView("day"); }}
+              onClick={async () => {
+                setSelDay(nextDayData.day);
+                setView("day");
+                await saveState(route, tasksDone, completedDays, diagAns, "day", nextDayData.day);
+              }}
               className="w-full glass-card p-6 md:p-8 text-left relative overflow-hidden cursor-pointer transition-all border-l-4"
               style={{
                 borderLeftColor: nextPc.hex,
@@ -962,7 +959,13 @@ export default function MisEmociones() {
                           {/* Tarjeta del Día */}
                           <motion.div
                             whileHover={!lk ? { scale: 1.02 } : {}}
-                            onClick={() => { if (!lk) { setSelDay(d.day); setView("day"); } }}
+                            onClick={async () => {
+                              if (!lk) {
+                                setSelDay(d.day);
+                                setView("day");
+                                await saveState(route, tasksDone, completedDays, diagAns, "day", d.day);
+                              }
+                            }}
                             className={cx(
                               "w-[calc(100%-4rem)] ml-16 md:ml-0 md:w-[calc(50%-2.5rem)]",
                               !isEven ? "md:order-last" : "md:order-first md:text-right"
@@ -1028,7 +1031,11 @@ export default function MisEmociones() {
             <h3 className="font-black uppercase tracking-wider text-sm text-slate-300">¿Quieres cambiar de misión?</h3>
             <p className="text-xs text-slate-500 font-medium">Revisa tu diagnóstico o cambia entre Principiante y Operador.</p>
             <button
-              onClick={() => { setRoute(null); setView("route"); }}
+              onClick={async () => {
+                setRoute(null);
+                setView("route");
+                await saveState(null, tasksDone, completedDays, diagAns, "route", selDay);
+              }}
               className="text-orange-400 hover:text-orange-300 transition-colors uppercase font-black text-xs tracking-widest px-4 py-2 bg-orange-500/10 rounded-lg hover:bg-orange-500/20"
             >
               🔄 Cambiar de Ruta
@@ -1058,7 +1065,10 @@ export default function MisEmociones() {
       className="max-w-3xl mx-auto pb-16"
     >
       <button
-        onClick={() => setView("home")}
+        onClick={async () => {
+          setView("home");
+          await saveState(route, tasksDone, completedDays, diagAns, "home", selDay);
+        }}
         className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6 group uppercase text-sm font-bold tracking-widest"
       >
         <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -1208,7 +1218,18 @@ export default function MisEmociones() {
                 </button>
               )}
               <button
-                onClick={() => setView("home")}
+                onClick={async () => {
+                  if (selDay < 10) {
+                    const nextD = selDay + 1;
+                    setSelDay(nextD);
+                    setView("day");
+                    await saveState(route, tasksDone, completedDays, diagAns, "day", nextD);
+                  } else {
+                    setView("home");
+                    await saveState(route, tasksDone, completedDays, diagAns, "home", selDay);
+                  }
+                  navigate("/app");
+                }}
                 className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"
               >
                 {selDay < 10 ? "Continuar mañana" : "Volver al mapa"}
