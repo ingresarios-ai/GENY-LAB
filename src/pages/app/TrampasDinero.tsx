@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft, ChevronRight, CheckCircle, Brain,
-  Share2, Copy, Check,   
+  Share2, Copy, Check, Info, HelpCircle, Sliders, Calculator, CheckSquare
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { jsPDF } from 'jspdf';
@@ -18,16 +18,43 @@ import confetti from "canvas-confetti";
 
 // ── Question Data ──────────────────────────────────────────────────────────
 
+interface QuestionOption {
+  value: string;
+  label: string;
+  feedback?: string;
+}
+
 interface Question {
   type: "comprensión" | "aplicación" | "acción";
   question: string;
   context?: string;
   hint?: string;
   placeholder: string;
-  inputType?: "number";
+  controlType: "text" | "choice" | "slider" | "calculator" | "checklist";
   prefix?: string;
   suffix?: string;
+  options?: QuestionOption[];
   rows?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  calculatorProps?: {
+    min1: number;
+    max1: number;
+    step1: number;
+    label1: string;
+    prefix1?: string;
+    suffix1?: string;
+    min2: number;
+    max2: number;
+    step2: number;
+    label2: string;
+    prefix2?: string;
+    suffix2?: string;
+    calcFormula: (val1: number, val2: number) => string;
+  };
+  checklistProps?: string[];
+  quickTemplates?: { label: string; text: string }[];
 }
 
 const RETO = {
@@ -35,112 +62,271 @@ const RETO = {
   subtitle: "Tu cerebro está programado evolutivamente para tomar decisiones financieras equivocadas.",
   intro:
     "Las trampas cognitivas sabotean silenciosamente tus decisiones financieras. Este ejercicio te ayudará a identificar cómo te afectan en tu día a día para que puedas neutralizarlas. Responde con total honestidad: esto no es un examen, es un espejo.",
-  questions: [
-    {
-      type: "comprensión" as const,
-      question:
-        "¿Por qué tu cerebro evolucionó para sabotear tus decisiones financieras modernas?",
-      context:
-        "Nuestra mente inconsciente opera bajo un software evolutivo diseñado hace miles de años para la supervivencia en la sabana africana. En ese entorno de escasez constante, la gratificación debía ser inmediata. El mercado financiero moderno, sin embargo, nos exige pensar a largo plazo, lo cual va totalmente en contra de nuestros instintos biológicos básicos.",
-      hint: "Explica la contradicción entre sobrevivir en la naturaleza antigua y operar en la economía moderna.",
-      placeholder: "Porque nuestro cerebro busca asegurar...",
-      rows: 3,
-    },
-    {
-      type: "comprensión" as const,
-      question:
-        "Según Kahneman & Tversky: ¿cuántas veces más duele perder $100 que el placer de ganar $100?",
-      context:
-        "Los psicólogos Daniel Kahneman y Amos Tversky descubrieron la 'aversión a la pérdida', revelando que el dolor psicológico que experimentamos al perder dinero es asimétrico y mucho más severo que la alegría de ganar la misma cantidad.",
-      hint: "Introduce el factor multiplicador aproximado documentado por la psicología conductual (suele estar entre 2 y 2.5).",
-      placeholder: "2",
-      inputType: "number" as const,
-      suffix: "veces más",
-    },
-    {
-      type: "aplicación" as const,
-      question:
-        "Piensa en tu último trade ganador: ¿lo cerraste antes del target o esperaste?",
-      context:
-        "La aversión a la pérdida nos tienta a cerrar prematuramente los trades ganadores para 'asegurar' una pequeña ganancia, debido a la ansiedad o miedo de que el mercado se dé la vuelta y nos la arrebate.",
-      placeholder: "Cerré en +$X antes del target porque sentí...",
-      rows: 3,
-    },
-    {
-      type: "aplicación" as const,
-      question:
-        "Piensa en tu último trade perdedor: ¿esperaste más de lo que debías? ¿Por qué?",
-      context:
-        "A la inversa, cuando una operación va en contra, la aversión a la pérdida nos empuja a retener posiciones perdedoras esperando 'recuperar' para no hacer real la pérdida, asumiendo un riesgo desmedido.",
-      placeholder: "Debí salir en $X pero no lo hice porque...",
-      rows: 3,
-    },
-    {
-      type: "comprensión" as const,
-      question:
-        "¿Qué es gratificación instantánea en trading (descuento hiperbólico)?",
-      context:
-        "El descuento hiperbólico es nuestra tendencia natural a valorar más las recompensas pequeñas pero inmediatas (por ejemplo, asegurar $50 hoy) frente a recompensas mucho más grandes pero futuras (por ejemplo, $200 siguiendo el plan). En el trading, esto genera impaciencia y rompe la consistencia.",
-      hint: "Define cómo esta inclinación por lo inmediato sabotea el plan a largo plazo.",
-      placeholder: "Es cuando preferimos la recompensa inmediata porque...",
-      rows: 3,
-    },
-    {
-      type: "aplicación" as const,
-      question:
-        "Si tu target promedio es $200 y cierras en $50: ¿cuánto dejas en la mesa al año? (100 trades)",
-      context:
-        "Al ceder sistemáticamente a la gratificación instantánea y salir antes de tiempo, saboteas tu esperanza matemática. Aunque tu tasa de acierto sea alta, el volumen de ganancias que sacrificas a largo plazo es destructivo.",
-      hint: "Calcula la pérdida acumulada en 100 operaciones por no aguantar al target: ($200 - $50) × 100.",
-      placeholder: "0",
-      inputType: "number" as const,
-      prefix: "$",
-    },
-    {
-      type: "comprensión" as const,
-      question:
-        "¿Cuál es la combinación mortal de FOMO + Costo Hundido?",
-      context:
-        "El FOMO (miedo a quedarse fuera) te incita a entrar tarde e impulsivamente en un trade. Una vez dentro de esa mala posición, el Costo Hundido te impide aceptar el error y salir de ella, justificando que 'ya invertiste dinero y esperanza' en esa entrada.",
-      hint: "Explica cómo interactúan estas dos fuerzas para crear la tormenta perfecta que quema cuentas.",
-      placeholder: "El FOMO nos hace entrar por emoción, y el costo hundido...",
-      rows: 4,
-    },
-    {
-      type: "aplicación" as const,
-      question:
-        "Tu último FOMO trade: ¿qué viste, qué hiciste, cómo terminó?",
-      context:
-        "El FOMO se activa con la dopamina cuando vemos velas grandes subiendo rápido o a otros operadores celebrando ganancias. Reconocer tus propios detonantes emocionales es el primer paso para no volver a caer.",
-      placeholder:
-        "Vi que el mercado estaba subiendo rápido, entré sin confirmación, terminé...",
-      rows: 4,
-    },
-    {
-      type: "aplicación" as const,
-      question:
-        "Después de 3 trades ganadores seguidos: ¿qué cambias en tu trading (tamaño, frecuencia, plan)?",
-      context:
-        "El exceso de confianza tras una racha ganadora (euforia) nos ciega. Creemos que el mercado es fácil y que tenemos 'el toque de Midas'. Es el punto más peligroso de la curva emocional, donde solemos aumentar el riesgo y violar el plan.",
-      hint: "Sé brutalmente honesto — identifica tu tendencia al exceso de confianza.",
-      placeholder: "Cuando tengo racha buena, empiezo a...",
-      rows: 4,
-    },
-    {
-      type: "acción" as const,
-      question:
-        "Escribe 1 regla anti-trampa para tu TRAMPA DOMINANTE (la que más te afecta). Ejemplo: 'Después de 2 trades ganadores seguidos, bajo tamaño 50% por 3 trades.'",
-      context:
-        "Las reglas anti-trampas actúan como cortafuegos mecánicos que protegen tu capital de tus propios sesgos cuando la emoción toma las riendas del ratón.",
-      hint: "Define una regla accionable que puedas incorporar a tu plan desde hoy.",
-      placeholder:
-        "Mi trampa dominante es [X]. Mi regla: cuando detecte...",
-      rows: 5,
-    },
-  ] as Question[],
 };
 
-const TOTAL_QUESTIONS = RETO.questions.length;
+const QUESTIONS_TRADER: Question[] = [
+  {
+    type: "comprensión",
+    question: "¿Sabiendo que tu cerebro fue programado para sobrevivir en la sabana (corto plazo) y no para el mercado moderno (largo plazo), cuál de estos dos impulsos sientes que domina tu operativa en momentos críticos?",
+    context: "Nuestra mente inconsciente opera bajo un software evolutivo diseñado hace miles de años para la supervivencia en la sabana africana. En ese entorno de escasez constante, la gratificación debía ser inmediata. El mercado financiero moderno, sin embargo, nos exige pensar a largo plazo, lo cual va totalmente en contra de nuestros instintos biológicos básicos.",
+    controlType: "choice",
+    options: [
+      { value: "sabana", label: "El instinto de la sabana: asegurar ganancias rápidas, miedo de quedarme fuera, urgencia por recuperar.", feedback: "¡Exacto! El cerebro prehistórico prioriza sobrevivir hoy por si mañana no hay comida. En trading, eso se traduce en ansiedad e impulsividad." },
+      { value: "prefrontal", label: "La corteza prefrontal: paciencia, disciplina, seguir el plan establecido a pesar de la incertidumbre.", feedback: "¡Excelente! Es la meta para alcanzar consistencia, aunque requiere esfuerzo consciente y herramientas mecánicas para acallar el instinto." }
+    ],
+    placeholder: "Explica brevemente en qué situaciones operativas sientes que el instinto prehistórico secuestra tu disciplina..."
+  },
+  {
+    type: "comprensión",
+    question: "Según Kahneman & Tversky: ¿cuántas veces más duele perder $100 que el placer de ganar $100?",
+    context: "Los psicólogos Daniel Kahneman y Amos Tversky descubrieron la 'aversión a la pérdida', revelando que el dolor psicológico que experimentamos al perder dinero es asimétrico y mucho más severo que la alegría de ganar la misma cantidad.",
+    controlType: "slider",
+    min: 1.0,
+    max: 5.0,
+    step: 0.1,
+    placeholder: "2",
+    suffix: "veces más"
+  },
+  {
+    type: "aplicación",
+    question: "Piensa en tu último trade ganador: ¿lo cerraste antes del target o esperaste?",
+    context: "La aversión a la pérdida nos tienta a cerrar prematuramente los trades ganadores para 'asegurar' una pequeña ganancia, debido a la ansiedad o miedo de que el mercado se dé la vuelta y nos la arrebate.",
+    controlType: "choice",
+    options: [
+      { value: "antes", label: "Lo cerré antes de tiempo (por miedo a que la ganancia se esfumara)" },
+      { value: "plan", label: "Esperé pacientemente a que tocara mi target o stop planeado" },
+      { value: "no_opero", label: "No he tenido operaciones ganadoras recientemente o no hago trading activo" }
+    ],
+    placeholder: "Describe la emoción o los pensamientos específicos que experimentabas mientras el precio se movía a tu favor..."
+  },
+  {
+    type: "aplicación",
+    question: "Piensa en tu último trade perdedor: ¿esperaste más de lo que debías? ¿Por qué?",
+    context: "A la inversa, cuando una operación va en contra, la aversión a la pérdida nos empuja a retener posiciones perdedoras esperando 'recuperar' para no hacer real la pérdida, asumiendo un riesgo desmedido.",
+    controlType: "choice",
+    options: [
+      { value: "esperanza", label: "Esperé de más o moví mi stop loss (por esperanza de que el mercado se recuperara)" },
+      { value: "corte", label: "Acepté la pérdida rápido y salí exactamente donde decía mi plan" },
+      { value: "no_opero", label: "No he tenido operaciones perdedoras recientemente" }
+    ],
+    placeholder: "¿Qué justificaciones te daba tu mente en ese momento para no cerrar la posición perdedora?"
+  },
+  {
+    type: "comprensión",
+    question: "¿Qué tan seguido caes en la trampa de la gratificación instantánea (descuento hiperbólico) al operar?",
+    context: "El descuento hiperbólico es nuestra tendencia natural a valorar más las recompensas pequeñas pero inmediatas (asegurar $50 hoy) frente a recompensas mucho más grandes pero futuras ($200 siguiendo el plan). En el trading, esto genera impaciencia y rompe la consistencia.",
+    controlType: "choice",
+    options: [
+      { value: "nunca", label: "Casi nunca: respeto mis targets de largo plazo y planes de salida con total disciplina." },
+      { value: "medio", label: "A veces: sobre todo en días de alta volatilidad o cuando llevo una racha negativa." },
+      { value: "siempre", label: "Muy seguido: me quema el dinero en las manos y prefiero salir con cualquier ganancia inmediata." }
+    ],
+    placeholder: "Describe una situación donde la impaciencia por asegurar una ganancia pequeña te costó un movimiento de precio mucho mayor."
+  },
+  {
+    type: "aplicación",
+    question: "Si tu target promedio es $200 y cierras en $50: ¿cuánto dejas en la mesa al año? (100 trades)",
+    context: "Al ceder sistemáticamente a la gratificación instantánea y salir antes de tiempo, saboteas tu esperanza matemática. Aunque tu tasa de acierto sea alta, el volumen de ganancias que sacrificas a largo plazo es destructivo.",
+    controlType: "calculator",
+    calculatorProps: {
+      min1: 100,
+      max1: 1000,
+      step1: 50,
+      label1: "Target planificado por operación ($)",
+      prefix1: "$",
+      min2: 10,
+      max2: 500,
+      step2: 10,
+      label2: "Ganancia real promedio que tomas por miedo ($)",
+      prefix2: "$",
+      calcFormula: (target, actual) => {
+        const diff = Math.max(0, target - actual);
+        const anual = diff * 100;
+        return `Estás dejando ir aproximadamente $${anual.toLocaleString()} USD al año por trade (calculado sobre un promedio de 100 operaciones). Esto destruye cualquier esperanza matemática a largo plazo.`;
+      }
+    },
+    placeholder: "0"
+  },
+  {
+    type: "comprensión",
+    question: "¿Cuál es la combinación mortal de FOMO + Costo Hundido en tu operativa?",
+    context: "El FOMO (miedo a quedarse fuera) te incita a entrar tarde e impulsivamente en un trade. Una vez dentro de esa mala posición, el Costo Hundido te impide aceptar el error y salir de ella, justificando que 'ya invertiste dinero y esperanza' en esa entrada.",
+    controlType: "choice",
+    options: [
+      { value: "ambos", label: "Escenario A: Entro tarde por euforia (FOMO), y luego aguanto la pérdida borrando el stop loss (Costo Hundido)." },
+      { value: "fomo_solo", label: "Escenario B: Cometo errores de entrada por FOMO, pero al menos soy estricto cortando pérdidas." },
+      { value: "limpio", label: "Escenario C: Entro bajo plan y salgo bajo plan. He aprendido a neutralizar ambas trampas." }
+    ],
+    placeholder: "¿Cómo planeas reaccionar la próxima vez que sientas la prisa de comprar porque el precio está subiendo de golpe?"
+  },
+  {
+    type: "aplicación",
+    question: "Tu último trade por FOMO: ¿qué viste, qué hiciste, cómo terminó?",
+    context: "El FOMO se activa con la dopamina cuando vemos velas grandes subiendo rápido o a otros operadores celebrando ganancias. Reconocer tus propios detonantes emocionales es el primer paso para no volver a caer.",
+    controlType: "text",
+    placeholder: "Vi que el activo [ticker] estaba subiendo verticalmente, sentí la urgencia de participar, compré sin confirmación en el punto más alto, y el mercado terminó..."
+  },
+  {
+    type: "aplicación",
+    question: "Después de 3 trades ganadores seguidos: ¿cuáles de estos síntomas de euforia experimentas?",
+    context: "El exceso de confianza tras una racha ganadora (euforia) nos ciega. Creemos que el mercado es fácil y que tenemos 'el toque de Midas'. Es el punto más peligroso de la curva emocional, donde solemos aumentar el riesgo y violar el plan.",
+    controlType: "checklist",
+    checklistProps: [
+      "Aumento el tamaño de mi lote o posición (exceso de confianza)",
+      "Opero con más frecuencia o tomo setups dudosos (sobreoperación)",
+      "Ignoro mis filtros de entrada o relajo mis reglas de gestión de riesgo",
+      "Mantengo la calma y respeto el plan, entiendo que es solo varianza estadística"
+    ],
+    placeholder: "¿Cómo te blindarás mental y operativamente contra la euforia tras tu próxima racha ganadora?"
+  },
+  {
+    type: "acción",
+    question: "Escribe 1 regla anti-trampa para tu TRAMPA DOMINANTE (la que más te afecta).",
+    context: "Las reglas anti-trampas actúan como cortafuegos mecánicos que protegen tu capital de tus propios sesgos cuando la emoción toma las riendas del ratón.",
+    controlType: "text",
+    quickTemplates: [
+      { label: "Cortafuegos de Euforia", text: "Si tengo 2 trades ganadores seguidos, cierro la plataforma de inmediato y no opero más por el día." },
+      { label: "Cortafuegos de FOMO", text: "Si el precio ya se ha desplazado más de un 1.5% del punto de entrada planeado, cancelo la orden de inmediato." },
+      { label: "Cortafuegos de Costo Hundido", text: "Mi stop loss físico se coloca de forma automática al abrir el trade y tengo terminantemente prohibido moverlo o cancelarlo." }
+    ],
+    placeholder: "Mi trampa dominante es [FOMO / Aversión / Euforia]. Mi regla anti-trampa es: cuando..."
+  }
+];
+
+const QUESTIONS_GENERAL: Question[] = [
+  {
+    type: "comprensión",
+    question: "¿Sabiendo que tu cerebro fue programado para la sabana (corto plazo) y no para el largo plazo, cuál de estos dos impulsos sientes que domina tus finanzas hoy?",
+    context: "Nuestra mente inconsciente opera bajo un software evolutivo diseñado hace miles de años para la supervivencia en la sabana africana. En ese entorno de escasez constante, la gratificación debía ser inmediata (gastar hoy por si mañana no hay). El ahorro y la inversión moderna nos exigen pensar a largo plazo, lo cual va totalmente en contra de nuestros instintos biológicos básicos.",
+    controlType: "choice",
+    options: [
+      { value: "instinto", label: "El instinto prehistórico: priorizo gastar en el momento o buscar satisfacciones rápidas.", feedback: "¡Es muy normal! Es la programación humana por defecto: buscar dopamina a corto plazo ante la incertidumbre." },
+      { value: "estrategia", label: "La estrategia de largo plazo: tengo la capacidad de postergar la recompensa para construir patrimonio.", feedback: "¡Excelente! Requiere dominar al cerebro impulsivo, pero es la llave para la libertad financiera y la tranquilidad." }
+    ],
+    placeholder: "Explica en qué situaciones de tu vida diaria sientes que el impulso del momento sabotea tus planes financieros..."
+  },
+  {
+    type: "comprensión",
+    question: "Según Kahneman & Tversky: ¿cuántas veces más duele perder $100 que el placer de ganar $100?",
+    context: "Los psicólogos Daniel Kahneman y Amos Tversky descubrieron la 'aversión a la pérdida', revelando que el dolor psicológico que experimentamos al perder dinero es asimétrico y mucho más severo que la alegría de ganar la misma cantidad.",
+    controlType: "slider",
+    min: 1.0,
+    max: 5.0,
+    step: 0.1,
+    placeholder: "2",
+    suffix: "veces más"
+  },
+  {
+    type: "aplicación",
+    question: "Piensa en un negocio, venta (ej. auto, producto) o inversión que hiciste: ¿te apresuraste a vender rápido por miedo a perder la ganancia, o esperaste el valor planeado?",
+    context: "La aversión a la pérdida nos tienta a cerrar tratos o vender activos prematuramente para 'asegurar' una pequeña ganancia, debido a la ansiedad de que las cosas empeoren y perdamos lo que ya tenemos.",
+    controlType: "choice",
+    options: [
+      { value: "antes", label: "Acepté un trato inferior o vendí de inmediato por miedo a quedarme sin nada" },
+      { value: "plan", label: "Esperé pacientemente al valor justo o planeado del activo antes de cerrar el trato" },
+      { value: "no_aplica", label: "No he tenido una experiencia similar o no he realizado inversiones/ventas" }
+    ],
+    placeholder: "¿Qué emociones pasaron por tu mente y cómo influyeron en tu decisión final?"
+  },
+  {
+    type: "aplicación",
+    question: "Piensa en un negocio fallido, mala compra o préstamo a alguien: ¿siguiste metiendo dinero o tiempo esperando que se recuperara (esperanza ciega)?",
+    context: "La aversión a la pérdida nos empuja a retener malas inversiones o seguir metiendo dinero en proyectos fallidos solo por no aceptar el hecho de que ya perdimos el dinero inicial.",
+    controlType: "choice",
+    options: [
+      { value: "esperanza", label: "Sostuve la inversión, negocio o préstamo por meses/años esperando recuperar (no acepté la pérdida)" },
+      { value: "corte", label: "Acepté la pérdida rápido, corté el flujo de dinero o tiempo y asumí el aprendizaje" },
+      { value: "no_aplica", label: "No he tenido una experiencia similar recientemente" }
+    ],
+    placeholder: "¿Por qué decidiste aguantar de más o cortar de inmediato? Describe la experiencia..."
+  },
+  {
+    type: "comprensión",
+    question: "¿Qué tan seguido caes en compras impulsivas o gastos innecesarios hoy, sacrificando tus metas de ahorro a largo plazo?",
+    context: "El descuento hiperbólico es nuestra tendencia natural a valorar más las recompensas pequeñas pero inmediatas (comprar ropa, café premium, o salidas hoy) frente a recompensas mucho más grandes pero futuras (independencia financiera, ahorros estables).",
+    controlType: "choice",
+    options: [
+      { value: "nunca", label: "Casi nunca: tengo mis gastos bajo control y ahorro con total disciplina." },
+      { value: "medio", label: "A veces: sobre todo cuando estoy bajo estrés o salgo de compras los fines de semana." },
+      { value: "siempre", label: "Muy seguido: me quema el dinero en las manos y prefiero la recompensa inmediata del consumo." }
+    ],
+    placeholder: "Describe una compra por impulso reciente o gasto innecesario del que te hayas arrepentido después."
+  },
+  {
+    type: "aplicación",
+    question: "Si gastas dinero en compras por impulso o gastos innecesarios: ¿cuánto dejas de acumular en 5 años?",
+    context: "Al ceder a la gratificación instantánea sistemáticamente, destruyes tu capacidad de generar riqueza. Pequeños gastos acumulados y puestos a trabajar con interés compuesto suman una fortuna a largo plazo.",
+    controlType: "calculator",
+    calculatorProps: {
+      min1: 10,
+      max1: 500,
+      step1: 10,
+      label1: "Gasto mensual promedio en compras por impulso / hormiga ($)",
+      prefix1: "$",
+      min2: 1,
+      max2: 10,
+      step2: 1,
+      label2: "Plazo de proyección en años",
+      suffix2: " años",
+      calcFormula: (monthly, years) => {
+        const totalSavedNoInterest = monthly * 12 * years;
+        let totalWithInterest = 0;
+        const rate = 0.10; // 10% annual
+        for(let i=0; i<years * 12; i++) {
+          totalWithInterest = (totalWithInterest + monthly) * (1 + rate/12);
+        }
+        return `Si invirtieras ese dinero a una tasa conservadora del 10% anual, dejarías de acumular aproximadamente $${Math.round(totalWithInterest).toLocaleString()} USD en ${years} años. Sin intereses, representan $${totalSavedNoInterest.toLocaleString()} USD desperdiciados.`;
+      }
+    },
+    placeholder: "0"
+  },
+  {
+    type: "comprensión",
+    question: "¿Has caído en la trampa mortal de FOMO + Costo Hundido en tus compras o suscripciones?",
+    context: "Comprar una suscripción cara, membresía de gimnasio o curso porque todo el mundo habla de ello es FOMO. Mantener el pago mensual o forzarse a ir sin provecho solo porque 'ya pagaste la inscripción o anualidad' es la trampa del Costo Hundido.",
+    controlType: "choice",
+    options: [
+      { value: "ambos", label: "Escenario A: Compré algo costoso por impulso de moda (FOMO), y sigo pagándolo para no sentir que tiré el dinero (Costo Hundido)." },
+      { value: "solo_fomo", label: "Escenario B: Compro cosas por impulso de ofertas, pero las cancelo o devuelvo rápido si veo que no las utilizo." },
+      { value: "limpio", label: "Escenario C: Evito compras de oportunidad o modas. Pago únicamente lo que tengo planificado utilizar." }
+    ],
+    placeholder: "¿Qué suscripción o gasto tienes hoy que responda a esta combinación? ¿Cómo piensas cortarlo?"
+  },
+  {
+    type: "aplicación",
+    question: "Tu última compra impulsada por FOMO: ¿qué viste, qué hiciste y cómo terminó?",
+    context: "El FOMO financiero se alimenta de ofertas con 'tiempo limitado' o de ver a otros con el último modelo de celular, ropa o viajes en redes sociales. Nos hace gastar dinero que no planeábamos.",
+    controlType: "text",
+    placeholder: "Vi una oferta o recomendación en redes sobre..., sentí que me iba a perder la oportunidad de..., gasté dinero no planificado, y al final..."
+  },
+  {
+    type: "aplicación",
+    question: "Cuando recibes un dinero extra (bono, aumento o ganancia): ¿cuál de estos comportamientos experimentas?",
+    context: "La euforia tras recibir ingresos extraordinarios nos hace sentir falsamente ricos. Aumentamos nuestro nivel de vida de inmediato (inflación del estilo de vida) pensando que esa abundancia temporal será constante.",
+    controlType: "checklist",
+    checklistProps: [
+      "Salgo a celebrar o a comer de inmediato gastando de forma desmedida",
+      "Busco qué comprar o qué gadget adquirir para gastar el excedente rápido",
+      "Me cuesta mucho ahorrarlo porque siento que 'me lo merezco' por mi esfuerzo",
+      "Lo separo para ahorro/inversión el mismo día que lo recibo y mantengo mi estilo de vida intacto"
+    ],
+    placeholder: "¿Cómo planeas gestionar tu próximo ingreso extra para que no se evapore en gastos emocionales?"
+  },
+  {
+    type: "acción",
+    question: "Escribe 1 regla anti-trampa para tu TRAMPA DOMINANTE (la que más te afecta) en tus finanzas.",
+    context: "Una regla anti-trampas es un compromiso inquebrantable que automatiza tu toma de decisiones antes de que las emociones del momento te hagan gastar.",
+    controlType: "text",
+    quickTemplates: [
+      { label: "Regla de las 48 Horas", text: "Si veo un artículo no planificado que quiero comprar, me obligo a esperar 48 horas. Si sigo queriéndolo después de ese tiempo, evalúo su compra." },
+      { label: "Regla del Ahorro Primero", text: "El mismo día que reciba mis ingresos, el 10% se transferirá de forma automática a mi cuenta de inversión, antes de realizar cualquier otro pago." },
+      { label: "Regla de Suscripciones", text: "Cualquier suscripción que no haya utilizado en los últimos 30 días será cancelada de inmediato, sin importar el descuento que me ofrezcan." }
+    ],
+    placeholder: "Mi trampa dominante es [FOMO / Gastos hormiga / Consumo]. Mi regla anti-trampa es: cuando..."
+  }
+];
+
+const TOTAL_QUESTIONS = 10;
 
 const TYPE_STYLES: Record<
   string,
@@ -166,9 +352,127 @@ const TYPE_STYLES: Record<
   },
 };
 
-// ════════════════════════════════════════════════════════════════════════════
-// MAIN COMPONENT
-// ════════════════════════════════════════════════════════════════════════════
+function InteractiveSlider({
+  q,
+  i,
+  responses,
+  update,
+  style
+}: {
+  q: Question;
+  i: number;
+  responses: Record<string, string>;
+  update: (i: number | string, v: string) => void;
+  style: any;
+}) {
+  const val = parseFloat(responses[i] || "1.0");
+  const isTargetRange = val >= 2.0 && val <= 2.5;
+
+  return (
+    <div className="mt-4 space-y-4">
+      <div className="flex items-center gap-4">
+        <input
+          type="range"
+          min={q.min || 1.0}
+          max={q.max || 5.0}
+          step={q.step || 0.1}
+          value={val}
+          onChange={(e) => update(i, e.target.value)}
+          className="flex-1 accent-[#FF3EB0] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+        />
+        <span className={`text-2xl font-mono font-bold w-20 text-right ${isTargetRange ? "text-brand-green" : style.color}`}>
+          {val.toFixed(1)}x
+        </span>
+      </div>
+      <div className={`p-4 rounded-xl border text-xs leading-relaxed font-mono ${
+        isTargetRange
+          ? "bg-brand-green/5 border-brand-green/30 text-brand-green"
+          : "bg-white/[0.02] border-white/5 text-white/50"
+      }`}>
+        {val === 1.0 && "1.0x: Sentirías el mismo dolor que placer (emocionalmente neutro). No concuerda con la psicología humana."}
+        {val > 1.0 && val < 2.0 && `${val.toFixed(1)}x: Aversión leve. Sientes un dolor moderado, pero los estudios científicos muestran un impacto emocional mayor.`}
+        {isTargetRange && `${val.toFixed(1)}x: ¡Rango correcto! Daniel Kahneman demostró que el dolor emocional de perder dinero es entre el doble y 2.5 veces más fuerte que ganar la misma cantidad. Por eso evitamos el riesgo de manera irracional.`}
+        {val > 2.5 && `${val.toFixed(1)}x: Aversión severa. Experimentas una resistencia psicológica extrema ante la posibilidad de perder.`}
+      </div>
+    </div>
+  );
+}
+
+function InteractiveCalculator({
+  q,
+  i,
+  responses,
+  setResponses,
+  style
+}: {
+  q: Question;
+  i: number;
+  responses: Record<string, string>;
+  setResponses: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  style: any;
+}) {
+  const props = q.calculatorProps!;
+  const [val1, setVal1] = useState(() => parseInt(responses[i + '_val1'] || String(props.min1)));
+  const [val2, setVal2] = useState(() => parseInt(responses[i + '_val2'] || String(props.min2)));
+
+  useEffect(() => {
+    const text = props.calcFormula(val1, val2);
+    setResponses(prev => ({
+      ...prev,
+      [i]: text,
+      [i + '_val1']: String(val1),
+      [i + '_val2']: String(val2)
+    }));
+  }, [val1, val2]);
+
+  return (
+    <div className="mt-4 space-y-5 bg-white/[0.01] border border-white/5 rounded-xl p-5">
+      <div className="space-y-2">
+        <div className="flex justify-between text-xs font-mono text-white/50">
+          <span>{props.label1}</span>
+          <span className="font-bold text-white">
+            {props.prefix1 || ""}{val1}{props.suffix1 || ""}
+          </span>
+        </div>
+        <input
+          type="range"
+          min={props.min1}
+          max={props.max1}
+          step={props.step1}
+          value={val1}
+          onChange={(e) => setVal1(parseInt(e.target.value))}
+          className="w-full accent-[#FF3EB0] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex justify-between text-xs font-mono text-white/50">
+          <span>{props.label2}</span>
+          <span className="font-bold text-white">
+            {props.prefix2 || ""}{val2}{props.suffix2 || ""}
+          </span>
+        </div>
+        <input
+          type="range"
+          min={props.min2}
+          max={Math.min(props.max2, val1)}
+          step={props.step2}
+          value={val2}
+          onChange={(e) => setVal2(parseInt(e.target.value))}
+          className="w-full accent-[#FF3EB0] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+        />
+      </div>
+
+      <div className="pt-3 border-t border-white/5 flex gap-2.5 items-start">
+        <Calculator className="w-4 h-4 text-brand-yellow shrink-0 mt-0.5" />
+        <div className="text-xs text-brand-yellow font-mono leading-relaxed">
+          <span className="font-bold block mb-1">Impacto Proyectado:</span>
+          {props.calcFormula(val1, val2)}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function TrampasDinero() {
   const user = { id: "local-user" };
@@ -178,10 +482,13 @@ export default function TrampasDinero() {
 
   // ── State ──
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<"trader" | "general" | null>(null);
   const [view, setView] = useState<"intro" | "questions" | "completed">("intro");
-  const [responses, setResponses] = useState<Record<number, string>>({});
+  const [responses, setResponses] = useState<Record<string, string>>({});
   const [copiedLink, setCopiedLink] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const activeQuestions = profile === 'trader' ? QUESTIONS_TRADER : QUESTIONS_GENERAL;
 
   const answered = Object.values(responses).filter(
     (v) => v && String(v).trim()
@@ -197,6 +504,7 @@ export default function TrampasDinero() {
           await clearActivityProgressDB('trampas');
           setSearchParams({}, { replace: true });
           setResponses({});
+          setProfile(null);
           setView("questions");
           setLoading(false);
           return;
@@ -205,6 +513,7 @@ export default function TrampasDinero() {
         if (saved && saved.metadata) {
           const r = saved.metadata;
           if (r.responses) setResponses(r.responses);
+          if (r.profile) setProfile(r.profile);
           if (r.completed || saved.completed) setView('completed');
         }
       } catch (e) {
@@ -221,13 +530,14 @@ export default function TrampasDinero() {
     const timer = setTimeout(() => {
       saveActivityProgressDB('trampas', {
         responses,
+        profile,
         completed: view === 'completed'
       }, false).catch(console.error);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [responses, view, loading]);
+  }, [responses, view, loading, profile]);
 
-  const update = (i: number, v: string) =>
+  const update = (i: number | string, v: string) =>
     setResponses((prev) => ({ ...prev, [i]: v }));
 
   const handleStart = () => { setView("questions"); };
@@ -239,6 +549,7 @@ export default function TrampasDinero() {
     try {
       await saveActivityProgressDB('trampas', {
         responses,
+        profile,
         completed: true,
       }, true);
     } catch (e) {
@@ -300,7 +611,7 @@ export default function TrampasDinero() {
     y = addPdfText(doc, intro, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
     y += 4;
     
-    RETO.questions.forEach((q, i) => {
+    activeQuestions.forEach((q, i) => {
       y = checkPageBreak(doc, y, 20);
       
       y = addPdfText(doc, `PREGUNTA ${i+1} (${q.type.toUpperCase()})`, y, { fontSize: 10, color: [255, 62, 176], fontStyle: 'bold' });
@@ -309,7 +620,21 @@ export default function TrampasDinero() {
       y = addPdfText(doc, q.question, y, { fontSize: 11, color: [15, 23, 42], fontStyle: 'bold', lineHeight: 6 });
       y += 4;
       
-      y = addPdfText(doc, String(responses[i] || 'No respondida'), y, { fontSize: 10, color: [100, 116, 139], fontStyle: 'italic', lineHeight: 6 });
+      let ansText = String(responses[i] || 'No respondida');
+      if (q.controlType === 'choice' && q.options) {
+        const opt = q.options.find(o => o.value === responses[i]);
+        if (opt) ansText = opt.label;
+      } else if (q.controlType === 'slider') {
+        ansText = `${parseFloat(responses[i] || "1.0").toFixed(1)}x veces más`;
+      }
+      
+      y = addPdfText(doc, ansText, y, { fontSize: 10, color: [100, 116, 139], fontStyle: 'italic', lineHeight: 6 });
+      
+      const refText = responses[i + '_text'];
+      if (refText) {
+        y += 2;
+        y = addPdfText(doc, `Justificación: ${refText}`, y, { fontSize: 10, color: [71, 85, 105], lineHeight: 5 });
+      }
       y += 6;
     });
     
@@ -431,6 +756,56 @@ export default function TrampasDinero() {
   // VIEW: QUESTIONS
   // ════════════════════════════════════════════════════════════════════════
   if (view === "questions") {
+    if (!profile) {
+      return (
+        <div className="max-w-2xl mx-auto px-4 py-12 min-h-[70vh] flex flex-col justify-center">
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-10 space-y-8 relative overflow-hidden border-t-2 border-t-[#FF3EB0]">
+            <div className="absolute inset-0 bg-gradient-to-b from-[#FF3EB0]/5 to-transparent pointer-events-none" />
+            
+            <div className="text-center space-y-3">
+              <span className="text-[10px] tracking-[0.3em] uppercase text-[#FF3EB0] font-black font-mono">
+                Configuración Inicial
+              </span>
+              <h2 className="text-3xl font-black uppercase tracking-tight">
+                ¿Cómo deseas enfocar <span className="title-highlight">tu reto?</span>
+              </h2>
+              <p className="text-brand-text-muted text-sm max-w-md mx-auto leading-relaxed font-medium">
+                Adaptaremos las preguntas y ejemplos del ejercicio para que hagan clic exacto con tu nivel de experiencia actual.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 pt-4">
+              <button
+                onClick={() => setProfile('trader')}
+                className="glass-card p-6 text-left border border-white/5 hover:border-[#FF3EB0]/30 hover:bg-white/[0.01] transition-all group flex flex-col justify-between min-h-[160px]"
+              >
+                <div>
+                  <span className="text-2xl mb-3 block">📈</span>
+                  <h3 className="font-bold text-white text-base group-hover:text-[#FF3EB0] transition-colors mb-2">Perfil Trader / Inversionista</h3>
+                  <p className="text-xs text-brand-text-muted leading-relaxed font-medium">
+                    Si ya operas o inviertes activamente en los mercados financieros y quieres optimizar tu psicología operativa (targets, pérdidas, FOMO).
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setProfile('general')}
+                className="glass-card p-6 text-left border border-white/5 hover:border-brand-green/30 hover:bg-white/[0.01] transition-all group flex flex-col justify-between min-h-[160px]"
+              >
+                <div>
+                  <span className="text-2xl mb-3 block">🛍️</span>
+                  <h3 className="font-bold text-white text-base group-hover:text-brand-green transition-colors mb-2">Perfil Finanzas Personales</h3>
+                  <p className="text-xs text-brand-text-muted leading-relaxed font-medium">
+                    Si no haces trading y deseas aplicar el ejercicio a tus hábitos diarios, compras por impulso, metas de ahorro y relación general con el dinero.
+                  </p>
+                </div>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      );
+    }
+
     return (
       <div className="flex flex-col min-h-[calc(100vh-80px)]">
         {/* Sticky header with progress */}
@@ -441,8 +816,8 @@ export default function TrampasDinero() {
               <span className="text-sm font-black text-[#FF3EB0] uppercase tracking-wider hidden sm:inline">
                 RETO {RETO.name}
               </span>
-              <span className="text-[10px] font-mono text-brand-text-muted tracking-widest">
-                · 1 DÍA
+              <span className="text-[10px] font-mono text-brand-text-muted tracking-widest uppercase">
+                · PERFIL {profile === 'trader' ? 'TRADER' : 'FINANZAS'}
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -477,15 +852,14 @@ export default function TrampasDinero() {
                 Bajemos el contenido al papel.
               </h1>
               <p className="text-brand-text-muted text-sm leading-relaxed font-medium">
-                10 preguntas. Cada una hace click con algo de lo que hemos visto. Respóndelas con honestidad — son para ti.
+                10 preguntas interactivas. Cada una hace click con algo de lo que hemos visto. Respóndelas con honestidad — son para ti.
               </p>
             </div>
 
             {/* Question cards */}
-            {RETO.questions.map((q, i) => {
+            {activeQuestions.map((q, i) => {
               const style = TYPE_STYLES[q.type];
-              const isAnswered =
-                responses[i] && String(responses[i]).trim();
+              const isAnswered = responses[i] && String(responses[i]).trim();
 
               return (
                 <motion.div
@@ -530,40 +904,146 @@ export default function TrampasDinero() {
 
                   {/* Hint */}
                   {q.hint && (
-                    <p className="text-sm text-brand-text-muted leading-relaxed mb-4">
+                    <p className="text-xs text-brand-text-muted leading-relaxed mb-4">
                       {q.hint}
                     </p>
                   )}
 
-                  {/* Input */}
-                  {q.inputType === "number" ? (
-                    <div className="flex items-center gap-3 mt-4">
-                      {q.prefix && (
-                        <span className={`text-xl font-mono font-bold ${style.color}`}>
-                          {q.prefix}
-                        </span>
-                      )}
-                      <input
-                        type="number"
-                        value={responses[i] || ""}
-                        onChange={(e) => update(i, e.target.value)}
-                        placeholder="0"
-                        className="w-48 bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-lg font-mono font-bold tabular-nums focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15"
-                      />
-                      {q.suffix && (
-                        <span className="text-sm font-mono font-bold text-white/50">
-                          {q.suffix}
-                        </span>
+                  {/* Input Rendering based on controlType */}
+                  {q.controlType === "choice" && (
+                    <div className="grid gap-2 mt-3">
+                      {q.options?.map((opt) => {
+                        const isSelected = responses[i] === opt.value;
+                        return (
+                          <div key={opt.value}>
+                            <button
+                              type="button"
+                              onClick={() => update(i, opt.value)}
+                              className={`w-full text-left p-3.5 rounded-xl border text-xs font-semibold transition-all flex justify-between items-center ${
+                                isSelected
+                                  ? "bg-[#FF3EB0]/10 border-[#FF3EB0] text-white"
+                                  : "bg-white/[0.01] border-white/5 text-white/70 hover:bg-white/[0.03] hover:text-white"
+                              }`}
+                            >
+                              <span>{opt.label}</span>
+                              <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 ${
+                                isSelected ? "border-[#FF3EB0] bg-[#FF3EB0]" : "border-white/20"
+                              }`}>
+                                {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                              </span>
+                            </button>
+                            {isSelected && opt.feedback && (
+                              <motion.p
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                className="text-[11px] text-brand-green mt-2 ml-2 leading-relaxed font-mono font-bold"
+                              >
+                                ✓ {opt.feedback}
+                              </motion.p>
+                            )}
+                          </div>
+                        );
+                      })}
+
+                      {responses[i] && q.placeholder && (
+                        <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
+                          <label className="text-[10px] font-mono text-white/35 uppercase tracking-widest block mb-1.5">↓ Escribe tu reflexión o justificación:</label>
+                          <textarea
+                            value={responses[i + '_text'] || ""}
+                            onChange={(e) => setResponses(prev => ({ ...prev, [i + '_text']: e.target.value }))}
+                            placeholder={q.placeholder}
+                            rows={q.rows || 3}
+                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-sm leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                          />
+                        </motion.div>
                       )}
                     </div>
-                  ) : (
-                    <textarea
-                      value={responses[i] || ""}
-                      onChange={(e) => update(i, e.target.value)}
-                      placeholder={q.placeholder}
-                      rows={q.rows || 3}
-                      className="w-full mt-2 bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-sm leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
-                    />
+                  )}
+
+                  {q.controlType === "slider" && (
+                    <InteractiveSlider q={q} i={i} responses={responses} update={update} style={style} />
+                  )}
+
+                  {q.controlType === "calculator" && (
+                    <InteractiveCalculator q={q} i={i} responses={responses} setResponses={setResponses} style={style} />
+                  )}
+
+                  {q.controlType === "checklist" && (
+                    <div className="mt-3 space-y-2">
+                      {q.checklistProps?.map((item) => {
+                        const currentSelections = responses[i] ? responses[i].split(" || ") : [];
+                        const isChecked = currentSelections.includes(item);
+                        const handleCheck = () => {
+                          let updated: string[];
+                          if (isChecked) {
+                            updated = currentSelections.filter(x => x !== item);
+                          } else {
+                            updated = [...currentSelections, item];
+                          }
+                          update(i, updated.join(" || "));
+                        };
+
+                        return (
+                          <button
+                            type="button"
+                            key={item}
+                            onClick={handleCheck}
+                            className={`w-full text-left p-3.5 rounded-xl border text-xs font-semibold transition-all flex items-center gap-3 ${
+                              isChecked
+                                ? "bg-white/[0.03] border-[#FF3EB0]/30 text-white"
+                                : "bg-white/[0.01] border-white/5 text-white/60 hover:bg-white/[0.02]"
+                            }`}
+                          >
+                            <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                              isChecked ? "border-[#FF3EB0] bg-[#FF3EB0]" : "border-white/20"
+                            }`}>
+                              {isChecked && <Check className="w-2.5 h-2.5 text-white" />}
+                            </span>
+                            <span>{item}</span>
+                          </button>
+                        );
+                      })}
+
+                      {responses[i] && (
+                        <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
+                          <label className="text-[10px] font-mono text-white/35 uppercase tracking-widest block mb-1.5">↓ Escribe tu reflexión o justificación:</label>
+                          <textarea
+                            value={responses[i + '_text'] || ""}
+                            onChange={(e) => setResponses(prev => ({ ...prev, [i + '_text']: e.target.value }))}
+                            placeholder={q.placeholder}
+                            rows={q.rows || 3}
+                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-sm leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                          />
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
+
+                  {q.controlType === "text" && (
+                    <div className="space-y-3 mt-2">
+                      {q.quickTemplates && (
+                        <div className="flex flex-wrap gap-1.5 mb-1.5">
+                          <span className="text-[9px] font-mono text-white/35 uppercase tracking-wider w-full mb-0.5">Plantillas rápidas recomendadas:</span>
+                          {q.quickTemplates.map((t) => (
+                            <button
+                              type="button"
+                              key={t.label}
+                              onClick={() => update(i, t.text)}
+                              className="text-[9px] font-mono bg-white/5 border border-white/10 rounded px-2 py-1 text-white/80 hover:bg-[#FF3EB0]/15 hover:border-[#FF3EB0]/40 hover:text-white transition-colors"
+                            >
+                              + {t.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <textarea
+                        value={responses[i] || ""}
+                        onChange={(e) => update(i, e.target.value)}
+                        placeholder={q.placeholder}
+                        rows={q.rows || 3}
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-sm leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                      />
+                    </div>
                   )}
                 </motion.div>
               );
