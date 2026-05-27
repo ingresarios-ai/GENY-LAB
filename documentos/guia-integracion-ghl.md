@@ -51,6 +51,41 @@ En tu automatización de GHL, ya puedes enviar este enlace al contacto de forma 
 
 ---
 
+## Paso 4: Configurar los Webhooks de Progreso (Retorno desde GENY LAB)
+
+Para enviar notificaciones automáticas por WhatsApp o Email a tus contactos cada vez que avanzan en el reto o completan una actividad, debes configurar la recepción de eventos desde la app hacia GHL.
+
+### 1. Crear un Webhook Receiver en tu Workflow de GHL
+1. En tu CRM GHL, ve a **Automation → Workflows** y crea un nuevo workflow para cada evento (o un workflow integrador).
+2. Agrega el trigger **Custom Webhook** (o utiliza un webhook de entrada para iniciar la automatización). Esto te dará una **URL de Webhook de GHL** (ej. `https://services.leadconnectorhq.com/hooks/...`).
+
+### 2. Registrar la URL en el Panel de Administración de GENY LAB
+1. Inicia sesión en el Admin Panel de la app (`/admin`).
+2. Ve a la sección **Webhooks** en el menú lateral.
+3. Haz clic en **Agregar** y llena los campos:
+   * **Nombre:** Describe tu webhook (ej. `GHL - Progreso del Reto` o `GHL - Reto Completado`).
+   * **URL:** Pega la URL del Webhook de GHL que copiaste.
+   * **Actividades que disparan:** Elige los eventos correspondientes. Puedes seleccionar eventos específicos (ej. `flow`, `sombra`) o elegir **Todas** o **Todo Completado**.
+4. Haz clic en **Crear Webhook**. ¡Listo! Ahora la app enviará los datos automáticamente.
+
+### 3. Payload Enviado (Estructura JSON)
+La app envía un POST con la siguiente estructura:
+```json
+{
+  "email": "correo-del-usuario@ejemplo.com",
+  "activity_id": "flow", // adn, gastos, termostato, trampas, pedem, sombra, flow
+  "is_completed": true,
+  "metadata": {
+    "route": "trader",
+    "arquetipo": "estratega"
+    // ... métricas específicas del progreso de la actividad
+  }
+}
+```
+*(Para el evento final del **Reto del Flow**, el `activity_id` enviado será `flow` y se disparará adicionalmente el evento general `all_completed` / `Todo Completado`).*
+
+---
+
 ## 🔒 Seguridad y Robustez del Enlace Permanente
 * **Sin Expiración:** El enlace enviado al cliente es del tipo `https://genylab.ingresarios.net/acceso/[access_code]`. Este enlace es único y no expira.
 * **Inicio de Sesión Automático:** Al hacer clic en este enlace, el navegador del usuario invoca una petición segura al backend, genera dinámicamente un token de sesión temporal de Supabase de un solo uso y lo loguea en la aplicación redirigiéndolo de inmediato al panel de `/app`.

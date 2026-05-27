@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { loadActivityProgressDB, saveActivityProgressDB } from '../lib/activitySync';
 
 const ADMIN_API = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api`;
 
@@ -7,94 +9,139 @@ const ADMIN_API = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api`;
  * Settings (enabled/minutes) are fetched from site_settings via admin-api.
  * Once revealed, subsequent visits (reloads) show content immediately.
  *
- * @param storageKey - unique localStorage key per page
+ * @param storageKey - unique key per page
  * @returns { contentRevealed, minutesLeft, secondsLeft, loading }
  */
 export function useDelayedReveal(storageKey: string) {
-  const [contentRevealed, setContentRevealed] = useState(() => {
-    return localStorage.getItem(storageKey) === 'true';
-  });
+  const [contentRevealed, setContentRevealed] = useState(false);
   const [remaining, setRemaining] = useState(0);
-  const [loading, setLoading] = useState(!localStorage.getItem(storageKey));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Already revealed from a previous visit
-    if (contentRevealed) {
-      setLoading(false);
-      return;
-    }
-
     let cancelled = false;
+    let iv: any;
 
     async function init() {
-      // Fetch config from admin API
-      let enabled = true;
-      let delayMinutes = 10;
-
       try {
-        const res = await fetch(`${ADMIN_API}/site-settings/content_delay`, {
-          headers: { 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` }
-        });
-        if (res.ok) {
-          const config = await res.json();
-          enabled = config.enabled ?? true;
-          delayMinutes = config.minutes ?? 10;
+        // 1. Check if user is authenticated
+        const { data: { user } } = await supabase.auth.getUser();
+        const isAuth = !!user;
+
+        // 2. Fetch reveal state
+        let arrivedAt = 0;
+        let revealed = false;
+
+        if (isAuth) {
+          const dbState = await loadActivityProgressDB(storageKey);
+          if (dbState && dbState.metadata) {
+            revealed = dbState.metadata.contentRevealed === true;
+            arrivedAt = dbState.metadata.arrivedAt || 0;
+          }
+        } else {
+          // Anonymous visitor fallback to sessionStorage (no localStorage)
+          revealed = sessionStorage.getItem(storageKey) === 'true';
+          arrivedAt = parseInt(sessionStorage.getItem(`${storageKey}_arrived`) || '0');
         }
-      } catch {
-        // Fallback to defaults if API fails
-      }
 
-      if (cancelled) return;
+        if (revealed) {
+          if (!cancelled) {
+            setContentRevealed(true);
+            setLoading(false);
+          }
+          return;
+        }
 
-      // Feature disabled — show everything immediately
-      if (!enabled) {
-        setContentRevealed(true);
-        localStorage.setItem(storageKey, 'true');
-        setLoading(false);
-        return;
-      }
+        // 3. Fetch delay settings from site config API
+        let enabled = true;
+        let delayMinutes = 10;
 
-      const delayMs = delayMinutes * 60 * 1000;
+        try {
+          const res = await fetch(`${ADMIN_API}/site-settings/content_delay`, {
+            headers: { 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` }
+          });
+          if (res.ok) {
+            const config = await res.json();
+            enabled = config.enabled ?? true;
+            delayMinutes = config.minutes ?? 10;
+          }
+        } catch {
+          // Fallback to defaults if API fails
+        }
 
-      // First visit: record the timestamp when the user arrived
-      const arrivedKey = `${storageKey}_arrived`;
-      let arrivedAt = parseInt(localStorage.getItem(arrivedKey) || '0');
-      if (!arrivedAt) {
-        arrivedAt = Date.now();
-        localStorage.setItem(arrivedKey, arrivedAt.toString());
-      }
-
-      setLoading(false);
-
-      const tick = () => {
         if (cancelled) return;
-        const elapsed = Date.now() - arrivedAt;
-        const left = Math.max(0, delayMs - elapsed);
-        setRemaining(left);
 
-        if (left <= 0) {
-          setContentRevealed(true);
-          localStorage.setItem(storageKey, 'true');
-          clearInterval(iv);
+        // Feature disabled — show everything immediately
+        if (!enabled) {
+          if (!cancelled) {
+            setContentRevealed(true);
+            setLoading(false);
+          }
+          // Save completion
+          if (isAuth) {
+            saveActivityProgressDB(storageKey, { arrivedAt: Date.now(), contentRevealed: true }, false);
+          } else {
+            sessionStorage.setItem(storageKey, 'true');
+          }
+          return;
         }
-      };
 
-      tick();
-      const iv = setInterval(tick, 1000);
+        const delayMs = delayMinutes * 60 * 1000;
 
-      // Cleanup
-      return () => { clearInterval(iv); };
+        // First visit: record the timestamp when the user arrived
+        if (!arrivedAt) {
+          arrivedAt = Date.now();
+          if (isAuth) {
+            await saveActivityProgressDB(storageKey, { arrivedAt, contentRevealed: false }, false);
+          } else {
+            sessionStorage.setItem(`${storageKey}_arrived`, arrivedAt.toString());
+          }
+        }
+
+        if (cancelled) return;
+        setLoading(false);
+
+        const tick = () => {
+          if (cancelled) return;
+          const elapsed = Date.now() - arrivedAt;
+          const left = Math.max(0, delayMs - elapsed);
+          setRemaining(left);
+
+          if (left <= 0) {
+            if (!cancelled) {
+              setContentRevealed(true);
+            }
+            clearInterval(iv);
+            
+            // Save completion status
+            if (isAuth) {
+              saveActivityProgressDB(storageKey, { arrivedAt, contentRevealed: true }, false);
+            } else {
+              sessionStorage.setItem(storageKey, 'true');
+            }
+          }
+        };
+
+        tick();
+        iv = setInterval(tick, 1000);
+      } catch (err) {
+        console.error('Error in useDelayedReveal:', err);
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
     }
 
-    const cleanup = init();
+    init();
+
     return () => {
       cancelled = true;
-      cleanup?.then(fn => fn?.());
+      if (iv) clearInterval(iv);
     };
-  }, [storageKey, contentRevealed]);
+  }, [storageKey]);
 
   const minutesLeft = Math.floor(remaining / 60000);
   const secondsLeft = Math.floor((remaining % 60000) / 1000);
 
   return { contentRevealed, minutesLeft, secondsLeft, loading };
 }
+

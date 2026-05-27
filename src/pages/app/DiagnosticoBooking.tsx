@@ -7,7 +7,7 @@ import { Logo } from '../../components/Logo';
 import { Footer } from '../../components/Footer';
 import Confetti from '../../components/Confetti';
 import confetti from 'canvas-confetti';
-import { syncAllCompletedActivities } from '../../lib/activitySync';
+import { syncAllCompletedActivities, saveActivityProgressDB } from '../../lib/activitySync';
 
 export default function DiagnosticoBooking() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export default function DiagnosticoBooking() {
   useEffect(() => {
     syncAllCompletedActivities();
     if (isAllCompleted()) {
-      localStorage.setItem('geny_visited_diagnostico', 'true');
+      saveActivityProgressDB('visited-diagnostico', { visited: true }, false);
     }
   }, []);
 

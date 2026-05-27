@@ -7,7 +7,7 @@ import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap, Gr
 import { LESSONS, getLevelForXp, getXpProgressInLevel, PHASE_LABELS, type Lesson } from '../../lib/lessons';
 import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted } from '../../lib/progressStore';
 import { Logo } from '../../components/Logo';
-import { loadAllActivitiesProgressDB } from '../../lib/activitySync';
+import { loadAllActivitiesProgressDB, loadActivityProgressDB, saveActivityProgressDB } from '../../lib/activitySync';
 import { supabase } from '../../lib/supabase';
 
 export default function PathMap() {
@@ -32,9 +32,7 @@ export default function PathMap() {
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const [userName, setUserName] = useState<string>('Trader');
-  const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
-    return localStorage.getItem('geny_lab_hide_welcome') !== 'true';
-  });
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [dbActivities, setDbActivities] = useState<any[]>([]);
   const [pendingActivity, setPendingActivity] = useState<{
     id: string;
@@ -44,9 +42,7 @@ export default function PathMap() {
     statusText: string;
   } | null>(null);
   const [showPendingModal, setShowPendingModal] = useState(false);
-  const [visitedBooking, setVisitedBooking] = useState<boolean>(() => {
-    return localStorage.getItem('geny_visited_diagnostico') === 'true';
-  });
+  const [visitedBooking, setVisitedBooking] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -69,7 +65,22 @@ export default function PathMap() {
   }, []);
 
   useEffect(() => {
-    setVisitedBooking(localStorage.getItem('geny_visited_diagnostico') === 'true');
+    async function loadPreferences() {
+      try {
+        const welcomePref = await loadActivityProgressDB('welcome-modal-preference');
+        if (!welcomePref || welcomePref.metadata?.hide_welcome !== true) {
+          setShowWelcomeModal(true);
+        }
+        
+        const bookingPref = await loadActivityProgressDB('visited-diagnostico');
+        if (bookingPref && bookingPref.metadata?.visited === true) {
+          setVisitedBooking(true);
+        }
+      } catch (err) {
+        console.error('Error loading preferences from DB:', err);
+      }
+    }
+    loadPreferences();
   }, []);
 
   const pendingActivityName = useMemo(() => {
@@ -226,7 +237,7 @@ export default function PathMap() {
 
   const handleCloseWelcome = () => {
     if (dontShowAgain) {
-      localStorage.setItem('geny_lab_hide_welcome', 'true');
+      saveActivityProgressDB('welcome-modal-preference', { hide_welcome: true }, false);
     }
     setShowWelcomeModal(false);
   };

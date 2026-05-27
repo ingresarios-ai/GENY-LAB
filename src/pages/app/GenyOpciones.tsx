@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import confetti from "canvas-confetti";
 import { markActivityCompleted } from '../../lib/progressStore';
-import { syncActivityToSupabase } from '../../lib/activitySync';
+import { syncActivityToSupabase, loadActivityProgressDB, saveActivityProgressDB } from '../../lib/activitySync';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BLACK-SCHOLES ENGINE
@@ -259,22 +259,26 @@ export default function GenyOpciones() {
 
   // ── Load saved progress ──
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('geny-opciones-progress');
-      if (saved) {
-        const r = JSON.parse(saved);
-        if (r.done) setDone(new Set(r.done));
-        if (r.xp != null) setXp(r.xp);
-        if (r.cash != null) setCash(r.cash);
-        if (r.positions) setPositions(r.positions);
-        if (r.trades) setTrades(r.trades);
-        if (r.dia != null) setDia(r.dia);
-        if (r.dte != null) setDte(r.dte);
+    async function fetchSavedProgress() {
+      try {
+        const result = await loadActivityProgressDB('geny-opciones-progress');
+        if (result && result.metadata) {
+          const r = result.metadata;
+          if (r.done) setDone(new Set(r.done));
+          if (r.xp != null) setXp(r.xp);
+          if (r.cash != null) setCash(r.cash);
+          if (r.positions) setPositions(r.positions);
+          if (r.trades) setTrades(r.trades);
+          if (r.dia != null) setDia(r.dia);
+          if (r.dte != null) setDte(r.dte);
+        }
+      } catch (e) {
+        console.error('Error loading opciones progress:', e);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.error('Error loading opciones progress:', e);
     }
-    setLoading(false);
+    fetchSavedProgress();
   }, []);
 
   // Auto-complete "geny" lesson on page entry
@@ -285,7 +289,7 @@ export default function GenyOpciones() {
     }
   }, [loading]);
 
-  // ── Persist to localStorage (debounced) ──
+  // ── Persist to Supabase DB (debounced/async) ──
   const saveState = (overrides: any = {}) => {
     try {
       const current = {
@@ -297,7 +301,8 @@ export default function GenyOpciones() {
       if (overrides.done instanceof Set) {
         current.done = Array.from(overrides.done);
       }
-      localStorage.setItem('geny-opciones-progress', JSON.stringify(current));
+      // Save directly to Supabase activity log without webhooks
+      saveActivityProgressDB('geny-opciones-progress', current, false);
     } catch (e) {
       console.error('Error saving opciones progress:', e);
     }

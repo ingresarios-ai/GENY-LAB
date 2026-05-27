@@ -53,7 +53,7 @@ export default function RetoFlow() {
   const [tasksDone, setTasksDone] = useState<Record<string, boolean>>({});
   const [completedDays, setCompletedDays] = useState<Record<number, boolean>>({});
   const [emociones, setEmociones] = useState<Record<number, string>>({});
-  const [view, setView] = useState<"route" | "arquetipo" | "home" | "day" | "glosario">("route");
+  const [view, setView] = useState<"route" | "arquetipo" | "home" | "day" | "glosario" | "results">("route");
   const [selDay, setSelDay] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState(false);
   const [glosarioQuery, setGlosarioQuery] = useState("");
@@ -69,6 +69,7 @@ export default function RetoFlow() {
           setLoading(false);
           return;
         }
+        const queryView = searchParams.get('view');
         const saved = await loadActivityProgressDB('flow');
         if (saved && saved.metadata) {
           const r = saved.metadata;
@@ -83,6 +84,9 @@ export default function RetoFlow() {
           if (isCompleted || saved.completed) {
             markActivityCompleted('flow');
           }
+        }
+        if (queryView === 'results') {
+          setView('results');
         }
       } catch (e) {
         console.error('Error loading flow progress:', e);
@@ -205,6 +209,94 @@ export default function RetoFlow() {
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
     };
     window.open(links[platform], "_blank");
+  };
+
+  const generateResultsPDF = async () => {
+    setIsGenerating(true);
+    try {
+      const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+      let y = initPdfWithHeader(doc, 'Reto Flow');
+      const W = 210, M = 18;
+      
+      // Title
+      doc.setTextColor(15, 23, 42); // slate-900
+      doc.setFontSize(22); 
+      doc.setFont('helvetica', 'bold');
+      doc.text('REPORTE DE INTEGRACIÓN DEL FLOW', M, y); 
+      y += 10;
+
+      const intro = `¡Felicidades, ${userName}! Has completado los 10 días del Reto del Flow ("El estado de máximo rendimiento"). Este reporte resume tu progreso, el perfil de flow elegido y tu arquetipo integrado. Has entrenado tu mente para operar y tomar decisiones financieras desde la serenidad del Self.`;
+      y = addPdfText(doc, intro, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
+      y += 8;
+
+      // Route / Profile
+      y = checkPageBreak(doc, y, 40);
+      const trackInfo = TRACKS[route || 'novato'];
+      y = addPdfText(doc, `1. TU PERFIL: ${trackInfo?.nombre.toUpperCase()}`, y, { fontSize: 14, color: [0, 209, 255], fontStyle: 'bold' });
+      y += 6;
+      y = addPdfText(doc, trackInfo?.desc || '', y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+      y += 8;
+
+      // Archetype
+      y = checkPageBreak(doc, y, 40);
+      const arqInfo = ARQUETIPOS.find((a) => a.id === arquetipo);
+      y = addPdfText(doc, `2. TU ARQUETIPO: ${arqInfo?.nombre.toUpperCase()}`, y, { fontSize: 14, color: [124, 58, 237], fontStyle: 'bold' });
+      y += 6;
+      y = addPdfText(doc, arqInfo?.desc || '', y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+      y += 8;
+
+      // Phase Summary
+      y = checkPageBreak(doc, y, 45);
+      y = addPdfText(doc, '3. RESUMEN DE FASES DEL RETO', y, { fontSize: 14, color: [15, 23, 42], fontStyle: 'bold' });
+      y += 6;
+
+      // Phase 1
+      y = addPdfText(doc, 'FASE 1: ACTIVACIÓN (Días 1 a 3)', y, { fontSize: 11, color: [242, 197, 0], fontStyle: 'bold' });
+      y += 4;
+      const phase1Text = "• Aprendiste a identificar tu Mapa de Flow Personal a partir de tus experiencias pasadas.\n• Construiste tu Mapa Emocional honesto de decisiones con el dinero.\n• Diseñaste tu Ritual de Entrada Pre-Operativa para calmar tu mente y activar el foco a voluntad.";
+      y = addPdfText(doc, phase1Text, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+      y += 6;
+
+      // Phase 2
+      y = checkPageBreak(doc, y, 40);
+      y = addPdfText(doc, 'FASE 2: PROFUNDIZACIÓN (Días 4 a 7)', y, { fontSize: 11, color: [0, 209, 255], fontStyle: 'bold' });
+      y += 4;
+      const phase2Text = "• Identificaste la voz del miedo y la utilizaste como información reguladora de riesgo.\n• Implementaste la metodología PEDEM (Planear-Ejecutar-Documentar-Evaluar-Mejorar) de manera consciente.\n• Aprendiste a distinguir las decisiones reactivas del Ego de las decisiones claras del Self.\n• Entrenaste bloques de Concentración Pura sin distracciones físicas ni digitales.";
+      y = addPdfText(doc, phase2Text, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+      y += 6;
+
+      // Phase 3
+      y = checkPageBreak(doc, y, 40);
+      y = addPdfText(doc, 'FASE 3: INTEGRACIÓN (Días 8 a 10)', y, { fontSize: 11, color: [0, 230, 118], fontStyle: 'bold' });
+      y += 4;
+      const phase3Text = "• Integraste tu sistema de flow personalizado en tu rutina diaria.\n• Alquimizaste tu sombra emocional en un factor de protección en los mercados.\n• Construiste tu Manifiesto Personal del Flow para mantener el estado mental de alto rendimiento.";
+      y = addPdfText(doc, phase3Text, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+      y += 10;
+
+      // Action plan
+      y = checkPageBreak(doc, y, 45);
+      y = addPdfText(doc, '4. TU PLAN DE ACCIÓN RECOMENDADO', y, { fontSize: 14, color: [15, 23, 42], fontStyle: 'bold' });
+      y += 6;
+
+      const actionText = route === "trader"
+        ? "1. Ritual Pre-Trading: Seguirás ejecutando tu rutina de respiración, delimitación de setups y definición de sesgo antes de ver la pantalla.\n2. Bitácora de Flow: Mantendrás el registro de tu nivel de flow y emociones en cada sesión.\n3. Alquimia: Usarás tus disparadores de ego (frustración, codicia) como señales técnicas para modular tu riesgo y sizing."
+        : "1. Ritual de Foco: Dedicarás 10 minutos a silenciar tu entorno y respirar antes de tomar cualquier decisión de inversión o gasto relevante.\n2. Bitácora del Self: Observarás cuándo es tu ego reactivo el que quiere comprar o gastar imprevistamente.\n3. Aprendizaje Compuesto: Aplicarás PEDEM en cada meta financiera personal.";
+      y = addPdfText(doc, actionText, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5.5 });
+      y += 12;
+
+      y = checkPageBreak(doc, y, 20);
+      doc.setDrawColor(0, 230, 118);
+      doc.setLineWidth(0.5);
+      doc.line(M, y, W - M, y);
+      y += 6;
+
+      y = addPdfText(doc, 'ESTADO FINAL: MASTER DEL FLOW EN GENY LAB', y, { fontSize: 10, color: [0, 230, 118], fontStyle: 'bold', align: 'center' });
+      doc.save(`reporte-integracion-flow.pdf`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // ════════════════════════════════════════════════════════════════════════
@@ -491,6 +583,187 @@ export default function RetoFlow() {
   }
 
   // ════════════════════════════════════════════════════════════════════════
+  // VIEW: FINAL CHALLENGE RESULTS / REPORT (10 Days Completed)
+  // ════════════════════════════════════════════════════════════════════════
+  if (view === "results") {
+    const totalDays = DAYS.length;
+    const completedCount = Object.values(completedDays).filter(Boolean).length;
+    const trackInfo = TRACKS[route || "novato"];
+    const arqInfo = ARQUETIPOS.find((a) => a.id === arquetipo);
+
+    return (
+      <div className="max-w-5xl mx-auto pb-12 space-y-8">
+        <ResultActions 
+          onDownloadPDF={generateResultsPDF} 
+          onReset={async () => {
+            setRoute(null);
+            setArquetipo(null);
+            setCompletedDays({});
+            setTasksDone({});
+            setEmociones({});
+            setView("route");
+            await saveState(null, null, {}, {}, {}, "route", 1);
+          }} 
+          resetLabel="Reiniciar todo el Reto"
+        />
+
+        <div className="min-h-[70vh] flex flex-col justify-center gap-8">
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+            {/* Header Card */}
+            <div className="glass-card p-8 md:p-10 border-t-2 border-t-[#00D1FF] relative overflow-hidden text-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00D1FF]/10 via-transparent to-transparent pointer-events-none" />
+              <div className="relative z-10 space-y-4">
+                <span className="text-6xl">🏆</span>
+                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-wider text-white">
+                  Reporte de Integración de Flow
+                </h1>
+                <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+                  Felicidades, <span className="text-[#00D1FF] font-black">{userName}</span>. Has completado exitosamente la actividad de 10 días "Reto del Flow" y entrenado tu mente para operar desde la serenidad del Self.
+                </p>
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-[#00D1FF]/10 border border-[#00D1FF]/30 rounded-full text-[#00D1FF] text-xs font-black uppercase tracking-widest font-mono">
+                  ✓ RETO COMPLETADO ({completedCount}/{totalDays} Días)
+                </div>
+              </div>
+            </div>
+
+            {/* Content Columns */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Left Column: Track & Archetype */}
+              <div className="glass-card p-6 md:p-8 space-y-6 flex flex-col justify-between">
+                <div className="space-y-6">
+                  {/* Track info */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center">
+                        <span className="text-lg">{trackInfo?.emoji}</span>
+                      </div>
+                      <div>
+                        <h3 className="text-xs font-black text-brand-blue uppercase tracking-widest">Ruta de Entrenamiento</h3>
+                        <p className="text-[10px] text-brand-text-muted uppercase tracking-widest font-mono">{trackInfo?.nombre}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-slate-300 leading-relaxed italic">
+                      "{trackInfo?.tagline}"
+                    </p>
+                  </div>
+                  
+                  {/* Archetype info */}
+                  <div className="pt-6 border-t border-white/5 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-brand-purple/15 border border-brand-purple/30 flex items-center justify-center">
+                        <span className="text-lg">{arqInfo?.emoji}</span>
+                      </div>
+                      <div>
+                        <h3 className="text-xs font-black text-brand-purple uppercase tracking-widest">Tu Arquetipo de Flow</h3>
+                        <p className="text-[10px] text-brand-text-muted uppercase tracking-widest font-mono">{arqInfo?.nombre}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-slate-300 leading-relaxed font-medium">
+                      {arqInfo?.desc}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Phases summary */}
+                <div className="pt-6 border-t border-white/5 space-y-4">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-white">Fases del Entrenamiento:</h4>
+                  <div className="space-y-3 font-medium">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400">Fase 1: Activación (Días 1-3)</span>
+                      <span className="text-brand-green font-bold font-mono">✓ COMPLETADA</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400">Fase 2: Profundización (Días 4-7)</span>
+                      <span className="text-brand-green font-bold font-mono">✓ COMPLETADA</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400">Fase 3: Integración (Días 8-10)</span>
+                      <span className="text-brand-green font-bold font-mono">✓ COMPLETADA</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Improvements & Skills */}
+              <div className="glass-card p-6 md:p-8 space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-brand-green/15 border border-brand-green/30 flex items-center justify-center">
+                    <span className="text-lg">⚡</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-brand-green uppercase tracking-widest">Habilidades y Mejoras Integradas</h3>
+                    <p className="text-[10px] text-brand-text-muted uppercase tracking-widest font-mono">Cambios en tu Perfil {route === 'trader' ? 'Trader' : 'Finanzas'}</p>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 text-sm text-slate-300 font-medium">
+                  {route === "trader" ? (
+                    <>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
+                        <span><strong>Foco Absoluto:</strong> Capacidad para operar libre de distracciones externas e internas.</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
+                        <span><strong>Coherencia Cardíaca:</strong> Control de tu respiración pre-trading para modular la respuesta al estrés.</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
+                        <span><strong>Decisiones desde el Self:</strong> Identificación oportuna de los sesgos y venganza del ego.</span>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
+                        <span><strong>Presencia Consciente:</strong> Enfoque ininterrumpido en la planeación y tareas financieras.</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
+                        <span><strong>Saneamiento Emocional:</strong> Observación de los impulsos inconscientes de gasto/riesgo en tus finanzas diarias.</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
+                        <span><strong>Framework PEDEM:</strong> Hábito de planeación, ejecución y evaluación en tus metas de vida.</span>
+                      </li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            {/* Booking CTA Card */}
+            <div className="glass-card p-8 md:p-10 border border-[#F2C500]/30 bg-gradient-to-r from-[#F2C500]/10 to-transparent relative overflow-hidden rounded-3xl text-center space-y-6">
+              <div className="absolute top-0 right-0 p-8 text-8xl opacity-[0.03] pointer-events-none">
+                🏆
+              </div>
+              <div className="relative z-10 space-y-4 max-w-2xl mx-auto">
+                <span className="text-[#F2C500] font-mono text-xs font-black uppercase tracking-[0.2em]">¡RECOMPENSA FINAL DESBLOQUEADA!</span>
+                <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">
+                  Tu Sesión Diagnóstico de Consistencia
+                </h2>
+                <p className="text-white/70 text-sm md:text-base leading-relaxed">
+                  Has completado las 7 actividades core del reto. El acceso a tu sesión privada 1-a-1 valorada en <strong>$1,000 USD</strong> está totalmente liberado. Agenda tu horario en el calendario de inmediato para asegurar tu lugar.
+                </p>
+                
+                <div className="pt-4">
+                  <Link 
+                    to="/app/diagnostico" 
+                    className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-black px-8 py-4 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(245,158,11,0.2)] hover:shadow-[0_0_40px_rgba(245,158,11,0.4)]"
+                  >
+                    <span>Agendar Sesión Diagnóstico ➔</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
   // VIEW: HOME / DASHBOARD
   // ════════════════════════════════════════════════════════════════════════
   if (view === "home") {
@@ -519,14 +792,23 @@ export default function RetoFlow() {
               <h2 className="text-3xl font-black text-brand-green uppercase tracking-wider">¡Felicidades, Master del Flow!</h2>
               <p className="text-slate-300 text-lg">Has completado los 10 días del Reto del Flow. Has integrado tu mentalidad con el mercado.</p>
               
-              <div className="max-w-md mx-auto py-6 border-t border-b border-white/5 my-6">
-                <p className="text-xs text-brand-green font-black uppercase tracking-widest mb-3">Comparte tu victoria</p>
-                <ShareModule 
-                  activity="flow" 
-                  title="Reto 10 Días al Flow" 
-                  resultData={{ selDay: 10, title: "Reto Completado", route, arquetipo }}
-                  shareMessage={`¡He completado con éxito los 10 días del Reto del Flow en GENY LAB! ⚡ Mente en calma, operativa consistente. Únete al reto.`}
-                />
+              <div className="max-w-md mx-auto py-6 border-t border-b border-white/5 my-6 space-y-4">
+                <button
+                  onClick={() => setView("results")}
+                  className="w-full cursor-pointer inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-brand-green/20 border border-brand-green/30 text-brand-green hover:bg-brand-green/30 transition-all text-xs font-mono uppercase tracking-widest rounded-xl"
+                >
+                  📊 Ver Reporte Completo
+                </button>
+                
+                <div className="pt-4 border-t border-white/5">
+                  <p className="text-xs text-brand-green font-black uppercase tracking-widest mb-3">Comparte tu victoria</p>
+                  <ShareModule 
+                    activity="flow" 
+                    title="Reto 10 Días al Flow" 
+                    resultData={{ selDay: 10, title: "Reto Completado", route, arquetipo }}
+                    shareMessage={`¡He completado con éxito los 10 días del Reto del Flow en GENY LAB! ⚡ Mente en calma, operativa consistente. Únete al reto.`}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -915,8 +1197,8 @@ export default function RetoFlow() {
                       await saveState(route, arquetipo, tasksDone, completedDays, emociones, "day", nextD);
                       navigate("/app");
                     } else {
-                      setView("home");
-                      await saveState(route, arquetipo, tasksDone, completedDays, emociones, "home", selDay);
+                      setView("results");
+                      await saveState(route, arquetipo, tasksDone, completedDays, emociones, "results", selDay);
                       // Trigger big completion confetti on manual results view entry!
                       setTimeout(() => {
                         confetti({
