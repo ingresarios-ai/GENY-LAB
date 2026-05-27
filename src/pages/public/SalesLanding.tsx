@@ -252,11 +252,13 @@ export default function SalesLanding() {
             </div>
             
             {/* Secure payment logos below video */}
+            {contentRevealed && (
             <div className="flex flex-wrap items-center justify-center gap-8 mt-6 text-white/60 text-sm font-mono uppercase tracking-[0.15em] font-black">
               <span className="flex items-center gap-2"><Lock size={16} className="text-[#00D1FF]" /> Conexión Segura SSL</span>
               <span className="flex items-center gap-2"><Shield size={16} className="text-[#00E676]" /> Garantía Total 15 Días</span>
               <span className="flex items-center gap-2"><Clock size={16} className="text-[#f59e0b]" /> Acceso de por vida</span>
             </div>
+            )}
           </div>
 
           {/* HEADLINE — Identity-based pattern interrupt (HUGE TYPOGRAPHY) */}
