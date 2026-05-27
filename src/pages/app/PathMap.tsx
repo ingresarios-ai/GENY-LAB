@@ -570,34 +570,34 @@ export default function PathMap() {
       </div>
 
       {/* ══════ DESKTOP: Horizontal Carousel ══════ */}
-      <div className="relative w-full max-w-[1300px] mx-auto px-16 hidden md:block mb-16">
+      <div className="relative w-full max-w-[1320px] mx-auto px-20 hidden md:block mb-16">
         {canScrollLeft && (
           <button 
             onClick={() => scroll('left')} 
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-30 cursor-pointer focus:outline-none" 
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-30 cursor-pointer focus:outline-none" 
             aria-label="Izquierda"
           >
             <motion.div
               animate={{ x: [0, -4, 0] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="w-12 h-12 rounded-xl bg-[#05080f]/90 backdrop-blur-md border border-[#00D1FF]/40 flex items-center justify-center text-[#00D1FF] shadow-[0_0_20px_rgba(0,209,255,0.25)] hover:border-[#00D1FF] hover:text-white hover:shadow-[0_0_30px_rgba(0,209,255,0.45)] hover:scale-105 active:scale-95 transition-all duration-300"
+              className="w-16 h-16 rounded-2xl bg-[#05080f]/95 backdrop-blur-md border border-[#00D1FF]/40 flex items-center justify-center text-[#00D1FF] shadow-[0_0_25px_rgba(0,209,255,0.3)] hover:border-[#00D1FF] hover:text-white hover:shadow-[0_0_35px_rgba(0,209,255,0.5)] hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={36} />
             </motion.div>
           </button>
         )}
         {canScrollRight && (
           <button 
             onClick={() => scroll('right')} 
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-30 cursor-pointer focus:outline-none" 
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-30 cursor-pointer focus:outline-none" 
             aria-label="Derecha"
           >
             <motion.div
               animate={{ x: [0, 4, 0] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="w-12 h-12 rounded-xl bg-[#05080f]/90 backdrop-blur-md border border-[#00D1FF]/40 flex items-center justify-center text-[#00D1FF] shadow-[0_0_20px_rgba(0,209,255,0.25)] hover:border-[#00D1FF] hover:text-white hover:shadow-[0_0_30px_rgba(0,209,255,0.45)] hover:scale-105 active:scale-95 transition-all duration-300"
+              className="w-16 h-16 rounded-2xl bg-[#05080f]/95 backdrop-blur-md border border-[#00D1FF]/40 flex items-center justify-center text-[#00D1FF] shadow-[0_0_25px_rgba(0,209,255,0.3)] hover:border-[#00D1FF] hover:text-white hover:shadow-[0_0_35px_rgba(0,209,255,0.5)] hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              <ChevronRight size={24} />
+              <ChevronRight size={36} />
             </motion.div>
           </button>
         )}
