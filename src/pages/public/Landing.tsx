@@ -149,6 +149,7 @@ export default function Landing() {
 
     const cleanPhone = phone.replace(/\D/g, '');
     const checkoutUrl = `${CTA_URL}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(cleanPhone)}`;
+    setShowLeadModal(false);
     window.location.href = checkoutUrl;
   };
 

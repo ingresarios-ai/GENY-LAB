@@ -148,6 +148,7 @@ export default function SalesLanding() {
     }
 
     const checkoutUrl = `${CTA_URL}?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`;
+    setShowLeadModal(false);
     window.location.href = checkoutUrl;
   };
 
