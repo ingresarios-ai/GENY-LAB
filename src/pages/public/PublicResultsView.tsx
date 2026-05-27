@@ -155,6 +155,7 @@ export default function PublicResultsView() {
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState('');
   const [activeStep, setActiveStep] = useState<number | null>(0);
+  const [showTechnicalData, setShowTechnicalData] = useState(false);
 
   useEffect(() => {
     // 1. Prevent Indexing dynamically
@@ -556,94 +557,15 @@ export default function PublicResultsView() {
                   </div>
                 </div>
 
-                {/* Profile Summary */}
-                <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <UserIcon className="w-4 h-4 text-[#00D1FF]" />
-                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">Radiografía Ejecutiva</span>
-                  </div>
-                  <p className="text-sm text-white/80 leading-relaxed">{analysis.perfil_resumen}</p>
-                </div>
-
-                {/* Pain Point */}
-                {analysis.dolor_principal && (
-                  <div className="bg-black/30 rounded-2xl p-6 border border-red-500/10">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Heart className="w-4 h-4 text-red-400" />
-                      <span className="text-xs font-bold text-red-400 uppercase tracking-widest">Dolor Principal del Usuario</span>
-                    </div>
-                    <p className="text-sm text-white/80 leading-relaxed">{analysis.dolor_principal}</p>
-                  </div>
-                )}
-
-                {/* Plan Argument */}
-                <div className="bg-black/30 rounded-2xl p-6 border border-[#00E676]/10">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Target className="w-4 h-4 text-[#00E676]" />
-                    <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Por qué este Plan</span>
-                  </div>
-                  <p className="text-sm text-white/80 leading-relaxed">{analysis.plan_argumento}</p>
-                </div>
-
-                {/* Strengths + Attention Areas */}
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <TrendingUp className="w-4 h-4 text-[#00E676]" />
-                      <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Anclas Positivas</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {analysis.fortalezas?.map((f: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-white/70">
-                          <CheckCircle2 className="w-4 h-4 text-[#00E676] mt-0.5 shrink-0" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="w-4 h-4 text-[#F2C500]" />
-                      <span className="text-xs font-bold text-[#F2C500] uppercase tracking-widest">Puntos de Resistencia</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {analysis.areas_atencion?.map((a: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-white/70">
-                          <AlertTriangle className="w-4 h-4 text-[#F2C500] mt-0.5 shrink-0" />
-                          {a}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Opening Hook */}
-                <div className="rounded-2xl p-6 border border-purple-500/20" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.05), rgba(6,9,16,1))' }}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <MessageSquare className="w-4 h-4 text-purple-400" />
-                    <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">🎯 Gancho de Apertura</span>
-                  </div>
-                  <p className="text-base text-white/90 leading-relaxed italic border-l-2 border-purple-500/30 pl-4">"{analysis.gancho_apertura || analysis.gancho_personalizado}"</p>
-                </div>
-
-                {/* Investment Argument */}
-                <div className="rounded-2xl p-6 border border-[#00D1FF]/15" style={{ background: 'linear-gradient(135deg, rgba(0,209,255,0.03), rgba(0,230,118,0.03))' }}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <DollarSign className="w-4 h-4 text-[#00D1FF]" />
-                    <span className="text-xs font-bold text-[#00D1FF] uppercase tracking-widest">💰 Argumento de Inversión</span>
-                  </div>
-                  <p className="text-sm text-white/80 leading-relaxed">{analysis.argumento_inversion}</p>
-                </div>
-
                 {/* Objection Handlers */}
                 {analysis.objeciones && (
-                  <div className="rounded-2xl border border-[#F2C500]/15 overflow-hidden" style={{ background: 'rgba(242,197,0,0.02)' }}>
+                  <div className="rounded-2xl border border-[#F2C500]/15 overflow-hidden bg-black/20" style={{ background: 'rgba(242,197,0,0.02)' }}>
                     <div className="p-6 pb-4">
                       <div className="flex items-center gap-2 mb-1">
                         <ShieldAlert className="w-5 h-5 text-[#F2C500]" />
-                        <span className="text-sm font-black text-[#F2C500] uppercase tracking-widest">Manejo de Objeciones</span>
+                        <span className="text-sm font-black text-[#F2C500] uppercase tracking-widest">Manejo de Objeciones del Cliente</span>
                       </div>
-                      <p className="text-[10px] text-white/30 uppercase tracking-widest mt-1">Respuestas anticipadas basadas en los datos del usuario</p>
+                      <p className="text-[10px] text-white/30 uppercase tracking-widest mt-1">Respuestas adaptadas basadas en las respuestas del lead</p>
                     </div>
                     <div className="divide-y divide-white/5">
                       {[
@@ -665,24 +587,45 @@ export default function PublicResultsView() {
                   </div>
                 )}
 
-                {/* Closing Script */}
-                {analysis.script_cierre && (
-                  <div className="rounded-2xl p-6 border border-[#00E676]/20" style={{ background: 'linear-gradient(135deg, rgba(0,230,118,0.04), rgba(0,209,255,0.02))' }}>
+                {/* Strengths + Attention Areas */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
                     <div className="flex items-center gap-2 mb-3">
-                      <Zap className="w-4 h-4 text-[#00E676]" />
-                      <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">🔒 Script de Cierre</span>
+                      <TrendingUp className="w-4 h-4 text-[#00E676]" />
+                      <span className="text-xs font-bold text-[#00E676] uppercase tracking-widest">Fortalezas (Anclas Positivas)</span>
                     </div>
-                    <p className="text-sm text-white/85 leading-relaxed border-l-2 border-[#00E676]/30 pl-4 italic">{analysis.script_cierre}</p>
+                    <ul className="space-y-2.5">
+                      {analysis.fortalezas?.map((f: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-2 text-xs text-white/70 leading-relaxed">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#00E676] mt-0.5 shrink-0" />
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                )}
+                  <div className="bg-black/30 rounded-2xl p-6 border border-white/5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <AlertTriangle className="w-4 h-4 text-[#F2C500]" />
+                      <span className="text-xs font-bold text-[#F2C500] uppercase tracking-widest">Puntos de Resistencia (A vigilar)</span>
+                    </div>
+                    <ul className="space-y-2.5">
+                      {analysis.areas_atencion?.map((a: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-2 text-xs text-white/70 leading-relaxed">
+                          <AlertTriangle className="w-3.5 h-3.5 text-[#F2C500] mt-0.5 shrink-0" />
+                          <span>{a}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
 
                 {/* Regenerate button */}
-                <div className="text-center pt-2">
+                <div className="text-center pt-2 border-t border-white/5">
                   <button 
                     onClick={generateAnalysis}
-                    className="text-xs text-white/30 hover:text-purple-400 transition-colors font-bold uppercase tracking-widest"
+                    className="text-xs text-white/30 hover:text-purple-400 transition-colors font-bold uppercase tracking-widest font-mono"
                   >
-                    ↻ Regenerar Análisis
+                    ↻ Regenerar Diagnóstico Completo (AI)
                   </button>
                 </div>
               </div>
@@ -690,88 +633,109 @@ export default function PublicResultsView() {
           </div>
         </motion.div>
 
-        {/* Activity Blocks */}
-        <div className="space-y-6">
-          <ActivityBlock id="adn" title="ADN Financiero" emoji="🧬" log={acts.adn}>
-            {acts.adn?.metadata && (
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-black/30 p-5 rounded-2xl border border-white/5">
-                  <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1">Arquetipo Principal</p>
-                  <p className="text-xl font-bold text-[#FFD700]">{acts.adn.metadata.adn || 'N/A'}</p>
+        {/* ═══════════════════════════════════════════════════════ */}
+        {/* COMPACT DATA GRID - USER RESPONSES (CORE) */}
+        {/* ═══════════════════════════════════════════════════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-white/5 bg-black/20 p-6 md:p-8 space-y-6"
+        >
+          <div className="flex items-center gap-2 border-b border-white/5 pb-4">
+            <Activity className="w-5 h-5 text-[#00D1FF]" />
+            <h3 className="text-base font-black uppercase tracking-wider text-white">Respuestas del Reto (Datos Core)</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* ADN */}
+            <div className="bg-black/30 p-5 rounded-2xl border border-white/5 space-y-2">
+              <span className="text-[10px] font-mono text-purple-400 uppercase tracking-widest font-bold block">🧬 ADN Financiero</span>
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-white">Arquetipo: <span className="text-[#FFD700]">{acts.adn?.metadata?.adn || 'No completado'}</span></p>
+                <p className="text-xs text-white/50">Sombra: <span className="text-red-400">{acts.adn?.metadata?.sombra || 'N/A'}</span></p>
+              </div>
+            </div>
+
+            {/* GASTOS */}
+            <div className="bg-black/30 p-5 rounded-2xl border border-white/5 space-y-2">
+              <span className="text-[10px] font-mono text-[#00D1FF] uppercase tracking-widest font-bold block">🐜 Gastos Hormiga</span>
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-white">Fuga Mensual: <span className="text-red-400">{acts.gastos?.metadata?.total ? `$${Math.round(acts.gastos.metadata.total).toLocaleString()}` : 'No completado'}</span></p>
+                <p className="text-xs text-white/50">Fuga Anual: <span className="text-red-500 font-bold">{acts.gastos?.metadata?.total ? `$${Math.round(acts.gastos.metadata.total * 12).toLocaleString()}` : 'N/A'}</span></p>
+              </div>
+            </div>
+
+            {/* TERMOSTATO */}
+            <div className="bg-black/30 p-5 rounded-2xl border border-white/5 space-y-2">
+              <span className="text-[10px] font-mono text-[#00E676] uppercase tracking-widest font-bold block">🌡️ Termostato</span>
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-white">Puntaje: <span className="text-[#00E676]">{acts.termostato?.metadata?.puntaje_global ? `${acts.termostato.metadata.puntaje_global}°` : 'No completado'}</span></p>
+                <p className="text-xs text-white/50">Calibración: <span className="text-white/80">{acts.termostato?.metadata?.temperatura_label || 'N/A'}</span></p>
+              </div>
+            </div>
+
+            {/* TRAMPAS */}
+            <div className="bg-black/30 p-5 rounded-2xl border border-white/5 space-y-2">
+              <span className="text-[10px] font-mono text-amber-500 uppercase tracking-widest font-bold block">🧠 Trampas del Dinero</span>
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-white">Trampas Detectadas:</p>
+                <p className="text-xs text-white/70">
+                  {acts.trampas?.metadata?.responses 
+                    ? `${Object.keys(acts.trampas.metadata.responses).length} sesgos evaluados` 
+                    : 'No completado'}
+                </p>
+              </div>
+            </div>
+
+            {/* PEDEM */}
+            <div className="bg-black/30 p-5 rounded-2xl border border-white/5 space-y-2">
+              <span className="text-[10px] font-mono text-[#00D1FF] uppercase tracking-widest font-bold block">📋 Mi Primer PEDEM</span>
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-white">Estado del Plan:</p>
+                <p className="text-xs text-[#00E676] font-bold">
+                  {acts.pedem ? '✓ Estructurado y Guardado' : 'No completado'}
+                </p>
+              </div>
+            </div>
+
+            {/* EMOCIONES Y FLOW */}
+            <div className="bg-black/30 p-5 rounded-2xl border border-white/5 space-y-2">
+              <span className="text-[10px] font-mono text-purple-400 uppercase tracking-widest font-bold block">⚡ Emociones y Flow</span>
+              <div className="space-y-1">
+                <p className="text-xs text-white/80">Sombra Emocional: <span className="text-purple-300 font-bold">{acts.sombra ? `Día ${acts.sombra.metadata?.d || acts.sombra.metadata?.selDay || 'Listo'}` : 'Pendiente'}</span></p>
+                <p className="text-xs text-white/80">Reto del Flow: <span className="text-[#00D1FF] font-bold">{acts.flow ? `Día ${acts.flow.metadata?.d || acts.flow.metadata?.selDay || 'Listo'}` : 'Pendiente'}</span></p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ═══════════════════════════════════════════════════════ */}
+        {/* TECHNICAL RAW DATA SECTION (COLLAPSIBLE / DEVELOPER ONLY) */}
+        {/* ═══════════════════════════════════════════════════════ */}
+        <div className="pt-8 border-t border-white/5 text-center">
+          <button
+            onClick={() => setShowTechnicalData(!showTechnicalData)}
+            className="text-[10px] font-mono text-white/20 hover:text-white/40 uppercase tracking-widest font-bold transition-colors"
+          >
+            {showTechnicalData ? '▲ Ocultar Datos Técnicos de Soporte' : '▼ Mostrar Datos Técnicos de Soporte (JSON)'}
+          </button>
+
+          {showTechnicalData && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 text-left space-y-4 max-w-2xl mx-auto"
+            >
+              <div className="p-4 bg-black/40 rounded-xl border border-white/5">
+                <p className="text-xs font-mono text-white/40 mb-3 uppercase tracking-wider">Payloads de Actividades en Supabase:</p>
+                <div className="space-y-3">
+                  {activities.map((act) => (
+                    <JsonViewer key={act.activity_id} data={act.metadata} title={`actividad: ${act.activity_id}`} />
+                  ))}
                 </div>
-                <div className="bg-black/30 p-5 rounded-2xl border border-white/5">
-                  <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1">Sombra (Debilidad)</p>
-                  <p className="text-base text-red-400 font-medium">{acts.adn.metadata.sombra || 'N/A'}</p>
-                </div>
               </div>
-            )}
-          </ActivityBlock>
-
-          <ActivityBlock id="gastos" title="Gastos Hormiga" emoji="🐜" log={acts.gastos}>
-            {acts.gastos?.metadata && (
-              <div className="bg-black/30 p-5 rounded-2xl border border-white/5 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1">Fuga Mensual Detectada</p>
-                  <p className="text-3xl font-black text-white">${Math.round(acts.gastos.metadata.total || 0).toLocaleString('en-US')}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1">Pérdida Anual</p>
-                  <p className="text-xl font-bold text-red-500">${Math.round((acts.gastos.metadata.total || 0) * 12).toLocaleString('en-US')}</p>
-                </div>
-              </div>
-            )}
-          </ActivityBlock>
-
-          <ActivityBlock id="termostato" title="Termostato Financiero" emoji="🌡️" log={acts.termostato}>
-            {acts.termostato?.metadata && (
-              <div className="bg-black/30 p-5 rounded-2xl border border-white/5 flex items-center gap-6">
-                <div className="text-5xl font-black text-[#00D1FF]">{acts.termostato.metadata.puntaje_global}°</div>
-                <div>
-                  <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1">Calibración Actual</p>
-                  <p className="text-lg font-bold text-white">{acts.termostato.metadata.temperatura_label || 'N/A'}</p>
-                </div>
-              </div>
-            )}
-          </ActivityBlock>
-
-          <ActivityBlock id="trampas" title="Trampas del Dinero" emoji="🧠" log={acts.trampas}>
-            {acts.trampas?.metadata && (
-              <div className="bg-black/30 p-5 rounded-2xl border border-white/5">
-                <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Respuestas del Quiz</p>
-                <div className="flex flex-wrap gap-2 text-sm text-white/80">
-                  {Object.keys(acts.trampas.metadata.responses || {}).length} trampas detectadas o evaluadas. (Ver Raw JSON para los detalles específicos de cada sesgo).
-                </div>
-              </div>
-            )}
-          </ActivityBlock>
-
-          <ActivityBlock id="pedem" title="Mi Primer PEDEM" emoji="📋" log={acts.pedem}>
-            {acts.pedem?.metadata && (
-              <div className="bg-black/30 p-5 rounded-2xl border border-white/5">
-                <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Plan Estructurado (Resumen)</p>
-                <p className="text-sm text-white/60">Contiene metas, control de deudas, e ingresos planeados. Abre el Raw JSON para leer el plan completo detallado.</p>
-              </div>
-            )}
-          </ActivityBlock>
-
-          <ActivityBlock id="sombra" title="Mis Emociones (Sombra)" emoji="🤯" log={acts.sombra}>
-            {acts.sombra?.metadata && (
-              <div className="bg-black/30 p-5 rounded-2xl border border-white/5">
-                <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Último avance</p>
-                <p className="text-base text-white">Día registrado: <span className="font-bold text-[#00D1FF]">{acts.sombra.metadata.d || acts.sombra.metadata.selDay || 1}</span></p>
-              </div>
-            )}
-          </ActivityBlock>
-
-          <ActivityBlock id="flow" title="Reto del Flow" emoji="⚡" log={acts.flow}>
-            {acts.flow?.metadata && (
-              <div className="bg-black/30 p-5 rounded-2xl border border-white/5">
-                <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Estado actual</p>
-                <p className="text-base text-white">Día de Flow: <span className="font-bold text-[#00D1FF]">{acts.flow.metadata.d || acts.flow.metadata.selDay || 1}</span></p>
-              </div>
-            )}
-          </ActivityBlock>
-
+            </motion.div>
+          )}
         </div>
       </div>
     </div>
