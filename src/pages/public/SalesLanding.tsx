@@ -105,6 +105,7 @@ export default function SalesLanding() {
               country,
               country_name: countryName,
               status: 'lead',
+              lead_source: 'sales_page',
               updated_at: new Date().toISOString()
             })
             .eq('email', emailLC);
@@ -119,6 +120,7 @@ export default function SalesLanding() {
             country,
             country_name: countryName,
             status: 'lead',
+            lead_source: 'sales_page',
             payment_method: 'generic',
             payment_platform: 'generic',
             created_at: new Date().toISOString(),
@@ -161,6 +163,25 @@ export default function SalesLanding() {
     tick();
     const iv = setInterval(tick, 1000);
     return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => {
+    const recordVisit = async () => {
+      try {
+        let visitorId = localStorage.getItem('geny_visitor_id');
+        if (!visitorId) {
+          visitorId = crypto.randomUUID();
+          localStorage.setItem('geny_visitor_id', visitorId);
+        }
+        await supabase.from('page_visits').insert({
+          page_path: window.location.pathname,
+          visitor_id: visitorId
+        });
+      } catch (err) {
+        console.warn('Failed to record page visit:', err);
+      }
+    };
+    recordVisit();
   }, []);
 
   useEffect(() => {

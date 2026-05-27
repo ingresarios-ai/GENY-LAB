@@ -67,6 +67,9 @@ async function api(path: string, options: RequestInit = {}): Promise<any> {
 // Stats
 export const getStats = () => api('stats');
 
+// Analytics
+export const getAnalytics = () => api('analytics');
+
 // Users
 export const getUsers = (params?: Record<string, string>) => {
   const qs = params ? '?' + new URLSearchParams(params).toString() : '';

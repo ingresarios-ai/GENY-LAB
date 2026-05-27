@@ -352,6 +352,53 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // ── ANALYTICS ──
+    if (segments[0] === "analytics" && method === "GET") {
+      const [visitsRes, usersRes] = await Promise.all([
+        supabase
+          .from("page_visits")
+          .select("page_path, visitor_id, ip_country, created_at"),
+        supabase
+          .from("enrolled_users")
+          .select("id, name, email, lead_source, status, created_at")
+      ]);
+
+      if (visitsRes.error) return json({ error: visitsRes.error.message }, 500);
+      if (usersRes.error) return json({ error: usersRes.error.message }, 500);
+
+      const visits = visitsRes.data || [];
+      const enrolled = usersRes.data || [];
+
+      // Group unique visits by path
+      const uniqueVisitsByPath: Record<string, Set<string>> = {};
+      visits.forEach((v: any) => {
+        const path = v.page_path === "/landing" ? "/landing" : "/";
+        if (!uniqueVisitsByPath[path]) {
+          uniqueVisitsByPath[path] = new Set();
+        }
+        uniqueVisitsByPath[path].add(v.visitor_id);
+      });
+
+      // Filter to relevant lead sources
+      const salesPageLeads = enrolled.filter((u: any) => u.lead_source === "sales_page");
+      const landingPageLeads = enrolled.filter((u: any) => u.lead_source === "landing_page");
+
+      const stats = {
+        salesPage: {
+          visits: uniqueVisitsByPath["/"]?.size || 0,
+          leads: salesPageLeads.length,
+          conversions: salesPageLeads.filter((u: any) => u.status === "active").length,
+        },
+        landingPage: {
+          visits: uniqueVisitsByPath["/landing"]?.size || 0,
+          leads: landingPageLeads.length,
+          conversions: landingPageLeads.filter((u: any) => u.status === "active").length,
+        }
+      };
+
+      return json({ stats, rawVisitsCount: visits.length });
+    }
+
     // ── USERS ──
     if (segments[0] === "users") {
       if (method === "GET" && segments.length === 1) {
