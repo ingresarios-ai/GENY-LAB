@@ -137,7 +137,7 @@ export default function AdminMetrics() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-brand-blue/50" />
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white/90">Sales Page Principal</h2>
+              <h2 className="text-lg font-bold text-white/90">Sales Page Whop</h2>
               <code className="text-xs text-brand-blue/60 font-mono">Ruta: /</code>
             </div>
             <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-blue/15 text-brand-blue border border-brand-blue/20">
@@ -205,7 +205,7 @@ export default function AdminMetrics() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500/50" />
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white/90">Clon de Landing Page</h2>
+              <h2 className="text-lg font-bold text-white/90">Sales Page Hotmart</h2>
               <code className="text-xs text-purple-400/60 font-mono">Ruta: /landing</code>
             </div>
             <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/20">
@@ -278,7 +278,7 @@ export default function AdminMetrics() {
           {/* Sales Page Funnel */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm font-semibold">
-              <span className="text-brand-blue">Sales Page Principal (/)</span>
+              <span className="text-brand-blue">Sales Page Whop (/)</span>
               <span className="text-white/40">Visitas: {salesPage.visits} • Leads: {salesPage.leads} • Ventas: {salesPage.conversions}</span>
             </div>
             <div className="flex items-center gap-1.5 h-6 rounded-lg overflow-hidden bg-white/[0.02] border border-white/5 p-0.5">
@@ -305,7 +305,7 @@ export default function AdminMetrics() {
           {/* Landing Page Funnel */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm font-semibold">
-              <span className="text-purple-400">Landing Page Clon (/landing)</span>
+              <span className="text-purple-400">Sales Page Hotmart (/landing)</span>
               <span className="text-white/40">Visitas: {landingPage.visits} • Leads: {landingPage.leads} • Ventas: {landingPage.conversions}</span>
             </div>
             <div className="flex items-center gap-1.5 h-6 rounded-lg overflow-hidden bg-white/[0.02] border border-white/5 p-0.5">
