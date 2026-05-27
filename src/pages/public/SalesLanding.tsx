@@ -88,7 +88,9 @@ export default function SalesLanding() {
   }, []);
 
   useEffect(() => {
-    const h = () => { if (headlineRef.current) setShowStickyBar(headlineRef.current.getBoundingClientRect().bottom < 0); };
+    const h = () => { 
+      setShowStickyBar(window.scrollY > 150); 
+    };
     window.addEventListener('scroll', h, { passive: true });
     return () => window.removeEventListener('scroll', h);
   }, []);
@@ -878,17 +880,40 @@ export default function SalesLanding() {
       {/* ── STICKY BAR — Only after scrolling past pricing ── */}
       <AnimatePresence>
         {showStickyBar && (
-          <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }} transition={{ duration: 0.3 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#05080f]/95 backdrop-blur-xl border-t border-white/10 py-4 px-4 sm:px-6">
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }} 
+            animate={{ y: 0, opacity: 1 }} 
+            exit={{ y: 100, opacity: 0 }} 
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#0c1324]/95 backdrop-blur-xl border-t-2 border-t-[#00D1FF]/40 py-5 px-4 sm:px-6 shadow-[0_-15px_40px_rgba(0,209,255,0.18)]"
+          >
             <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-              <div className="hidden sm:flex items-center gap-4">
+              <div className="hidden sm:flex items-center gap-5">
                 <span className="text-white/30 text-base line-through font-bold font-mono">$3,000</span>
-                <span className="text-4xl font-black bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent font-mono">USD $67</span>
-                <span className="text-sm text-[#f59e0b] font-mono font-black bg-[#f59e0b]/5 border border-[#f59e0b]/20 px-3 py-1 rounded-full uppercase tracking-wider">{pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}</span>
+                <div className="flex flex-col">
+                  <span className="text-3xl sm:text-4xl font-black text-[#00E676] drop-shadow-[0_0_15px_rgba(1,228,126,0.35)] leading-none">
+                    USD $67
+                  </span>
+                  <span className="text-[10px] text-white/50 font-mono mt-0.5 tracking-wider">PAGO ÚNICO</span>
+                </div>
+                <span className="text-sm text-[#f59e0b] font-mono font-black bg-[#f59e0b]/10 border border-[#f59e0b]/30 px-3 py-1 rounded-full uppercase tracking-wider animate-pulse">
+                  {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
+                </span>
               </div>
-              <a href={CTA_URL} target="_blank" rel="noopener noreferrer"
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black uppercase tracking-wider text-base bg-gradient-to-r from-[#00D1FF] to-[#00E676] text-[#05080f] hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-[0_0_20px_rgba(0,230,118,0.3)]">
-                QUIERO MI ACCESO <ArrowRight size={18} />
+              
+              {/* On mobile, show price inside button or next to it */}
+              <div className="sm:hidden flex flex-col items-start leading-none gap-1 shrink-0">
+                <span className="text-2xl font-black text-[#00E676] drop-shadow-[0_0_10px_rgba(1,228,126,0.3)]">USD $67</span>
+                <span className="text-[8px] text-white/40 font-mono tracking-widest">PAGO ÚNICO</span>
+              </div>
+
+              <a 
+                href={CTA_URL} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2.5 px-8 py-4.5 rounded-2xl font-black uppercase tracking-wider text-base bg-gradient-to-r from-[#00E676] via-[#00D1FF] to-[#00E676] text-[#05080f] hover:scale-[1.03] active:scale-[0.98] transition-transform shadow-[0_0_30px_rgba(1,228,126,0.65)] hover:shadow-[0_0_45px_rgba(1,228,126,0.9)]"
+              >
+                QUIERO MI ACCESO <ArrowRight size={18} className="stroke-[3px]" />
               </a>
             </div>
           </motion.div>
