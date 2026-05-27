@@ -404,6 +404,36 @@ export default function GenyOpciones() {
     saveState({ dia: newDia, dte: newDte });
   };
 
+  // ── Restart simulator ──
+  const reiniciarSimulador = async () => {
+    if (!window.confirm('¿Estás seguro de que deseas reiniciar el simulador? Esto borrará tu saldo actual, posiciones abiertas y tu historial de operaciones.')) {
+      return;
+    }
+    
+    const defaultState = {
+      done: [],
+      xp: 0,
+      cash: 25000,
+      positions: [],
+      trades: [],
+      dia: 1,
+      dte: 14,
+    };
+    
+    setDone(new Set());
+    setXp(0);
+    setCash(25000);
+    setPositions([]);
+    setTrades([]);
+    setDia(1);
+    setDte(14);
+    setSel(null);
+    setAiMsg('¡Simulador reiniciado! 🎓\n\nTu balance vuelve a estar en $25,000 USD y tu historial se ha limpiado. Comienza de nuevo cuando estés listo.');
+    
+    await saveActivityProgressDB('geny-opciones-progress', defaultState, false);
+    showToast('🔄 Simulador reiniciado con éxito');
+  };
+
   // ── Execute order ──
   const ejecutarOrden = () => {
     if (!sel) return;
@@ -565,6 +595,10 @@ export default function GenyOpciones() {
                 className="px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest bg-white/5 border border-white/10 text-brand-text-muted hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
                 <Clock className="w-3.5 h-3.5" /> Día {dia}
                 <span className="text-brand-blue">→ Avanzar</span>
+              </button>
+              <button onClick={reiniciarSimulador}
+                className="px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest bg-red-500/10 border border-red-500/20 text-red-400 hover:text-white hover:bg-red-500/20 transition-all flex items-center gap-2">
+                <RefreshCcw className="w-3.5 h-3.5" /> Reiniciar
               </button>
             </div>
           </div>
