@@ -524,15 +524,15 @@ export default function MisEmociones() {
 
   const generateResultsPDF = async () => {
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    let y = initPdfWithHeader(doc, 'REPORTE DE INTEGRACIÓN DE SOMBRA');
+    let y = initPdfWithHeader(doc, 'Reto Sombra');
     const W = 210, M = 18;
     
-    // User info
+    // Title
     doc.setTextColor(15, 23, 42); // slate-900
-    doc.setFontSize(26); 
+    doc.setFontSize(22); 
     doc.setFont('helvetica', 'bold');
-    doc.text('REPORTE FINAL DE RESULTADOS', M, y); 
-    y += 12;
+    doc.text('REPORTE DE INTEGRACIÓN DE SOMBRA', M, y); 
+    y += 10;
 
     const intro = `¡Felicidades, ${userName}! Has completado los 10 días de la Operación Saboteador ("Mis Emociones"). Este reporte resume tu progreso, las habilidades que has integrado y los cambios logrados durante este proceso de transformación mental basado en la psicología de Carl Jung.`;
     y = addPdfText(doc, intro, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
