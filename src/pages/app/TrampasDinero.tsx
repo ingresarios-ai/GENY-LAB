@@ -614,7 +614,7 @@ function InteractiveCalculator({
   }, [val1, val2, curr]);
 
   return (
-    <div className="mt-4 space-y-5 bg-white/[0.01] border border-white/5 rounded-xl p-5">
+    <div className="mt-4 space-y-5 bg-[#131924]/60 border border-white/15 rounded-xl p-5">
       {/* Currency Selector */}
       <div className="flex items-center justify-between pb-3 border-b border-white/5">
         <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider">Selecciona tu moneda:</span>
@@ -990,7 +990,7 @@ export default function TrampasDinero() {
             <div className="grid md:grid-cols-2 gap-4 pt-4">
               <button
                 onClick={() => setProfile('trader')}
-                className="glass-card p-6 text-left border border-white/5 hover:border-[#FF3EB0]/30 hover:bg-white/[0.01] transition-all group flex flex-col justify-between min-h-[160px]"
+                className="glass-card p-6 text-left border border-white/10 bg-white/[0.02] hover:border-[#FF3EB0]/50 hover:bg-[#FF3EB0]/5 hover:shadow-[0_0_20px_rgba(255,62,176,0.1)] transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer"
               >
                 <div>
                   <span className="text-2xl mb-3 block">📈</span>
@@ -1003,7 +1003,7 @@ export default function TrampasDinero() {
 
               <button
                 onClick={() => setProfile('general')}
-                className="glass-card p-6 text-left border border-white/5 hover:border-brand-green/30 hover:bg-white/[0.01] transition-all group flex flex-col justify-between min-h-[160px]"
+                className="glass-card p-6 text-left border border-white/10 bg-white/[0.02] hover:border-brand-green/50 hover:bg-brand-green/5 hover:shadow-[0_0_20px_rgba(0,230,118,0.1)] transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer"
               >
                 <div>
                   <span className="text-2xl mb-3 block">🛍️</span>
@@ -1124,7 +1124,7 @@ export default function TrampasDinero() {
 
                   {/* Input Rendering based on controlType */}
                   {q.controlType === "choice" && (
-                    <div className="grid gap-2 mt-3">
+                    <div className="grid gap-2.5 mt-3">
                       {q.options?.map((opt) => {
                         const isSelected = responses[i] === opt.value;
                         return (
@@ -1132,18 +1132,18 @@ export default function TrampasDinero() {
                             <button
                               type="button"
                               onClick={() => update(i, opt.value)}
-                              className={`w-full text-left p-4 rounded-xl border text-base md:text-lg font-bold transition-all flex justify-between items-center ${
+                              className={`group w-full text-left p-4 rounded-xl border text-base md:text-lg font-bold transition-all flex items-start gap-4 cursor-pointer ${
                                 isSelected
-                                  ? "bg-[#FF3EB0]/10 border-[#FF3EB0] text-white"
-                                  : "bg-white/[0.01] border-white/5 text-white/70 hover:bg-white/[0.03] hover:text-white"
+                                  ? "bg-[#FF3EB0]/15 border-[#FF3EB0] text-white shadow-[0_0_25px_rgba(255,62,176,0.2)]"
+                                  : "bg-[#131924] border-white/15 text-white/80 hover:bg-[#FF3EB0]/5 hover:border-[#FF3EB0]/50 hover:text-white"
                               }`}
                             >
-                              <span>{opt.label}</span>
-                              <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 ${
-                                isSelected ? "border-[#FF3EB0] bg-[#FF3EB0]" : "border-white/20"
+                              <span className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                                isSelected ? "border-[#FF3EB0] bg-[#FF3EB0]" : "border-white/30 group-hover:border-[#FF3EB0]/50 group-hover:scale-105"
                               }`}>
-                                {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                {isSelected && <span className="w-2 h-2 rounded-full bg-white" />}
                               </span>
+                              <span className="flex-1 leading-snug">{opt.label}</span>
                             </button>
                             {isSelected && opt.feedback && (
                               <motion.p
@@ -1166,7 +1166,7 @@ export default function TrampasDinero() {
                             onChange={(e) => setResponses(prev => ({ ...prev, [i + '_text']: e.target.value }))}
                             placeholder={q.placeholder}
                             rows={q.rows || 3}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                            className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0] focus:bg-[#0f1422] transition-all placeholder:text-white/30 resize-y"
                           />
                         </motion.div>
                       )}
@@ -1182,7 +1182,7 @@ export default function TrampasDinero() {
                   )}
 
                   {q.controlType === "checklist" && (
-                    <div className="mt-3 space-y-2">
+                    <div className="mt-3 space-y-2.5">
                       {q.checklistProps?.map((item) => {
                         const currentSelections = responses[i] ? responses[i].split(" || ") : [];
                         const isChecked = currentSelections.includes(item);
@@ -1201,18 +1201,18 @@ export default function TrampasDinero() {
                             type="button"
                             key={item}
                             onClick={handleCheck}
-                            className={`w-full text-left p-4 rounded-xl border text-base md:text-lg font-bold transition-all flex items-center gap-3 ${
+                            className={`group w-full text-left p-4 rounded-xl border text-base md:text-lg font-bold transition-all flex items-start gap-4 cursor-pointer ${
                               isChecked
-                                ? "bg-white/[0.03] border-[#FF3EB0]/30 text-white"
-                                : "bg-white/[0.01] border-white/5 text-white/60 hover:bg-white/[0.02]"
+                                ? "bg-[#FF3EB0]/15 border-[#FF3EB0] text-white shadow-[0_0_25px_rgba(255,62,176,0.2)]"
+                                : "bg-[#131924] border-white/15 text-white/80 hover:bg-[#FF3EB0]/5 hover:border-[#FF3EB0]/50 hover:text-white"
                             }`}
                           >
-                            <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                              isChecked ? "border-[#FF3EB0] bg-[#FF3EB0]" : "border-white/20"
+                            <span className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                              isChecked ? "border-[#FF3EB0] bg-[#FF3EB0]" : "border-white/30 group-hover:border-[#FF3EB0]/50 group-hover:scale-105"
                             }`}>
-                              {isChecked && <Check className="w-2.5 h-2.5 text-white" />}
+                              {isChecked && <Check className="w-3.5 h-3.5 text-white" />}
                             </span>
-                            <span>{item}</span>
+                            <span className="flex-1 leading-snug">{item}</span>
                           </button>
                         );
                       })}
@@ -1225,7 +1225,7 @@ export default function TrampasDinero() {
                             onChange={(e) => setResponses(prev => ({ ...prev, [i + '_text']: e.target.value }))}
                             placeholder={q.placeholder}
                             rows={q.rows || 3}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                            className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0] focus:bg-[#0f1422] transition-all placeholder:text-white/30 resize-y"
                           />
                         </motion.div>
                       )}
@@ -1242,7 +1242,7 @@ export default function TrampasDinero() {
                               type="button"
                               key={t.label}
                               onClick={() => update(i, t.text)}
-                              className="text-xs font-mono bg-white/5 border border-white/10 rounded px-2.5 py-1 text-white/80 hover:bg-[#FF3EB0]/15 hover:border-[#FF3EB0]/40 hover:text-white transition-colors"
+                              className="text-xs font-mono bg-white/[0.04] border border-white/15 rounded px-2.5 py-1 text-white/80 hover:bg-[#FF3EB0]/15 hover:border-[#FF3EB0]/40 hover:text-white transition-colors cursor-pointer"
                             >
                               + {t.label}
                             </button>
@@ -1254,7 +1254,7 @@ export default function TrampasDinero() {
                         onChange={(e) => update(i, e.target.value)}
                         placeholder={q.placeholder}
                         rows={q.rows || 3}
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0]/50 transition-colors placeholder:text-white/15 resize-y"
+                        className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-white text-base md:text-lg leading-relaxed focus:outline-none focus:border-[#FF3EB0] focus:bg-[#0f1422] transition-all placeholder:text-white/30 resize-y"
                       />
                     </div>
                   )}
