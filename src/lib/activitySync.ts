@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-const ACTIVITY_KEYS: Record<string, string> = {
+export const ACTIVITY_KEYS: Record<string, string> = {
   adn: 'adn-diagnosis',
   gastos: 'gastos-hormiga-progress',
   termostato: 'termostato-diagnosis',
