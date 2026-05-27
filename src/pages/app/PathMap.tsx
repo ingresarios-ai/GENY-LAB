@@ -44,6 +44,9 @@ export default function PathMap() {
     statusText: string;
   } | null>(null);
   const [showPendingModal, setShowPendingModal] = useState(false);
+  const [visitedBooking, setVisitedBooking] = useState<boolean>(() => {
+    return localStorage.getItem('geny_visited_diagnostico') === 'true';
+  });
 
   useEffect(() => {
     (async () => {
@@ -65,8 +68,15 @@ export default function PathMap() {
     })();
   }, []);
 
+  useEffect(() => {
+    setVisitedBooking(localStorage.getItem('geny_visited_diagnostico') === 'true');
+  }, []);
+
   const pendingActivityName = useMemo(() => {
     if (allDone) {
+      if (visitedBooking) {
+        return 'CONVERTIRTE EN INGRESARIO';
+      }
       return 'Agenda tu Sesión Diagnóstico 📅';
     }
     for (const lesson of LESSONS) {
@@ -75,7 +85,7 @@ export default function PathMap() {
       }
     }
     return 'Ninguna';
-  }, [dbActivities, allDone]);
+  }, [dbActivities, allDone, visitedBooking]);
 
   // Auto-scroll to current card
   useEffect(() => {
@@ -424,9 +434,36 @@ export default function PathMap() {
 
       {/* Tech Header */}
       <div className="w-full flex flex-col items-start max-w-[1200px] mb-8 mt-4 md:mt-8 px-4 md:px-8 overflow-hidden">
-        <div className="flex items-center gap-2 text-[#00D1FF] font-mono text-[9px] md:text-xs tracking-[0.15em] md:tracking-[0.2em] mb-2 uppercase">
-          <span className="w-2 h-2 bg-[#00D1FF] animate-pulse rounded-sm shrink-0"></span>
-          <span className="truncate">Bienvenido, {userName} // Actividad pendiente: {pendingActivityName}</span>
+        <div className="flex flex-col gap-1.5 font-mono text-[10px] md:text-xs tracking-[0.15em] md:tracking-[0.2em] mb-3 uppercase">
+          <div className="flex items-center gap-2 text-white/50">
+            <span className="w-2 h-2 bg-[#00E676] animate-pulse rounded-sm shrink-0"></span>
+            <span>
+              Bienvenido,{' '}
+              <span className="text-[#00E676] font-bold drop-shadow-[0_0_8px_rgba(0,230,118,0.3)]">
+                {userName}
+              </span>
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-white/50">
+            <span className={`w-2 h-2 ${allDone && visitedBooking ? 'bg-[#F2C500]' : 'bg-[#00D1FF]'} animate-pulse rounded-sm shrink-0`}></span>
+            <span>
+              Actividad pendiente:{' '}
+              {allDone && visitedBooking ? (
+                <a
+                  href="https://reto.ingresarios.net/planes"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#F2C500] font-black underline hover:text-yellow-400 transition-colors animate-pulse inline-flex items-center gap-1 cursor-pointer drop-shadow-[0_0_8px_rgba(242,197,0,0.4)]"
+                >
+                  {pendingActivityName}
+                </a>
+              ) : (
+                <span className="text-[#00D1FF] font-bold drop-shadow-[0_0_8px_rgba(0,209,255,0.3)]">
+                  {pendingActivityName}
+                </span>
+              )}
+            </span>
+          </div>
         </div>
         <div className="mb-2">
           <Logo imgClassName="h-12 md:h-20 w-auto object-contain" />

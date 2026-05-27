@@ -16,6 +16,9 @@ export default function DiagnosticoBooking() {
   // Sweep sync all completed activities to Supabase on mount
   useEffect(() => {
     syncAllCompletedActivities();
+    if (isAllCompleted()) {
+      localStorage.setItem('geny_visited_diagnostico', 'true');
+    }
   }, []);
 
   // Guard: only accessible if all lessons are completed
