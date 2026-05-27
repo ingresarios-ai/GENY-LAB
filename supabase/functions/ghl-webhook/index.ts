@@ -125,7 +125,12 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = await req.json();
-    const { name, email, phone } = body;
+    console.log("Incoming GHL Webhook payload:", JSON.stringify(body));
+
+    const contact = body?.contact || body || {};
+
+    // Extraer Email con fallbacks
+    const email = contact.email || body?.email || "";
 
     if (!email) {
       return new Response(JSON.stringify({ error: "Missing email in payload" }), {
@@ -134,9 +139,20 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Extraer Teléfono con fallbacks
+    const phone = contact.phone || body?.phone || contact.phone_number || body?.phone_number || "";
+
+    // Extraer Nombre con fallbacks robustos
+    let parsedName = contact.name || body?.name || contact.nombre || body?.nombre || "";
+    if (!parsedName) {
+      const firstName = contact.first_name || body?.first_name || contact.firstName || body?.firstName || "";
+      const lastName = contact.last_name || body?.last_name || contact.lastName || body?.lastName || "";
+      parsedName = `${firstName} ${lastName}`.trim();
+    }
+
     const supabase = createClient(supabaseUrl, serviceKey);
     const cleanEmail = email.toLowerCase().trim();
-    const cleanName = name || "Sin nombre";
+    const cleanName = parsedName || "Sin nombre";
     const normalizedPhone = normalizePhone(phone || "");
 
     // 1. Obtener o crear cuenta en Supabase Auth
