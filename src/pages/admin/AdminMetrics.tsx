@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BarChart3, Users, UserCheck, Eye, Percent, ArrowRight, TrendingUp } from 'lucide-react';
-import { getAnalytics } from '../../lib/adminApi';
+import { getAnalytics, resetAnalytics } from '../../lib/adminApi';
 
 interface LandingStats {
   visits: number;
@@ -19,13 +19,36 @@ interface AnalyticsData {
 export default function AdminMetrics() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [resetting, setResetting] = useState(false);
 
-  useEffect(() => {
+  const loadData = () => {
+    setLoading(true);
     getAnalytics()
       .then(setData)
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  const handleReset = async () => {
+    if (!confirm('¿Estás seguro de reiniciar todas las métricas de analítica? Esto borrará el registro de visitas, eliminará los leads registrados (no pagados) y limpiará la procedencia de los usuarios activos.')) {
+      return;
+    }
+    
+    setResetting(true);
+    try {
+      await resetAnalytics();
+      loadData();
+    } catch (err) {
+      console.error(err);
+      alert('Error al reiniciar métricas');
+    } finally {
+      setResetting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -57,12 +80,21 @@ export default function AdminMetrics() {
   return (
     <div className="space-y-6 max-w-5xl">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white/90 tracking-wide flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-brand-blue" />
-          Analytics & Métricas
-        </h1>
-        <p className="text-base text-white/30 mt-0.5">Comparativa de conversión de Landing Pages</p>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white/90 tracking-wide flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-brand-blue" />
+            Analytics & Métricas
+          </h1>
+          <p className="text-base text-white/30 mt-0.5">Comparativa de conversión de Landing Pages</p>
+        </div>
+        <button
+          onClick={handleReset}
+          disabled={resetting}
+          className="px-4 py-2 rounded-lg text-sm font-semibold border border-red-500/30 text-red-400 bg-red-500/[0.04] hover:bg-red-500/[0.08] hover:border-red-500/50 active:scale-[0.98] transition-all disabled:opacity-30 disabled:pointer-events-none"
+        >
+          {resetting ? 'Reiniciando...' : 'Reiniciar Métricas'}
+        </button>
       </div>
 
       {/* Global Counters */}

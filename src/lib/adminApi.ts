@@ -69,6 +69,7 @@ export const getStats = () => api('stats');
 
 // Analytics
 export const getAnalytics = () => api('analytics');
+export const resetAnalytics = () => api('analytics/reset', { method: 'POST' });
 
 // Users
 export const getUsers = (params?: Record<string, string>) => {
