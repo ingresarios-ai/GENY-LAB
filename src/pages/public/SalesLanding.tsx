@@ -229,7 +229,7 @@ export default function SalesLanding() {
       {contentRevealed && (
         <div className="bg-[#fe0443]/10 border-b border-[#fe0443]/20 py-4 text-center text-sm sm:text-base font-mono tracking-widest text-[#fe0443] font-black flex items-center justify-center gap-2">
           <span className="w-3 h-3 rounded-full bg-[#fe0443] animate-pulse" />
-          ATENCIÓN: ACCESO EXCLUSIVO LIMITADO A 100 CUPOS · SÓLO QUEDAN {spots} DISPONIBLES HOY
+          ATENCIÓN: ACCESO CON CUPOS LIMITADOS
         </div>
       )}
 
