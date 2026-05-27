@@ -10,7 +10,7 @@ const ACTIVITY_LABELS: Record<string, string> = {
 
 const PAYMENT_LABELS: Record<string, string> = {
   efectivo: '💵 Efectivo', deposito: '🏦 Depósito', transferencia: '💳 Transferencia',
-  hotmart: '🟠 Hotmart', whop: '🟣 Whop', webhook: '🔗 Webhook', otro: '📦 Otro',
+  hotmart: '🟠 Hotmart', whop: '🟣 Whop', webhook: '🔗 Webhook', ghl: '👥 Alumno tribu', otro: '📦 Otro',
 };
 
 interface Stats {
@@ -26,11 +26,13 @@ interface Stats {
 }
 
 const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payment-webhook`;
+const GHL_WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ghl-webhook?token=ghl_webhook_sec_8f93bead61f8a8470ac00`;
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [copiedGhl, setCopiedGhl] = useState(false);
 
   useEffect(() => {
     getStats().then(setStats).catch(console.error).finally(() => setLoading(false));
@@ -59,31 +61,61 @@ export default function AdminDashboard() {
         <p className="text-base text-white/30 mt-0.5">Panel de administración</p>
       </div>
 
-      {/* ── Webhook URL ── */}
-      <div
-        className="flex items-center gap-3 px-4 py-3 rounded-xl"
-        style={{
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.06)',
-        }}
-      >
-        <Link2 className="w-4 h-4 text-white/25 shrink-0" />
-        <div className="flex-1 min-w-0">
-          <div className="text-base text-white/35 font-medium mb-0.5">Webhook URL para Hotmart / Whop</div>
-          <code className="text-lg font-mono text-white/60 truncate block select-all">{WEBHOOK_URL}</code>
-        </div>
-        <button
-          onClick={() => { navigator.clipboard.writeText(WEBHOOK_URL); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-          className="shrink-0 p-2 rounded-lg transition-all"
+      {/* ── Webhook URLs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Hotmart / Whop Webhook */}
+        <div
+          className="flex items-center gap-3 px-4 py-3 rounded-xl animate-fade-in"
           style={{
-            background: copied ? 'rgba(0,230,118,0.08)' : 'rgba(255,255,255,0.03)',
-            border: `1px solid ${copied ? 'rgba(0,230,118,0.2)' : 'rgba(255,255,255,0.06)'}`,
-            color: copied ? '#00E676' : 'rgba(255,255,255,0.3)',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
           }}
-          title="Copiar URL"
         >
-          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-        </button>
+          <Link2 className="w-4 h-4 text-white/25 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="text-base text-white/35 font-medium mb-0.5">Webhook URL para Hotmart / Whop</div>
+            <code className="text-lg font-mono text-white/60 truncate block select-all">{WEBHOOK_URL}</code>
+          </div>
+          <button
+            onClick={() => { navigator.clipboard.writeText(WEBHOOK_URL); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            className="shrink-0 p-2 rounded-lg transition-all hover:brightness-125"
+            style={{
+              background: copied ? 'rgba(0,230,118,0.08)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${copied ? 'rgba(0,230,118,0.2)' : 'rgba(255,255,255,0.06)'}`,
+              color: copied ? '#00E676' : 'rgba(255,255,255,0.3)',
+            }}
+            title="Copiar URL"
+          >
+            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          </button>
+        </div>
+
+        {/* GHL Webhook */}
+        <div
+          className="flex items-center gap-3 px-4 py-3 rounded-xl animate-fade-in"
+          style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+          }}
+        >
+          <Link2 className="w-4 h-4 text-[#00D1FF]/40 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="text-base text-white/35 font-medium mb-0.5">Webhook URL para GoHighLevel (GHL)</div>
+            <code className="text-lg font-mono text-white/60 truncate block select-all">{GHL_WEBHOOK_URL}</code>
+          </div>
+          <button
+            onClick={() => { navigator.clipboard.writeText(GHL_WEBHOOK_URL); setCopiedGhl(true); setTimeout(() => setCopiedGhl(false), 2000); }}
+            className="shrink-0 p-2 rounded-lg transition-all hover:brightness-125"
+            style={{
+              background: copiedGhl ? 'rgba(0,230,118,0.08)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${copiedGhl ? 'rgba(0,230,118,0.2)' : 'rgba(255,255,255,0.06)'}`,
+              color: copiedGhl ? '#00E676' : 'rgba(255,255,255,0.3)',
+            }}
+            title="Copiar URL"
+          >
+            {copiedGhl ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
       {/* ── Conversion Funnel ── */}

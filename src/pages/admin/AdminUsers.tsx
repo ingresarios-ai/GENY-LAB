@@ -20,8 +20,19 @@ const PAYMENT_METHODS = [
   { value: 'transferencia', label: '💳 Transferencia' },
   { value: 'hotmart', label: '🟠 Hotmart' },
   { value: 'whop', label: '🟣 Whop' },
+  { value: 'ghl', label: '👥 Alumno tribu' },
   { value: 'otro', label: '📦 Otro' },
 ];
+
+const PAYMENT_LABELS: Record<string, string> = {
+  efectivo: '💵 Efectivo',
+  deposito: '🏦 Depósito',
+  transferencia: '💳 Transferencia',
+  hotmart: '🟠 Hotmart',
+  whop: '🟣 Whop',
+  ghl: '👥 Alumno tribu',
+  otro: '📦 Otro',
+};
 
 // Magic Link section component for user detail panel
 function MagicLinkSection({ user, onUpdated }: { user: any; onUpdated: (url: string) => void }) {
@@ -325,7 +336,14 @@ export default function AdminUsers() {
                   </div>
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-base font-semibold text-white/80 truncate">{u.name}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-base font-semibold text-white/80 truncate">{u.name}</div>
+                      {u.payment_method === 'ghl' && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(0,209,255,0.1)', color: '#00D1FF', border: '1px solid rgba(0,209,255,0.2)' }}>
+                          Alumno tribu
+                        </span>
+                      )}
+                    </div>
                     <div className="text-sm text-white/35 font-mono truncate">{u.email}</div>
                     {(u.phone || u.country_name) && (
                       <div className="flex items-center gap-3 mt-0.5">
@@ -407,7 +425,7 @@ export default function AdminUsers() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
                   <div className="text-sm text-white/30 font-medium mb-1">Método de pago</div>
-                  <div className="text-base font-medium text-white/60">{selectedUser.payment_method}</div>
+                  <div className="text-base font-medium text-white/60">{PAYMENT_LABELS[selectedUser.payment_method] || selectedUser.payment_method}</div>
                 </div>
                 <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
                   <div className="text-sm text-white/30 font-medium mb-1">Monto</div>
