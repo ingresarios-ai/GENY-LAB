@@ -1,28 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { X, Lock, Shield, Mail, User, Phone, ArrowRight, Loader2 } from 'lucide-react';
-import PhoneInput, { getCountryCallingCode, getCountries } from 'react-phone-number-input';
-import flags from 'react-phone-number-input/flags';
-import 'react-phone-number-input/style.css';
+import { X, Lock, Shield, Mail, User, ArrowRight, Loader2 } from 'lucide-react';
 
 interface LeadModalProps {
   onClose: () => void;
   onSubmit: (name: string, email: string, phone: string, country: string) => Promise<void>;
 }
 
+const COUNTRY_CODES = [
+  { code: '+52', flag: '🇲🇽', name: 'México', iso: 'MX' },
+  { code: '+57', flag: '🇨🇴', name: 'Colombia', iso: 'CO' },
+  { code: '+1', flag: '🇺🇸', name: 'USA/Canadá', iso: 'US' },
+  { code: '+34', flag: '🇪🇸', name: 'España', iso: 'ES' },
+  { code: '+54', flag: '🇦🇷', name: 'Argentina', iso: 'AR' },
+  { code: '+51', flag: '🇵🇪', name: 'Perú', iso: 'PE' },
+  { code: '+56', flag: '🇨🇱', name: 'Chile', iso: 'CL' },
+  { code: '+593', flag: '🇪🇨', name: 'Ecuador', iso: 'EC' },
+  { code: '+58', flag: '🇻🇪', name: 'Venezuela', iso: 'VE' },
+  { code: '+502', flag: '🇬🇹', name: 'Guatemala', iso: 'GT' },
+  { code: '+506', flag: '🇨🇷', name: 'Costa Rica', iso: 'CR' },
+  { code: '+507', flag: '🇵🇦', name: 'Panamá', iso: 'PA' },
+  { code: '+591', flag: '🇧🇴', name: 'Bolivia', iso: 'BO' },
+  { code: '+595', flag: '🇵🇾', name: 'Paraguay', iso: 'PY' },
+  { code: '+598', flag: '🇺🇾', name: 'Uruguay', iso: 'UY' },
+  { code: '+503', flag: '🇸🇻', name: 'El Salvador', iso: 'SV' },
+  { code: '+504', flag: '🇭🇳', name: 'Honduras', iso: 'HN' },
+  { code: '+505', flag: '🇳🇮', name: 'Nicaragua', iso: 'NI' },
+];
+
 export const LeadModal: React.FC<LeadModalProps> = ({ onClose, onSubmit }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState<string | undefined>('+52');
-  const [country, setCountry] = useState<any>('MX');
+  const [countryCode, setCountryCode] = useState('+52');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [country, setCountry] = useState('MX');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Preferred countries for phone selector
-  const preferredCountries = ['CO', 'MX', 'US'];
-  const allCountries = getCountries();
-  const otherCountries = allCountries.filter(c => !preferredCountries.includes(c));
-  const countriesOrder = [...preferredCountries, ...otherCountries];
 
   // Auto-detect country code from IP address
   useEffect(() => {
@@ -33,11 +46,11 @@ export const LeadModal: React.FC<LeadModalProps> = ({ onClose, onSubmit }) => {
         const locMatch = text.match(/loc=(\w{2})/);
         if (locMatch) {
           const code = locMatch[1].toUpperCase();
-          setCountry(code);
-          try {
-            const callingCode = getCountryCallingCode(code as any);
-            if (callingCode) setPhone(`+${callingCode}`);
-          } catch (e) {}
+          const found = COUNTRY_CODES.find(c => c.iso === code);
+          if (found) {
+            setCountryCode(found.code);
+            setCountry(code);
+          }
           return;
         }
       } catch (e) {}
@@ -47,11 +60,11 @@ export const LeadModal: React.FC<LeadModalProps> = ({ onClose, onSubmit }) => {
         const data = await response.json();
         if (data.country) {
           const code = data.country.toUpperCase();
-          setCountry(code);
-          try {
-            const callingCode = getCountryCallingCode(code as any);
-            if (callingCode) setPhone(`+${callingCode}`);
-          } catch (e) {}
+          const found = COUNTRY_CODES.find(c => c.iso === code);
+          if (found) {
+            setCountryCode(found.code);
+            setCountry(code);
+          }
         }
       } catch (e) {}
     };
@@ -71,14 +84,21 @@ export const LeadModal: React.FC<LeadModalProps> = ({ onClose, onSubmit }) => {
       setError('Por favor ingresa un correo electrónico válido.');
       return;
     }
-    if (!phone || phone.trim().length < 6) {
+    const cleanNum = phoneNumber.replace(/\D/g, '');
+    if (!cleanNum || cleanNum.length < 7) {
       setError('Por favor ingresa un número de teléfono válido.');
       return;
     }
 
+    // Process Mexican formatting internally: add '1' after '+52' if missing
+    let finalPhone = `${countryCode}${cleanNum}`;
+    if (finalPhone.startsWith('+52') && !finalPhone.startsWith('+521')) {
+      finalPhone = '+521' + finalPhone.slice(3);
+    }
+
     setLoading(true);
     try {
-      await onSubmit(name.trim(), email.trim(), phone, country);
+      await onSubmit(name.trim(), email.trim(), finalPhone, country);
     } catch (err: any) {
       setError(err.message || 'Ocurrió un error al procesar tu solicitud. Intenta de nuevo.');
       setLoading(false);
@@ -180,20 +200,39 @@ export const LeadModal: React.FC<LeadModalProps> = ({ onClose, onSubmit }) => {
             <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">
               WhatsApp / Teléfono
             </label>
-            <div className="phone-input-custom">
-              <PhoneInput
-                key={country || 'auto'}
-                international
-                defaultCountry={country}
-                countries={countriesOrder as any}
-                value={phone}
-                onChange={(val) => {
-                  setPhone(val);
+            <div className="flex gap-2">
+              <div className="relative shrink-0">
+                <select
+                  value={countryCode}
+                  onChange={(e) => {
+                    setCountryCode(e.target.value);
+                    const found = COUNTRY_CODES.find(c => c.code === e.target.value);
+                    if (found) setCountry(found.iso);
+                  }}
+                  disabled={loading}
+                  className="appearance-none bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 pr-8 text-white font-semibold outline-none focus:border-[#00D1FF]/50 focus:bg-white/[0.08] transition-all cursor-pointer min-w-[110px]"
+                >
+                  {COUNTRY_CODES.map((c) => (
+                    <option key={c.iso} value={c.code} className="bg-[#0c1220] text-white">
+                      {c.flag} {c.code}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/40 text-xs">
+                  ▼
+                </div>
+              </div>
+
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => {
+                  setPhoneNumber(e.target.value.replace(/\D/g, ''));
                   setError('');
                 }}
                 disabled={loading}
-                placeholder="Tu número"
-                flags={flags}
+                placeholder="300 123 4567"
+                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium placeholder:text-white/20 focus:border-[#00D1FF]/50 focus:bg-white/[0.08] outline-none transition-all"
                 required
               />
             </div>
