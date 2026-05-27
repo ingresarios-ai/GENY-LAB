@@ -48,6 +48,7 @@ export default function TermostatoFinanciero() {
   const [analyzing, setAnalyzing] = useState(false);
   const [diagnosis, setDiagnosis] = useState<any>(null);
   const [turns, setTurns] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -107,7 +108,7 @@ export default function TermostatoFinanciero() {
   };
 
   const sendMessage = async () => {
-    if (!input.trim()||loading||analyzing) return;
+    if (!input.trim()||loading||analyzing||transitioning) return;
     const userMsg = input.trim(); setInput('');
     const newTurns = turns+1; setTurns(newTurns);
     const updated = [...messages,{role:'user',content:userMsg}];
@@ -119,10 +120,19 @@ export default function TermostatoFinanciero() {
       const clean = reply.replace('[ANÁLISIS_LISTO]','').trim();
       setMessages([...updated,{role:'assistant',content:clean}]); setLoading(false);
       if (isDone||newTurns>=11) {
-        const transMsg = 'Perfecto. Ya tengo toda la información que necesito. Voy a procesar tu perfil de termostato financiero — dame unos segundos para analizar tus patrones y generar el diagnóstico.';
-        const delay1 = clean.length * 15 + 400;
-        const delay2 = delay1 + transMsg.length * 15 + 2500;
-        setTimeout(()=>setMessages(prev=>[...prev,{role:'assistant',content:transMsg}]), delay1);
+        setTransitioning(true);
+        const transMsg = '¡Excelente! Con tus respuestas he completado el mapa de tu perfil financiero. Voy a procesar tu termostato e identificar tu arquetipo — dame unos segundos para analizar tus patrones y generar el diagnóstico.';
+        const showTrans = !isDone;
+        const typingTimeClean = clean.length * 15;
+        const delayToShowTrans = typingTimeClean + 1500;
+        
+        if (showTrans) {
+          setTimeout(()=>setMessages(prev=>[...prev,{role:'assistant',content:transMsg}]), delayToShowTrans);
+        }
+        
+        const typingTimeTrans = transMsg.length * 15;
+        const delayToDiagnose = (showTrans ? (delayToShowTrans + typingTimeTrans) : typingTimeClean) + 4500;
+        
         setTimeout(async()=>{
           setAnalyzing(true);
           try {
@@ -144,7 +154,8 @@ export default function TermostatoFinanciero() {
             setScreen('result'); setTimeout(()=>confetti({particleCount:100,spread:70}),300);
           }
           setAnalyzing(false);
-        }, delay2);
+          setTransitioning(false);
+        }, delayToDiagnose);
       }
     } catch(e) {
       console.error(e);
@@ -153,7 +164,7 @@ export default function TermostatoFinanciero() {
     }
   };
 
-  const reset = () => { setScreen('welcome'); setMessages([]); setInput(''); setLoading(false); setAnalyzing(false); setDiagnosis(null); setTurns(0); };
+  const reset = () => { setScreen('welcome'); setMessages([]); setInput(''); setLoading(false); setAnalyzing(false); setDiagnosis(null); setTurns(0); setTransitioning(false); };
 
   const generatePDF = async () => {
     if (!diagnosis) return;
@@ -350,11 +361,20 @@ export default function TermostatoFinanciero() {
           </div>
 
           {!analyzing&&(
-            <div className="p-4 border-t border-white/10 bg-[#0d1117] shrink-0 z-10 flex gap-3 items-end">
-              <textarea ref={inputRef} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}} placeholder="Escribe tu respuesta aquí..." disabled={loading||analyzing} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-[15px] text-white resize-none outline-none focus:border-brand-blue/50 focus:bg-brand-blue/5 transition-all disabled:opacity-50 min-h-[52px] max-h-[120px]" rows={1}/>
-              <button onClick={sendMessage} disabled={!input.trim()||loading||analyzing} className={`p-3.5 rounded-xl flex items-center justify-center transition-all shrink-0 h-[52px] w-[52px] ${(!input.trim()||loading)?'bg-white/5 text-brand-text-muted cursor-not-allowed':'bg-brand-blue text-white shadow-[0_0_15px_rgba(0,209,255,0.3)] hover:scale-105'}`}>
-                <ChevronRight className="w-5 h-5"/>
-              </button>
+            <div className="p-4 border-t border-white/10 bg-[#0d1117] shrink-0 z-10">
+              {transitioning ? (
+                <div className="flex items-center justify-center gap-3 py-3.5 text-cyan-400 font-mono text-xs tracking-widest uppercase animate-pulse">
+                  <span className="w-2 h-2 bg-cyan-400 rounded-full shrink-0"></span>
+                  <span>Analizando tus respuestas...</span>
+                </div>
+              ) : (
+                <div className="flex gap-3 items-end">
+                  <textarea ref={inputRef} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}} placeholder="Escribe tu respuesta aquí..." disabled={loading||analyzing} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-[15px] text-white resize-none outline-none focus:border-brand-blue/50 focus:bg-brand-blue/5 transition-all disabled:opacity-50 min-h-[52px] max-h-[120px]" rows={1}/>
+                  <button onClick={sendMessage} disabled={!input.trim()||loading||analyzing} className={`p-3.5 rounded-xl flex items-center justify-center transition-all shrink-0 h-[52px] w-[52px] ${(!input.trim()||loading)?'bg-white/5 text-brand-text-muted cursor-not-allowed':'bg-brand-blue text-white shadow-[0_0_15px_rgba(0,209,255,0.3)] hover:scale-105'}`}>
+                    <ChevronRight className="w-5 h-5"/>
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
