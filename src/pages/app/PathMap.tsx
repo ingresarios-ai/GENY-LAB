@@ -8,6 +8,7 @@ import { LESSONS, getLevelForXp, getXpProgressInLevel, PHASE_LABELS, type Lesson
 import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted } from '../../lib/progressStore';
 import { Logo } from '../../components/Logo';
 import { loadAllActivitiesProgressDB } from '../../lib/activitySync';
+import { supabase } from '../../lib/supabase';
 
 export default function PathMap() {
   const navigate = useNavigate();
@@ -30,17 +31,7 @@ export default function PathMap() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // Auto-scroll to current card
-  useEffect(() => {
-    setTimeout(() => {
-      if (window.innerWidth < 768 && currentCardRef.current) {
-        currentCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else if (window.innerWidth >= 768 && desktopCurrentCardRef.current) {
-        desktopCurrentCardRef.current.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      }
-    }, 600);
-  }, []);
-
+  const [userName, setUserName] = useState<string>('Trader');
   const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
     return localStorage.getItem('geny_lab_hide_welcome') !== 'true';
   });
@@ -53,6 +44,50 @@ export default function PathMap() {
     statusText: string;
   } | null>(null);
   const [showPendingModal, setShowPendingModal] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && user.email) {
+          const { data } = await supabase
+            .from('enrolled_users')
+            .select('name')
+            .eq('email', user.email)
+            .single();
+          if (data && data.name) {
+            setUserName(data.name.split(' ')[0]); // Get first name
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching user name:', err);
+      }
+    })();
+  }, []);
+
+  const pendingActivityName = useMemo(() => {
+    if (allDone) {
+      return 'Agenda tu Sesión Diagnóstico 📅';
+    }
+    for (const lesson of LESSONS) {
+      if (!isLessonCompleted(lesson.id)) {
+        return `${lesson.title.replace('\n', ' ')} ${lesson.emoji}`;
+      }
+    }
+    return 'Ninguna';
+  }, [dbActivities, allDone]);
+
+  // Auto-scroll to current card
+  useEffect(() => {
+    setTimeout(() => {
+      if (window.innerWidth < 768 && currentCardRef.current) {
+        currentCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (window.innerWidth >= 768 && desktopCurrentCardRef.current) {
+        desktopCurrentCardRef.current.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }, 600);
+  }, []);
+
 
   // Scan for pending/unfinished activities
   useEffect(() => {
@@ -391,7 +426,7 @@ export default function PathMap() {
       <div className="w-full flex flex-col items-start max-w-[1200px] mb-8 mt-4 md:mt-8 px-4 md:px-8 overflow-hidden">
         <div className="flex items-center gap-2 text-[#00D1FF] font-mono text-[9px] md:text-xs tracking-[0.15em] md:tracking-[0.2em] mb-2 uppercase">
           <span className="w-2 h-2 bg-[#00D1FF] animate-pulse rounded-sm shrink-0"></span>
-          <span className="truncate">CONEXIÓN: ESTABLE // SINCRONIZACIÓN: ACTIVA</span>
+          <span className="truncate">Bienvenido, {userName} // Actividad pendiente: {pendingActivityName}</span>
         </div>
         <div className="mb-2">
           <Logo imgClassName="h-12 md:h-20 w-auto object-contain" />
