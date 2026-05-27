@@ -109,11 +109,19 @@ export default function RetoADN() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const initTimerRef = useRef<any>(null);
+
+  useEffect(() => {
+    return () => {
+      if (initTimerRef.current) clearTimeout(initTimerRef.current);
+    };
+  }, []);
 
   // Load saved results if coming from "Ver mis resultados"
   useEffect(() => {
     (async () => {
       if (searchParams.get('reset') === 'true') {
+        if (initTimerRef.current) clearTimeout(initTimerRef.current);
         await clearActivityProgressDB('adn');
         setSearchParams({}, { replace: true });
         setScreen("welcome");
@@ -171,6 +179,7 @@ export default function RetoADN() {
   const startInterview = async () => {
     window.scrollTo(0, 0);
     setScreen("loading-ai");
+    if (initTimerRef.current) clearTimeout(initTimerRef.current);
     const greeting = "Hola. Soy GENY, tu analista de ADN Financiero. En los próximos minutos vamos a tener una conversación que va a revelar patrones sobre tu relación con el dinero que probablemente nunca habías visto. No hay respuestas correctas ni incorrectas — solo honestidad.";
     try {
       const reply = await callEdgeFunction(
@@ -179,15 +188,22 @@ export default function RetoADN() {
       );
       const clean = reply.replace("[ANÁLISIS_LISTO]", "").trim();
       setMessages([
-        { role: "assistant", content: greeting },
-        { role: "assistant", content: clean }
+        { role: "assistant", content: greeting }
       ]);
+      const delay = greeting.length * 15 + 400;
+      initTimerRef.current = setTimeout(() => {
+        setMessages(prev => [...prev, { role: "assistant", content: clean }]);
+      }, delay);
     } catch (e) {
       console.error(e);
       setMessages([
-        { role: "assistant", content: greeting },
-        { role: "assistant", content: "Para empezar, cuéntame: ¿cuál es el mayor desafío que enfrentas hoy con el dinero?" }
+        { role: "assistant", content: greeting }
       ]);
+      const delay = greeting.length * 15 + 400;
+      const fallbackMsg = "Para empezar, cuéntame: ¿cuál es el mayor desafío que enfrentas hoy con el dinero?";
+      initTimerRef.current = setTimeout(() => {
+        setMessages(prev => [...prev, { role: "assistant", content: fallbackMsg }]);
+      }, delay);
     }
     setScreen("chat");
   };
@@ -284,6 +300,7 @@ export default function RetoADN() {
   };
 
   const reset = () => {
+    if (initTimerRef.current) clearTimeout(initTimerRef.current);
     setScreen("welcome"); setMessages([]); setInput("");
     setLoading(false); setAnalyzing(false); setDiagnosis(null); setTurns(0);
     setTransitioning(false);
