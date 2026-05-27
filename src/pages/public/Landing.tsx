@@ -282,7 +282,29 @@ export default function Landing() {
           </div>
           )}
 
-
+          {/* Waiting message while content is hidden */}
+          {!contentRevealed && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            className="text-center max-w-2xl mx-auto mt-12 mb-8"
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 text-white">
+              Mira el video completo
+            </h2>
+            <p className="text-white/60 text-lg sm:text-xl leading-relaxed mb-8">
+              El contenido completo de esta página se desbloqueará mientras terminas de ver el video.
+            </p>
+            <div className="inline-flex items-center gap-4 px-8 py-4 rounded-2xl bg-white/5 border border-white/10">
+              <Clock size={22} className="text-[#00E676]" />
+              <span className="text-white/80 text-lg font-mono font-bold">
+                {String(minutesLeft).padStart(2, '0')}:{String(secondsLeft).padStart(2, '0')}
+              </span>
+              <span className="text-white/40 text-sm">para desbloquear</span>
+            </div>
+          </motion.div>
+          )}
         </div>
       </section>
 
