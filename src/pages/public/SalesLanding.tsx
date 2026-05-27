@@ -896,9 +896,6 @@ export default function SalesLanding() {
                   </span>
                   <span className="text-[10px] text-white/50 font-mono mt-0.5 tracking-wider">PAGO ÚNICO</span>
                 </div>
-                <span className="text-sm text-[#f59e0b] font-mono font-black bg-[#f59e0b]/10 border border-[#f59e0b]/30 px-3 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                  {pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}
-                </span>
               </div>
               
               {/* On mobile, show price inside button or next to it */}
