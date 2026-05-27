@@ -572,17 +572,33 @@ export default function PathMap() {
       {/* ══════ DESKTOP: Horizontal Carousel ══════ */}
       <div className="relative w-full mb-16 hidden md:block">
         {canScrollLeft && (
-          <button onClick={() => scroll('left')} className="absolute left-[-20px] top-1/2 -translate-y-1/2 z-30 cursor-pointer hover:scale-110 transition-transform focus:outline-none" aria-label="Izquierda">
-            <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:bg-white/10">
-              <ChevronLeft size={24} />
-            </div>
+          <button 
+            onClick={() => scroll('left')} 
+            className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 cursor-pointer focus:outline-none" 
+            aria-label="Izquierda"
+          >
+            <motion.div
+              animate={{ x: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="w-14 h-14 rounded-full bg-[#05080f]/90 backdrop-blur-md border-2 border-[#00D1FF]/40 flex items-center justify-center text-[#00D1FF] shadow-[0_0_25px_rgba(0,209,255,0.3)] hover:border-[#00D1FF] hover:text-white hover:shadow-[0_0_35px_rgba(0,209,255,0.5)] hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              <ChevronLeft size={32} />
+            </motion.div>
           </button>
         )}
         {canScrollRight && (
-          <button onClick={() => scroll('right')} className="absolute right-[-20px] top-1/2 -translate-y-1/2 z-30 cursor-pointer hover:scale-110 transition-transform focus:outline-none" aria-label="Derecha">
-            <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:bg-white/10">
-              <ChevronRight size={24} />
-            </div>
+          <button 
+            onClick={() => scroll('right')} 
+            className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 cursor-pointer focus:outline-none" 
+            aria-label="Derecha"
+          >
+            <motion.div
+              animate={{ x: [0, 6, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="w-14 h-14 rounded-full bg-[#05080f]/90 backdrop-blur-md border-2 border-[#00D1FF]/40 flex items-center justify-center text-[#00D1FF] shadow-[0_0_25px_rgba(0,209,255,0.3)] hover:border-[#00D1FF] hover:text-white hover:shadow-[0_0_35px_rgba(0,209,255,0.5)] hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              <ChevronRight size={32} />
+            </motion.div>
           </button>
         )}
 
