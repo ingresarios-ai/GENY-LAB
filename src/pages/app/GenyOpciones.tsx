@@ -12,7 +12,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, R
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import confetti from "canvas-confetti";
-import CompletionBanner from '../../components/CompletionBanner';
+import { markActivityCompleted } from '../../lib/progressStore';
+import { syncActivityToSupabase } from '../../lib/activitySync';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BLACK-SCHOLES ENGINE
@@ -276,6 +277,14 @@ export default function GenyOpciones() {
     setLoading(false);
   }, []);
 
+  // Auto-complete "geny" lesson on page entry
+  useEffect(() => {
+    if (!loading) {
+      markActivityCompleted('geny');
+      syncActivityToSupabase('geny');
+    }
+  }, [loading]);
+
   // ── Persist to localStorage (debounced) ──
   const saveState = (overrides: any = {}) => {
     try {
@@ -526,7 +535,7 @@ export default function GenyOpciones() {
         )}
       </AnimatePresence>
 
-      <CompletionBanner lessonId="geny" />
+
 
       {/* ── HEADER ── */}
       <div className="glass-panel p-5 relative overflow-hidden border-t-2 border-t-brand-blue/40">
