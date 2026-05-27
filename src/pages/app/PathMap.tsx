@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap, GraduationCap } from 'lucide-react';
+import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap, GraduationCap, Sparkles } from 'lucide-react';
 import { LESSONS, getLevelForXp, getXpProgressInLevel, PHASE_LABELS, type Lesson } from '../../lib/lessons';
 import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted } from '../../lib/progressStore';
 import { Logo } from '../../components/Logo';
@@ -520,20 +520,52 @@ export default function PathMap() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: LESSONS.length * 0.05 }}
           onClick={() => { if (allDone) navigate('/app/diagnostico'); }}
-          className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
-            allDone ? 'glass-panel border-[#F2C500]/30 cursor-pointer' : 'bg-[#0A0B10] border-white/[0.04] opacity-50'
+          className={`relative rounded-xl border p-4 flex items-center gap-4 transition-all ${
+            allDone 
+              ? 'bg-gradient-to-r from-[#1C1500] to-[#0A0B10] border-yellow-500/30 cursor-pointer active:scale-[0.98] shadow-[0_0_20px_rgba(242,197,0,0.05)]' 
+              : 'bg-[#0A0B10] border-white/[0.04] opacity-50'
           }`}
         >
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center border shrink-0 ${allDone ? 'bg-[#F2C500]/10 border-[#F2C500]/40 text-[#F2C500]' : 'bg-white/5 border-white/5 text-white/30'}`}>
-            {allDone ? <GraduationCap size={18} /> : <Lock size={16} />}
+          {allDone && (
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-[radial-gradient(circle_at_right,rgba(242,197,0,0.08),transparent_70%)] pointer-events-none" />
+          )}
+          
+          <div className={`w-14 h-14 rounded-xl flex items-center justify-center border shrink-0 relative ${
+            allDone 
+              ? 'bg-gradient-to-br from-yellow-400 via-amber-500 to-yellow-600 border-yellow-300 text-black shadow-[0_0_15px_rgba(242,197,0,0.3)]' 
+              : 'bg-white/5 border-white/5 text-white/30'
+          }`}>
+            {allDone ? (
+              <>
+                <Trophy size={24} className="stroke-[2.5px] animate-pulse" />
+                <div className="absolute -top-1 -right-1 text-yellow-300">
+                  <Sparkles size={10} className="fill-yellow-300" />
+                </div>
+              </>
+            ) : (
+              <Lock size={18} />
+            )}
           </div>
+          
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Recompensa</p>
-            <h3 className={`text-sm font-bold truncate ${allDone ? 'text-[#F2C500]' : 'text-white/40'}`}>
-              {allDone ? '¡Acceso Liberado!' : 'Diagnóstico Final'}
+            <span className={`text-[8px] font-mono tracking-widest font-black uppercase ${
+              allDone ? 'text-yellow-400' : 'text-white/40'
+            }`}>
+              {allDone ? '👑 Recompensa Desbloqueada' : 'Recompensa'}
+            </span>
+            <h3 className={`text-base font-black truncate leading-tight ${
+              allDone ? 'text-white' : 'text-white/40'
+            }`}>
+              {allDone ? '¡ACCESO LIBERADO!' : 'Diagnóstico Final'}
             </h3>
+            <p className="text-[10px] font-mono text-white/50 truncate mt-0.5">&gt; Reclama tu Diagnóstico Financiero</p>
           </div>
-          {allDone && <GraduationCap size={14} className="text-[#F2C500] shrink-0" />}
+          
+          {allDone ? (
+            <ChevronRight className="w-5 h-5 text-yellow-400 shrink-0" />
+          ) : (
+            <Lock size={14} className="text-white/20 shrink-0" />
+          )}
         </motion.div>
       </div>
 
@@ -632,18 +664,103 @@ export default function PathMap() {
             );
           })}
           {/* Final Reward - Desktop */}
-          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: LESSONS.length * 0.1 }}
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            transition={{ duration: 0.5, delay: LESSONS.length * 0.1 }}
             onClick={() => { if (allDone) navigate('/app/diagnostico'); }}
-            className={`w-[320px] shrink-0 snap-start relative group rounded-xl overflow-hidden glass-panel h-[360px] flex flex-col ${allDone ? 'tech-panel-active border-[#F2C500]/50 shadow-[0_0_30px_rgba(242,197,0,0.2)] cursor-pointer' : 'opacity-60 border-white/5'}`}>
-            <div className={`absolute inset-0 bg-gradient-to-b ${allDone ? 'from-[#F2C500]/10 to-transparent' : 'from-white/5 to-transparent'} opacity-50`} />
+            className={`w-[320px] shrink-0 snap-start relative group rounded-2xl overflow-hidden h-[420px] flex flex-col transition-all duration-500 border ${
+              allDone 
+                ? 'bg-gradient-to-b from-[#1C1500]/90 via-[#0A0B10]/95 to-[#0F0B00]/90 border-yellow-400/30 hover:border-yellow-400/70 shadow-[0_0_30px_rgba(242,197,0,0.07)] hover:shadow-[0_0_50px_rgba(242,197,0,0.2)] cursor-pointer hover:-translate-y-1' 
+                : 'bg-[#0A0B10] border-white/[0.04] opacity-50 cursor-not-allowed'
+            }`}
+          >
+            {/* Background elements for unlocked state */}
+            {allDone && (
+              <>
+                <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-yellow-500/10 blur-[40px] pointer-events-none group-hover:bg-yellow-500/20 transition-all duration-500" />
+                <div className="absolute -bottom-16 -left-16 w-36 h-36 rounded-full bg-amber-500/10 blur-[50px] pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(242,197,0,0.05),transparent_60%)] pointer-events-none" />
+              </>
+            )}
+            
             <div className="relative z-10 p-6 h-full flex flex-col justify-between items-center text-center">
-              <div className={`w-14 h-14 rounded-lg flex items-center justify-center backdrop-blur-md border ${allDone ? 'bg-[#F2C500]/10 border-[#F2C500]/40 text-[#F2C500]' : 'bg-white/5 border-white/10 text-white/30'}`}>
-                {allDone ? <GraduationCap size={24} /> : <Lock size={20} />}
+              {/* Icon / Badge Container */}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="relative">
+                  {allDone && (
+                    <>
+                      {/* Rotating aura */}
+                      <motion.div 
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                        className="absolute -inset-4 rounded-full border border-dashed border-yellow-500/30"
+                      />
+                      {/* Pulsing glow behind */}
+                      <div className="absolute inset-0 rounded-full bg-yellow-500/20 blur-md animate-ping duration-1000 opacity-60" />
+                      {/* Floating sparkles */}
+                      <motion.div 
+                        animate={{ y: [-4, 4, -4], x: [-2, 2, -2] }}
+                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                        className="absolute -top-6 -right-6 text-yellow-400"
+                      >
+                        <Sparkles size={18} className="fill-yellow-400/30" />
+                      </motion.div>
+                      <motion.div 
+                        animate={{ y: [3, -3, 3], x: [2, -2, 2] }}
+                        transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+                        className="absolute -bottom-4 -left-5 text-amber-400"
+                      >
+                        <Sparkles size={14} className="fill-amber-400/30" />
+                      </motion.div>
+                    </>
+                  )}
+                  
+                  {/* Main circular frame */}
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center border transition-all duration-300 relative ${
+                    allDone 
+                      ? 'bg-gradient-to-br from-yellow-400 via-amber-500 to-yellow-600 border-yellow-300 text-black shadow-[0_0_30px_rgba(242,197,0,0.4)] scale-110' 
+                      : 'bg-white/5 border-white/10 text-white/30'
+                  }`}>
+                    {allDone ? (
+                      <Trophy size={36} className="stroke-[2.5px] drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] animate-pulse" />
+                    ) : (
+                      <Lock size={24} />
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="mt-auto flex flex-col items-center w-full">
-                <h2 className={`text-xl font-bold tracking-tight uppercase mb-2 ${allDone ? 'text-[#F2C500]' : 'text-white/40'}`}>{allDone ? '¡ACCESO LIBERADO!' : 'RECOMPENSA FINAL'}</h2>
-                <p className="text-xs font-mono text-white/50 mb-6">&gt; Diagnóstico Financiero. Completa la red para acceder.</p>
-                {allDone && (<button className="w-full py-3 rounded-md font-mono tracking-widest text-xs uppercase bg-[#F2C500]/10 border border-[#F2C500]/40 text-[#F2C500] hover:bg-[#F2C500]/20 transition-colors">RECLAMAR AHORA</button>)}
+              
+              <div className="w-full space-y-4">
+                <div className="space-y-1">
+                  <span className={`text-[10px] font-mono tracking-[0.3em] font-black uppercase ${
+                    allDone ? 'text-yellow-400' : 'text-white/30'
+                  }`}>
+                    {allDone ? '👑 ¡RECLAMAR RECOMPENSA!' : 'RECOMPENSA FINAL'}
+                  </span>
+                  
+                  <h2 className={`text-2xl font-black tracking-[0.12em] uppercase leading-tight ${
+                    allDone ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-white/40'
+                  }`}>
+                    {allDone ? '¡ACCESO LIBERADO!' : 'DIAGNÓSTICO FINAL'}
+                  </h2>
+                </div>
+                
+                <p className={`text-sm font-mono leading-relaxed max-w-[240px] mx-auto ${
+                  allDone ? 'text-yellow-100/70' : 'text-white/30'
+                }`}>
+                  &gt; Diagnóstico Financiero. Completa la red para acceder.
+                </p>
+                
+                {allDone ? (
+                  <button className="w-full cursor-pointer py-4 rounded-xl font-mono tracking-widest text-xs font-black uppercase bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-500 text-black hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(242,197,0,0.35)]">
+                    ENTRAR AL DIAGNÓSTICO
+                  </button>
+                ) : (
+                  <div className="w-full py-3.5 rounded-xl border border-white/5 bg-white/[0.01] text-white/40 font-mono text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                    <Lock size={14} /> BLOQUEADO
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
