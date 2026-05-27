@@ -186,11 +186,12 @@ export const GastosHormiga = () => {
         amounts,
         currencyId: currency.id,
         completed: step === 2,
+        total,
       };
       saveActivityProgressDB('gastos', dataToSave, false).catch(console.error);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [amounts, currency.id, step, loading]);
+  }, [amounts, currency.id, step, loading, total]);
 
   // ── Fetch user name ───────────────────────────────────────────────────
   useEffect(() => {
@@ -214,6 +215,7 @@ export const GastosHormiga = () => {
         amounts,
         currencyId: currency.id,
         completed: true,
+        total,
       }, true);
       markActivityCompleted('gastos');
     } catch (e) {

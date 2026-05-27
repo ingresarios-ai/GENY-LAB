@@ -251,6 +251,18 @@ export default function PublicResultsView() {
 
   const coreTotal = ["adn", "gastos", "termostato", "trampas", "pedem", "sombra", "flow"].filter(id => acts[id]).length;
 
+  const gastosData = (() => {
+    if (!acts.gastos) return { completed: false, monthly: 0, annual: 0 };
+    const meta = acts.gastos.metadata || {};
+    let total = 0;
+    if (typeof meta.total === 'number') {
+      total = meta.total;
+    } else if (meta.amounts) {
+      total = Object.values(meta.amounts).reduce((s: number, v: any) => s + (parseFloat(v) || 0), 0);
+    }
+    return { completed: true, monthly: total, annual: total * 12 };
+  })();
+
   const scoreColor = (score: number) => {
     if (score >= 8) return '#00E676';
     if (score >= 6) return '#F2C500';
@@ -666,8 +678,8 @@ export default function PublicResultsView() {
             <div className="bg-black/30 p-5 rounded-2xl border border-white/5 space-y-2">
               <span className="text-[10px] font-mono text-[#00D1FF] uppercase tracking-widest font-bold block">🐜 Gastos Hormiga</span>
               <div className="space-y-1">
-                <p className="text-sm font-bold text-white">Fuga Mensual: <span className="text-red-400">{acts.gastos?.metadata?.total ? `$${Math.round(acts.gastos.metadata.total).toLocaleString()}` : 'No completado'}</span></p>
-                <p className="text-xs text-white/50">Fuga Anual: <span className="text-red-500 font-bold">{acts.gastos?.metadata?.total ? `$${Math.round(acts.gastos.metadata.total * 12).toLocaleString()}` : 'N/A'}</span></p>
+                <p className="text-sm font-bold text-white">Fuga Mensual: <span className="text-red-400">{gastosData.completed ? `$${Math.round(gastosData.monthly).toLocaleString()}` : 'No completado'}</span></p>
+                <p className="text-xs text-white/50">Fuga Anual: <span className="text-red-500 font-bold">{gastosData.completed ? `$${Math.round(gastosData.annual).toLocaleString()}` : 'N/A'}</span></p>
               </div>
             </div>
 

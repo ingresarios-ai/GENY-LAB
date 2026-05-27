@@ -158,9 +158,15 @@ serve(async (req) => {
         case 'adn':
           activitySummaries.push(`ADN FINANCIERO: Arquetipo="${meta.adn || 'N/A'}", Sombra="${meta.sombra || 'N/A'}", Título="${meta.titulo || ''}", Lectura="${meta.lecturaCore || ''}", Fortaleza="${meta.fortaleza || ''}", Patrón de sabotaje="${meta.patron || ''}"`);
           break;
-        case 'gastos':
-          activitySummaries.push(`GASTOS HORMIGA: Fuga mensual=$${meta.total || 0}, Fuga anual=$${(meta.total || 0) * 12}, Categorías=${JSON.stringify(meta.categories || meta)}`);
+        case 'gastos': {
+          let totalVal = meta.total;
+          if (typeof totalVal !== 'number' && meta.amounts) {
+            totalVal = Object.values(meta.amounts).reduce((s: number, v: any) => s + (parseFloat(v) || 0), 0);
+          }
+          const monthlyTotal = typeof totalVal === 'number' ? totalVal : 0;
+          activitySummaries.push(`GASTOS HORMIGA: Fuga mensual=$${monthlyTotal}, Fuga anual=$${monthlyTotal * 12}, Categorías=${JSON.stringify(meta.categories || meta)}`);
           break;
+        }
         case 'termostato':
           activitySummaries.push(`TERMOSTATO: Puntaje=${meta.puntaje_global || 0}°/100°, Nivel="${meta.temperatura_label || 'N/A'}", Detalles por categoría=${JSON.stringify(meta.categories || meta)}`);
           break;

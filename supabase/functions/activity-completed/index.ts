@@ -139,8 +139,13 @@ Deno.serve(async (req: Request) => {
       key_metrics.arquetipo = md.adn || null;
       key_metrics.sombra = md.sombra || null;
     } else if (activity_id === "gastos") {
-      key_metrics.fuga_mensual = md.total || 0;
-      key_metrics.fuga_anual = Math.round((md.total || 0) * 12);
+      let totalVal = md.total;
+      if (typeof totalVal !== 'number' && md.amounts) {
+        totalVal = Object.values(md.amounts).reduce((s: number, v: any) => s + (parseFloat(v) || 0), 0);
+      }
+      const monthlyTotal = typeof totalVal === 'number' ? totalVal : 0;
+      key_metrics.fuga_mensual = monthlyTotal;
+      key_metrics.fuga_anual = Math.round(monthlyTotal * 12);
     } else if (activity_id === "termostato") {
       key_metrics.puntaje_termostato = md.puntaje_global || null;
       key_metrics.temperatura_label = md.temperatura_label || null;
