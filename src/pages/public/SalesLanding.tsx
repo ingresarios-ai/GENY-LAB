@@ -226,10 +226,12 @@ export default function SalesLanding() {
       <div className="absolute top-[30%] right-[5%] w-[500px] h-[500px] bg-[#00E676]/[0.02] rounded-full blur-[140px] -z-10 pointer-events-none" />
 
       {/* 🚨 Warning Top Bar */}
-      <div className="bg-[#fe0443]/10 border-b border-[#fe0443]/20 py-4 text-center text-sm sm:text-base font-mono tracking-widest text-[#fe0443] font-black flex items-center justify-center gap-2">
-        <span className="w-3 h-3 rounded-full bg-[#fe0443] animate-pulse" />
-        ATENCIÓN: ACCESO EXCLUSIVO LIMITADO A 100 CUPOS · SÓLO QUEDAN {spots} DISPONIBLES HOY
-      </div>
+      {contentRevealed && (
+        <div className="bg-[#fe0443]/10 border-b border-[#fe0443]/20 py-4 text-center text-sm sm:text-base font-mono tracking-widest text-[#fe0443] font-black flex items-center justify-center gap-2">
+          <span className="w-3 h-3 rounded-full bg-[#fe0443] animate-pulse" />
+          ATENCIÓN: ACCESO EXCLUSIVO LIMITADO A 100 CUPOS · SÓLO QUEDAN {spots} DISPONIBLES HOY
+        </div>
+      )}
 
       {/* ══════════════════════════════════════════════════════════════════
           HERO — Pattern Interrupt + Video
@@ -279,33 +281,7 @@ export default function SalesLanding() {
           </div>
           )}
 
-          {/* Waiting message while content is hidden */}
-          {!contentRevealed && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="text-center max-w-2xl mx-auto mt-12 mb-8"
-          >
-            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-[#00D1FF]/10 border border-[#00D1FF]/20 mb-6">
-              <Eye size={20} className="text-[#00D1FF]" />
-              <span className="text-[#00D1FF] font-bold text-sm uppercase tracking-wider">Contenido bloqueado</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 text-white">
-              Mira el video completo
-            </h2>
-            <p className="text-white/60 text-lg sm:text-xl leading-relaxed mb-8">
-              El contenido completo de esta página se desbloqueará mientras terminas de ver el video.
-            </p>
-            <div className="inline-flex items-center gap-4 px-8 py-4 rounded-2xl bg-white/5 border border-white/10">
-              <Clock size={22} className="text-[#00E676]" />
-              <span className="text-white/80 text-lg font-mono font-bold">
-                {String(minutesLeft).padStart(2, '0')}:{String(secondsLeft).padStart(2, '0')}
-              </span>
-              <span className="text-white/40 text-sm">para desbloquear</span>
-            </div>
-          </motion.div>
-          )}
+
         </div>
       </section>
 
