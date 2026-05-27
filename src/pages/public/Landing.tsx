@@ -147,7 +147,8 @@ export default function Landing() {
       console.warn('Webhook failed:', err);
     }
 
-    const checkoutUrl = `${CTA_URL}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`;
+    const cleanPhone = phone.replace(/\D/g, '');
+    const checkoutUrl = `${CTA_URL}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(cleanPhone)}`;
     window.location.href = checkoutUrl;
   };
 
