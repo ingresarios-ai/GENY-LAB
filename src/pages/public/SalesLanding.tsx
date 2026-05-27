@@ -77,6 +77,7 @@ export default function SalesLanding() {
   const pricingRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const { contentRevealed, minutesLeft, secondsLeft } = useDelayedReveal('geny_sales_revealed');
+  const [activeTab, setActiveTab] = useState<'personal' | 'trading'>('personal');
 
   const handleLeadSubmit = async (name: string, email: string, phone: string, country: string) => {
     const COUNTRY_DATA: Record<string, string> = {
@@ -318,13 +319,51 @@ export default function SalesLanding() {
         
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <FadeIn>
-            <div className="text-center max-w-3xl mx-auto mb-14">
+            <div className="text-center max-w-3xl mx-auto mb-8">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4">
-                ¿Por qué sigues <span className="text-red-400">saboteando</span> tu cuenta?
+                {activeTab === 'personal' ? (
+                  <>¿Por qué sigues <span className="text-red-400">saboteando</span> tu dinero?</>
+                ) : (
+                  <>¿Por qué sigues <span className="text-red-400">saboteando</span> tu cuenta?</>
+                )}
               </h2>
               <p className="text-white/70 text-lg md:text-xl leading-relaxed">
-                Haces un plan perfecto. Sabes dónde entrar. Pero cuando el mercado se mueve, entras en pánico, mueves el stop o cierras antes de tiempo. Esto es lo que está pasando:
+                {activeTab === 'personal' ? (
+                  "Haces un plan de ahorro, decides no gastar más, o piensas en comenzar a invertir. Pero al final del mes, terminas gastando de más, evitas revisar tu cuenta bancaria y aplazas tu crecimiento. Esto es lo que está pasando:"
+                ) : (
+                  "Haces un plan perfecto. Sabes dónde entrar. Pero cuando el mercado se mueve, entras en pánico, mueves el stop o cierras antes de tiempo. Esto es lo que está pasando:"
+                )}
               </p>
+            </div>
+          </FadeIn>
+
+          {/* Premium Selector Tabs */}
+          <FadeIn>
+            <div className="flex justify-center mb-10">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-1.5 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('personal')}
+                  className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all duration-300 ${
+                    activeTab === 'personal'
+                      ? 'bg-gradient-to-r from-[#00D1FF] to-[#00E676] text-[#05080f] shadow-lg'
+                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Aún no opero (Finanzas e Inversiones)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('trading')}
+                  className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all duration-300 ${
+                    activeTab === 'trading'
+                      ? 'bg-gradient-to-r from-[#00D1FF] to-[#00E676] text-[#05080f] shadow-lg'
+                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Ya opero (Hago Trading)
+                </button>
+              </div>
             </div>
           </FadeIn>
 
@@ -337,20 +376,31 @@ export default function SalesLanding() {
                     <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
                       <AlertTriangle size={22} />
                     </div>
-                    <h3 className="text-lg md:text-xl font-black uppercase tracking-wider text-red-400">EL TRADING DEL CAOS (EL 95%)</h3>
+                    <h3 className="text-lg md:text-xl font-black uppercase tracking-wider text-red-400">
+                      {activeTab === 'personal' ? 'LAS FINANZAS DEL CAOS (EL 95%)' : 'EL TRADING DEL CAOS (EL 95%)'}
+                    </h3>
                   </div>
 
                   <p className="text-white/90 text-base md:text-lg leading-relaxed font-semibold">
-                    Operas desde el caos mental. Tu cerebro no está entrenado para sostener el riesgo, por lo que entra en modo de supervivencia. No piensas: reaccionas.
+                    {activeTab === 'personal' ? (
+                      "Operas desde la reactividad emocional. El dinero te genera estrés o culpa, lo que activa tu modo de supervivencia. No gestionas: evitas o gastas."
+                    ) : (
+                      "Operas desde el caos mental. Tu cerebro no está entrenado para sostener el riesgo, por lo que entra en modo de supervivencia. No piensas: reaccionas."
+                    )}
                   </p>
 
                   <div className="flex flex-col gap-4">
-                    {[
+                    {(activeTab === 'personal' ? [
+                      'Compras por impulso para llenar vacíos emocionales o buscar satisfacción instantánea.',
+                      'Evitas revisar tu cuenta bancaria o tus deudas por miedo a enfrentar la realidad.',
+                      'Buscas dinero rápido en esquemas dudosos o "consejos calientes" sin entender el riesgo.',
+                      'Abandonas tus metas de ahorro o presupuestos al primer imprevisto, volviendo al ciclo de siempre.'
+                    ] : [
                       'Dudas de tus setups (configuraciones o patrones gráficos de entrada) y entras tarde o dejas pasar la oportunidad.',
                       'Mueves el stop-loss en pánico creyendo que el mercado se recuperará.',
                       'Cierras operaciones ganadoras antes de tiempo por miedo a perderlas.',
                       'Operas por venganza para recuperar lo que perdiste en el trade anterior.'
-                    ].map((item, i) => (
+                    ]).map((item, i) => (
                       <div key={i} className="flex items-start gap-3">
                         <div className="mt-1 w-6 h-6 rounded-md bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
                           <span className="text-red-400 text-sm font-black">✕</span>
@@ -363,7 +413,11 @@ export default function SalesLanding() {
 
                 <div className="pt-4 border-t border-red-500/10 mt-6">
                   <p className="text-red-300 font-bold text-base sm:text-lg italic">
-                    "Eso no es estupidez. Es tu cerebro llegando a su límite biológico de tolerancia al riesgo."
+                    {activeTab === 'personal' ? (
+                      '"Eso no es falta de capacidad. Es tu cerebro respondiendo con parálisis o huida ante el estrés del dinero."'
+                    ) : (
+                      '"Eso no es estupidez. Es tu cerebro llegando a su límite biológico de tolerancia al riesgo."'
+                    )}
                   </p>
                 </div>
               </div>
@@ -377,20 +431,31 @@ export default function SalesLanding() {
                     <div className="w-10 h-10 rounded-lg bg-[#00E676]/10 border border-[#00E676]/30 flex items-center justify-center text-[#00E676] shrink-0">
                       <Target size={22} />
                     </div>
-                    <h3 className="text-lg md:text-xl font-black uppercase tracking-wider text-[#00E676]">EL TRADER SISTEMÁTICO (EL 5%)</h3>
+                    <h3 className="text-lg md:text-xl font-black uppercase tracking-wider text-[#00E676]">
+                      {activeTab === 'personal' ? 'EL GESTOR SISTEMÁTICO (EL 5%)' : 'EL TRADER SISTEMÁTICO (EL 5%)'}
+                    </h3>
                   </div>
 
                   <p className="text-white/90 text-base md:text-lg leading-relaxed font-semibold">
-                    Operas como una terminal matemática. Conoces tus emociones, sabes medir tu termostato financiero y ejecutas el plan sin drama ni dilemas mentales.
+                    {activeTab === 'personal' ? (
+                      "Operas con una estrategia clara. Conoces tus emociones, mides tu termostato financiero y ejecutas tus hábitos sin dilemas mentales."
+                    ) : (
+                      "Operas como una terminal matemática. Conoces tus emociones, sabes medir tu termostato financiero y ejecutas el plan sin drama ni dilemas mentales."
+                    )}
                   </p>
 
                   <div className="flex flex-col gap-4">
-                    {[
+                    {(activeTab === 'personal' ? [
+                      'Planificas tus gastos y automatizas tus inversiones antes de gastar lo que te sobra.',
+                      'Tomas decisiones de compra analíticas y racionales, alineadas con tus metas reales.',
+                      'Eliges instrumentos de inversión regulados y acordes a tu ADN y nivel de tolerancia.',
+                      'Sostienes tus hábitos financieros mes a mes con disciplina, sabiendo que la consistencia vence al azar.'
+                    ] : [
                       'Ejecutas con confianza porque sabes qué estilo encaja con tu ADN.',
                       'Mantienes el stop-loss fijo, aceptando las pérdidas como parte del negocio.',
                       'Dejas correr las ganancias hasta tu objetivo técnico planificado.',
                       'Apagas las pantallas después de tu límite de pérdidas diario, sin dudar.'
-                    ].map((item, i) => (
+                    ]).map((item, i) => (
                       <div key={i} className="flex items-start gap-3">
                         <div className="mt-1 w-6 h-6 rounded-md bg-[#00E676]/10 border border-[#00E676]/20 flex items-center justify-center shrink-0">
                           <CheckCircle2 size={16} className="text-[#00E676]" />
@@ -403,7 +468,11 @@ export default function SalesLanding() {
 
                 <div className="pt-4 border-t border-[#00E676]/10 mt-6">
                   <p className="text-[#00E676] font-bold text-base sm:text-lg italic">
-                    "La consistencia real no está en la gráfica, está en cómo calibras tu propio sistema de ejecución."
+                    {activeTab === 'personal' ? (
+                      '"La riqueza real no depende de la suerte, depende de cómo calibras tu propio sistema de hábitos financieros."'
+                    ) : (
+                      '"La consistencia real no está en la gráfica, está en cómo calibras tu propio sistema de ejecución."'
+                    )}
                   </p>
                 </div>
               </div>
@@ -412,7 +481,11 @@ export default function SalesLanding() {
 
           <FadeIn delay={0.3}>
             <p className="text-[#00D1FF] text-xl md:text-3xl font-black text-center mt-12 uppercase tracking-wide">
-              Si te identificaste con el caos, sigue leyendo. Lo que viene va a reconfigurar tu forma de operar.
+              {activeTab === 'personal' ? (
+                "Si te identificaste con el caos, sigue leyendo. Lo que viene va a reconfigurar tu mentalidad del dinero."
+              ) : (
+                "Si te identificaste con el caos, sigue leyendo. Lo que viene va a reconfigurar tu forma de operar."
+              )}
             </p>
           </FadeIn>
         </div>
