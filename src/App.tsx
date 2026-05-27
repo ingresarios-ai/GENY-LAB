@@ -16,6 +16,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminLeads from './pages/admin/AdminLeads';
 import AdminWebhooks from './pages/admin/AdminWebhooks';
 import AdminSettings from './pages/admin/AdminSettings';
 
@@ -89,6 +90,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="usuarios" element={<AdminUsers />} />
+          <Route path="leads" element={<AdminLeads />} />
           <Route path="webhooks" element={<AdminWebhooks />} />
           <Route path="configuracion" element={<AdminSettings />} />
         </Route>

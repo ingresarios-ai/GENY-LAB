@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Webhook, LogOut, Shield, UserCog } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, Webhook, LogOut, Shield, UserCog } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { isAdminAuthenticated, logoutAdmin, getAdminInfo } from '../../lib/adminApi';
 import { supabase } from '../../lib/supabase';
@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase';
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/usuarios', icon: Users, label: 'Usuarios' },
+  { to: '/admin/leads', icon: UserPlus, label: 'Leads' },
   { to: '/admin/webhooks', icon: Webhook, label: 'Webhooks' },
   { to: '/admin/configuracion', icon: UserCog, label: 'Admins', superadminOnly: true },
 ];

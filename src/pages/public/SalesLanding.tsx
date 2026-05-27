@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { Footer } from '../../components/Footer';
 import { Logo } from '../../components/Logo';
+import { LeadModal } from '../../components/LeadModal';
+import { supabase } from '../../lib/supabase';
 
 /* ── Utilities ─────────────────────────────────────────────────────────── */
 
@@ -26,9 +28,9 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
 
 const CTA_URL = 'https://whop.com/checkout/plan_cnokB2HmtC1kG';
 
-function CTAButton({ large = false, className = '', text = 'QUIERO MI ACCESO AHORA' }: { large?: boolean; className?: string; text?: React.ReactNode }) {
+function CTAButton({ large = false, className = '', text = 'QUIERO MI ACCESO AHORA', onClick }: { large?: boolean; className?: string; text?: React.ReactNode; onClick?: (e: React.MouseEvent) => void }) {
   return (
-    <a href={CTA_URL} target="_blank" rel="noopener noreferrer"
+    <a href={CTA_URL} target="_blank" rel="noopener noreferrer" onClick={onClick}
       className={`group relative inline-flex items-center justify-center gap-3 font-black uppercase tracking-wider rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] ${large ? 'px-10 py-5 text-base md:text-lg' : 'px-8 py-4 text-sm md:text-base'} bg-gradient-to-r from-[#00D1FF] to-[#00E676] text-[#05080f] shadow-[0_0_40px_rgba(0,209,255,0.3)] hover:shadow-[0_0_60px_rgba(0,209,255,0.5)] ${className}`}>
       <span className="text-center">{text}</span>
       <ArrowRight size={large ? 22 : 18} className="group-hover:translate-x-1 transition-transform shrink-0" />
@@ -70,8 +72,82 @@ function Callout({ children, color = '#00D1FF' }: { children: React.ReactNode; c
 export default function SalesLanding() {
   const [timeLeft, setTimeLeft] = useState({ h: 47, m: 59, s: 59 });
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const [showLeadModal, setShowLeadModal] = useState(false);
   const pricingRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
+
+  const handleLeadSubmit = async (name: string, email: string, phone: string, country: string) => {
+    const COUNTRY_DATA: Record<string, string> = {
+      'MX': 'México', 'CO': 'Colombia', 'AR': 'Argentina', 'CL': 'Chile',
+      'PE': 'Perú', 'EC': 'Ecuador', 'VE': 'Venezuela', 'BO': 'Bolivia',
+      'PY': 'Paraguay', 'UY': 'Uruguay', 'GT': 'Guatemala', 'CR': 'Costa Rica',
+      'PA': 'Panamá', 'HN': 'Honduras', 'SV': 'El Salvador', 'NI': 'Nicaragua',
+      'DO': 'Rep. Dominicana', 'CU': 'Cuba', 'PR': 'Puerto Rico', 'US': 'Estados Unidos',
+      'ES': 'España', 'BR': 'Brasil', 'CA': 'Canadá'
+    };
+    const countryName = COUNTRY_DATA[country.toUpperCase()] || country;
+
+    try {
+      const emailLC = email.toLowerCase().trim();
+      const { data: existing } = await supabase
+        .from('enrolled_users')
+        .select('id, status')
+        .eq('email', emailLC)
+        .maybeSingle();
+
+      if (existing) {
+        if (existing.status !== 'active') {
+          await supabase
+            .from('enrolled_users')
+            .update({
+              name,
+              phone,
+              country,
+              country_name: countryName,
+              status: 'lead',
+              updated_at: new Date().toISOString()
+            })
+            .eq('email', emailLC);
+        }
+      } else {
+        await supabase
+          .from('enrolled_users')
+          .insert({
+            name,
+            email: emailLC,
+            phone,
+            country,
+            country_name: countryName,
+            status: 'lead',
+            payment_method: 'generic',
+            payment_platform: 'generic',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+      }
+    } catch (err) {
+      console.error('Error saving lead to Supabase:', err);
+    }
+
+    try {
+      await fetch('https://services.leadconnectorhq.com/hooks/jTugwykceKyJlATOSvkb/webhook-trigger/g50c1EJeXc546KQ6RhHr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email: email.toLowerCase().trim(),
+          phone,
+          country,
+          source: 'sales_page_leads'
+        })
+      });
+    } catch (err) {
+      console.warn('Webhook failed:', err);
+    }
+
+    const checkoutUrl = `${CTA_URL}?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`;
+    window.location.href = checkoutUrl;
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem('geny_landing_timer');
@@ -741,7 +817,7 @@ export default function SalesLanding() {
                       <span>SÍ, QUIERO MI ACCESO AHORA</span>
                       <span className="text-xs md:text-sm font-bold opacity-80 mt-0.5">— SOLO POR $67 USD —</span>
                     </div>
-                  } className="w-full max-w-lg mx-auto" />
+                  } className="w-full max-w-lg mx-auto" onClick={(e) => { e.preventDefault(); setShowLeadModal(true); }} />
                 </div>
 
                 {/* 🛡️ Guarantee Box */}
@@ -869,7 +945,7 @@ export default function SalesLanding() {
                 <span>SÍ, QUIERO MI ACCESO</span>
                 <span className="text-xs md:text-sm font-bold opacity-80 mt-0.5">— SOLO POR $67 USD —</span>
               </div>
-            } />
+            } onClick={(e) => { e.preventDefault(); setShowLeadModal(true); }} />
             <p className="text-white/40 text-sm font-mono uppercase tracking-widest mt-6 font-bold">
               Pago único · Garantía 15 días · Acceso inmediato
             </p>
@@ -908,12 +984,23 @@ export default function SalesLanding() {
                 href={CTA_URL} 
                 target="_blank" 
                 rel="noopener noreferrer"
+                onClick={(e) => { e.preventDefault(); setShowLeadModal(true); }}
                 className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2.5 px-8 py-4.5 rounded-2xl font-black uppercase tracking-wider text-base bg-gradient-to-r from-[#00E676] via-[#00D1FF] to-[#00E676] text-[#05080f] hover:scale-[1.03] active:scale-[0.98] transition-transform shadow-[0_0_30px_rgba(1,228,126,0.65)] hover:shadow-[0_0_45px_rgba(1,228,126,0.9)]"
               >
                 QUIERO MI ACCESO <ArrowRight size={18} className="stroke-[3px]" />
               </a>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── LEAD CAPTURE MODAL ── */}
+      <AnimatePresence>
+        {showLeadModal && (
+          <LeadModal
+            onClose={() => setShowLeadModal(false)}
+            onSubmit={handleLeadSubmit}
+          />
         )}
       </AnimatePresence>
 

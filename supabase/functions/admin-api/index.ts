@@ -361,7 +361,11 @@ Deno.serve(async (req: Request) => {
           .order("created_at", { ascending: false });
 
         const status = url.searchParams.get("status");
-        if (status) query = query.eq("status", status);
+        if (status) {
+          query = query.eq("status", status);
+        } else {
+          query = query.neq("status", "lead");
+        }
 
         const payment = url.searchParams.get("payment_method");
         if (payment) query = query.eq("payment_method", payment);
