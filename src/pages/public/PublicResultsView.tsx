@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Shield, ChevronDown, ChevronUp, CheckCircle2, User as UserIcon, Calendar, MapPin, Phone, Mail, FileJson, Activity, Lock, Brain, Sparkles, Target, AlertTriangle, DollarSign, MessageSquare, TrendingUp, Loader2, Zap, Heart, Clock, BookX, ShieldAlert } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
@@ -85,6 +85,65 @@ function ActivityBlock({ id, title, emoji, log, children }: { id: string, title:
   );
 }
 
+const stepsInfo = [
+  {
+    key: 'apertura',
+    num: 1,
+    title: 'Apertura',
+    objective: 'Romper hielo',
+    badgeColor: 'rgba(0, 209, 255, 0.1)',
+    textColor: '#00D1FF'
+  },
+  {
+    key: 'punto_actual',
+    num: 2,
+    title: 'Punto actual',
+    objective: 'Identificar nivel',
+    badgeColor: 'rgba(242, 197, 0, 0.1)',
+    textColor: '#F2C500'
+  },
+  {
+    key: 'dolor_real',
+    num: 3,
+    title: 'Dolor real',
+    objective: 'Detectar fricción',
+    badgeColor: 'rgba(255, 82, 82, 0.1)',
+    textColor: '#FF5252'
+  },
+  {
+    key: 'impacto',
+    num: 4,
+    title: 'Impacto',
+    objective: 'Crear conciencia',
+    badgeColor: 'rgba(139, 92, 246, 0.1)',
+    textColor: '#a78bfa'
+  },
+  {
+    key: 'diagnostico',
+    num: 5,
+    title: 'Diagnóstico',
+    objective: 'Conectar problema',
+    badgeColor: 'rgba(0, 230, 118, 0.1)',
+    textColor: '#00E676'
+  },
+  {
+    key: 'recomendacion',
+    num: 6,
+    title: 'Recomendación',
+    objective: 'Ofrecer plan',
+    badgeColor: 'rgba(245, 158, 11, 0.1)',
+    textColor: '#f59e0b'
+  },
+  {
+    key: 'cierre',
+    num: 7,
+    title: 'Cierre',
+    objective: 'Llevar a decisión',
+    badgeColor: 'rgba(236, 72, 153, 0.1)',
+    textColor: '#ec4899'
+  }
+];
+
 export default function PublicResultsView() {
   const { userId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -95,6 +154,7 @@ export default function PublicResultsView() {
   const [analysis, setAnalysis] = useState<any>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState('');
+  const [activeStep, setActiveStep] = useState<number | null>(0);
 
   useEffect(() => {
     // 1. Prevent Indexing dynamically
@@ -200,6 +260,48 @@ export default function PublicResultsView() {
     if (verdict === 'ALTAMENTE RECOMENDADO') return '#00E676';
     if (verdict === 'RECOMENDADO') return '#00D1FF';
     return '#F2C500';
+  };
+
+  const scriptComercial = analysis?.script_comercial || {
+    apertura: {
+      pregunta: `Hola ${user?.name || 'Trader'}, qué gusto saludarte. Vi que completaste las 7 actividades de GENY LAB. Cuéntame, ¿qué fue lo que más te hizo clic de todo este proceso?`,
+      que_escuchar: "Principiante: Hablará de seguridad y miedo. Intermedio: Hablará de consistencia y desorden. Avanzado: Hablará de optimizar y timing.",
+      directriz: "No vendas todavía. Escuchar de forma activa y tomar nota de la palabra clave."
+    },
+    punto_actual: {
+      pregunta: "Excelente. Y hoy en tu día a día con las finanzas y las inversiones, ¿en qué punto sientes que estás exactamente?",
+      que_escuchar: "Clasificación del prospecto según su nivel de trading.",
+      directriz: "Clasificar mentalmente al usuario: principiante, intermedio o avanzado."
+    },
+    dolor_real: {
+      pregunta: "Entiendo. Y cuando intentas avanzar o aplicar lo que ya sabes, ¿qué es lo que más te cuesta sostener o mantener en el tiempo?",
+      que_escuchar: "Falta de claridad en principiante. Inconsistencia/emociones en intermedio. Precisión y acompañamiento en avanzado.",
+      directriz: "Aplicar la técnica de Reflejo Profesional: 'O sea que no es falta de ganas, es falta de estructura...'"
+    },
+    impacto: {
+      pregunta: "Totalmente. Y si no cambias esto y sigues operando igual, ¿cómo te ves de aquí a 6 meses?",
+      que_escuchar: "Igual de estancado, repitiendo ciclos, o dejando dinero sobre la mesa.",
+      directriz: "Hacer silencio absoluto tras lanzar la pregunta. Deja que él mismo sienta el costo de no actuar."
+    },
+    diagnostico: {
+      pregunta: `Por lo que me cuentas y analizando tu perfil, lo que necesitas es ${
+        analysis?.plan_sugerido === 'pro' 
+          ? 'un método blindado con acompañamiento diario directo para afinar tu ejecución' 
+          : 'una ruta clara paso a paso que te dé la seguridad técnica para operar sin miedo'
+      }.`,
+      que_escuchar: "Escucha su nivel de acuerdo y apertura ante tu diagnóstico.",
+      directriz: "Da un diagnóstico directo y clínico. Muestra autoridad profesional."
+    },
+    recomendacion: {
+      pregunta: `Con base en esto, la opción que más sentido tiene para ti y que te va a ayudar a resolver esto de raíz es el plan ${analysis?.plan_nombre || 'INGRESARIOS PRO'} (${analysis?.plan_precio || '$1,497 USD Pago Único'}).`,
+      que_escuchar: "Reacciones iniciales ante el precio o el plan sugerido.",
+      directriz: "Recomienda una sola opción principal. No muestres alternativas a menos que sea necesario."
+    },
+    cierre: {
+      pregunta: "¿Qué tendría que pasar en este momento para que tomes la decisión de dar el paso y empezar a trabajar juntos?",
+      que_escuchar: "Objeciones finales y reales de presupuesto, tiempo o seguridad.",
+      directriz: "Escucha la objeción real y responde utilizando el manejador de objeciones. No sobreexpliques."
+    }
   };
 
   return (
@@ -354,6 +456,105 @@ export default function PublicResultsView() {
                     <p className="text-[10px] uppercase tracking-widest text-[#FF5252] mt-2 font-bold">Dato de Impacto — Usar en la Sesión</p>
                   </div>
                 )}
+
+                {/* ═══════════════════════════════════════════════════════ */}
+                {/* 7-STEP DYNAMIC CLOSER SCRIPT Accordion */}
+                {/* ═══════════════════════════════════════════════════════ */}
+                <div className="bg-black/30 rounded-3xl p-6 border border-white/5 space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-5 h-5 text-[#00D1FF]" />
+                      <h3 className="text-lg font-black uppercase tracking-wider text-white">Guía Interactiva del Guion (Closers)</h3>
+                    </div>
+                    <span className="text-[10px] font-mono text-purple-400 bg-purple-400/10 border border-purple-400/20 px-2.5 py-0.5 rounded-full uppercase tracking-widest font-bold">7 Momentos</span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {stepsInfo.map((step, idx) => {
+                      const stepData = scriptComercial[step.key] || {};
+                      const isOpen = activeStep === idx;
+                      
+                      return (
+                        <div 
+                          key={step.key} 
+                          className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                            isOpen ? 'border-[#00D1FF]/30 bg-[#080d16]/80 shadow-[0_0_20px_rgba(0,209,255,0.03)]' : 'border-white/5 bg-black/20 hover:border-white/10'
+                          }`}
+                        >
+                          {/* Accordion Header */}
+                          <button
+                            onClick={() => setActiveStep(isOpen ? null : idx)}
+                            className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div 
+                                className="w-7 h-7 rounded-lg flex items-center justify-center font-mono text-xs font-bold text-white shrink-0"
+                                style={{ background: step.badgeColor, border: `1px solid ${step.textColor}33` }}
+                              >
+                                {step.num}
+                              </div>
+                              <div>
+                                <span className="text-sm font-black text-white uppercase tracking-wider">{step.title}</span>
+                                <span className="mx-2 text-white/20">|</span>
+                                <span className="text-xs font-mono uppercase tracking-wider text-white/50">{step.objective}</span>
+                              </div>
+                            </div>
+                            {isOpen ? (
+                              <ChevronUp className="w-4 h-4 text-white/40" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-white/40" />
+                            )}
+                          </button>
+
+                          {/* Accordion Body */}
+                          <AnimatePresence initial={false}>
+                            {isOpen && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="border-t border-white/5"
+                              >
+                                <div className="p-5 space-y-4">
+                                  {/* Suggested Question */}
+                                  <div className="bg-[#00D1FF]/[0.02] border border-[#00D1FF]/10 rounded-xl p-4 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none">
+                                      <MessageSquare className="w-16 h-16 text-[#00D1FF]" />
+                                    </div>
+                                    <span className="text-[9px] font-mono text-[#00D1FF] uppercase tracking-widest font-black block mb-2">Pregunta sugerida a realizar</span>
+                                    <p className="text-sm md:text-base font-bold text-white italic pl-3 border-l-2 border-[#00D1FF]/45 leading-relaxed">
+                                      "{stepData.pregunta || ''}"
+                                    </p>
+                                  </div>
+
+                                  {/* Grid columns */}
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    {/* What to listen for */}
+                                    <div className="bg-black/30 rounded-xl p-4 border border-white/5 space-y-2">
+                                      <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest font-black block">¿Qué debes escuchar?</span>
+                                      <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">
+                                        {stepData.que_escuchar || ''}
+                                      </p>
+                                    </div>
+
+                                    {/* What the agent should do */}
+                                    <div className="bg-black/30 rounded-xl p-4 border border-white/5 space-y-2">
+                                      <span className="text-[9px] font-mono text-[#00E676] uppercase tracking-widest font-black block">¿Qué debe hacer el comercial?</span>
+                                      <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">
+                                        {stepData.directriz || ''}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
 
                 {/* Profile Summary */}
                 <div className="bg-black/30 rounded-2xl p-6 border border-white/5">

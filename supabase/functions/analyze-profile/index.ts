@@ -84,8 +84,46 @@ Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, sin markdo
     "no_tengo_dinero": "Manejo de 'no tengo dinero' — opciones de pago mensual accesibles + argumento de redirección de gastos hormiga + costo de NO actuar (seguir perdiendo $X/mes)"
   },
   "script_cierre": "Párrafo de cierre que el closer puede adaptar. Debe conectar el dolor, la evidencia y la solución. Tono firme pero empático. Ejemplo de nivel: 'Ya viste los números. Tu termostato a X° te tiene operando con miedo. Estás perdiendo $Y al año sin darte cuenta. El Método no es un gasto — es la calibración que te falta. ¿Empezamos hoy?'",
-  "dato_impacto": "El dato más impactante del perfil del usuario, formateado para generar un WOW moment en la sesión. Ejemplo: 'Este usuario pierde $4,200 al año en gastos invisibles — más del doble del costo del plan PRO'"
-}`;
+  "dato_impacto": "El dato más impactante del perfil del usuario, formateado para generar un WOW moment en la sesión. Ejemplo: 'Este usuario pierde $4,200 al año en gastos invisibles — más del doble del costo del plan PRO'",
+  "script_comercial": {
+    "apertura": {
+      "pregunta": "Pregunta exacta de apertura adaptada al nombre del usuario y a algún dato relevante que completó.",
+      "que_escuchar": "Qué señales de su perfil debe escuchar con atención el comercial (ej: si busca empezar de cero, ordenar sus finanzas, u optimizar resultados avanzados). Usa sus respuestas para personalizarlo.",
+      "directriz": "Instrucción de comportamiento para el comercial (ej: No vender todavía. Escuchar de forma activa y tomar nota de la palabra clave)."
+    },
+    "punto_actual": {
+      "pregunta": "Pregunta de punto actual para que el usuario defina en qué nivel financiero/trading se encuentra.",
+      "que_escuchar": "Cómo clasificará el comercial la respuesta (si describe confusión/miedo, si intenta aplicar pero no sostiene consistencia, o si ya tiene experiencia pero busca mejorar).",
+      "directriz": "Instrucción de comportamiento para el comercial (ej: Clasificarlo mentalmente en Principiante, Intermedio o Avanzado según su respuesta)."
+    },
+    "dolor_real": {
+      "pregunta": "Pregunta dirigida a que el usuario admita qué es lo que más le cuesta sostener (fricción).",
+      "que_escuchar": "Qué tipo de fricción admite (falta de claridad en principiante, inconsistencia/disciplina en intermedio, o precisión/acompañamiento en avanzado).",
+      "directriz": "Instrucción de comportamiento (ej: Aplicar la técnica de Reflejo Profesional: 'O sea que no es falta de ganas, es falta de estructura...'). Genera una frase de ejemplo de Reflejo personalizada para este usuario."
+    },
+    "impacto": {
+      "pregunta": "Pregunta confrontadora de impacto sobre cómo se verá el usuario en 6 meses si no cambia su situación hoy.",
+      "que_escuchar": "Señales de conciencia (si admite que estará igual de perdido, repitiendo ciclos o dejando dinero sobre la mesa).",
+      "directriz": "Instrucción de comportamiento (ej: Silencio absoluto tras lanzar la pregunta. Dejar que él mismo reflexione y verbalice el costo de su inacción. No suavizar la pregunta)."
+    },
+    "diagnostico": {
+      "pregunta": "Declaración de diagnóstico profesional que conecta su problema con lo que necesita.",
+      "que_escuchar": "Señales de asentimiento y validación por parte del usuario ante el diagnóstico médico comercial.",
+      "directriz": "Instrucción de comportamiento (ej: Presentar el diagnóstico de forma clara y firme, sin dar una clase técnica. Definir qué requiere el usuario según su nivel: Ruta clara, Método y constancia, o Afinar ejecución)."
+    },
+    "recomendacion": {
+      "pregunta": "Declaración de recomendación del plan recomendado (Starter, MAX 6, MAX 12 o PRO).",
+      "que_escuchar": "Reacción al precio y a la oferta. Escuchar objeciones lógicas o emocionales.",
+      "directriz": "Instrucción de comportamiento (ej: Ofrecer únicamente el plan sugerido por la IA como solución ideal. Evitar dar una lista de opciones)."
+    },
+    "cierre": {
+      "pregunta": "Pregunta directa de cierre para llevar a la decisión de avanzar.",
+      "que_escuchar": "Objeción real final (si es de seguridad, estructura, o ventaja técnica).",
+      "directriz": "Instrucción de comportamiento (ej: Escuchar la objeción específica y responder usando el manejador de objeciones indicado. No sobreexplicar ni justificar el precio de forma genérica)."
+    }
+  }
+}
+`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
