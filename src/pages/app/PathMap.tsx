@@ -571,6 +571,10 @@ export default function PathMap() {
 
       {/* ══════ DESKTOP: Horizontal Carousel ══════ */}
       <div className="relative w-full mb-16 hidden md:block">
+        {/* Gradient Overlays for smooth theater fade and clashing avoidance */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 lg:w-48 bg-gradient-to-r from-[#05080f] via-[#05080f]/90 to-transparent z-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 lg:w-48 bg-gradient-to-l from-[#05080f] via-[#05080f]/90 to-transparent z-20 pointer-events-none" />
+
         {canScrollLeft && (
           <button 
             onClick={() => scroll('left')} 
