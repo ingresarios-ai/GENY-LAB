@@ -138,7 +138,7 @@ export default function Landing() {
           email: email.toLowerCase().trim(),
           phone,
           country,
-          source: 'sales_page_leads'
+          source: 'landing_page_leads'
         })
       });
     } catch (err) {
@@ -150,10 +150,10 @@ export default function Landing() {
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem('geny_landing_timer');
+    const saved = localStorage.getItem('geny_clone_landing_timer');
     let end: number;
     if (saved) { end = parseInt(saved); }
-    else { end = Date.now() + 48 * 60 * 60 * 1000; localStorage.setItem('geny_landing_timer', end.toString()); }
+    else { end = Date.now() + 48 * 60 * 60 * 1000; localStorage.setItem('geny_clone_landing_timer', end.toString()); }
     const tick = () => {
       const diff = Math.max(0, end - Date.now());
       setTimeLeft({ h: Math.floor(diff / 3600000), m: Math.floor((diff % 3600000) / 60000), s: Math.floor((diff % 60000) / 1000) });
@@ -187,10 +187,10 @@ export default function Landing() {
 
   const pad = (n: number) => String(n).padStart(2, '0');
   const [spots] = useState(() => {
-    const s = localStorage.getItem('geny_spots');
+    const s = localStorage.getItem('geny_clone_spots');
     if (s) return parseInt(s);
     const n = Math.floor(Math.random() * 15) + 12;
-    localStorage.setItem('geny_spots', n.toString());
+    localStorage.setItem('geny_clone_spots', n.toString());
     return n;
   });
 
