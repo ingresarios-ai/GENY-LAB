@@ -406,7 +406,7 @@ export const DAYS: DayData[] = [
         exercises: [
           { type: "journal", icon: "✍️", title: "El Antes y el Después", time: "20 min", inst: "YO HACE 10 DÍAS: ¿Qué no veía? ¿Qué me controlaba? YO HOY: ¿Qué veo ahora? ¿Qué he integrado? Sé específico. Esta es tu evidencia tangible de transformación. Guárdala." },
           { type: "meditation", icon: "🧘", title: "Ceremonia de Cierre", time: "15 min", inst: "Antes de iniciar tu visualización final, realiza la respiración de calma 4-7-8 por 5 ciclos:\n• Inhala en 4 segundos.\n• Retén el aire durante 7 segundos.\n• Exhala lento durante 8 segundos.\n\nAl terminar, visualiza a tu Saboteador frente a ti. Ya no es tu enemigo: es tu aliado contratado e integrado. Estrecha su mano y di en voz alta: 'Somos uno. Actúo y vivo desde mi totalidad'." },
-          { type: "practice", icon: "🎯", title: "Diseña tu Ritual Permanente", time: "20 min", inst: "Crea tu sistema diario post-reto. MAÑANA (10 min): ___. DURANTE EL DÍA: ___. NOCHE (5 min): ___. Hazlo REALISTA." },
+          { type: "practice", icon: "🎯", title: "Diseña tu Ritual Permanente", time: "20 min", inst: "Crea tu sistema diario post-reto. Hazlo REALISTA:\n\n• MAÑANA (10 min): ___________\n• DURANTE EL DÍA: ___________\n• NOCHE (5 min): ___________" },
           { type: "reflection", icon: "🔍", title: "Tu Mensaje + Tu Invitación", time: "10 min", inst: "Si pudieras compartir UNA lección con alguien que la necesita, ¿cuál sería? Escríbela. Ahora ABRE el botón de compartir y envíasela. Quien camina acompañado, llega más lejos." },
         ],
       },
