@@ -161,7 +161,7 @@ export const DAYS: FlowDay[] = [
         context: "No necesitas ser trader para beneficiarte de un ritual de entrada. Cualquier tarea importante se ejecuta mejor cuando preparas tu mente primero.",
         exercises: [
           { type: "ritual", icon: "🧘", title: "Protocolo de Entrada", time: "10 min",
-            inst: "Crea una rutina de 5 minutos: 1) Respiración 4-7-8 × 3 ciclos, 2) Escribe tu intención para la sesión, 3) Apaga notificaciones. Practícala ahora." },
+            inst: "Crea una rutina de 5 minutos:\n\n1. Respiración 4-7-8 × 3 ciclos.\n2. Escribe tu intención para la sesión.\n3. Apaga notificaciones.\n\nPractícala ahora." },
           { type: "práctica", icon: "🎯", title: "Flow con Ritual", time: "25 min",
             inst: "Elige una tarea desafiante (estudiar, resolver un problema, crear algo). Ejecuta tu ritual de entrada y luego trabaja 20 min sin parar. ¿Notas diferencia?" },
           { type: "reflexión", icon: "📝", title: "Evaluación del Ritual", time: "10 min",
@@ -172,7 +172,7 @@ export const DAYS: FlowDay[] = [
         context: "Tu protocolo pre-trading es tu borde competitivo más subestimado. Los traders en flow no abren la plataforma y empiezan a operar. Preparan su estado interno primero.",
         exercises: [
           { type: "ritual", icon: "🧘", title: "Protocolo Pre-Trading", time: "10 min",
-            inst: "Diseña tu protocolo de 5 min: 1) Respiración 4-7-8 × 3 ciclos, 2) Define tu sesgo del día, 3) Revisa niveles clave, 4) Intención escrita. Ejecútalo ahora." },
+            inst: "Diseña tu protocolo de 5 min:\n\n1. Respiración 4-7-8 × 3 ciclos.\n2. Define tu sesgo del día.\n3. Revisa niveles clave.\n4. Intención escrita.\n\nEjecútalo ahora." },
           { type: "práctica", icon: "📊", title: "Sesión con Protocolo Activo", time: "30 min",
             inst: "Ejecuta tu ritual COMPLETO antes de operar. Durante la sesión, observa: ¿entraste al mercado más calmado? ¿Tus decisiones fueron más limpias?" },
           { type: "reflexión", icon: "📝", title: "Evaluación del Protocolo", time: "10 min",
@@ -225,7 +225,7 @@ export const DAYS: FlowDay[] = [
           { type: "pedem", icon: "🎯", title: "EJECUTAR con Presencia", time: "20 min",
             inst: "Ejecuta el primer paso de tu plan. Observa tu estado interno mientras lo haces. ¿Hay flow o hay miedo? ¿Es tu Self o tu ego quien decide?" },
           { type: "pedem", icon: "📝", title: "DOCUMENTAR con Honestidad", time: "10 min",
-            inst: "Documenta qué hiciste, cómo te sentiste, y qué aprendiste. Las 3 preguntas PEDEM: ¿Qué salió bien? ¿Qué falló? ¿Qué haré diferente?" },
+            inst: "Documenta qué hiciste, cómo te sentiste, y qué aprendiste. Las 3 preguntas PEDEM:\n\n1. ¿Qué salió bien?\n2. ¿Qué falló?\n3. ¿Qué haré diferente?" },
         ]
       },
       trader: {
@@ -375,7 +375,7 @@ export const DAYS: FlowDay[] = [
           { type: "ritual", icon: "🏆", title: "Sesión Ceremonial de Cierre", time: "15 min",
             inst: "Activa tu ritual completo. Haz algo que habrías evitado el Día 1 (revisar finanzas, planear una inversión, presupuestar). Hazlo desde el flow." },
           { type: "reflexión", icon: "🌟", title: "Manifiesto Personal del Flow", time: "20 min",
-            inst: "Escribe tu manifiesto en 3 líneas: 1) Quién soy en flow, 2) Qué ya no tolero, 3) Qué haré esta semana para mantener el estado." },
+            inst: "Escribe tu manifiesto en 3 líneas:\n\n1. Quién soy en flow.\n2. Qué ya no tolero.\n3. Qué haré esta semana para mantener el estado." },
         ]
       },
       trader: {
@@ -386,7 +386,7 @@ export const DAYS: FlowDay[] = [
           { type: "práctica", icon: "⚡", title: "Sesión de Trading en Flow Total", time: "60 min",
             inst: "Opera con PEDEM consciente, decide desde el Self, integra la sombra cuando aparezca. Esta sesión no es para ganar dinero — es para ser quien ya eres." },
           { type: "reflexión", icon: "🌟", title: "Manifiesto del Trader en Flow", time: "15 min",
-            inst: "Escribe tu manifiesto: 1) Mi estado óptimo es ___, 2) Mi sombra integrada me da ___, 3) Mi protocolo de flow es ___. Este es tu documento vivo." },
+            inst: "Escribe tu manifiesto:\n\n1. Mi estado óptimo es ___.\n2. Mi sombra integrada me da ___.\n3. Mi protocolo de flow es ___.\n\nEste es tu documento vivo." },
         ]
       }
     }
