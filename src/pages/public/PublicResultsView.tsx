@@ -519,12 +519,12 @@ export default function PublicResultsView() {
                               >
                                 <div className="p-5 space-y-4">
                                   {/* Suggested Question */}
-                                  <div className="bg-[#00D1FF]/[0.02] border border-[#00D1FF]/10 rounded-xl p-4 relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none">
-                                      <MessageSquare className="w-16 h-16 text-[#00D1FF]" />
+                                  <div className="bg-[#00D1FF]/[0.04] border border-[#00D1FF]/30 rounded-2xl p-5 relative overflow-hidden shadow-[inset_0_0_20px_rgba(0,209,255,0.05)]">
+                                    <div className="absolute top-0 right-0 p-4 opacity-[0.04] pointer-events-none">
+                                      <MessageSquare className="w-20 h-20 text-[#00D1FF]" />
                                     </div>
-                                    <span className="text-[9px] font-mono text-[#00D1FF] uppercase tracking-widest font-black block mb-2">Pregunta sugerida a realizar</span>
-                                    <p className="text-sm md:text-base font-bold text-white italic pl-3 border-l-2 border-[#00D1FF]/45 leading-relaxed">
+                                    <span className="text-[10px] font-mono text-[#00D1FF] uppercase tracking-wider font-extrabold block mb-2.5">Pregunta sugerida a realizar:</span>
+                                    <p className="text-base md:text-xl font-black text-white pl-4 border-l-4 border-[#00D1FF] leading-relaxed select-all">
                                       "{stepData.pregunta || ''}"
                                     </p>
                                   </div>
@@ -532,17 +532,23 @@ export default function PublicResultsView() {
                                   {/* Grid columns */}
                                   <div className="grid md:grid-cols-2 gap-4">
                                     {/* What to listen for */}
-                                    <div className="bg-black/30 rounded-xl p-4 border border-white/5 space-y-2">
-                                      <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest font-black block">¿Qué debes escuchar?</span>
-                                      <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">
+                                    <div className="bg-[#0c121e]/60 rounded-xl p-5 border border-white/10 space-y-3">
+                                      <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                                        <Brain className="w-4 h-4 text-purple-400 shrink-0" />
+                                        <span className="text-[10px] font-mono text-purple-400 uppercase tracking-widest font-black">¿Qué debes escuchar?</span>
+                                      </div>
+                                      <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-line font-medium">
                                         {stepData.que_escuchar || ''}
                                       </p>
                                     </div>
 
                                     {/* What the agent should do */}
-                                    <div className="bg-black/30 rounded-xl p-4 border border-white/5 space-y-2">
-                                      <span className="text-[9px] font-mono text-[#00E676] uppercase tracking-widest font-black block">¿Qué debe hacer el comercial?</span>
-                                      <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">
+                                    <div className="bg-[#0c121e]/60 rounded-xl p-5 border border-white/10 space-y-3">
+                                      <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                                        <Target className="w-4 h-4 text-[#00E676] shrink-0" />
+                                        <span className="text-[10px] font-mono text-[#00E676] uppercase tracking-widest font-black">¿Qué debe hacer el comercial?</span>
+                                      </div>
+                                      <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-line font-medium">
                                         {stepData.directriz || ''}
                                       </p>
                                     </div>

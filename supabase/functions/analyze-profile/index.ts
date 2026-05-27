@@ -87,39 +87,39 @@ Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, sin markdo
   "dato_impacto": "El dato más impactante del perfil del usuario, formateado para generar un WOW moment en la sesión. Ejemplo: 'Este usuario pierde $4,200 al año en gastos invisibles — más del doble del costo del plan PRO'",
   "script_comercial": {
     "apertura": {
-      "pregunta": "Pregunta exacta de apertura adaptada al nombre del usuario y a algún dato relevante que completó.",
-      "que_escuchar": "Qué señales de su perfil debe escuchar con atención el comercial (ej: si busca empezar de cero, ordenar sus finanzas, u optimizar resultados avanzados). Usa sus respuestas para personalizarlo.",
-      "directriz": "Instrucción de comportamiento para el comercial (ej: No vender todavía. Escuchar de forma activa y tomar nota de la palabra clave)."
+      "pregunta": "Pregunta de apertura CORTA, directa y sumamente natural (máximo 1-2 líneas), personalizada con el nombre del usuario y su arquetipo o algún hito de su reto.",
+      "que_escuchar": "Escribe 2-3 viñetas cortas (cada una empezando con el símbolo '• ') detallando qué señales de su perfil debe capturar el comercial (ej: si el lead muestra confusión de principiante o busca optimizar avanzados). Mantén cada viñeta en máximo 8 palabras.",
+      "directriz": "Instrucción de comportamiento directa en 1-2 viñetas (usando '• ') para el comercial (ej: '• No vender todavía.', '• Identificar y anotar la palabra clave de dolor')."
     },
     "punto_actual": {
-      "pregunta": "Pregunta de punto actual para que el usuario defina en qué nivel financiero/trading se encuentra.",
-      "que_escuchar": "Cómo clasificará el comercial la respuesta (si describe confusión/miedo, si intenta aplicar pero no sostiene consistencia, o si ya tiene experiencia pero busca mejorar).",
-      "directriz": "Instrucción de comportamiento para el comercial (ej: Clasificarlo mentalmente en Principiante, Intermedio o Avanzado según su respuesta)."
+      "pregunta": "Pregunta corta de punto actual (máximo 1-2 líneas) para que el prospecto defina dónde se encuentra en su camino financiero hoy.",
+      "que_escuchar": "Escribe 2-3 viñetas cortas (usando '• ') sobre cómo clasificar su respuesta según su nivel. Máximo 8 palabras por viñeta.",
+      "directriz": "Instrucciones de acción claras en viñetas (usando '• ') para el comercial sobre cómo ubicarlo mentalmente."
     },
     "dolor_real": {
-      "pregunta": "Pregunta dirigida a que el usuario admita qué es lo que más le cuesta sostener (fricción).",
-      "que_escuchar": "Qué tipo de fricción admite (falta de claridad en principiante, inconsistencia/disciplina en intermedio, o precisión/acompañamiento en avanzado).",
-      "directriz": "Instrucción de comportamiento (ej: Aplicar la técnica de Reflejo Profesional: 'O sea que no es falta de ganas, es falta de estructura...'). Genera una frase de ejemplo de Reflejo personalizada para este usuario."
+      "pregunta": "Pregunta corta y profunda (máximo 1-2 líneas) dirigida a revelar su fricción más pesada para avanzar.",
+      "que_escuchar": "Escribe 2-3 viñetas cortas (usando '• ') sobre qué tipo de dolor admite (falta de disciplina, falta de ruta, etc.). Máximo 8 palabras por viñeta.",
+      "directriz": "Instrucciones en viñetas (usando '• ') sobre cómo aplicar el Reflejo Profesional. Incluye un ejemplo corto exacto personalizado de reflejo."
     },
     "impacto": {
-      "pregunta": "Pregunta confrontadora de impacto sobre cómo se verá el usuario en 6 meses si no cambia su situación hoy.",
-      "que_escuchar": "Señales de conciencia (si admite que estará igual de perdido, repitiendo ciclos o dejando dinero sobre la mesa).",
-      "directriz": "Instrucción de comportamiento (ej: Silencio absoluto tras lanzar la pregunta. Dejar que él mismo reflexione y verbalice el costo de su inacción. No suavizar la pregunta)."
+      "pregunta": "Pregunta confrontadora corta (máximo 1-2 líneas) sobre las consecuencias en 6 meses si sigue cometiendo los mismos errores hoy.",
+      "que_escuchar": "Escribe 2-3 viñetas cortas (usando '• ') con señales de toma de conciencia (ej: si admite pérdida de capital o estancamiento). Máximo 8 palabras por viñeta.",
+      "directriz": "Instrucciones en viñetas (usando '• ') (ej: '• Mantener silencio total.', '• Dejar que sienta la incomodidad de la inacción y no interrumpir')."
     },
     "diagnostico": {
-      "pregunta": "Declaración de diagnóstico profesional que conecta su problema con lo que necesita.",
-      "que_escuchar": "Señales de asentimiento y validación por parte del usuario ante el diagnóstico médico comercial.",
-      "directriz": "Instrucción de comportamiento (ej: Presentar el diagnóstico de forma clara y firme, sin dar una clase técnica. Definir qué requiere el usuario según su nivel: Ruta clara, Método y constancia, o Afinar ejecución)."
+      "pregunta": "Declaración clínica corta (máximo 2 líneas) de diagnóstico que resuma exactamente lo que requiere según sus datos.",
+      "que_escuchar": "Escribe 2-3 viñetas cortas (usando '• ') para evaluar si el lead acepta y asiente con el diagnóstico de valor. Máximo 8 palabras por viñeta.",
+      "directriz": "Directrices en viñetas (usando '• ') para sonar como el especialista experto y conectar con la solución."
     },
     "recomendacion": {
-      "pregunta": "Declaración de recomendación del plan recomendado (Starter, MAX 6, MAX 12 o PRO).",
-      "que_escuchar": "Reacción al precio y a la oferta. Escuchar objeciones lógicas o emocionales.",
-      "directriz": "Instrucción de comportamiento (ej: Ofrecer únicamente el plan sugerido por la IA como solución ideal. Evitar dar una lista de opciones)."
+      "pregunta": "Pitch de recomendación ultra directo (máximo 2 líneas) del plan ideal sugerido y su precio.",
+      "que_escuchar": "Escribe 2-3 viñetas cortas (usando '• ') para medir su respuesta ante la inversión. Máximo 8 palabras por viñeta.",
+      "directriz": "Instrucción de acción en viñetas (usando '• ') (ej: '• No justificar el precio.', '• Ofrecer una sola opción principal')."
     },
     "cierre": {
-      "pregunta": "Pregunta directa de cierre para llevar a la decisión de avanzar.",
-      "que_escuchar": "Objeción real final (si es de seguridad, estructura, o ventaja técnica).",
-      "directriz": "Instrucción de comportamiento (ej: Escuchar la objeción específica y responder usando el manejador de objeciones indicado. No sobreexplicar ni justificar el precio de forma genérica)."
+      "pregunta": "Pregunta directa de cierre y transición a pago (máximo 1-2 líneas).",
+      "que_escuchar": "Escribe 2-3 viñetas cortas (usando '• ') para identificar el tipo de objeción real (tiempo, dinero, duda). Máximo 8 palabras por viñeta.",
+      "directriz": "Instrucciones en viñetas (usando '• ') para desactivar la objeción usando los argumentos del panel y concretar el pago."
     }
   }
 }
