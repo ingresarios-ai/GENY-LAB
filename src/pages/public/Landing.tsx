@@ -294,7 +294,7 @@ export default function Landing() {
               Mira el video completo
             </h2>
             <p className="text-white/60 text-lg sm:text-xl leading-relaxed mb-8">
-              El contenido completo de esta página se desbloqueará mientras terminas de ver el video.
+              Tu mapa de ruta para salir del caos operativo y estructurar tu Plan Estratégico se activará en:
             </p>
             <div className="inline-flex items-center gap-4 px-8 py-4 rounded-2xl bg-white/5 border border-white/10">
               <Clock size={22} className="text-[#00E676]" />
