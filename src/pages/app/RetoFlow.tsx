@@ -16,8 +16,8 @@ import {
 import ShareModule from "../../components/ShareModule";
 import ResultActions from "../../components/ResultActions";
 import CompletionBanner from '../../components/CompletionBanner';
-import html2canvas from 'html2canvas-pro';
 import jsPDF from "jspdf";
+import { initPdfWithHeader, addPdfText, checkPageBreak } from '../../utils/pdfUtils';
 // ── Helpers ────────────────────────────────────────────────────────────────
 function cx(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
@@ -874,35 +874,23 @@ export default function RetoFlow() {
                   setIsGenerating(true);
                   try {
                     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-                    const W=210,M=18; let y=20;
+                    let y = initPdfWithHeader(doc, 'Reto Flow');
                     
-                    doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F');
-                    doc.setFillColor(139,92,246); doc.rect(0,0,W,3,'F'); // brand-purple
-                    
-                    doc.setTextColor(139,92,246); doc.setFontSize(9); doc.text('INGRESARIOS · GENY LAB',M,y);
-                    doc.setTextColor(100); doc.text('RETO FLOW',W-M,y,{align:'right'}); y+=16;
-                    
-                    doc.setTextColor(255); doc.setFontSize(28); 
-                    doc.text(`DÍA ${selDay} COMPLETADO`,M,y); y+=12;
+                    y = addPdfText(doc, `DÍA ${selDay} COMPLETADO`, y, { fontSize: 20, fontStyle: 'bold', color: [15, 23, 42] });
+                    y += 4;
 
-                    doc.setTextColor(200); doc.setFontSize(14);
-                    const titleLines = doc.splitTextToSize(dayData.title, W-2*M);
-                    doc.text(titleLines, M, y); y+=titleLines.length*6 + 10;
+                    y = addPdfText(doc, dayData.title, y, { fontSize: 14, fontStyle: 'normal', color: [71, 85, 105] });
+                    y += 10;
                     
-                    doc.setTextColor(255); doc.setFontSize(14);
-                    doc.text('EJERCICIOS COMPLETADOS', M, y); y+=10;
+                    y = addPdfText(doc, 'EJERCICIOS COMPLETADOS', y, { fontSize: 14, fontStyle: 'bold', color: [15, 23, 42] });
+                    y += 8;
 
                     exercises.forEach((ex, i) => {
-                      if (y > 270) { doc.addPage(); doc.setFillColor(8,12,15); doc.rect(0,0,W,297,'F'); y=20; }
-                      doc.setTextColor(139,92,246); doc.setFontSize(9); 
-                      doc.text(`EJERCICIO ${i+1} (~${ex.time})`, M, y); y+=6;
-                      doc.setTextColor(255); doc.setFontSize(11);
-                      const qLines = doc.splitTextToSize(ex.title, W-2*M);
-                      doc.text(qLines, M, y); y+=qLines.length*6+2;
-                      doc.setTextColor(200); doc.setFontSize(10); doc.setFont('helvetica', 'italic');
-                      const ansLines = doc.splitTextToSize(ex.inst, W-2*M);
-                      doc.text(ansLines, M, y); y+=ansLines.length*6+6;
-                      doc.setFont('helvetica', 'normal');
+                      y = checkPageBreak(doc, y, 35);
+                      y = addPdfText(doc, `EJERCICIO ${i+1} (~${ex.time}): ${ex.title}`, y, { fontSize: 11, fontStyle: 'bold', color: [0, 212, 255] });
+                      y += 2;
+                      y = addPdfText(doc, ex.inst, y, { fontSize: 10, fontStyle: 'italic', color: [71, 85, 105] });
+                      y += 8;
                     });
 
                     doc.save(`reto-flow-dia-${selDay}.pdf`);
