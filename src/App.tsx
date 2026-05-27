@@ -36,6 +36,7 @@ import ResetPassword from './pages/ResetPassword';
 import InscripcionExitosa from './pages/public/InscripcionExitosa';
 import EstablecerContrasena from './pages/public/EstablecerContrasena';
 import SalesLanding from './pages/public/SalesLanding';
+import Landing from './pages/public/Landing';
 
 function App() {
   return (
@@ -97,6 +98,7 @@ function App() {
 
         {/* Root — Sales Landing Page */}
         <Route path="/" element={<SalesLanding />} />
+        <Route path="/landing" element={<Landing />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </BrowserRouter>
