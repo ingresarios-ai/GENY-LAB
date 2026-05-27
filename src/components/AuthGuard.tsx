@@ -21,7 +21,9 @@ async function doSyncInBackground(email: string) {
       .eq('user_id', user.id);
       
     if (acts && acts.length > 0) {
-      const completedIds = acts.filter((a: any) => a.completed_at).map((a: any) => a.activity_id);
+      const completedIds = acts
+        .filter((a: any) => a.completed_at || a.metadata?.completed === true)
+        .map((a: any) => a.activity_id);
       syncFromDB(completedIds);
     }
   } catch (err) {

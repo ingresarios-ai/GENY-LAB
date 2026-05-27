@@ -63,7 +63,7 @@ Deno.serve(async (req: Request) => {
     // Check if activity log already exists
     const { data: existing, error: checkError } = await supabase
       .from("user_activity_log")
-      .select("id")
+      .select("id, completed_at")
       .eq("user_id", user.id)
       .eq("activity_id", activity_id);
 
@@ -78,7 +78,7 @@ Deno.serve(async (req: Request) => {
         .from("user_activity_log")
         .update({
           metadata: metadata || {},
-          completed_at: is_completed ? now : null,
+          completed_at: is_completed ? now : existing[0].completed_at,
         })
         .eq("id", existing[0].id);
       logError = error;

@@ -78,7 +78,7 @@ export default function PathMap() {
         }> = [];
 
         for (const item of progressList) {
-          if (item.completed_at) continue;
+          if (item.completed_at || item.metadata?.completed === true) continue;
 
           const lesson = LESSONS.find(l => l.id === item.activity_id);
           if (!lesson) continue;
@@ -449,7 +449,7 @@ export default function PathMap() {
           // Expanded current card
           const actProgress = dbActivities.find(a => a.activity_id === lesson.id);
           const actStarted = !!actProgress;
-          const actCompleted = !!actProgress?.completed_at;
+          const actCompleted = !!actProgress?.completed_at || actProgress?.metadata?.completed === true;
 
           return (
             <motion.div
@@ -562,7 +562,7 @@ export default function PathMap() {
 
             const actProgress = dbActivities.find(a => a.activity_id === lesson.id);
             const actStarted = !!actProgress;
-            const actCompleted = !!actProgress?.completed_at;
+            const actCompleted = !!actProgress?.completed_at || actProgress?.metadata?.completed === true;
 
             let gradient = 'from-white/5 to-white/5';
             let iconBg = 'bg-white/5 border-white/10 text-white/40';
