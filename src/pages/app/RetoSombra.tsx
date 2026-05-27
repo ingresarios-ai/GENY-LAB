@@ -40,7 +40,7 @@ export default function MisEmociones() {
   const [tasksDone, setTasksDone] = useState<Record<string, boolean>>({});
   const [completedDays, setCompletedDays] = useState<Record<number, boolean>>({});
   const bannerRef = useRef<HTMLDivElement>(null);
-  const [view, setView] = useState<"hero" | "diag" | "result" | "route" | "home" | "day">("hero");
+  const [view, setView] = useState<"hero" | "diag" | "result" | "route" | "home" | "day" | "results">("hero");
   const [selDay, setSelDay] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState(false);
   const [shareModal, setShareModal] = useState(false);
@@ -72,6 +72,7 @@ export default function MisEmociones() {
           setLoading(false);
           return;
         }
+        const queryView = searchParams.get('view');
         const saved = await loadActivityProgressDB('sombra');
         if (saved && saved.metadata) {
           const r = saved.metadata;
@@ -88,6 +89,9 @@ export default function MisEmociones() {
           if (isCompleted || saved.completed) {
             markActivityCompleted('sombra');
           }
+        }
+        if (queryView === 'results') {
+          setView('results');
         }
       } catch (e) {
         console.error('Error loading sombra progress:', e);
@@ -518,6 +522,90 @@ export default function MisEmociones() {
     doc.save('reto-sombra.pdf');
   };
 
+  const generateResultsPDF = async () => {
+    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    let y = initPdfWithHeader(doc, 'REPORTE DE INTEGRACIÓN DE SOMBRA');
+    const W = 210, M = 18;
+    
+    // User info
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setFontSize(26); 
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPORTE FINAL DE RESULTADOS', M, y); 
+    y += 12;
+
+    const intro = `¡Felicidades, ${userName}! Has completado los 10 días de la Operación Saboteador ("Mis Emociones"). Este reporte resume tu progreso, las habilidades que has integrado y los cambios logrados durante este proceso de transformación mental basado en la psicología de Carl Jung.`;
+    y = addPdfText(doc, intro, y, { fontSize: 11, color: [51, 65, 85], lineHeight: 6 });
+    y += 8;
+
+    // Diagnostic section
+    y = checkPageBreak(doc, y, 40);
+    y = addPdfText(doc, '1. TU DIAGNÓSTICO INICIAL', y, { fontSize: 14, color: [239, 68, 68], fontStyle: 'bold' });
+    y += 6;
+
+    const scoreText = `Nivel de Autosabotaje Inicial: ${diagScore}% - ${diagResult?.title}`;
+    y = addPdfText(doc, scoreText, y, { fontSize: 12, color: [15, 23, 42], fontStyle: 'bold' });
+    y += 5;
+
+    y = addPdfText(doc, diagResult?.message || '', y, { fontSize: 10, color: [100, 116, 139], lineHeight: 5 });
+    y += 8;
+
+    // Phase Summary
+    y = checkPageBreak(doc, y, 45);
+    y = addPdfText(doc, '2. LOGROS POR FASES DE LA OPERACIÓN', y, { fontSize: 14, color: [15, 23, 42], fontStyle: 'bold' });
+    y += 6;
+
+    // Phase 1
+    y = addPdfText(doc, 'FASE 1: DETECTAR (Días 1 a 3)', y, { fontSize: 11, color: [249, 115, 22], fontStyle: 'bold' });
+    y += 4;
+    const phase1Text = route === "operador"
+      ? "• Identificaste el 'Trader que Nadie Ve' (tu Sombra operativa inconsciente).\n• Mapeaste tu Yo Ideal vs. Yo Real para ver dónde cae la máscara de disciplina.\n• Realizaste una ficha policial de tu Saboteador y definiste su modus operandi."
+      : "• Identificaste el 'Yo que Nadie Ve' en tu relación con el dinero.\n• Mapeaste tu Yo Ideal vs. Yo Real en finanzas personales para detectar la brecha de control.\n• Diseñaste la ficha policial de tu Saboteador, identificando sus detonantes y modus operandi.";
+    y = addPdfText(doc, phase1Text, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+    y += 6;
+
+    // Phase 2
+    y = checkPageBreak(doc, y, 40);
+    y = addPdfText(doc, 'FASE 2: DESACTIVAR (Días 4 a 7)', y, { fontSize: 11, color: [245, 158, 11], fontStyle: 'bold' });
+    y += 4;
+    const phase2Text = route === "operador"
+      ? "• Hiciste arqueología financiera para vincular recuerdos de infancia con tu sizing y manejo de stops hoy.\n• Realizaste imaginación activa mediante un diálogo directo y por escrito con tu Saboteador.\n• Identificaste tu miedo nuclear subyacente y expusiste de forma controlada tu peor escenario emocional.\n• Descubriste tu Sombra Dorada: dones de trading reprimidos que no te permitías brillar."
+      : "• Hiciste arqueología financiera para sanar creencias de escasez heredadas de la infancia.\n• Realizaste imaginación activa escribiendo un diálogo directo para comprender de qué te protege tu Saboteador.\n• Confrontaste tu miedo nuclear oculto en el dinero y realizaste simulación controlada del peor escenario.\n• Recuperaste tu Sombra Dorada: la ambición saludable y los dones de prosperidad bloqueados.";
+    y = addPdfText(doc, phase2Text, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+    y += 6;
+
+    // Phase 3
+    y = checkPageBreak(doc, y, 40);
+    y = addPdfText(doc, 'FASE 3: DOMINAR (Días 8 a 10)', y, { fontSize: 11, color: [16, 185, 129], fontStyle: 'bold' });
+    y += 4;
+    const phase3Text = route === "operador"
+      ? "• Dejaste de pelear contra tu Saboteador e integraste sus impulsos como un sistema de alerta pre-trading.\n• Alquimizaste tus peores defectos: transformaste impulsividad en rapidez, miedo en gestión de riesgo y codicia en dejar correr ganancias.\n• Diseñaste un ritual permanente post-reto para blindar cada sesión antes de ver los charts."
+      : "• Convertiste al Saboteador en tu aliado protector: usaste su miedo como prudencia y su impulso como acción rápida.\n• Alquimizaste defectos financieros cotidianos: indecisión en evaluación cuidadosa, y compras impulsivas en recompensas planificadas.\n• Creaste un sistema diario post-reto con rituales por la mañana, tarde y noche.";
+    y = addPdfText(doc, phase3Text, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5 });
+    y += 10;
+
+    // Improvements and commitments
+    y = checkPageBreak(doc, y, 45);
+    y = addPdfText(doc, '3. TU PLAN DE ACCIÓN Y COMPROMISO INTEGRADO', y, { fontSize: 14, color: [15, 23, 42], fontStyle: 'bold' });
+    y += 6;
+
+    const actionText = route === "operador"
+      ? "1. Ritual Pre-Trading: Dedicarás 10 minutos antes de cada sesión a respirar con coherencia cardíaca, chequear el estado emocional de tu Saboteador y declarar operar desde la totalidad.\n2. Bitácora Integrada: Sumarás la columna del Saboteador en tu bitácora operativa.\n3. Alquimia Diaria: Cada vez que sientas prisa o miedo, recordarás que son señales de advertencia técnica, no motivos para romper tu plan."
+      : "1. Ritual Matutino: Dedicarás 10 minutos cada mañana a respirar en calma, registrar tu estado emocional y elegir conscientemente la abundancia.\n2. Filtro de Compras: Pausarás 24 horas antes de realizar cualquier gasto emocional o imprevisto, analizando si responde a una necesidad del Saboteador.\n3. Hábito de Oro: Usarás tus dones transmutados para tomar control activo del ahorro y la educación financiera.";
+    y = addPdfText(doc, actionText, y, { fontSize: 10, color: [51, 65, 85], lineHeight: 5.5 });
+    y += 12;
+
+    y = checkPageBreak(doc, y, 20);
+    doc.setDrawColor(16, 185, 129);
+    doc.setLineWidth(0.5);
+    doc.line(M, y, W - M, y);
+    y += 6;
+
+    y = addPdfText(doc, 'ESTADO FINAL: AUTOSABOTAJE NEUTRALIZADO Y SOMBRA INTEGRADA', y, { fontSize: 10, color: [16, 185, 129], fontStyle: 'bold', align: 'center' });
+    
+    doc.save('reporte-final-sombra.pdf');
+  };
+
   if (view === "result") {
     return (
       <div className="max-w-5xl mx-auto pb-12">
@@ -748,6 +836,173 @@ export default function MisEmociones() {
   }
 
   // ═══════════════════════════════════════════════════════════════════════
+  // VIEW: FINAL CHALLENGE RESULTS / REPORT (10 Days Completed)
+  // ═══════════════════════════════════════════════════════════════════════
+  if (view === "results") {
+    const totalDays = DAYS.length;
+    const completedCount = Object.values(completedDays).filter(Boolean).length;
+    const phaseColorMap: Record<string, { bg: string; border: string; text: string; hex: string; glow: string }> = {
+      detectar:    { bg: "from-orange-500/10 to-transparent",   border: "border-orange-500/20",   text: "text-orange-500",   hex: "#f97316", glow: "249,115,22" },
+      desactivar:  { bg: "from-amber-500/10 to-transparent",    border: "border-amber-500/20",    text: "text-amber-500",    hex: "#f59e0b", glow: "245,158,11" },
+      dominar:     { bg: "from-emerald-500/10 to-transparent",  border: "border-emerald-500/20",  text: "text-emerald-500",  hex: "#10b981", glow: "16,185,129" },
+    };
+    
+    return (
+      <div className="max-w-5xl mx-auto pb-12">
+        <ResultActions 
+          onDownloadPDF={generateResultsPDF} 
+          onReset={async () => {
+            setRoute(null);
+            setView("route");
+            await saveState(null, {}, {}, [], "route", 1);
+          }} 
+          resetLabel="Reiniciar todo el Reto"
+        />
+
+        <div className="min-h-[70vh] flex flex-col justify-center mt-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+            {/* Header Card */}
+            <div className="glass-card p-8 md:p-10 border-t-2 border-t-[#01E47E] relative overflow-hidden text-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#01E47E]/10 via-transparent to-transparent pointer-events-none" />
+              <div className="relative z-10 space-y-4">
+                <span className="text-6xl">👑</span>
+                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-wider text-white">
+                  Reporte de Integración de Sombra
+                </h1>
+                <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+                  Felicidades, <span className="text-[#01E47E] font-black">{userName}</span>. Has completado exitosamente la actividad de 10 días "Mis Emociones" y neutralizado el autosabotaje financiero.
+                </p>
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-brand-green text-xs font-black uppercase tracking-widest font-mono">
+                  ✓ RETO COMPLETADO ({completedCount}/{totalDays} Días)
+                </div>
+              </div>
+            </div>
+
+            {/* Content Columns */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Left Column: Progress & Score Summary */}
+              <div className="glass-card p-6 md:p-8 space-y-6 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center">
+                      <span className="text-lg">🎯</span>
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black text-red-500 uppercase tracking-widest">Diagnóstico Inicial</h3>
+                      <p className="text-[10px] text-brand-text-muted uppercase tracking-widest font-mono">Nivel de Sabotaje</p>
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-white">{diagScore}%</span>
+                    <span className="text-red-400 font-bold uppercase tracking-wider text-xs">{diagResult?.title}</span>
+                  </div>
+                  <p className="text-sm text-slate-300 leading-relaxed border-l-4 border-red-500/30 pl-4 py-1 font-medium">
+                    {diagResult?.message}
+                  </p>
+                </div>
+
+                <div className="pt-6 border-t border-white/5 space-y-4">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-white">Fases del Entrenamiento:</h4>
+                  <div className="space-y-3 font-medium">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400">Fase 1: Detectar (Días 1-3)</span>
+                      <span className="text-brand-green font-bold font-mono">✓ COMPLETADA</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400">Fase 2: Desactivar (Días 4-7)</span>
+                      <span className="text-brand-green font-bold font-mono">✓ COMPLETADA</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400">Fase 3: Dominar (Días 8-10)</span>
+                      <span className="text-brand-green font-bold font-mono">✓ COMPLETADA</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Improvements */}
+              <div className="glass-card p-6 md:p-8 space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-brand-cyan/15 border border-brand-cyan/30 flex items-center justify-center">
+                    <span className="text-lg">⚡</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-brand-cyan uppercase tracking-widest">Habilidades y Mejoras Integradas</h3>
+                    <p className="text-[10px] text-brand-text-muted uppercase tracking-widest font-mono">Cambios en tu Perfil {route === 'operador' ? 'Trader' : 'Finanzas'}</p>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 text-sm text-slate-300 font-medium">
+                  {route === "operador" ? (
+                    <>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#01E47E] shrink-0 mt-0.5" />
+                        <span><strong>Control de Impulsividad:</strong> Capacidad para evitar entradas fuera de plan tras pérdidas (anti-revenge trading).</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#01E47E] shrink-0 mt-0.5" />
+                        <span><strong>Integración de Emociones:</strong> Uso de impulsos emocionales como alertas tempranas para regular el sizing y el riesgo.</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#01E47E] shrink-0 mt-0.5" />
+                        <span><strong>Protección del Plan:</strong> Neutralización del miedo a perder que provoca cerrar ganadores antes o mover stops irracionalmente.</span>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#01E47E] shrink-0 mt-0.5" />
+                        <span><strong>Gasto Emocional Neutralizado:</strong> Mayor conciencia de los detonantes que te impulsaban a gastar dinero por aburrimiento o estrés.</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#01E47E] shrink-0 mt-0.5" />
+                        <span><strong>Saneamiento de Creencias:</strong> Desinstalación de lealtades invisibles de escasez y culpa familiar respecto a prosperar.</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#01E47E] shrink-0 mt-0.5" />
+                        <span><strong>Acción frente a la Procrastinación:</strong> Superación de la resistencia para ahorrar, planificar o invertir de forma inteligente.</span>
+                      </li>
+                    </>
+                  )}
+                </ul>
+
+                {/* PDF Action in column */}
+                <div className="pt-4">
+                  <button
+                    onClick={generateResultsPDF}
+                    className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-[0_0_20px_rgba(220,38,38,0.25)] cursor-pointer"
+                  >
+                    📥 Descargar Reporte Final (PDF)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Back Button / Next lesson mapping */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <button
+                onClick={async () => {
+                  setView("home");
+                  await saveState(route, tasksDone, completedDays, diagAns, "home");
+                }}
+                className="py-3.5 px-8 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white rounded-xl text-xs font-mono uppercase tracking-widest transition-colors cursor-pointer"
+              >
+                Volver al Mapa del Reto
+              </button>
+              <button
+                onClick={() => navigate('/app')}
+                className="py-3.5 px-8 bg-brand-cyan/10 border border-brand-cyan/30 hover:bg-brand-cyan/20 text-brand-cyan rounded-xl text-xs font-mono uppercase tracking-widest transition-colors cursor-pointer"
+              >
+                Volver a la Ruta Principal
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
   // VIEW: HOME / DASHBOARD (Vertical Journey)
   // ═══════════════════════════════════════════════════════════════════════
   if (view === "home") {
@@ -878,7 +1133,25 @@ export default function MisEmociones() {
               <div className="relative z-10 space-y-6">
                 <div className="text-6xl">👑</div>
                 <h2 className="text-3xl font-black text-emerald-500 uppercase tracking-wider">¡Saboteador Desactivado!</h2>
-                <p className="text-slate-300 text-lg">Has completado el protocolo de 10 días. Sombra integrada, autosabotaje neutralizado.</p>
+                <p className="text-slate-300 text-lg mb-6">Has completado el protocolo de 10 días. Sombra integrada, autosabotaje neutralizado.</p>
+
+                <div className="flex flex-wrap justify-center gap-3 mb-8">
+                  <button
+                    onClick={generateResultsPDF}
+                    className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black uppercase tracking-widest text-[10px] md:text-xs rounded-xl transition-all shadow-[0_0_15px_rgba(220,38,38,0.2)] cursor-pointer"
+                  >
+                    📥 Descargar Reporte Final (PDF)
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setView("results");
+                      await saveState(route, tasksDone, completedDays, diagAns, "results");
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white font-black uppercase tracking-widest text-[10px] md:text-xs rounded-xl transition-colors cursor-pointer"
+                  >
+                    🔍 Ver Reporte de Resultados
+                  </button>
+                </div>
                 
                 <div className="glass-card p-8 border border-[#01E47E]/30 bg-[#0a1f14]/50 relative overflow-hidden text-center space-y-6 max-w-2xl mx-auto">
                   <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
