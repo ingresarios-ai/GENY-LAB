@@ -169,22 +169,7 @@ export default function RetoFlow() {
     setCompletedDays(newDays);
     await saveState(route, arquetipo, newTasks, newDays, emociones, view, selDay);
 
-    // Auto-redirect to home view if all 10 days are completed
-    const allDaysComplete = Object.values(newDays).filter(Boolean).length >= DAYS.length;
-    if (allDaysComplete) {
-      setTimeout(() => {
-        setView("home");
-        setTimeout(() => {
-          bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          confetti({
-            particleCount: 300,
-            spread: 120,
-            origin: { y: 0.4 },
-            colors: ["#01E47E", "#00D1FF", "#7c3aed"],
-          });
-        }, 600);
-      }, 1500);
-    }
+    // No auto-redirect. Let the user stay on the Day 10 view to read details/download PDF and click "Ver resultados" manually.
   };
 
   // ── Share ──────────────────────────────────────────────────────────────
@@ -932,6 +917,15 @@ export default function RetoFlow() {
                     } else {
                       setView("home");
                       await saveState(route, arquetipo, tasksDone, completedDays, emociones, "home", selDay);
+                      // Trigger big completion confetti on manual results view entry!
+                      setTimeout(() => {
+                        confetti({
+                          particleCount: 300,
+                          spread: 120,
+                          origin: { y: 0.4 },
+                          colors: ["#01E47E", "#00D1FF", "#7c3aed"],
+                        });
+                      }, 100);
                     }
                   }}
                   className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"

@@ -184,22 +184,7 @@ export default function MisEmociones() {
         colors: ["#f97316", "#f59e0b", "#10b981"],
       });
 
-      // Check if ALL 10 days are now complete → auto-scroll to completion banner
-      const allDaysComplete = Object.values(newDays).filter(Boolean).length >= DAYS.length;
-      if (allDaysComplete) {
-        setTimeout(() => {
-          setView("home");
-          setTimeout(() => {
-            bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            confetti({
-              particleCount: 300,
-              spread: 120,
-              origin: { y: 0.4 },
-              colors: ["#01E47E", "#10b981", "#f59e0b", "#f97316"],
-            });
-          }, 600);
-        }, 1500);
-      }
+      // No auto-redirect. Let the user stay on the Day 10 view to read details/download PDF and click "Finalizar Reto" manually.
     } else if (!allDone && completedDays[selDay]) {
       newDays[selDay] = false;
     }
@@ -1505,6 +1490,15 @@ export default function MisEmociones() {
                   } else {
                     setView("home");
                     await saveState(route, tasksDone, completedDays, diagAns, "home", selDay);
+                    // Trigger big completion confetti on manual results view entry!
+                    setTimeout(() => {
+                      confetti({
+                        particleCount: 300,
+                        spread: 120,
+                        origin: { y: 0.4 },
+                        colors: ["#01E47E", "#10b981", "#f59e0b", "#f97316"],
+                      });
+                    }, 100);
                   }
                 }}
                 className="w-full sm:w-auto cursor-pointer rounded-xl px-8 py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300"
