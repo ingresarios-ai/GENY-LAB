@@ -26,7 +26,7 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
   );
 }
 
-const CTA_URL = 'https://whop.com/checkout/plan_cnokB2HmtC1kG';
+const CTA_URL = 'https://pay.hotmart.com/H105933876U?checkoutMode=10';
 
 function CTAButton({ large = false, className = '', text = 'QUIERO MI ACCESO AHORA', onClick }: { large?: boolean; className?: string; text?: React.ReactNode; onClick?: (e: React.MouseEvent) => void }) {
   return (
@@ -147,7 +147,7 @@ export default function Landing() {
       console.warn('Webhook failed:', err);
     }
 
-    const checkoutUrl = `${CTA_URL}?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`;
+    const checkoutUrl = `${CTA_URL}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`;
     window.location.href = checkoutUrl;
   };
 
