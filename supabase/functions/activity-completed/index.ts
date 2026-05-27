@@ -260,7 +260,7 @@ Deno.serve(async (req: Request) => {
     });
   } catch (err) {
     console.error("Activity error:", err);
-    return json({ error: "Internal error", detail: String(err) }, 500);
+    return json({ error: "Internal error" }, 500);
   }
 });
 

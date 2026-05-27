@@ -1,11 +1,22 @@
 // admin-api — REST API for the admin dashboard
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-admin-secret",
-};
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://genylab.ingresarios.net',
+  'http://localhost:5173',
+  'http://localhost:4173',
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, x-admin-secret",
+  };
+}
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -124,43 +135,62 @@ async function sendToLeadConnector(
   }
 }
 
-function json(data: unknown, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}
+// json() and unauthorized() are defined inside the handler to access per-request CORS headers
 
-function unauthorized() {
-  return json({ error: "Unauthorized" }, 401);
-}
-
-// Verify admin token: token is "admin_id:username" base64 encoded
+// Verify admin token: check against session_token stored in DB with expiration
 async function verifyAdminToken(
   supabase: any,
   token: string
 ): Promise<{ valid: boolean; adminId?: string; role?: string }> {
   try {
-    const decoded = atob(token);
-    const [adminId, username] = decoded.split(":");
-    if (!adminId || !username) return { valid: false };
+    if (!token || token.length < 32) return { valid: false };
 
     const { data: admin } = await supabase
       .from("admin_users")
-      .select("id, role, is_active")
-      .eq("id", adminId)
-      .eq("username", username)
+      .select("id, role, is_active, session_expires_at")
+      .eq("session_token", token)
       .eq("is_active", true)
       .single();
 
     if (!admin) return { valid: false };
+
+    // Check expiration
+    if (admin.session_expires_at && new Date(admin.session_expires_at) < new Date()) {
+      // Token expired — clear it
+      await supabase
+        .from("admin_users")
+        .update({ session_token: null, session_expires_at: null })
+        .eq("id", admin.id);
+      return { valid: false };
+    }
+
     return { valid: true, adminId: admin.id, role: admin.role };
   } catch {
     return { valid: false };
   }
 }
 
+// Generate a cryptographically random session token
+function generateSessionToken(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+}
+
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req);
+
+  function json(data: unknown, status = 200) {
+    return new Response(JSON.stringify(data), {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  function unauthorized() {
+    return json({ error: "Unauthorized" }, 401);
+  }
+
   if (req.method === "OPTIONS") {
     return new Response(null, {
       headers: {
@@ -219,7 +249,14 @@ Deno.serve(async (req: Request) => {
           return json({ error: "Credenciales incorrectas" }, 403);
         }
 
-        const token = btoa(`${adminUser.id}:${adminUser.username}`);
+        // Generate secure session token with 24h expiration
+        const token = generateSessionToken();
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        await supabase
+          .from("admin_users")
+          .update({ session_token: token, session_expires_at: expiresAt })
+          .eq("id", adminUser.id);
+
         return json({
           success: true,
           token,
@@ -237,7 +274,14 @@ Deno.serve(async (req: Request) => {
       }
 
       const adminUser = Array.isArray(admin) ? admin[0] : admin;
-      const token = btoa(`${adminUser.id}:${adminUser.username}`);
+      // Generate secure session token with 24h expiration
+      const token = generateSessionToken();
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      await supabase
+        .from("admin_users")
+        .update({ session_token: token, session_expires_at: expiresAt })
+        .eq("id", adminUser.id);
+
       return json({
         success: true,
         token,
@@ -259,9 +303,10 @@ Deno.serve(async (req: Request) => {
     const userId = segments[1];
     
     // Fetch user and activities using service_role key
+    // Security: only return name and country — no email/phone (PII)
     const { data: user, error: userError } = await supabase
       .from("enrolled_users")
-      .select("id, name, email, phone, country_name, created_at, status")
+      .select("id, name, country_name, created_at, status")
       .eq("id", userId)
       .single();
 
@@ -276,10 +321,22 @@ Deno.serve(async (req: Request) => {
       .order("completed_at", { ascending: false });
 
     if (actError) {
-      return json({ error: actError.message }, 500);
+      return json({ error: "Failed to load activities" }, 500);
     }
 
     return json({ user, activities });
+  }
+
+  // ── PUBLIC SETTINGS ENDPOINT (no token needed) ──
+  if (segments[0] === "site-settings" && method === "GET" && segments.length === 2) {
+    const key = segments[1];
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", key)
+      .single();
+    if (error || !data) return json({ error: "Setting not found" }, 404);
+    return json(data.value);
   }
 
   // All other endpoints require auth
@@ -290,6 +347,22 @@ Deno.serve(async (req: Request) => {
   if (!valid) return unauthorized();
 
   try {
+    // ── SITE SETTINGS (admin) ──
+    if (segments[0] === "site-settings" && segments.length === 2) {
+      const key = segments[1];
+
+      if (method === "PUT") {
+        const body = await req.json();
+        const { data, error } = await supabase
+          .from("site_settings")
+          .upsert({ key, value: body, updated_at: new Date().toISOString() })
+          .select()
+          .single();
+        if (error) return json({ error: error.message }, 500);
+        return json({ success: true, data });
+      }
+    }
+
     // ── STATS ──
     if (segments[0] === "stats" && method === "GET") {
       const [usersRes, activityRes, recentRes] = await Promise.all([
@@ -443,10 +516,15 @@ Deno.serve(async (req: Request) => {
         if (payment) query = query.eq("payment_method", payment);
 
         const search = url.searchParams.get("search");
-        if (search)
-          query = query.or(
-            `name.ilike.%${search}%,email.ilike.%${search}%`
-          );
+        if (search) {
+          // Security: escape PostgREST special chars to prevent filter injection
+          const safe = search.replace(/[%,.*()\\]/g, "").slice(0, 100);
+          if (safe) {
+            query = query.or(
+              `name.ilike.%${safe}%,email.ilike.%${safe}%`
+            );
+          }
+        }
 
         const activity = url.searchParams.get("activity");
         if (activity) {
@@ -889,9 +967,15 @@ Deno.serve(async (req: Request) => {
       if (method === "PATCH" && segments.length === 2) {
         const whId = segments[1];
         const body = await req.json();
+        // Security: only allow known fields to be updated
+        const allowed = ["name", "url", "events", "is_active", "secret"];
+        const filtered: Record<string, any> = {};
+        for (const key of allowed) {
+          if (key in body) filtered[key] = body[key];
+        }
         const { data, error } = await supabase
           .from("admin_webhooks")
-          .update(body)
+          .update(filtered)
           .eq("id", whId)
           .select()
           .single();
@@ -913,6 +997,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Not found" }, 404);
   } catch (err) {
     console.error("Admin API error:", err);
-    return json({ error: "Internal error", detail: String(err) }, 500);
+    // Security: don't expose error details to client
+    return json({ error: "Internal error" }, 500);
   }
 });

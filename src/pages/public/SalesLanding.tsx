@@ -13,6 +13,7 @@ import { Footer } from '../../components/Footer';
 import { Logo } from '../../components/Logo';
 import { LeadModal } from '../../components/LeadModal';
 import { supabase } from '../../lib/supabase';
+import { useDelayedReveal } from '../../hooks/useDelayedReveal';
 
 /* ── Utilities ─────────────────────────────────────────────────────────── */
 
@@ -75,6 +76,7 @@ export default function SalesLanding() {
   const [showLeadModal, setShowLeadModal] = useState(false);
   const pricingRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
+  const { contentRevealed, minutesLeft, secondsLeft } = useDelayedReveal('geny_sales_revealed');
 
   const handleLeadSubmit = async (name: string, email: string, phone: string, country: string) => {
     const COUNTRY_DATA: Record<string, string> = {
@@ -258,6 +260,7 @@ export default function SalesLanding() {
           </div>
 
           {/* HEADLINE — Identity-based pattern interrupt (HUGE TYPOGRAPHY) */}
+          {contentRevealed && (
           <div ref={headlineRef} className="text-center max-w-5xl mx-auto mt-6">
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.6rem] font-black leading-[1.08] tracking-tight mb-8">
               Sabes exactamente lo que tienes que hacer…<br />
@@ -272,8 +275,39 @@ export default function SalesLanding() {
               <ArrowDown size={18} />
             </div>
           </div>
+          )}
+
+          {/* Waiting message while content is hidden */}
+          {!contentRevealed && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            className="text-center max-w-2xl mx-auto mt-12 mb-8"
+          >
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-[#00D1FF]/10 border border-[#00D1FF]/20 mb-6">
+              <Eye size={20} className="text-[#00D1FF]" />
+              <span className="text-[#00D1FF] font-bold text-sm uppercase tracking-wider">Contenido bloqueado</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 text-white">
+              Mira el video completo
+            </h2>
+            <p className="text-white/60 text-lg sm:text-xl leading-relaxed mb-8">
+              El contenido completo de esta página se desbloqueará mientras terminas de ver el video.
+            </p>
+            <div className="inline-flex items-center gap-4 px-8 py-4 rounded-2xl bg-white/5 border border-white/10">
+              <Clock size={22} className="text-[#00E676]" />
+              <span className="text-white/80 text-lg font-mono font-bold">
+                {String(minutesLeft).padStart(2, '0')}:{String(secondsLeft).padStart(2, '0')}
+              </span>
+              <span className="text-white/40 text-sm">para desbloquear</span>
+            </div>
+          </motion.div>
+          )}
         </div>
       </section>
+
+      {contentRevealed && (<>
 
       {/* ══════════════════════════════════════════════════════════════════
           AGITATION — Make them FEEL the pain (not just read it)
@@ -1025,6 +1059,8 @@ export default function SalesLanding() {
           />
         )}
       </AnimatePresence>
+
+      </>)}
 
       <Footer />
     </div>

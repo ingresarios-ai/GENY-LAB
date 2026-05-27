@@ -174,7 +174,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "https://genylab.ingresarios.net",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers":
           "content-type, x-hotmart-hottok, x-whop-signature",
@@ -367,8 +367,9 @@ Deno.serve(async (req: Request) => {
     );
   } catch (err) {
     console.error("Webhook error:", err);
+    // Security: don't expose error details to client
     return new Response(
-      JSON.stringify({ error: "Internal error", detail: String(err) }),
+      JSON.stringify({ error: "Internal error" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

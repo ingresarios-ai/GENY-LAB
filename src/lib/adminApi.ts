@@ -138,3 +138,15 @@ export const updateAdminUser = (id: string, updates: Record<string, any>) =>
 
 export const deleteAdminUser = (id: string) =>
   api(`admins/${id}`, { method: 'DELETE' });
+
+// Site Settings (public read, admin write)
+export const getSiteSetting = async (key: string) => {
+  const res = await fetch(`${ADMIN_API}/site-settings/${key}`, {
+    headers: { 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` }
+  });
+  if (!res.ok) return null;
+  return res.json();
+};
+
+export const updateSiteSetting = (key: string, value: any) =>
+  api(`site-settings/${key}`, { method: 'PUT', body: JSON.stringify(value) });

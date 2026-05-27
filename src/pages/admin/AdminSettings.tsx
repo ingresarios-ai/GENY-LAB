@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import {
   UserCog, Plus, X, Trash2, Eye, EyeOff, Shield, ShieldCheck,
-  AlertCircle, Check, Pencil
+  AlertCircle, Check, Pencil, Settings, Clock, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import {
-  getAdminUsers, createAdminUser, updateAdminUser, deleteAdminUser, getAdminInfo
+  getAdminUsers, createAdminUser, updateAdminUser, deleteAdminUser, getAdminInfo,
+  getSiteSetting, updateSiteSetting
 } from '../../lib/adminApi';
 
 const ROLES = [
@@ -31,6 +32,12 @@ export default function AdminSettings() {
 
   const currentAdmin = getAdminInfo();
 
+  // Site settings state
+  const [delayEnabled, setDelayEnabled] = useState(true);
+  const [delayMinutes, setDelayMinutes] = useState(10);
+  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [settingsSaving, setSettingsSaving] = useState(false);
+
   const loadAdmins = async () => {
     try {
       const res = await getAdminUsers();
@@ -41,7 +48,34 @@ export default function AdminSettings() {
     setLoading(false);
   };
 
-  useEffect(() => { loadAdmins(); }, []);
+  const loadSettings = async () => {
+    try {
+      const config = await getSiteSetting('content_delay');
+      if (config) {
+        setDelayEnabled(config.enabled ?? true);
+        setDelayMinutes(config.minutes ?? 10);
+      }
+    } catch {}
+    setSettingsLoading(false);
+  };
+
+  const saveSettings = async () => {
+    setSettingsSaving(true);
+    try {
+      await updateSiteSetting('content_delay', {
+        enabled: delayEnabled,
+        minutes: delayMinutes
+      });
+      // Clear localStorage so users see the new config on next visit
+      setSuccess('Configuración guardada exitosamente');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err: any) {
+      setError(err.message || 'Error al guardar configuración');
+    }
+    setSettingsSaving(false);
+  };
+
+  useEffect(() => { loadAdmins(); loadSettings(); }, []);
 
   const resetForm = () => {
     setForm({ username: '', password: '', display_name: '', admin_role: 'admin' });
@@ -109,7 +143,100 @@ export default function AdminSettings() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Header */}
+      {/* Page Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-white/90 flex items-center gap-2.5">
+          <Settings className="w-6 h-6 text-brand-blue" />
+          Configuración
+        </h1>
+        <p className="text-base text-white/35 mt-1">
+          Ajustes de la plataforma y gestión de administradores
+        </p>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════
+          SALES PAGE SETTINGS
+      ═══════════════════════════════════════════════════════ */}
+      <div
+        className="rounded-2xl p-6 space-y-5"
+        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
+      >
+        <div className="flex items-center gap-2.5">
+          <Settings className="w-5 h-5 text-[#00D1FF]" />
+          <h2 className="text-lg font-bold text-white/80">Sales Page — Contenido Bloqueado</h2>
+        </div>
+        <p className="text-sm text-white/35">
+          Oculta el contenido de las páginas de venta y muestra solo el logo y el video. Después del tiempo configurado, el contenido se desbloquea automáticamente.
+        </p>
+
+        {settingsLoading ? (
+          <div className="text-white/25 text-sm py-4">Cargando configuración…</div>
+        ) : (
+          <>
+            {/* Toggle */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setDelayEnabled(!delayEnabled)}
+                  className="transition-all"
+                >
+                  {delayEnabled ? (
+                    <ToggleRight className="w-10 h-10 text-[#00E676]" />
+                  ) : (
+                    <ToggleLeft className="w-10 h-10 text-white/20" />
+                  )}
+                </button>
+                <div>
+                  <span className="text-sm font-bold text-white/70">
+                    {delayEnabled ? 'Activado' : 'Desactivado'}
+                  </span>
+                  <p className="text-xs text-white/30">
+                    {delayEnabled ? 'El contenido se oculta en la primera visita' : 'Todo el contenido es visible de inmediato'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Minutes input */}
+            {delayEnabled && (
+              <div className="flex items-center gap-4">
+                <Clock className="w-5 h-5 text-[#00D1FF] shrink-0" />
+                <label className="text-sm text-white/50 shrink-0">Minutos de espera:</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={60}
+                  value={delayMinutes}
+                  onChange={e => setDelayMinutes(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
+                  className="w-20 rounded-lg px-3 py-2 text-sm text-white font-mono text-center focus:outline-none transition-all"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  onFocus={e => { e.target.style.borderColor = 'rgba(0,209,255,0.3)'; }}
+                  onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+                />
+                <span className="text-xs text-white/25">min</span>
+              </div>
+            )}
+
+            {/* Save button */}
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={saveSettings}
+                disabled={settingsSaving}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-30"
+                style={{ background: '#00D1FF', color: '#060910' }}
+                onMouseOver={e => { (e.target as HTMLElement).style.boxShadow = '0 0 20px rgba(0,209,255,0.3)'; }}
+                onMouseOut={e => { (e.target as HTMLElement).style.boxShadow = 'none'; }}
+              >
+                {settingsSaving ? 'Guardando…' : 'Guardar Configuración'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════
+          ADMIN USERS
+      ═══════════════════════════════════════════════════════ */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white/90 flex items-center gap-2.5">
