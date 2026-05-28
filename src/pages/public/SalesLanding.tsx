@@ -311,6 +311,97 @@ export default function SalesLanding() {
       {contentRevealed && (<>
 
       {/* ══════════════════════════════════════════════════════════════════
+          THE SOLUTION — GENY LAB
+          Technique: Gamification and Interactive Mockups
+      ══════════════════════════════════════════════════════════════════ */}
+      <section id="solucion" className="py-20 md:py-28 relative border-t border-white/5">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E676]/[0.02] to-transparent pointer-events-none" />
+        
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00E676] mb-3 block">PRESENTAMOS EL NÚCLEO</span>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-white via-white to-[#00D1FF] bg-clip-text text-transparent">
+                GENY LAB
+              </h2>
+              <p className="text-white/40 text-sm font-mono uppercase tracking-[0.2em] mt-3">
+                {activeTab === 'personal' ? "Sistema de Calibración Nodal para tus Finanzas" : "Sistema de Calibración Nodal para Traders"}
+              </p>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.1}>
+            <div className="max-w-4xl mx-auto">
+              <Callout color="#00E676">
+                <p className="text-white/90 text-base sm:text-lg md:text-xl leading-relaxed">
+                  {activeTab === 'personal' ? (
+                    <>Imagina tomar decisiones con tu dinero sabiendo <strong className="text-white">exactamente</strong> qué emoción te autosabotea hoy, conociendo tu termostato real de riqueza y usando un sistema interactivo que te frena <em>antes</em> de cometer tu clásico error de gasto recurrente.</>
+                  ) : (
+                    <>Imagina abrir tu plataforma sabiendo <strong className="text-white">exactamente</strong> qué emoción te autosabotea hoy, conociendo tu termostato real de riesgo y usando un sistema interactivo que te frena <em>antes</em> de cometer tu clásico error recurrente.</>
+                  )}
+                </p>
+                <p className="text-[#00E676] font-bold text-sm sm:text-base tracking-wider uppercase mt-4">
+                  → Eso es lo que construyes en menos de 15 minutos en GENY LAB.
+                </p>
+              </Callout>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.15}>
+            <div className="space-y-6 max-w-4xl mx-auto mt-10">
+              <p className="text-white/70 text-base md:text-lg leading-relaxed text-center">
+                Esto no es un curso pasivo de videos infinitos. Es un <strong className="text-[#00E676]">Laboratorio Interactivo Gamificado</strong> donde completas validaciones prácticas, desbloqueas nodos y calibras tu ADN financiero con Inteligencia Artificial.
+              </p>
+            </div>
+          </FadeIn>
+
+          {/* Gamified Mockups as Sleek Browser Mockups */}
+          <FadeIn>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mt-16 max-w-5xl mx-auto">
+              {/* Mockup 1 */}
+              <div className="rounded-3xl border border-white/10 bg-[#080d16] overflow-hidden shadow-[0_0_80px_rgba(0,209,255,0.1)] hover:shadow-[0_0_80px_rgba(0,209,255,0.25)] hover:border-[#00D1FF]/40 transition-all duration-500 flex flex-col justify-between group">
+                <div className="bg-[#0c1220] px-4 py-3 border-b border-white/5 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                  <span className="text-[10px] font-mono text-white/30 ml-4">GENY LAB - MAPA NODAL</span>
+                </div>
+                <div className="p-4 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0c1220]/40">
+                  <img src="/images/landing/app_mockup.png" alt="Mapa de progreso de GENY LAB" className="rounded-xl border border-white/5 shadow-2xl max-w-full max-h-[300px] object-contain group-hover:scale-[1.02] transition-transform duration-500" />
+                </div>
+                <div className="p-5 border-t border-white/5 bg-[#0a0f1b]/50">
+                  <p className="text-white/80 font-bold text-sm">Validaciones Gamificadas por Nodos</p>
+                  <p className="text-white/40 text-xs mt-1">Completa desafíos, avanza por las etapas y monitorea tu progreso real.</p>
+                </div>
+              </div>
+
+              {/* Mockup 2 */}
+              <div className="rounded-3xl border border-white/10 bg-[#080d16] overflow-hidden shadow-[0_0_80px_rgba(0,230,118,0.08)] hover:shadow-[0_0_80px_rgba(0,230,118,0.2)] hover:border-[#00E676]/40 transition-all duration-500 flex flex-col justify-between group">
+                <div className="bg-[#0c1220] px-4 py-3 border-b border-white/5 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                  <span className="text-[10px] font-mono text-white/30 ml-4">GENY LAB - SIMULADOR</span>
+                </div>
+                <div className="p-4 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0c1220]/40">
+                  <img src="/images/landing/simulator_preview.png" alt="Simulador interactivo de mercado" className="rounded-xl border border-white/5 shadow-2xl max-w-full max-h-[300px] object-contain group-hover:scale-[1.02] transition-transform duration-500" />
+                </div>
+                <div className="p-5 border-t border-white/5 bg-[#0a0f1b]/50">
+                  <p className="text-white/80 font-bold text-sm">
+                    {activeTab === 'personal' ? "Simulador y Desafíos Financieros" : "Simulador de Mercado e Indicadores"}
+                  </p>
+                  <p className="text-white/40 text-xs mt-1">
+                    {activeTab === 'personal' ? "Mide tu termostato financiero en tiempo real bajo escenarios y dilemas financieros reales." : "Mide tu termostato financiero en tiempo real bajo condiciones de mercado simuladas."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+
+      {/* ══════════════════════════════════════════════════════════════════
           AGITATION — Make them FEEL the pain (not just read it)
           Technique: Comparison between Chaos & Control
       ══════════════════════════════════════════════════════════════════ */}
@@ -505,10 +596,18 @@ export default function SalesLanding() {
               </p>
               <h3 className="text-xl md:text-2xl font-black uppercase text-white mb-3">Esto NO es para todo el mundo</h3>
               <p className="text-white/60 text-sm md:text-base leading-relaxed mb-4">
-                Si buscas un grupo de señales de Telegram para copiar setups (configuraciones o patrones gráficos de entrada), un robot automático que opere milagrosamente por ti, o el secreto para hacerte millonario este fin de semana... <strong>por favor, cierra esta pestaña.</strong>
+                {activeTab === 'personal' ? (
+                  <>Si buscas una fórmula mágica de riqueza sin esfuerzo, consejos rápidos para ganarte la lotería este fin de semana, o un esquema de dinero fácil... <strong>por favor, cierra esta pestaña.</strong></>
+                ) : (
+                  <>Si buscas un grupo de señales de Telegram para copiar setups (configuraciones o patrones gráficos de entrada), un robot automático que opere milagrosamente por ti, o el secreto para hacerte millonario este fin de semana... <strong>por favor, cierra esta pestaña.</strong></>
+                )}
               </p>
               <p className="text-white/65 text-sm md:text-base leading-relaxed">
-                GENY LAB es un sistema de entrenamiento estricto para traders que ya se cansaron de perder capital por indisciplina y están listos para profesionalizar su mentalidad. <strong>Si eres de los que hacen el trabajo duro, bienvenido.</strong>
+                {activeTab === 'personal' ? (
+                  <>GENY LAB es un sistema de entrenamiento estricto para personas que ya se cansaron de perder dinero por malos hábitos y desorden, y están listas para profesionalizar su mentalidad financiera. <strong>Si eres de los que hacen el trabajo duro, bienvenido.</strong></>
+                ) : (
+                  <>GENY LAB es un sistema de entrenamiento estricto para traders que ya se cansaron de perder capital por indisciplina y están listos para profesionalizar su mentalidad. <strong>Si eres de los que hacen el trabajo duro, bienvenido.</strong></>
+                )}
               </p>
             </div>
           </FadeIn>
@@ -525,30 +624,43 @@ export default function SalesLanding() {
           <FadeIn>
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
-                El problema nunca fue<br />
-                <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,209,255,0.15)]">la estrategia.</span>
+                {activeTab === 'personal' ? (
+                  <>El problema nunca fue<br /><span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,209,255,0.15)]">la falta de ingresos.</span></>
+                ) : (
+                  <>El problema nunca fue<br /><span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,209,255,0.15)]">la estrategia.</span></>
+                )}
               </h2>
             </div>
           </FadeIn>
           <FadeIn delay={0.15}>
             <div className="space-y-6 max-w-4xl mx-auto">
               <p className="text-white/80 text-lg md:text-xl leading-relaxed text-center">
-                Todos los mentores y cursos que has comprado hasta hoy te enseñaron a operar <em>como ellos operan</em>. No como tú.
+                {activeTab === 'personal' ? (
+                  <>Todos los mentores y libros que has leído hasta hoy te enseñaron a ahorrar o invertir <em>como ellos lo hacen</em>. No como tú.</>
+                ) : (
+                  <>Todos los mentores y cursos que has comprado hasta hoy te enseñaron a operar <em>como ellos operan</em>. No como tú.</>
+                )}
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
                 {[
                   {
-                    q: "¿Qué emoción específica te hace romper tus reglas?",
-                    desc: "La mayoría te da reglas rígidas, pero ignoran la emoción exacta que las destruye en segundos."
+                    q: activeTab === 'personal' ? "¿Qué emoción específica te hace gastar de más?" : "¿Qué emoción específica te hace romper tus reglas?",
+                    desc: activeTab === 'personal'
+                      ? "La mayoría te da presupuestos rígidos, pero ignoran el impulso exacto que te hace gastar de más en segundos."
+                      : "La mayoría te da reglas rígidas, pero ignoran la emoción exacta que las destruye en segundos."
                   },
                   {
-                    q: "¿Cuál es tu tolerancia real al riesgo?",
-                    desc: "Te dicen 'arriesga el 1%', pero tu cerebro entra en pánico biológico mucho antes."
+                    q: activeTab === 'personal' ? "¿Cuál es tu termostato financiero real?" : "¿Cuál es tu tolerancia real al riesgo?",
+                    desc: activeTab === 'personal'
+                      ? "Te dicen 'ahorra el 10%', pero tu mente está programada con un límite invisible de supervivencia."
+                      : "Te dicen 'arriesga el 1%', pero tu cerebro entra en pánico biológico mucho antes."
                   },
                   {
-                    q: "¿Cuáles son tus patrones subconscientes?",
-                    desc: "Tus reacciones automáticas al gráfico vienen programadas de tu infancia y finanzas personales."
+                    q: activeTab === 'personal' ? "¿Cuáles son tus patrones subconscientes?" : "¿Cuáles son tus patrones subconscientes?",
+                    desc: activeTab === 'personal'
+                      ? "Tus reacciones automáticas ante el dinero vienen programadas de tu infancia y tus creencias familiares."
+                      : "Tus reacciones automáticas al gráfico vienen programadas de tu infancia y finanzas personales."
                   }
                 ].map((item, idx) => (
                   <div key={idx} className="rounded-2xl p-6 border border-white/5 bg-[#080d17]/60 hover:border-[#00D1FF]/20 transition-all duration-300">
@@ -560,87 +672,13 @@ export default function SalesLanding() {
 
               <div className="text-center py-6">
                 <p className="text-3xl sm:text-4xl font-black text-white">Ninguno.</p>
-                <p className="text-white/50 text-sm md:text-base mt-2">Porque todos vendían <em>su</em> método rígido. No tu calibración personalizada.</p>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          THE SOLUTION — GENY LAB
-          Technique: Gamification and Interactive Mockups
-      ══════════════════════════════════════════════════════════════════ */}
-      <section id="solucion" className="py-20 md:py-28 relative border-t border-white/5">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E676]/[0.02] to-transparent pointer-events-none" />
-        
-        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
-          <FadeIn>
-            <div className="text-center mb-12">
-              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00E676] mb-3 block">PRESENTAMOS EL NÚCLEO</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-white via-white to-[#00D1FF] bg-clip-text text-transparent">
-                GENY LAB
-              </h2>
-              <p className="text-white/40 text-sm font-mono uppercase tracking-[0.2em] mt-3">Sistema de Calibración Nodal para Traders</p>
-            </div>
-          </FadeIn>
-
-          <FadeIn delay={0.1}>
-            <div className="max-w-4xl mx-auto">
-              <Callout color="#00E676">
-                <p className="text-white/90 text-base sm:text-lg md:text-xl leading-relaxed">
-                  Imagina abrir tu plataforma sabiendo <strong className="text-white">exactamente</strong> qué emoción te autosabotea hoy, conociendo tu termostato real de riesgo y usando un sistema interactivo que te frena <em>antes</em> de cometer tu clásico error recurrente.
+                <p className="text-white/50 text-sm md:text-base mt-2">
+                  {activeTab === 'personal' ? (
+                    <>Porque todos te vendían <em>su</em> método de ahorro o inversión rígido. No tu calibración personalizada.</>
+                  ) : (
+                    <>Porque todos vendían <em>su</em> método rígido. No tu calibración personalizada.</>
+                  )}
                 </p>
-                <p className="text-[#00E676] font-bold text-sm sm:text-base tracking-wider uppercase mt-4">
-                  → Eso es lo que construyes en menos de 15 minutos en GENY LAB.
-                </p>
-              </Callout>
-            </div>
-          </FadeIn>
-
-          <FadeIn delay={0.15}>
-            <div className="space-y-6 max-w-4xl mx-auto mt-10">
-              <p className="text-white/70 text-base md:text-lg leading-relaxed text-center">
-                Esto no es un curso pasivo de videos infinitos. Es un <strong className="text-[#00E676]">Laboratorio Interactivo Gamificado</strong> donde completas validaciones prácticas, desbloqueas nodos y calibras tu ADN financiero con Inteligencia Artificial.
-              </p>
-            </div>
-          </FadeIn>
-
-          {/* Gamified Mockups as Sleek Browser Mockups */}
-          <FadeIn>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mt-16 max-w-5xl mx-auto">
-              {/* Mockup 1 */}
-              <div className="rounded-3xl border border-white/10 bg-[#080d16] overflow-hidden shadow-[0_0_80px_rgba(0,209,255,0.1)] hover:shadow-[0_0_80px_rgba(0,209,255,0.25)] hover:border-[#00D1FF]/40 transition-all duration-500 flex flex-col justify-between group">
-                <div className="bg-[#0c1220] px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                  <span className="text-[10px] font-mono text-white/30 ml-4">GENY LAB - MAPA NODAL</span>
-                </div>
-                <div className="p-4 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0c1220]/40">
-                  <img src="/images/landing/app_mockup.png" alt="Mapa de progreso de GENY LAB" className="rounded-xl border border-white/5 shadow-2xl max-w-full max-h-[300px] object-contain group-hover:scale-[1.02] transition-transform duration-500" />
-                </div>
-                <div className="p-5 border-t border-white/5 bg-[#0a0f1b]/50">
-                  <p className="text-white/80 font-bold text-sm">Validaciones Gamificadas por Nodos</p>
-                  <p className="text-white/40 text-xs mt-1">Completa desafíos, avanza por las etapas y monitorea tu progreso real.</p>
-                </div>
-              </div>
-
-              {/* Mockup 2 */}
-              <div className="rounded-3xl border border-white/10 bg-[#080d16] overflow-hidden shadow-[0_0_80px_rgba(0,230,118,0.08)] hover:shadow-[0_0_80px_rgba(0,230,118,0.2)] hover:border-[#00E676]/40 transition-all duration-500 flex flex-col justify-between group">
-                <div className="bg-[#0c1220] px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                  <span className="text-[10px] font-mono text-white/30 ml-4">GENY LAB - SIMULADOR</span>
-                </div>
-                <div className="p-4 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0c1220]/40">
-                  <img src="/images/landing/simulator_preview.png" alt="Simulador interactivo de mercado" className="rounded-xl border border-white/5 shadow-2xl max-w-full max-h-[300px] object-contain group-hover:scale-[1.02] transition-transform duration-500" />
-                </div>
-                <div className="p-5 border-t border-white/5 bg-[#0a0f1b]/50">
-                  <p className="text-white/80 font-bold text-sm">Simulador de Mercado e Indicadores</p>
-                  <p className="text-white/40 text-xs mt-1">Mide tu termostato financiero en tiempo real bajo condiciones de mercado simuladas.</p>
-                </div>
               </div>
             </div>
           </FadeIn>
@@ -664,7 +702,9 @@ export default function SalesLanding() {
             {[
               {
                 emoji: '🧬', title: 'Tu ADN Financiero', hook: 'LAB 1: PERFIL DE INVERSIÓN', color: '#00D1FF', num: '01',
-                desc: 'Descubre qué tipo de inversionista eres realmente, cuál es tu perfil de riesgo real y qué estilo operativo se alinea con tu naturaleza financiera. Deja de forzar estrategias ajenas.'
+                desc: activeTab === 'personal'
+                  ? 'Descubre qué tipo de inversionista eres realmente, cuál es tu perfil de riesgo real y qué estilo de ahorro e inversión se alinea con tu naturaleza financiera. Deja de forzar sistemas ajenos.'
+                  : 'Descubre qué tipo de inversionista eres realmente, cuál es tu perfil de riesgo real y qué estilo operativo se alinea con tu naturaleza financiera. Deja de forzar estrategias ajenas.'
               },
               {
                 emoji: '🐜', title: 'Gastos Hormiga', hook: 'LAB 2: PROYECCIÓN DE FUGAS', color: '#f59e0b', num: '02',
@@ -672,7 +712,9 @@ export default function SalesLanding() {
               },
               {
                 emoji: '🌡️', title: 'Termostato Financiero', hook: 'LAB 3: TECHO DE RIQUEZA', color: '#ef4444', num: '03',
-                desc: 'Mide y expande tu tolerancia biológica a la pérdida antes de entrar en pánico. Si no calibras este límite, tu cerebro saboteará tus stops de forma automática.'
+                desc: activeTab === 'personal'
+                  ? 'Mide y expande tu tolerancia biológica a la escasez y el crecimiento. Si no calibras este límite, tu cerebro saboteará tu capacidad de ahorro y retención de capital de forma automática.'
+                  : 'Mide y expande tu tolerancia biológica a la pérdida antes de entrar en pánico. Si no calibras este límite, tu cerebro saboteará tus stops de forma automática.'
               },
               {
                 emoji: '🧠', title: 'Trampas del Dinero', hook: 'LAB 4: 5 SESGOS COGNITIVOS', color: '#f97316', num: '04',
@@ -680,15 +722,21 @@ export default function SalesLanding() {
               },
               {
                 emoji: '📋', title: 'Mi Primer PEDEM', hook: 'LAB 5: SISTEMA DE PLANIFICACIÓN', color: '#3b82f6', num: '05',
-                desc: 'Construye tu bitácora de operaciones y plan de trading paso a paso usando el framework PEDEM. Separa al 5% consistente del 95% que opera al azar.'
+                desc: activeTab === 'personal'
+                  ? 'Construye tu plan de estructuración de gastos y mapa de riqueza mensual paso a paso usando el framework PEDEM. Separa al 5% libre financieramente del 95% que vive al día.'
+                  : 'Construye tu bitácora de operaciones y plan de trading paso a paso usando el framework PEDEM. Separa al 5% consistente del 95% que opera al azar.'
               },
               {
                 emoji: '🤯', title: 'Mis Emociones (Reto Sombra)', hook: 'LAB 6: AUTOSABOTAJE INTERIOR', color: '#8b5cf6', num: '06',
-                desc: 'Desmantela las creencias subconscientes y el miedo que sabotean tus ejecuciones. Identifica y desactiva al saboteador interno que causa tu sobreoperación.'
+                desc: activeTab === 'personal'
+                  ? 'Desmantela las creencias subconscientes y el miedo que sabotean tu abundancia. Identifica y desactiva al saboteador interno que causa tus compras impulsivas y fugas de capital.'
+                  : 'Desmantela las creencias subconscientes y el miedo que sabotean tus ejecuciones. Identifica y desactiva al saboteador interno que causa tu sobreoperación.'
               },
               {
                 emoji: '⚡', title: 'Reto del Flow', hook: 'LAB 7: MÁXIMO RENDIMIENTO', color: '#00E676', num: '07',
-                desc: 'Calibra tu estado mental para operar en la zona de flujo óptimo. Aprende a activar este estado de concentración total y consistencia cada vez que abres el gráfico.'
+                desc: activeTab === 'personal'
+                  ? 'Calibra tu estado mental para tomar decisiones de dinero en la zona de flujo óptimo. Aprende a activar este estado de paz mental y consistencia en tu día a día.'
+                  : 'Calibra tu estado mental para operar en la zona de flujo óptimo. Aprende a activar este estado de concentration total y consistencia cada vez que abres el gráfico.'
               },
             ].map((lab, i) => (
               <FadeIn key={i} delay={i * 0.08} className="h-full">
@@ -750,10 +798,18 @@ export default function SalesLanding() {
                 Es un escepticismo completamente sano. De hecho, si yo estuviera en tu lugar, pensaría exactamente lo mismo.
               </p>
               <p className="text-white/80 text-base sm:text-lg leading-relaxed">
-                Pero analízalo de esta manera: todos los mentores anteriores te pidieron que te adaptaras a <em>su</em> estrategia, forzándote a ejecutar setups (configuraciones o patrones gráficos de entrada) que van en contra de tu límite emocional y termostato biológico.
+                {activeTab === 'personal' ? (
+                  "Pero analízalo de esta manera: todos los mentores anteriores te pidieron que te adaptaras a sus presupuestos, forzándote a seguir reglas rígidas de privación que van en contra de tu termostato biológico y emocional."
+                ) : (
+                  "Pero analízalo de esta manera: todos los mentores anteriores te pidieron que te adaptaras a su estrategia, forzándote a ejecutar setups (configuraciones o patrones gráficos de entrada) que van en contra de tu límite emocional y termostato biológico."
+                )}
               </p>
               <p className="text-white/95 text-lg sm:text-xl font-black leading-relaxed">
-                GENY LAB es el único ecosistema que empieza por diagnosticarte a TI antes de enseñarte a operar. No puedes arreglar lo que no mides.
+                {activeTab === 'personal' ? (
+                  "GENY LAB es el único ecosistema que empieza por diagnosticarte a TI antes de decirte qué hacer con tu dinero. No puedes arreglar lo que no mides."
+                ) : (
+                  "GENY LAB es el único ecosistema que empieza por diagnosticarte a TI antes de enseñarte a operar. No puedes arreglar lo que no mides."
+                )}
               </p>
               <p className="text-[#00E676] text-base font-black uppercase tracking-wider">
                 ✓ No te pedimos fe. Te pedimos 15 minutos en el Lab 1 para que lo compruebes por ti mismo.
@@ -772,7 +828,11 @@ export default function SalesLanding() {
             <div className="text-center mb-16">
               <span className="text-sm md:text-base font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block font-bold">TESTIMONIOS REALES</span>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight">
-                Mira lo que pasa cuando un trader deja de operar{' '}
+                {activeTab === 'personal' ? (
+                  <>Mira lo que pasa cuando dejas de tomar decisiones de dinero{' '}</>
+                ) : (
+                  <>Mira lo que pasa cuando un trader deja de operar{' '}</>
+                )}
                 <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(0,209,255,0.2)]">emocionalmente</span>
               </h2>
               <p className="text-white/60 text-base sm:text-lg max-w-xl mx-auto mt-3">Miembros activos de nuestra comunidad compartiendo sus resultados reales.</p>
@@ -782,16 +842,31 @@ export default function SalesLanding() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {[
               {
-                name: 'Carlos M.', handle: '@carlos_m_trader', country: 'Colombia', rating: 5,
-                quote: 'Pensaba que era otro curso más. Ya había comprado 3 entrenamientos de $500 USD y seguía perdiendo dinero. En 15 minutos del Lab 1 descubrí que estaba operando con un tamaño de lote 4 veces mayor a mi tolerancia biológica real al riesgo. Ajusté eso y por fin dejé de sobreoperar en pánico. Totalmente recomendado.'
+                name: 'Carlos M.',
+                handle: activeTab === 'personal' ? '@carlos_m' : '@carlos_m_trader',
+                country: 'Colombia',
+                rating: 5,
+                quote: activeTab === 'personal'
+                  ? 'Pensaba que era otro curso más de finanzas. Ya había comprado 3 entrenamientos de $50 USD y seguía perdiendo dinero en gastos hormiga. En 15 minutos del Lab 1 descubrí que estaba gastando bajo un patrón de ansiedad que superaba mi límite biológico real de retención. Ajusté eso y por fin dejé de gastar de más. Totalmente recomendado.'
+                  : 'Pensaba que era otro curso más. Ya había comprado 3 entrenamientos de $500 USD y seguía perdiendo dinero. En 15 minutos del Lab 1 descubrí que estaba operando con un tamaño de lote 4 veces mayor a mi tolerancia biológica real al riesgo. Ajusté eso y por fin dejé de sobreoperar en pánico. Totalmente recomendado.'
               },
               {
-                name: 'Luis P.', handle: '@luisp_fx', country: 'México', rating: 5,
-                quote: 'Siempre me quejaba de mi falta de disciplina. Con el Termostato Financiero de GENY LAB entendí que mi cerebro entraba en modo supervivencia por el tamaño del stop. Expandir mi termostato de forma guiada con la IA cambió todo. $67 es literalmente un regalo frente a lo que perdía operando.'
+                name: 'Luis P.',
+                handle: activeTab === 'personal' ? '@luisp' : '@luisp_fx',
+                country: 'México',
+                rating: 5,
+                quote: activeTab === 'personal'
+                  ? 'Siempre me quejaba de mi falta de disciplina con el dinero. Con el Termostato Financiero de GENY LAB entendí que mi cerebro entraba en modo supervivencia y por eso gastaba todo mi sueldo al recibirlo. Expandir mi termostato de forma guiada con la IA cambió todo. $67 es literalmente un regalo frente a lo que perdía.'
+                  : 'Siempre me quejaba de mi falta de disciplina. Con el Termostato Financiero de GENY LAB entendí que mi cerebro entraba en modo supervivencia por el tamaño del stop. Expandir mi termostato de forma guiada con la IA cambió todo. $67 es literalmente un regalo frente a lo que perdía operando.'
               },
               {
-                name: 'Andrea G.', handle: '@andrea_options', country: 'España', rating: 5,
-                quote: 'La parálisis por exceso de información me tenía paralizada. Tenía 5 indicadores y 3 estrategias en la cabeza. Las simulaciones del Laboratorio de Opciones con retroalimentación del mentor IA me ayudaron a simplificar mi pantalla al mínimo. En dos semanas recuperé la claridad mental y la confianza para tomar posiciones.'
+                name: 'Andrea G.',
+                handle: activeTab === 'personal' ? '@andrea_g' : '@andrea_options',
+                country: 'España',
+                rating: 5,
+                quote: activeTab === 'personal'
+                  ? 'La parálisis por exceso de información financiera me tenía bloqueada. Tenía 5 presupuestos en Excel y no aplicaba ninguno. Las simulaciones de Desafíos Financieros con retroalimentación del mentor IA me ayudaron a simplificar mi plan de gastos al mínimo. En dos semanas recuperé la claridad mental y la confianza.'
+                  : 'La parálisis por exceso de información me tenía paralizada. Tenía 5 indicadores y 3 estrategias en la cabeza. Las simulaciones del Laboratorio de Opciones con retroalimentación del mentor IA me ayudaron a simplificar mi pantalla al mínimo. En dos semanas recuperé la claridad mental y la confianza para tomar posiciones.'
               }
             ].map((t, i) => (
               <FadeIn key={i} delay={i * 0.1} className="h-full">
@@ -846,10 +921,18 @@ export default function SalesLanding() {
                 <p className="text-xs font-mono uppercase tracking-widest text-[#f59e0b] font-black flex items-center gap-1.5 mb-4">
                   <Gift size={14} /> BONO EXCLUSIVO #1
                 </p>
-                <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-2">3 Sesiones de Trading Elite</h3>
-                <p className="text-sm font-mono text-white/50 uppercase tracking-widest mb-4">Acompañamiento en Vivo — Sábados 11:00 AM EST</p>
+                <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-2">
+                  {activeTab === 'personal' ? "3 Sesiones de Mentoría Elite" : "3 Sesiones de Trading Elite"}
+                </h3>
+                <p className="text-sm font-mono text-white/50 uppercase tracking-widest mb-4">
+                  {activeTab === 'personal' ? "Acompañamiento en Vivo — Sábados 11:00 AM EST" : "Acompañamiento en Vivo — Sábados 11:00 AM EST"}
+                </p>
                 <p className="text-base text-white/80 leading-relaxed mb-6">
-                  Únete a tus 3 mentorías en vivo iniciales. Analizamos los resultados de tus labs, revisamos operaciones reales y calibramos tu estructura operativa en directo con otros miembros.
+                  {activeTab === 'personal' ? (
+                    "Únete a tus 3 mentorías en vivo iniciales. Analizamos los resultados de tus labs, revisamos tus decisiones financieras reales y calibramos tus hábitos en directo con otros miembros."
+                  ) : (
+                    "Únete a tus 3 mentorías en vivo iniciales. Analizamos los resultados de tus labs, revisamos operaciones reales y calibramos tu estructura operativa en directo con otros miembros."
+                  )}
                 </p>
                 <div className="pt-4 border-t border-white/5 flex items-center justify-between text-sm text-white/40">
                   <span>Valor Comercial: <span className="line-through">$800 USD</span></span>
@@ -865,10 +948,16 @@ export default function SalesLanding() {
                 <p className="text-xs font-mono uppercase tracking-widest text-[#8b5cf6] font-black flex items-center gap-1.5 mb-4">
                   <Gift size={14} /> BONO EXCLUSIVO #2
                 </p>
-                <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-2">Diagnóstico Privado de Consistencia</h3>
+                <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-2">
+                  {activeTab === 'personal' ? "Diagnóstico Privado de Hábitos" : "Diagnóstico Privado de Consistencia"}
+                </h3>
                 <p className="text-sm font-mono text-white/50 uppercase tracking-widest mb-4">Análisis Personalizado 1-a-1</p>
                 <p className="text-base text-white/80 leading-relaxed mb-6">
-                  Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental y te trazamos un plan de acción.
+                  {activeTab === 'personal' ? (
+                    "Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental con el dinero y te trazamos un plan de acción."
+                  ) : (
+                    "Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental y te trazamos un plan de acción."
+                  )}
                 </p>
                 <div className="pt-4 border-t border-white/5 flex items-center justify-between text-sm text-white/40">
                   <span>Valor Comercial: <span className="line-through">$1,000 USD</span></span>
@@ -904,14 +993,14 @@ export default function SalesLanding() {
                 </div>
 
                 <h3 className="text-center text-3xl sm:text-4xl font-black uppercase tracking-tight text-white mb-8">
-                  CALIBRA TU EJECUCIÓN HOY MISMO
+                  {activeTab === 'personal' ? "CALIBRA TUS FINANZAS HOY MISMO" : "CALIBRA TU EJECUCIÓN HOY MISMO"}
                 </h3>
 
                 <div className="space-y-1 mb-10">
                   {[
                     ['Ecosistema GENY LAB — 7 Laboratorios Interactivos + IA', '$1,200 USD'],
-                    ['Bono #1 — Mentorías de la Sala de Trading Elite (Semanales)', '$800 USD'],
-                    ['Bono #2 — Diagnóstico Privado 1-a-1 de tu Consistencia', '$1,000 USD'],
+                    [activeTab === 'personal' ? 'Bono #1 — Mentorías de la Sala de Mentoría Elite (Semanales)' : 'Bono #1 — Mentorías de la Sala de Trading Elite (Semanales)', '$800 USD'],
+                    [activeTab === 'personal' ? 'Bono #2 — Diagnóstico Privado 1-a-1 de tus Hábitos Financieros' : 'Bono #2 — Diagnóstico Privado 1-a-1 de tu Consistencia', '$1,000 USD'],
                   ].map(([item, val], i) => (
                     <div key={i} className="flex items-center justify-between gap-4 py-4 border-b border-white/5 text-base sm:text-lg">
                       <div className="flex items-center gap-3">
@@ -929,7 +1018,11 @@ export default function SalesLanding() {
                 </div>
 
                 <p className="text-white/80 text-base sm:text-lg text-center leading-relaxed max-w-2xl mx-auto py-4">
-                  Si este sistema lo único que lograra fuera <strong className="text-white font-bold">detener tu próxima operación impulsiva por venganza</strong> y evitar que quemes tu cuenta de fondeo... ¿valdría la pena? <strong className="text-[#00E676] font-bold">Recuperas esto con una sola decisión inteligente.</strong>
+                  {activeTab === 'personal' ? (
+                    <>Si este sistema lo único que lograra fuera <strong className="text-white font-bold">detener tu próximo gasto impulsivo por emoción</strong> y evitar que dañes tu estabilidad financiera... ¿valdría la pena? <strong className="text-[#00E676] font-bold">Recuperas esto con una sola decisión inteligente.</strong></>
+                  ) : (
+                    <>Si este sistema lo único que lograra fuera <strong className="text-white font-bold">detener tu próxima operación impulsiva por venganza</strong> y evitar que quemes tu cuenta de fondeo... ¿valdría la pena? <strong className="text-[#00E676] font-bold">Recuperas esto con una sola decisión inteligente.</strong></>
+                  )}
                 </p>
 
                 <div className="text-center py-6 space-y-3">
@@ -959,7 +1052,11 @@ export default function SalesLanding() {
                     <div>
                       <h4 className="font-black text-white text-base sm:text-lg uppercase tracking-wide mb-1.5">Garantía Incondicional de 15 Días</h4>
                       <p className="text-base text-white/80 leading-relaxed">
-                        Entra, haz los labs, prueba el simulador, asiste a la sala de trading en vivo. Si en 15 días sientes que no te revela patrones mentales de trading que te valen miles de dólares, nos mandas un correo y te devolvemos el <strong className="text-white">100% de tu dinero</strong>. Sin explicaciones ni condiciones. El riesgo es todo nuestro.
+                        {activeTab === 'personal' ? (
+                          <>Entra, haz los labs, prueba el simulador, asiste a las sesiones de mentoría en vivo. Si en 15 días sientes que no te revela patrones de comportamiento financiero que te valen miles de dólares, nos mandas un correo y te devolvemos el <strong className="text-white">100% de tu dinero</strong>. Sin explicaciones ni condiciones. El riesgo es todo nuestro.</>
+                        ) : (
+                          <>Entra, haz los labs, prueba el simulador, asiste a la sala de trading en vivo. Si en 15 días sientes que no te revela patrones mentales de trading que te valen miles de dólares, nos mandas un correo y te devolvemos el <strong className="text-white">100% de tu dinero</strong>. Sin explicaciones ni condiciones. El riesgo es todo nuestro.</>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -1011,7 +1108,7 @@ export default function SalesLanding() {
                   'Completas tu inscripción segura en la pasarela SSL.',
                   'Recibes tus credenciales de acceso instantáneo en tu correo.',
                   'Entras al mapa nodal y desbloqueas tu ADN Financiero.',
-                  'Asistes a la próxima Sala de Trading en vivo el sábado.'
+                  activeTab === 'personal' ? 'Asistes a la próxima mentoría en vivo el sábado.' : 'Asistes a la próxima Sala de Trading en vivo el sábado.'
                 ].map((text, i) => (
                   <div key={i} className="space-y-4">
                     <div className="w-12 h-12 rounded-2xl bg-[#00E676]/10 border-2 border-[#00E676]/25 flex items-center justify-center text-[#00E676] font-mono font-black text-base sm:text-lg shadow-[0_4px_15px_rgba(0,230,118,0.15)]">
@@ -1043,10 +1140,38 @@ export default function SalesLanding() {
           </FadeIn>
           
           <div className="space-y-6 max-w-4xl mx-auto">
-            <FadeIn><FAQItem q="¿Necesito experiencia en trading?" a="GENY LAB está optimizado para traders de cualquier nivel. Si estás empezando, te ayuda a formar hábitos correctos desde el día uno. Si eres experimentado, te ayuda a diagnosticar y extirpar las trampas psicológicas que te impiden escalar tus resultados." /></FadeIn>
-            <FadeIn delay={0.05}><FAQItem q="¿Es una estrategia o señales de trading?" a="Ninguna de las dos. GENY LAB no te da señales ni te vende una fórmula mágica de velas japonesas. Es una terminal interactiva que diagnostica tus sesgos cognitivos, mide tu límite real de riesgo e integra retroalimentación de Inteligencia Artificial para pulir tu disciplina." /></FadeIn>
-            <FadeIn delay={0.1}><FAQItem q="¿Cuánto tiempo al día requiere?" a="Cada uno de los 7 laboratorios se puede completar en unos 15 a 30 minutos. Está diseñado para que avances a tu propio ritmo. La mentoría en vivo de la Sala de Trading Elite es de 1 hora los sábados y queda grabada si no puedes asistir." /></FadeIn>
-            <FadeIn delay={0.15}><FAQItem q="He comprado otros cursos de trading antes. ¿Por qué funcionaría este?" a="Los cursos tradicionales asumen que tu cerebro reacciona igual que el del profesor. GENY LAB es único porque te mide a ti primero: diagnostica tu aversión al riesgo, calcula tus fugas de capital y mapea tu perfil específico para darte un plan personalizado." /></FadeIn>
+            <FadeIn>
+              <FAQItem
+                q={activeTab === 'personal' ? "¿Necesito experiencia previa o conocimientos de finanzas?" : "¿Necesito experiencia en trading?"}
+                a={activeTab === 'personal'
+                  ? "No, ninguno. GENY LAB está diseñado para ayudarte a diagnosticar tus patrones psicológicos inconscientes desde cero. Si eres principiante, formarás hábitos correctos desde el día uno. Si ya tienes experiencia invirtiendo, te ayudará a romper tus techos invisibles y optimizar tu retención de capital."
+                  : "GENY LAB está optimizado para traders de cualquier nivel. Si estás empezando, te ayuda a formar hábitos correctos desde el día uno. Si eres experimentado, te ayuda a diagnosticar y extirpar las trampas psicológicas que te impiden escalar tus resultados."}
+              />
+            </FadeIn>
+            <FadeIn delay={0.05}>
+              <FAQItem
+                q={activeTab === 'personal' ? "¿Es una estrategia o consejos de inversión?" : "¿Es una estrategia o señales de trading?"}
+                a={activeTab === 'personal'
+                  ? "Ninguna de las dos. GENY LAB no te da recomendaciones de compra de acciones ni te vende una fórmula mágica de riqueza fácil. Es una terminal interactiva que diagnostica tus sesgos cognitivos, mide tu termostato de riqueza e integra retroalimentación de Inteligencia Artificial para pulir tus hábitos financieros."
+                  : "Ninguna de las dos. GENY LAB no te da señales ni te vende una fórmula mágica de velas japonesas. Es una terminal interactiva que diagnostica tus sesgos cognitivos, mide tu límite real de riesgo e integra retroalimentación de Inteligencia Artificial para pulir tu disciplina."}
+              />
+            </FadeIn>
+            <FadeIn delay={0.1}>
+              <FAQItem
+                q="¿Cuánto tiempo al día requiere?"
+                a={activeTab === 'personal'
+                  ? "Cada uno de los 7 laboratorios se puede completar en unos 15 a 30 minutos. Está diseñado para que avances a tu propio ritmo. Las sesiones de mentoría y feedback en vivo quedan grabadas si no puedes asistir."
+                  : "Cada uno de los 7 laboratorios se puede completar en unos 15 a 30 minutos. Está diseñado para que avances a tu propio ritmo. La mentoría en vivo de la Sala de Trading Elite es de 1 hora los sábados y queda grabada si no puedes asistir."}
+              />
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <FAQItem
+                q={activeTab === 'personal' ? "He comprado otros libros o cursos de finanzas antes. ¿Por qué funcionaría este?" : "He comprado otros cursos de trading antes. ¿Por qué funcionaría este?"}
+                a={activeTab === 'personal'
+                  ? "Los métodos tradicionales asumen que tu cerebro reacciona igual que el del autor. GENY LAB es único porque te mide a ti primero: diagnostica tus sesgos cognitivos ante pérdidas, calcula tus fugas silenciosas y mapea tu termostato para darte un plan de acción a tu medida."
+                  : "Los cursos tradicionales asumen que tu cerebro reacciona igual que el del profesor. GENY LAB es único porque te mide a ti primero: diagnostica tu aversión al riesgo, calcula tus fugas de capital y mapea tu perfil específico para darte un plan personalizado."}
+              />
+            </FadeIn>
             <FadeIn delay={0.2}><FAQItem q="¿Cómo funciona la garantía de 15 días?" a="Es simple: entras al panel, utilizas el simulador, asistes a la sesión en vivo y completas los módulos. Si no sientes que el ecosistema te da la claridad que necesitas, nos escribes un correo y te reembolsamos el 100% de tu pago. Cero preguntas incómodas." /></FadeIn>
             <FadeIn delay={0.25}><FAQItem q="¿Cómo accedo tras realizar el pago?" a="El sistema te enviará automáticamente tus credenciales a tu correo en menos de 60 segundos. Podrás ingresar a tu panel de inmediato y empezar con el Lab 1 hoy mismo." /></FadeIn>
           </div>
@@ -1063,7 +1188,11 @@ export default function SalesLanding() {
           <FadeIn>
             <Logo imgClassName="w-56 md:w-64 object-contain opacity-75" className="mb-6" />
             <p className="text-white/80 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-              La próxima vez que abras una operación en tu cuenta real, puedes hacerlo desde el mismo caos e indisciplina de siempre... o puedes hacerlo calibrado, con control total y el respaldo del ecosistema.
+              {activeTab === 'personal' ? (
+                "La próxima vez que tomes una decisión de dinero o presupuestes tu mes, puedes hacerlo desde el mismo caos e indisciplina de siempre... o puedes hacerlo calibrado, con control total y el respaldo del ecosistema."
+              ) : (
+                "La próxima vez que abras una operación en tu cuenta real, puedes hacerlo desde el mismo caos e indisciplina de siempre... o puedes hacerlo calibrado, con control total y el respaldo del ecosistema."
+              )}
             </p>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight text-white mb-10">
               Tu consistencia te espera del{' '}

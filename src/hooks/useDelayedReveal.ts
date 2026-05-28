@@ -27,31 +27,8 @@ export function useDelayedReveal(storageKey: string) {
         const { data: { user } } = await supabase.auth.getUser();
         const isAuth = !!user;
 
-        // 2. Fetch reveal state
-        let arrivedAt = 0;
-        let revealed = false;
-
-        if (isAuth) {
-          const dbState = await loadActivityProgressDB(storageKey);
-          if (dbState && dbState.metadata) {
-            revealed = dbState.metadata.contentRevealed === true;
-            arrivedAt = dbState.metadata.arrivedAt || 0;
-          }
-        } else {
-          // Anonymous visitor fallback to sessionStorage (no localStorage)
-          revealed = sessionStorage.getItem(storageKey) === 'true';
-          arrivedAt = parseInt(sessionStorage.getItem(`${storageKey}_arrived`) || '0');
-        }
-
-        if (revealed) {
-          if (!cancelled) {
-            setContentRevealed(true);
-            setLoading(false);
-          }
-          return;
-        }
-
-        // 3. Fetch delay settings from site config API
+        // 2. Fetch delay settings from site config API FIRST
+        //    (so admin toggle takes effect immediately for all visitors)
         let enabled = true;
         let delayMinutes = 10;
 
@@ -76,11 +53,29 @@ export function useDelayedReveal(storageKey: string) {
             setContentRevealed(true);
             setLoading(false);
           }
-          // Save completion
-          if (isAuth) {
-            saveActivityProgressDB(storageKey, { arrivedAt: Date.now(), contentRevealed: true }, false);
-          } else {
-            sessionStorage.setItem(storageKey, 'true');
+          return;
+        }
+
+        // 3. Feature is enabled — check saved reveal state
+        let arrivedAt = 0;
+        let revealed = false;
+
+        if (isAuth) {
+          const dbState = await loadActivityProgressDB(storageKey);
+          if (dbState && dbState.metadata) {
+            revealed = dbState.metadata.contentRevealed === true;
+            arrivedAt = dbState.metadata.arrivedAt || 0;
+          }
+        } else {
+          // Anonymous visitor fallback to sessionStorage (no localStorage)
+          revealed = sessionStorage.getItem(storageKey) === 'true';
+          arrivedAt = parseInt(sessionStorage.getItem(`${storageKey}_arrived`) || '0');
+        }
+
+        if (revealed) {
+          if (!cancelled) {
+            setContentRevealed(true);
+            setLoading(false);
           }
           return;
         }
