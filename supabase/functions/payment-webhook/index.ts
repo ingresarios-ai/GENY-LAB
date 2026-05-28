@@ -267,11 +267,12 @@ Deno.serve(async (req: Request) => {
 
     // Filter by product — platform-specific rules
     const WHOP_PRODUCT_ID = "prod_yohcdlgNjm2cm";
+    const WHOP_TEST_PRODUCT_ID = "prod_xxxxxxxxxxxxx";
 
     if (platform === "whop") {
       // Whop: filter by product_id
       const whopPid = body?.data?.product?.id || body?.product?.id || "";
-      if (whopPid && whopPid !== WHOP_PRODUCT_ID) {
+      if (whopPid && whopPid !== WHOP_PRODUCT_ID && whopPid !== WHOP_TEST_PRODUCT_ID) {
         console.log(`⏭️ Ignored Whop purchase for product_id: ${whopPid} (expected ${WHOP_PRODUCT_ID})`);
         return new Response(
           JSON.stringify({ success: true, message: "Ignored (wrong Whop product)" }),
