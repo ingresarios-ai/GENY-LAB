@@ -518,7 +518,7 @@ Deno.serve(async (req: Request) => {
         const search = url.searchParams.get("search");
         if (search) {
           // Security: escape PostgREST special chars to prevent filter injection
-          const safe = search.replace(/[%,.*()\\]/g, "").slice(0, 100);
+          const safe = search.replace(/[%,*()\\]/g, "").slice(0, 100);
           if (safe) {
             query = query.or(
               `name.ilike.%${safe}%,email.ilike.%${safe}%`
