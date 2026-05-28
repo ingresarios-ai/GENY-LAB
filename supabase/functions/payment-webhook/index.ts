@@ -74,6 +74,30 @@ function getCountryName(iso: string): string {
   return COUNTRY_DATA[iso.toUpperCase()]?.name || iso;
 }
 
+// Busca un usuario de auth por email recorriendo la paginación de listUsers
+async function findAuthUserByEmail(supabase: any, email: string): Promise<string | null> {
+  let page = 1;
+  const perPage = 100;
+  while (true) {
+    const { data, error } = await supabase.auth.admin.listUsers({
+      page,
+      perPage,
+    });
+    if (error || !data?.users || data.users.length === 0) {
+      break;
+    }
+    const found = data.users.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+    if (found) {
+      return found.id;
+    }
+    if (data.users.length < perPage) {
+      break;
+    }
+    page++;
+  }
+  return null;
+}
+
 // Crea cuenta en Supabase Auth y genera magic link
 async function createAuthUserAndMagicLink(
   supabase: any,
@@ -81,16 +105,12 @@ async function createAuthUserAndMagicLink(
   name: string
 ): Promise<{ authUserId: string | null; magicLinkUrl: string | null }> {
   try {
-    // Try to create the auth user (will fail silently if already exists)
-    const { data: existingUsers } = await supabase.auth.admin.listUsers();
-    const existing = (existingUsers?.users || []).find(
-      (u: any) => u.email?.toLowerCase() === email.toLowerCase()
-    );
+    const existingId = await findAuthUserByEmail(supabase, email);
 
     let authUserId: string;
 
-    if (existing) {
-      authUserId = existing.id;
+    if (existingId) {
+      authUserId = existingId;
     } else {
       // Create new auth user — email auto-confirmed, no password
       const { data: newUser, error: createError } =

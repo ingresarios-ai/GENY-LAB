@@ -6,6 +6,30 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const SITE_URL = "https://genylab.ingresarios.net";
 
+// Busca un usuario de auth por email recorriendo la paginación de listUsers
+async function findAuthUserByEmail(supabase: any, email: string): Promise<string | null> {
+  let page = 1;
+  const perPage = 100;
+  while (true) {
+    const { data, error } = await supabase.auth.admin.listUsers({
+      page,
+      perPage,
+    });
+    if (error || !data?.users || data.users.length === 0) {
+      break;
+    }
+    const found = data.users.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+    if (found) {
+      return found.id;
+    }
+    if (data.users.length < perPage) {
+      break;
+    }
+    page++;
+  }
+  return null;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -64,16 +88,13 @@ Deno.serve(async (req: Request) => {
 
       if (createErr) {
         // User might already exist in auth but not linked
-        const { data: existingUsers } = await supabase.auth.admin.listUsers();
-        const existing = (existingUsers?.users || []).find(
-          (u: any) => u.email?.toLowerCase() === user.email.toLowerCase()
-        );
-        if (existing) {
-          authUserId = existing.id;
+        const existingId = await findAuthUserByEmail(supabase, user.email);
+        if (existingId) {
+          authUserId = existingId;
           // Link it
           await supabase
             .from("enrolled_users")
-            .update({ auth_user_id: existing.id })
+            .update({ auth_user_id: existingId })
             .eq("id", user.id);
         } else {
           console.error("Failed to create auth user:", createErr);

@@ -39,16 +39,37 @@ function countryFromPhone(phone: string): string | null {
   return null;
 }
 
+// Busca un usuario de auth por email recorriendo la paginación de listUsers
+async function findAuthUserByEmail(supabase: any, email: string): Promise<string | null> {
+  let page = 1;
+  const perPage = 100;
+  while (true) {
+    const { data, error } = await supabase.auth.admin.listUsers({
+      page,
+      perPage,
+    });
+    if (error || !data?.users || data.users.length === 0) {
+      break;
+    }
+    const found = data.users.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+    if (found) {
+      return found.id;
+    }
+    if (data.users.length < perPage) {
+      break;
+    }
+    page++;
+  }
+  return null;
+}
+
 // Crear cuenta en Supabase Auth
 async function createAuthUser(supabase: any, email: string, name: string): Promise<string | null> {
   try {
-    const { data: existingUsers } = await supabase.auth.admin.listUsers();
-    const existing = (existingUsers?.users || []).find(
-      (u: any) => u.email?.toLowerCase() === email.toLowerCase()
-    );
+    const existingId = await findAuthUserByEmail(supabase, email);
 
-    if (existing) {
-      return existing.id;
+    if (existingId) {
+      return existingId;
     }
 
     const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
