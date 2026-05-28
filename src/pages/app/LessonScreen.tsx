@@ -9,6 +9,7 @@ import { LESSONS, getLevelForXp, TOTAL_LESSONS } from '../../lib/lessons';
 import { 
   getProgress, isLessonUnlocked,
   markVideoCompleted, markActivityCompleted, getCompletedCount, isAllCompleted,
+  isAlumnoTribu,
 } from '../../lib/progressStore';
 import { loadActivityProgressDB } from '../../lib/activitySync';
 
@@ -196,7 +197,7 @@ export default function LessonScreen() {
         // Check if ALL lessons are now complete (last lesson finished)
         if (isAllCompleted()) {
           setTimeout(() => {
-            navigate('/app/diagnostico');
+            navigate(isAlumnoTribu() ? '/app' : '/app/diagnostico');
           }, 1500);
         } else if (result.leveledUp) {
           setTimeout(() => {
@@ -240,7 +241,7 @@ export default function LessonScreen() {
       } else if (isAllCompleted()) {
         // Last lesson completed via fallback path
         setTimeout(() => {
-          navigate('/app/diagnostico');
+          navigate(isAlumnoTribu() ? '/app' : '/app/diagnostico');
         }, 1500);
       } else {
         const nextL = LESSONS.find(l => l.order === lesson.order + 1);
@@ -482,7 +483,7 @@ export default function LessonScreen() {
                   </div>
                 )}
               </div>
-            ) : activityDone && isAllCompleted() ? (
+            ) : activityDone && isAllCompleted() && !isAlumnoTribu() ? (
               <div className="text-sm font-medium flex flex-col gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-[#F2C500]/10 flex shrink-0 items-center justify-center text-[#F2C500] border border-[#F2C500]/30 shadow-[0_0_20px_rgba(242,197,0,0.3)]">
@@ -536,7 +537,7 @@ export default function LessonScreen() {
               if (nextL) {
                 setShowModuleUnlocked(true);
               } else {
-                navigate('/app/diagnostico');
+                navigate(isAlumnoTribu() ? '/app' : '/app/diagnostico');
               }
             }}
             className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-md flex items-center justify-center flex-col cursor-pointer"

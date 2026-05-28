@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { saveActivityProgressDB, loadActivityProgressDB, clearActivityProgressDB } from '../../lib/activitySync';
-import { markActivityCompleted } from "../../lib/progressStore";
+import { markActivityCompleted, isAlumnoTribu } from "../../lib/progressStore";
 import confetti from "canvas-confetti";
 import {
   DAYS, PHASES, TRACKS, ARQUETIPOS, EMOCIONES, GLOSARIO, TIPO_COLOR,
@@ -736,7 +736,8 @@ export default function RetoFlow() {
               </div>
             </div>
 
-            {/* Booking CTA Card */}
+            {/* Booking CTA Card (hidden for Alumno tribu) */}
+            {!isAlumnoTribu() && (
             <div className="glass-card p-8 md:p-10 border border-[#F2C500]/30 bg-gradient-to-r from-[#F2C500]/10 to-transparent relative overflow-hidden rounded-3xl text-center space-y-6">
               <div className="absolute top-0 right-0 p-8 text-8xl opacity-[0.03] pointer-events-none">
                 🏆
@@ -760,6 +761,7 @@ export default function RetoFlow() {
                 </div>
               </div>
             </div>
+            )}
 
           </motion.div>
         </div>

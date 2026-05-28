@@ -223,3 +223,20 @@ export const syncFromDB = (activityIds: string[]) => {
     window.dispatchEvent(new CustomEvent('progress-synced'));
   }
 };
+
+// ============================================
+// User payment method (for conditional UI)
+// ============================================
+
+const PM_KEY = 'geny_lab_user_pm';
+
+export const setUserPaymentMethod = (pm: string) => {
+  try { localStorage.setItem(PM_KEY, pm); } catch {}
+};
+
+export const getUserPaymentMethod = (): string | null => {
+  try { return localStorage.getItem(PM_KEY); } catch { return null; }
+};
+
+/** Returns true when the current user is an "Alumno tribu" (source = ghl) */
+export const isAlumnoTribu = (): boolean => getUserPaymentMethod() === 'ghl';

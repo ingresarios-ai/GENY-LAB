@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Lock, Play, Check, ChevronLeft, ChevronRight, Trophy, Flame, X, Zap, GraduationCap, Sparkles } from 'lucide-react';
 import { LESSONS, getLevelForXp, getXpProgressInLevel, PHASE_LABELS, type Lesson } from '../../lib/lessons';
-import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted } from '../../lib/progressStore';
+import { getProgress, isLessonUnlocked, isLessonCompleted, getCompletedCount, isAllCompleted, setUserPaymentMethod, isAlumnoTribu } from '../../lib/progressStore';
 import { Logo } from '../../components/Logo';
 import { loadAllActivitiesProgressDB, loadActivityProgressDB, saveActivityProgressDB } from '../../lib/activitySync';
 import { supabase } from '../../lib/supabase';
@@ -32,6 +32,7 @@ export default function PathMap() {
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const [userName, setUserName] = useState<string>('Trader');
+  const [isTribu, setIsTribu] = useState(() => isAlumnoTribu());
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [dbActivities, setDbActivities] = useState<any[]>([]);
   const [pendingActivity, setPendingActivity] = useState<{
@@ -51,11 +52,15 @@ export default function PathMap() {
         if (user && user.email) {
           const { data } = await supabase
             .from('enrolled_users')
-            .select('name')
+            .select('name, payment_method')
             .eq('email', user.email)
             .single();
           if (data && data.name) {
-            setUserName(data.name.split(' ')[0]); // Get first name
+            setUserName(data.name.split(' ')[0]);
+          }
+          if (data?.payment_method) {
+            setUserPaymentMethod(data.payment_method);
+            setIsTribu(data.payment_method === 'ghl');
           }
         }
       } catch (err) {
@@ -85,7 +90,7 @@ export default function PathMap() {
 
   const pendingActivityName = useMemo(() => {
     if (allDone) {
-      if (visitedBooking) {
+      if (isTribu || visitedBooking) {
         return 'CONVERTIRTE EN INGRESARIO';
       }
       return 'Agenda tu Sesión Diagnóstico 📅';
@@ -96,7 +101,7 @@ export default function PathMap() {
       }
     }
     return 'Ninguna';
-  }, [dbActivities, allDone, visitedBooking]);
+  }, [dbActivities, allDone, visitedBooking, isTribu]);
 
   // Auto-scroll to current card
   useEffect(() => {
@@ -597,8 +602,8 @@ export default function PathMap() {
           );
         })}
 
-        {/* Final Reward Card - Mobile */}
-        <motion.div
+        {/* Final Reward Card - Mobile (hidden for Alumno tribu) */}
+        {!isTribu && <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: LESSONS.length * 0.05 }}
@@ -649,7 +654,7 @@ export default function PathMap() {
           ) : (
             <Lock size={14} className="text-white/20 shrink-0" />
           )}
-        </motion.div>
+        </motion.div>}
       </div>
 
       {/* ══════ DESKTOP: Horizontal Carousel ══════ */}
@@ -762,8 +767,8 @@ export default function PathMap() {
               </motion.div>
             );
           })}
-          {/* Final Reward - Desktop */}
-          <motion.div 
+          {/* Final Reward - Desktop (hidden for Alumno tribu) */}
+          {!isTribu && <motion.div 
             initial={{ opacity: 0, x: 30 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.5, delay: LESSONS.length * 0.1 }}
@@ -862,7 +867,7 @@ export default function PathMap() {
                 )}
               </div>
             </div>
-          </motion.div>
+          </motion.div>}
         </div>
       </div>
     </div>

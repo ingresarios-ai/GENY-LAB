@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trophy } from 'lucide-react';
-import { isAllCompleted } from '../../lib/progressStore';
+import { isAllCompleted, isAlumnoTribu } from '../../lib/progressStore';
 import { Logo } from '../../components/Logo';
 import { Footer } from '../../components/Footer';
 import Confetti from '../../components/Confetti';
@@ -24,6 +24,13 @@ export default function DiagnosticoBooking() {
   // Guard: only accessible if all lessons are completed
   useEffect(() => {
     if (!isAllCompleted()) {
+      navigate('/app', { replace: true });
+    }
+  }, [navigate]);
+
+  // Guard: Alumno tribu users cannot access booking
+  useEffect(() => {
+    if (isAlumnoTribu()) {
       navigate('/app', { replace: true });
     }
   }, [navigate]);
