@@ -1107,12 +1107,38 @@ export default function RetoFlow() {
                       ~{ex.time}
                     </span>
                   </div>
-                  <p className={cx(
-                    "text-slate-400 text-sm md:text-base whitespace-pre-line",
+                  <div className={cx(
+                    "text-slate-400 text-sm md:text-base",
                     isDone ? "opacity-50" : ""
                   )}>
-                    {ex.inst}
-                  </p>
+                    {ex.inst.split('\n').map((line, li) => {
+                      if (!line.trim()) return <div key={li} className="h-2" />;
+                      const formatted = line.replace(
+                        /\b(ESCRIBE|VISUALIZA|OBSERVA|CIERRA LOS OJOS|PERMITE|RESPIRA|REPITE|RECONOCE|ANALIZA|DECIDE|DETENTE|PREGÚNTATE|PREGÚNTALE|COLOCA|EJECUTA|EVALÚA|IDENTIFICA|SIENTE|ESCUCHA|LEE|ABRE|RESPONDE|REVISA|IMPORTANTE|REGLA DE PROTECCIÓN|LA REGLA)\b/g,
+                        '%%ACTION%%$1%%/ACTION%%'
+                      );
+                      const parts = formatted.split(/%%ACTION%%|%%\/ACTION%%/);
+                      const isBullet = /^\s*[•\-–]/.test(line);
+                      const isNumbered = /^\s*\d+[\.\)]/.test(line);
+                      const isPaso = /^\s*Paso\s+\d/i.test(line);
+                      const isExample = /^\s*(Ejemplo|Ej:)/i.test(line);
+                      return (
+                        <p key={li} className={cx(
+                          isBullet ? "pl-4 py-0.5" : "",
+                          isNumbered ? "pl-2 py-0.5" : "",
+                          isPaso ? "font-semibold text-slate-300 mt-2" : "",
+                          isExample ? "italic text-slate-500" : "",
+                          !isBullet && !isNumbered && !isPaso ? "py-0.5" : ""
+                        )}>
+                          {parts.map((part, pi) =>
+                            pi % 2 === 1
+                              ? <span key={pi} className="font-bold text-amber-400/90">{part}</span>
+                              : <span key={pi}>{part}</span>
+                          )}
+                        </p>
+                      );
+                    })}
+                  </div>
                 </div>
               </motion.div>
             );
