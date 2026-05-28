@@ -722,6 +722,39 @@ Deno.serve(async (req: Request) => {
           body.phone = body.phone ? normalizePhone(body.phone) : null;
         }
 
+        // If promoting to active, check if we need to provision auth
+        const isPromoting = body.status === "active";
+        let provisionedAuth = false;
+
+        if (isPromoting) {
+          // Fetch current user to check if auth already exists
+          const { data: currentUser } = await supabase
+            .from("enrolled_users")
+            .select("email, name, auth_user_id, access_code, status")
+            .eq("id", userId)
+            .single();
+
+          if (currentUser && !currentUser.auth_user_id) {
+            // Create auth user + magic link
+            const { authUserId, magicLinkUrl } = await createAuthUserAndMagicLink(
+              supabase,
+              currentUser.email,
+              currentUser.name || "Sin nombre"
+            );
+
+            // Generate permanent access code
+            const accessCode = currentUser.access_code || crypto.randomUUID().replace(/-/g, '');
+            const permanentUrl = `${SITE_URL}/acceso/${accessCode}`;
+
+            body.auth_user_id = authUserId || null;
+            body.magic_link_url = permanentUrl;
+            body.access_code = accessCode;
+            provisionedAuth = true;
+
+            console.log(`🔑 Auto-provisioned auth for ${currentUser.email}: auth_id=${authUserId}`);
+          }
+        }
+
         const { data, error } = await supabase
           .from("enrolled_users")
           .update({ ...body, updated_at: new Date().toISOString() })
@@ -739,7 +772,7 @@ Deno.serve(async (req: Request) => {
           data.magic_link_url
         );
 
-        return json({ data });
+        return json({ data, auth_provisioned: provisionedAuth });
       }
 
       // DELETE /users/:id

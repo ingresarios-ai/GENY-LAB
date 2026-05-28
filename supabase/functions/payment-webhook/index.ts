@@ -192,6 +192,9 @@ Deno.serve(async (req: Request) => {
     const body = await req.json();
     const supabase = createClient(supabaseUrl, serviceKey);
 
+    // Debug: log incoming webhook payload summary
+    console.log(`📩 payment-webhook received | type: ${body?.type || body?.event || 'unknown'} | platform-hints: hotmart=${!!req.headers.get('x-hotmart-hottok')} whop=${!!(req.headers.get('webhook-signature') || req.headers.get('x-whop-signature'))} | email: ${body?.data?.user?.email || body?.data?.buyer?.email || body?.email || 'none'}`);
+
     // Detect platform from headers or payload
     const hotmartToken = req.headers.get("x-hotmart-hottok");
     const whopSig =
