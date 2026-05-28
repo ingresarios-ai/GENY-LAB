@@ -149,10 +149,50 @@ async function sendToLeadConnector(
       body: JSON.stringify(payload),
     });
     console.log(
-      `\uD83D\uDCE4 LeadConnector: ${res.status} for ${email} (phone: ${normalizedPhone})`
+      `📤 LeadConnector: ${res.status} for ${email} (phone: ${normalizedPhone})`
     );
   } catch (err) {
     console.error("LeadConnector error:", err);
+  }
+}
+
+const N8N_WEBHOOK_URL = "https://n8n.srv979105.hstgr.cloud/webhook/41e30e1a-bbe8-4996-b328-e4ff2c1b8da5";
+
+// Envía datos al webhook de n8n
+async function sendToN8n(opts: {
+  name: string;
+  email: string;
+  phone: string;
+  magicLinkUrl?: string | null;
+  platform?: string;
+  amount?: number | null;
+  currency?: string;
+  countryName?: string;
+}) {
+  try {
+    const payload = {
+      name: opts.name,
+      email: opts.email.toLowerCase().trim(),
+      phone: normalizePhone(opts.phone),
+      magic_link_url: opts.magicLinkUrl || null,
+      platform: opts.platform || "manual",
+      amount: opts.amount || null,
+      currency: opts.currency || null,
+      country_name: opts.countryName || null,
+      status: "active",
+      timestamp: new Date().toISOString()
+    };
+
+    const res = await fetch(N8N_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    console.log(
+      `📤 n8n webhook (admin): ${res.status} for ${opts.email} (platform: ${payload.platform})`
+    );
+  } catch (err) {
+    console.error("n8n webhook (admin) error:", err);
   }
 }
 
@@ -663,6 +703,16 @@ Deno.serve(async (req: Request) => {
 
         sendToLeadConnector(name, email, normalizedPhone, permanentUrl);
 
+        sendToN8n({
+          name,
+          email,
+          phone: normalizedPhone,
+          magicLinkUrl: permanentUrl,
+          platform: payment_method || "manual",
+          amount: payment_amount,
+          countryName: countryFromPhone(normalizedPhone) || null
+        });
+
         return json({ data, magic_link_url: permanentUrl }, 201);
       }
 
@@ -792,6 +842,18 @@ Deno.serve(async (req: Request) => {
           data.phone || "",
           data.magic_link_url
         );
+
+        if (isPromoting) {
+          sendToN8n({
+            name: data.name,
+            email: data.email,
+            phone: data.phone || "",
+            magicLinkUrl: data.magic_link_url,
+            platform: data.payment_platform || data.payment_method || "manual",
+            amount: data.payment_amount,
+            countryName: data.country_name || null
+          });
+        }
 
         return json({ data, auth_provisioned: provisionedAuth });
       }

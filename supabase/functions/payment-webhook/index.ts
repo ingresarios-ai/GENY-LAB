@@ -189,6 +189,48 @@ async function sendToLeadConnector(opts: {
   }
 }
 
+const N8N_WEBHOOK_URL = "https://n8n.srv979105.hstgr.cloud/webhook/41e30e1a-bbe8-4996-b328-e4ff2c1b8da5";
+
+// Envía datos al webhook de n8n
+async function sendToN8n(opts: {
+  name: string;
+  email: string;
+  phone: string;
+  magicLinkUrl?: string | null;
+  country?: string;
+  countryName?: string;
+  platform?: string;
+  amount?: number | null;
+  currency?: string;
+}) {
+  try {
+    const payload = {
+      name: opts.name,
+      email: opts.email.toLowerCase().trim(),
+      phone: opts.phone,
+      magic_link_url: opts.magicLinkUrl || null,
+      platform: opts.platform || "unknown",
+      amount: opts.amount || null,
+      currency: opts.currency || null,
+      country: opts.country || null,
+      country_name: opts.countryName || null,
+      status: "active",
+      timestamp: new Date().toISOString()
+    };
+
+    const res = await fetch(N8N_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    console.log(
+      `📤 n8n webhook: ${res.status} for ${opts.email} (platform: ${opts.platform})`
+    );
+  } catch (err) {
+    console.error("n8n webhook error:", err);
+  }
+}
+
 Deno.serve(async (req: Request) => {
   // Only accept POST
   if (req.method === "OPTIONS") {
@@ -365,6 +407,18 @@ Deno.serve(async (req: Request) => {
     // Send data to LeadConnector webhook (fire and forget)
     const isoCountry = normalizeCountry(country);
     sendToLeadConnector({
+      name: name || "Sin nombre",
+      email,
+      phone: normalizedPhone,
+      magicLinkUrl,
+      country: isoCountry,
+      countryName: getCountryName(isoCountry),
+      platform,
+      amount,
+      currency,
+    });
+
+    sendToN8n({
       name: name || "Sin nombre",
       email,
       phone: normalizedPhone,
