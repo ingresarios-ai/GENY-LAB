@@ -301,13 +301,8 @@ export default function SalesLanding() {
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <FadeIn>
             <div className="text-center mb-12">
-              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00E676] mb-3 block">PRESENTAMOS EL NÚCLEO</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-white via-white to-[#00D1FF] bg-clip-text text-transparent">
-                GENY LAB
-              </h2>
-              <p className="text-white/40 text-sm font-mono uppercase tracking-[0.2em] mt-3">
-                {activeTab === 'personal' ? "Sistema de Calibración Nodal para tus Finanzas" : "Sistema de Calibración Nodal para Traders"}
-              </p>
+              <span className="text-xs md:text-sm font-mono tracking-[0.25em] uppercase text-[#00E676] mb-6 block">PRESENTAMOS</span>
+              <Logo imgClassName="w-56 md:w-72 lg:w-80 object-contain drop-shadow-[0_0_30px_rgba(0,209,255,0.2)] mx-auto" taglineClassName="text-[10px] md:text-xs text-white/50 mt-2" />
             </div>
           </FadeIn>
 
