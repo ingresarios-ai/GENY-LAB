@@ -264,23 +264,6 @@ export default function SalesLanding() {
             )}
           </div>
 
-          {/* HEADLINE — Identity-based pattern interrupt (HUGE TYPOGRAPHY) */}
-          {contentRevealed && (
-          <div ref={headlineRef} className="text-center max-w-5xl mx-auto mt-6">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.6rem] font-black leading-[1.08] tracking-tight mb-8">
-              Sabes exactamente lo que tienes que hacer…<br />
-              <span className="bg-gradient-to-r from-red-500 via-red-400 to-[#FF6321] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(239,68,68,0.25)]">
-                y aún así lo haces mal.
-              </span>
-            </h1>
-            <p className="text-white/80 text-xl sm:text-2xl md:text-3xl leading-relaxed max-w-4xl mx-auto mb-10 font-medium">
-              Si esa frase te dolió al leerla, felicidades: significa que eres lo suficientemente honesto para admitir que estás operando bajo el caos. Y ese es el primer paso para corregirlo.
-            </p>
-            <div className="animate-bounce inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-white/40">
-              <ArrowDown size={18} />
-            </div>
-          </div>
-          )}
 
           {/* Waiting message while content is hidden */}
           {!contentRevealed && (
