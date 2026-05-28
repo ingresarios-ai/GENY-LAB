@@ -376,6 +376,100 @@ export default function SalesLanding() {
         </div>
       </section>
 
+      <section className="py-20 md:py-28 relative">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+          <FadeIn>
+            <div className="text-center mb-16">
+              <span className="text-sm md:text-base font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block font-bold">ECOSISTEMA DE CALIBRACIÓN</span>
+              <h2 className="text-3xl sm:text-5xl md:text-6xl font-black leading-[1.1] mb-4">
+                7 laboratorios diseñados para<br />
+                <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">auditar tu psicología</span> y estructura
+              </h2>
+              <p className="text-white/60 text-base md:text-lg max-w-2xl mx-auto">Cada uno de los 7 módulos prácticos ataca un ángulo crítico de los patrones invisibles que sabotean tu capital.</p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
+            {[
+              {
+                emoji: '🧬', title: 'Tu ADN Financiero', hook: 'LAB 1: PERFIL DE INVERSIÓN', color: '#00D1FF', num: '01',
+                desc: activeTab === 'personal'
+                  ? 'Descubre qué tipo de inversionista eres realmente, cuál es tu perfil de riesgo real y qué estilo de ahorro e inversión se alinea con tu naturaleza financiera. Deja de forzar sistemas ajenos.'
+                  : 'Descubre qué tipo de inversionista eres realmente, cuál es tu perfil de riesgo real y qué estilo operativo se alinea con tu naturaleza financiera. Deja de forzar estrategias ajenas.'
+              },
+              {
+                emoji: '🐜', title: 'Gastos Hormiga', hook: 'LAB 2: PROYECCIÓN DE FUGAS', color: '#f59e0b', num: '02',
+                desc: 'Identifica las pérdidas de capital silenciosas que devoran tus fondos sin que te des cuenta. Proyecta el impacto real a 5 y 10 años de no detener estas fugas hoy.'
+              },
+              {
+                emoji: '🌡️', title: 'Termostato Financiero', hook: 'LAB 3: TECHO DE RIQUEZA', color: '#ef4444', num: '03',
+                desc: activeTab === 'personal'
+                  ? 'Mide y expande tu tolerancia biológica a la escasez y el crecimiento. Si no calibras este límite, tu cerebro saboteará tu capacidad de ahorro y retención de capital de forma automática.'
+                  : 'Mide y expande tu tolerancia biológica a la pérdida antes de entrar en pánico. Si no calibras este límite, tu cerebro saboteará tus stops de forma automática.'
+              },
+              {
+                emoji: '🧠', title: 'Trampas del Dinero', hook: 'LAB 4: 5 SESGOS COGNITIVOS', color: '#f97316', num: '04',
+                desc: 'Detecta los sesgos mentales y trampas cognitivas que te hacen cometer errores irracionales bajo presión. Reconócelos en tiempo real para proteger tu saldo.'
+              },
+              {
+                emoji: '📋', title: 'Mi Primer PEDEM', hook: 'LAB 5: SISTEMA DE PLANIFICACIÓN', color: '#3b82f6', num: '05',
+                desc: activeTab === 'personal'
+                  ? 'Construye tu plan de estructuración de gastos y mapa de riqueza mensual paso a paso usando el framework PEDEM. Separa al 5% libre financieramente del 95% que vive al día.'
+                  : 'Construye tu bitácora de operaciones y plan de trading paso a paso usando el framework PEDEM. Separa al 5% consistente del 95% que opera al azar.'
+              },
+              {
+                emoji: '🤯', title: 'Mis Emociones (Reto Sombra)', hook: 'LAB 6: AUTOSABOTAJE INTERIOR', color: '#8b5cf6', num: '06',
+                desc: activeTab === 'personal'
+                  ? 'Desmantela las creencias subconscientes y el miedo que sabotean tu abundancia. Identifica y desactiva al saboteador interno que causa tus compras impulsivas y fugas de capital.'
+                  : 'Desmantela las creencias subconscientes y el miedo que sabotean tus ejecuciones. Identifica y desactiva al saboteador interno que causa tu sobreoperación.'
+              },
+              {
+                emoji: '⚡', title: 'Reto del Flow', hook: 'LAB 7: MÁXIMO RENDIMIENTO', color: '#00E676', num: '07',
+                desc: activeTab === 'personal'
+                  ? 'Calibra tu estado mental para tomar decisiones de dinero en la zona de flujo óptimo. Aprende a activar este estado de paz mental y consistencia en tu día a día.'
+                  : 'Calibra tu estado mental para operar en la zona de flujo óptimo. Aprende a activar este estado de concentration total y consistencia cada vez que abres el gráfico.'
+              },
+            ].map((lab, i) => (
+              <FadeIn key={i} delay={i * 0.08} className="h-full">
+                <div className="rounded-3xl p-6 md:p-8 h-full border border-white/5 bg-[#080d16]/70 backdrop-blur-xl relative overflow-hidden flex flex-col justify-between group hover:border-white/15 hover:shadow-[0_0_50px_rgba(255,255,255,0.02)] transition-all duration-300">
+                  {/* Neon top-left accent */}
+                  <div className="absolute top-0 left-0 w-24 h-[2px] transition-all duration-300 group-hover:w-full" style={{ backgroundColor: lab.color }} />
+                  {/* Massive background label */}
+                  <span className="text-7xl sm:text-8xl font-black absolute top-2 right-4 text-white/[0.02] select-none pointer-events-none group-hover:text-white/[0.04] transition-all duration-300">
+                    {lab.num}
+                  </span>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
+                        {lab.emoji}
+                      </div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-mono tracking-widest uppercase font-black" style={{ color: lab.color }}>{lab.hook}</p>
+                        <h4 className="font-black text-white text-lg sm:text-xl uppercase tracking-tight">{lab.title}</h4>
+                      </div>
+                    </div>
+                    <p className="text-white/80 text-base leading-relaxed">{lab.desc}</p>
+                  </div>
+                  
+                  <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-white/40">
+                    <span>ESTADO: DISPONIBLE</span>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          <FadeIn>
+            <div className="rounded-3xl p-8 border border-[#00D1FF]/15 bg-gradient-to-r from-[#00D1FF]/5 via-transparent to-transparent text-center max-w-4xl mx-auto mt-12 shadow-[0_0_50px_rgba(0,209,255,0.02)]">
+              <p className="text-white/80 text-base md:text-lg leading-relaxed">
+                Todo el ecosistema está unificado bajo un <strong className="text-white font-bold">Mapa de Progreso Nodal</strong>. La Inteligencia Artificial audita tu rendimiento práctico y desbloquea el siguiente nivel solo cuando demuestras que has asimilado la competencia. <strong className="text-[#00D1FF] font-bold">No avanzas viendo videos; avanzas aplicando.</strong>
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {contentRevealed && (<>
 
       {/* ══════════════════════════════════════════════════════════════════
@@ -662,99 +756,6 @@ export default function SalesLanding() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 relative">
-        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
-          <FadeIn>
-            <div className="text-center mb-16">
-              <span className="text-sm md:text-base font-mono tracking-[0.25em] uppercase text-[#00D1FF] mb-3 block font-bold">ECOSISTEMA DE CALIBRACIÓN</span>
-              <h2 className="text-3xl sm:text-5xl md:text-6xl font-black leading-[1.1] mb-4">
-                7 laboratorios diseñados para<br />
-                <span className="bg-gradient-to-r from-[#00D1FF] to-[#00E676] bg-clip-text text-transparent">auditar tu psicología</span> y estructura
-              </h2>
-              <p className="text-white/60 text-base md:text-lg max-w-2xl mx-auto">Cada uno de los 7 módulos prácticos ataca un ángulo crítico de los patrones invisibles que sabotean tu capital.</p>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-            {[
-              {
-                emoji: '🧬', title: 'Tu ADN Financiero', hook: 'LAB 1: PERFIL DE INVERSIÓN', color: '#00D1FF', num: '01',
-                desc: activeTab === 'personal'
-                  ? 'Descubre qué tipo de inversionista eres realmente, cuál es tu perfil de riesgo real y qué estilo de ahorro e inversión se alinea con tu naturaleza financiera. Deja de forzar sistemas ajenos.'
-                  : 'Descubre qué tipo de inversionista eres realmente, cuál es tu perfil de riesgo real y qué estilo operativo se alinea con tu naturaleza financiera. Deja de forzar estrategias ajenas.'
-              },
-              {
-                emoji: '🐜', title: 'Gastos Hormiga', hook: 'LAB 2: PROYECCIÓN DE FUGAS', color: '#f59e0b', num: '02',
-                desc: 'Identifica las pérdidas de capital silenciosas que devoran tus fondos sin que te des cuenta. Proyecta el impacto real a 5 y 10 años de no detener estas fugas hoy.'
-              },
-              {
-                emoji: '🌡️', title: 'Termostato Financiero', hook: 'LAB 3: TECHO DE RIQUEZA', color: '#ef4444', num: '03',
-                desc: activeTab === 'personal'
-                  ? 'Mide y expande tu tolerancia biológica a la escasez y el crecimiento. Si no calibras este límite, tu cerebro saboteará tu capacidad de ahorro y retención de capital de forma automática.'
-                  : 'Mide y expande tu tolerancia biológica a la pérdida antes de entrar en pánico. Si no calibras este límite, tu cerebro saboteará tus stops de forma automática.'
-              },
-              {
-                emoji: '🧠', title: 'Trampas del Dinero', hook: 'LAB 4: 5 SESGOS COGNITIVOS', color: '#f97316', num: '04',
-                desc: 'Detecta los sesgos mentales y trampas cognitivas que te hacen cometer errores irracionales bajo presión. Reconócelos en tiempo real para proteger tu saldo.'
-              },
-              {
-                emoji: '📋', title: 'Mi Primer PEDEM', hook: 'LAB 5: SISTEMA DE PLANIFICACIÓN', color: '#3b82f6', num: '05',
-                desc: activeTab === 'personal'
-                  ? 'Construye tu plan de estructuración de gastos y mapa de riqueza mensual paso a paso usando el framework PEDEM. Separa al 5% libre financieramente del 95% que vive al día.'
-                  : 'Construye tu bitácora de operaciones y plan de trading paso a paso usando el framework PEDEM. Separa al 5% consistente del 95% que opera al azar.'
-              },
-              {
-                emoji: '🤯', title: 'Mis Emociones (Reto Sombra)', hook: 'LAB 6: AUTOSABOTAJE INTERIOR', color: '#8b5cf6', num: '06',
-                desc: activeTab === 'personal'
-                  ? 'Desmantela las creencias subconscientes y el miedo que sabotean tu abundancia. Identifica y desactiva al saboteador interno que causa tus compras impulsivas y fugas de capital.'
-                  : 'Desmantela las creencias subconscientes y el miedo que sabotean tus ejecuciones. Identifica y desactiva al saboteador interno que causa tu sobreoperación.'
-              },
-              {
-                emoji: '⚡', title: 'Reto del Flow', hook: 'LAB 7: MÁXIMO RENDIMIENTO', color: '#00E676', num: '07',
-                desc: activeTab === 'personal'
-                  ? 'Calibra tu estado mental para tomar decisiones de dinero en la zona de flujo óptimo. Aprende a activar este estado de paz mental y consistencia en tu día a día.'
-                  : 'Calibra tu estado mental para operar en la zona de flujo óptimo. Aprende a activar este estado de concentration total y consistencia cada vez que abres el gráfico.'
-              },
-            ].map((lab, i) => (
-              <FadeIn key={i} delay={i * 0.08} className="h-full">
-                <div className="rounded-3xl p-6 md:p-8 h-full border border-white/5 bg-[#080d16]/70 backdrop-blur-xl relative overflow-hidden flex flex-col justify-between group hover:border-white/15 hover:shadow-[0_0_50px_rgba(255,255,255,0.02)] transition-all duration-300">
-                  {/* Neon top-left accent */}
-                  <div className="absolute top-0 left-0 w-24 h-[2px] transition-all duration-300 group-hover:w-full" style={{ backgroundColor: lab.color }} />
-                  {/* Massive background label */}
-                  <span className="text-7xl sm:text-8xl font-black absolute top-2 right-4 text-white/[0.02] select-none pointer-events-none group-hover:text-white/[0.04] transition-all duration-300">
-                    {lab.num}
-                  </span>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
-                        {lab.emoji}
-                      </div>
-                      <div>
-                        <p className="text-xs sm:text-sm font-mono tracking-widest uppercase font-black" style={{ color: lab.color }}>{lab.hook}</p>
-                        <h4 className="font-black text-white text-lg sm:text-xl uppercase tracking-tight">{lab.title}</h4>
-                      </div>
-                    </div>
-                    <p className="text-white/80 text-base leading-relaxed">{lab.desc}</p>
-                  </div>
-                  
-                  <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-white/40">
-                    <span>ESTADO: DISPONIBLE</span>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-
-          <FadeIn>
-            <div className="rounded-3xl p-8 border border-[#00D1FF]/15 bg-gradient-to-r from-[#00D1FF]/5 via-transparent to-transparent text-center max-w-4xl mx-auto mt-12 shadow-[0_0_50px_rgba(0,209,255,0.02)]">
-              <p className="text-white/80 text-base md:text-lg leading-relaxed">
-                Todo el ecosistema está unificado bajo un <strong className="text-white font-bold">Mapa de Progreso Nodal</strong>. La Inteligencia Artificial audita tu rendimiento práctico y desbloquea el siguiente nivel solo cuando demuestras que has asimilado la competencia. <strong className="text-[#00D1FF] font-bold">No avanzas viendo videos; avanzas aplicando.</strong>
-              </p>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════════════════════════════════
           OBJECTIONS REFRAME — Empathy + Call to test
