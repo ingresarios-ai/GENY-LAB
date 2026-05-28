@@ -927,14 +927,14 @@ export default function SalesLanding() {
                   <Gift size={14} /> BONO EXCLUSIVO #2
                 </p>
                 <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-2">
-                  {activeTab === 'personal' ? "Diagnóstico Privado de Hábitos" : "Diagnóstico Privado de Consistencia"}
+                  Sesión Estratégica Privada
                 </h3>
-                <p className="text-sm font-mono text-white/50 uppercase tracking-widest mb-4">Análisis Personalizado 1-a-1</p>
+                <p className="text-sm font-mono text-white/50 uppercase tracking-widest mb-4">Auditoría 1-a-1 con un Estratega</p>
                 <p className="text-base text-white/80 leading-relaxed mb-6">
                   {activeTab === 'personal' ? (
-                    "Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental con el dinero y te trazamos un plan de acción."
+                    "Una sesión privada donde un estratega de Ingresarios analiza tus resultados del laboratorio, identifica tu punto ciego financiero #1 y te diseña un mapa de ruta personalizado para los próximos 90 días. No es una clase — es una radiografía de tu situación con recomendaciones específicas para ti."
                   ) : (
-                    "Una sesión de auditoría digital donde analizamos la radiografía de tu ADN financiero y tus métricas del simulador. Identificamos tu principal trampa mental y te trazamos un plan de acción."
+                    "Una sesión privada donde un estratega de Ingresarios analiza tus métricas del laboratorio, identifica tu patrón de autosabotaje #1 y te diseña un plan de acción operativo para los próximos 90 días. No es una clase — es una radiografía de tu trading con recomendaciones específicas para ti."
                   )}
                 </p>
                 <div className="pt-4 border-t border-white/5 flex items-center justify-between text-sm text-white/40">
@@ -978,7 +978,7 @@ export default function SalesLanding() {
                   {[
                     ['Ecosistema GENY LAB — 7 Laboratorios Interactivos + IA', '$1,200 USD'],
                     [activeTab === 'personal' ? 'Bono #1 — Mentorías de la Sala de Mentoría Elite (Semanales)' : 'Bono #1 — Mentorías de la Sala de Trading Elite (Semanales)', '$800 USD'],
-                    [activeTab === 'personal' ? 'Bono #2 — Diagnóstico Privado 1-a-1 de tus Hábitos Financieros' : 'Bono #2 — Diagnóstico Privado 1-a-1 de tu Consistencia', '$1,000 USD'],
+                    ['Bono #2 — Sesión Estratégica Privada 1-a-1 con Estratega', '$1,000 USD'],
                   ].map(([item, val], i) => (
                     <div key={i} className="flex items-center justify-between gap-4 py-4 border-b border-white/5 text-base sm:text-lg">
                       <div className="flex items-center gap-3">
