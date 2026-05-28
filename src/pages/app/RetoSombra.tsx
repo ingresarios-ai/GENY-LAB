@@ -799,7 +799,11 @@ export default function MisEmociones() {
                 <Zap className="w-6 h-6 text-red-500" />
               </div>
               <h2 className="text-2xl font-black text-red-500 mb-1 uppercase tracking-wider">⚔️ Operador Activo</h2>
-              <p className="text-red-300 text-xs font-bold italic mb-4">"Ya opero — necesito eliminar el autosabotaje"</p>
+              <p className="text-red-300 text-xs font-bold italic mb-3">"Ya opero — necesito eliminar el autosabotaje"</p>
+              <div className="flex items-start gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg mb-4">
+                <span className="text-red-400 text-xs mt-0.5">⚠️</span>
+                <p className="text-red-300/80 text-[11px] leading-relaxed">Solo selecciona esta ruta si operas con <strong className="text-red-300">capital real</strong>. Si operas en demo o aún no operas, elige <strong className="text-amber-400">Principiante</strong>.</p>
+              </div>
               <p className="text-slate-400 mb-6 min-h-[60px]">
                 Combate directamente al Saboteador donde más duele: en tus sesiones de trading con capital real.
               </p>

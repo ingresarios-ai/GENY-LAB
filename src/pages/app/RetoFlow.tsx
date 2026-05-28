@@ -434,7 +434,11 @@ export default function RetoFlow() {
                 <Zap className="w-6 h-6 text-brand-blue" />
               </div>
               <h2 className="text-2xl font-black text-brand-blue mb-1 uppercase tracking-wider">⚡ {TRACKS.trader.nombre}</h2>
-              <p className="text-brand-yellow text-xs font-bold italic mb-4">"{TRACKS.trader.tagline}"</p>
+              <p className="text-brand-yellow text-xs font-bold italic mb-3">"{TRACKS.trader.tagline}"</p>
+              <div className="flex items-start gap-2 px-3 py-2 bg-brand-blue/10 border border-brand-blue/20 rounded-lg mb-4">
+                <span className="text-brand-blue text-xs mt-0.5">⚠️</span>
+                <p className="text-slate-400 text-[11px] leading-relaxed">Solo selecciona esta ruta si operas con <strong className="text-brand-blue">capital real</strong>. Si operas en demo o aún no operas, elige <strong className="text-brand-green">la otra ruta</strong>.</p>
+              </div>
               <p className="text-slate-400 mb-6 min-h-[60px]">{TRACKS.trader.desc}</p>
               <ul className="space-y-3 relative z-10">
                 <li className="flex items-start gap-3">

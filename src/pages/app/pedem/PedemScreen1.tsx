@@ -49,7 +49,11 @@ export function PedemScreen1({ onNovice, onOperator }: Props) {
             <div className="text-2xl font-black uppercase tracking-tight mb-2">
               Ya <span className="text-[#00D2FF]">opero.</span>
             </div>
-            <p className="text-sm text-brand-text-muted leading-relaxed">Tengo trades activos o he operado antes. Quiero estructurar mejor lo que hago.</p>
+            <p className="text-sm text-brand-text-muted leading-relaxed mb-3">Tengo trades activos o he operado antes. Quiero estructurar mejor lo que hago.</p>
+            <div className="flex items-start gap-2 px-3 py-2 bg-[#00D2FF]/10 border border-[#00D2FF]/20 rounded-lg">
+              <span className="text-[#00D2FF] text-xs mt-0.5">⚠️</span>
+              <p className="text-slate-400 text-[11px] leading-relaxed">Solo selecciona esta opción si operas con <strong className="text-[#00D2FF]">capital real</strong>. Si operas en demo o aún no operas, elige <strong className="text-[#00FF94]">la otra ruta</strong>.</p>
+            </div>
           </button>
           
           <div className="glass-card p-5 border-l-[3px] border-l-[#00D2FF]/30 text-left md:hidden mt-4">
