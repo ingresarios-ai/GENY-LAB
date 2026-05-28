@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User, Trophy, Crown, HelpCircle, LogOut, Phone, Globe, Shield, Star, Award, Edit2, Save, X } from 'lucide-react';
+import { User, Trophy, Crown, HelpCircle, LogOut, Phone, Globe, Shield, Star, Award, Edit2, Save, X, KeyRound, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { getProgress, getCompletedCount } from '../../lib/progressStore';
 import { LESSONS } from '../../lib/lessons';
@@ -38,6 +38,16 @@ export default function AccountPage() {
   const [editCountry, setEditCountry] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
   const [saving, setSaving] = useState(false);
+
+  // Password change state
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -127,6 +137,34 @@ export default function AccountPage() {
       toast.error('Error al actualizar el perfil');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Las contraseñas no coinciden');
+      return;
+    }
+
+    try {
+      setSavingPassword(true);
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+
+      toast.success('Contraseña actualizada correctamente');
+      setShowPasswordSection(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error: any) {
+      console.error('Error changing password:', error);
+      toast.error(error.message || 'Error al cambiar la contraseña');
+    } finally {
+      setSavingPassword(false);
     }
   };
 
@@ -312,6 +350,93 @@ export default function AccountPage() {
                 )}
               </div>
             </div>
+          </section>
+
+          {/* Cambiar Contraseña */}
+          <section className="glass-panel p-5 rounded-2xl border border-white/5">
+            <button
+              onClick={() => setShowPasswordSection(!showPasswordSection)}
+              className="w-full flex items-center gap-3 text-left"
+            >
+              <div className="p-2 bg-white/5 rounded-lg">
+                <KeyRound size={18} className="text-white/60" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-sm text-white/80">Cambiar Contraseña</p>
+                <p className="text-xs text-white/40 mt-0.5">Actualiza tu contraseña de acceso</p>
+              </div>
+              <span className={`text-white/30 text-xs transition-transform ${showPasswordSection ? 'rotate-180' : ''}`}>▼</span>
+            </button>
+
+            {showPasswordSection && (
+              <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                <div>
+                  <label className="block text-xs font-mono text-white/50 mb-1.5">Nueva contraseña</label>
+                  <div className="relative">
+                    <input
+                      type={showNewPw ? 'text' : 'password'}
+                      value={newPassword}
+                      onChange={e => setNewPassword(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 pr-10 text-white text-sm focus:outline-none focus:border-[#00D1FF] transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPw(!showNewPw)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                    >
+                      {showNewPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-mono text-white/50 mb-1.5">Confirmar contraseña</label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPw ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="Repite la contraseña"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 pr-10 text-white text-sm focus:outline-none focus:border-[#00D1FF] transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPw(!showConfirmPw)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                    >
+                      {showConfirmPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                  {confirmPassword && newPassword !== confirmPassword && (
+                    <p className="text-xs text-red-400 mt-1">Las contraseñas no coinciden</p>
+                  )}
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => {
+                      setShowPasswordSection(false);
+                      setNewPassword('');
+                      setConfirmPassword('');
+                    }}
+                    className="flex-1 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm font-medium transition-colors"
+                    disabled={savingPassword}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={savingPassword || newPassword.length < 6 || newPassword !== confirmPassword}
+                    className="flex-1 py-2.5 rounded-lg bg-[#00D1FF] hover:bg-[#00D1FF]/80 text-black text-sm font-bold transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                  >
+                    {savingPassword ? (
+                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                    ) : (
+                      <>Guardar</>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
         </div>
 
