@@ -66,7 +66,16 @@ export default function AdminSettings() {
         enabled: delayEnabled,
         minutes: delayMinutes
       });
-      // Clear localStorage so users see the new config on next visit
+      // Clear sessionStorage/localStorage so users (and the admin) see the new config on next visit
+      sessionStorage.removeItem('geny_sales_revealed');
+      sessionStorage.removeItem('geny_sales_revealed_arrived');
+      sessionStorage.removeItem('geny_landing_revealed');
+      sessionStorage.removeItem('geny_landing_revealed_arrived');
+      localStorage.removeItem('geny_sales_revealed');
+      localStorage.removeItem('geny_sales_revealed_arrived');
+      localStorage.removeItem('geny_landing_revealed');
+      localStorage.removeItem('geny_landing_revealed_arrived');
+
       setSuccess('Configuración guardada exitosamente');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {

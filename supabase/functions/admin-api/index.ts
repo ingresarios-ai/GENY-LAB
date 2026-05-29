@@ -256,7 +256,7 @@ Deno.serve(async (req: Request) => {
     return new Response(null, {
       headers: {
         ...corsHeaders,
-        "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
         "Access-Control-Allow-Headers":
           "content-type, x-admin-secret, authorization, apikey, x-client-info",
       },
