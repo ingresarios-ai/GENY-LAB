@@ -91,47 +91,21 @@ export default function Landing() {
     const countryName = COUNTRY_DATA[country.toUpperCase()] || country;
 
     try {
-      const emailLC = email.toLowerCase().trim();
-      const { data: existing } = await supabase
-        .from('enrolled_users')
-        .select('id, status')
-        .eq('email', emailLC)
-        .maybeSingle();
-
-      if (existing) {
-        if (existing.status !== 'active') {
-          await supabase
-            .from('enrolled_users')
-            .update({
-              name,
-              phone,
-              country,
-              country_name: countryName,
-              status: 'lead',
-              lead_source: 'landing_page',
-              updated_at: new Date().toISOString()
-            })
-            .eq('email', emailLC);
-        }
+      const { data, error } = await supabase.rpc('register_lead', {
+        p_name: name,
+        p_email: email,
+        p_phone: phone,
+        p_country: country,
+        p_country_name: countryName,
+        p_lead_source: 'landing_page'
+      });
+      if (error) {
+        console.error('Error registering lead via RPC:', error);
       } else {
-        await supabase
-          .from('enrolled_users')
-          .insert({
-            name,
-            email: emailLC,
-            phone,
-            country,
-            country_name: countryName,
-            status: 'lead',
-            lead_source: 'landing_page',
-            payment_method: 'generic',
-            payment_platform: 'generic',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          });
+        console.log('Lead registered successfully:', data);
       }
     } catch (err) {
-      console.error('Error saving lead to Supabase:', err);
+      console.error('Error calling register_lead RPC:', err);
     }
 
     try {
