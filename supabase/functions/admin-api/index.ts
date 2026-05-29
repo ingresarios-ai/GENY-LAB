@@ -452,9 +452,12 @@ Deno.serve(async (req: Request) => {
         paymentDist[key] = (paymentDist[key] || 0) + 1;
       });
 
+      const ignoredActivities = ["welcome-modal-preference", "geny_sales_revealed", "geny_landing_revealed"];
       const activityDist: Record<string, number> = {};
       activities.forEach((a: any) => {
-        activityDist[a.activity_id] = (activityDist[a.activity_id] || 0) + 1;
+        if (!ignoredActivities.includes(a.activity_id)) {
+          activityDist[a.activity_id] = (activityDist[a.activity_id] || 0) + 1;
+        }
       });
 
       const { data: allLogs } = await supabase

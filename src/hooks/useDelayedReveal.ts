@@ -60,17 +60,9 @@ export function useDelayedReveal(storageKey: string) {
         let arrivedAt = 0;
         let revealed = false;
 
-        if (isAuth) {
-          const dbState = await loadActivityProgressDB(storageKey);
-          if (dbState && dbState.metadata) {
-            revealed = dbState.metadata.contentRevealed === true;
-            arrivedAt = dbState.metadata.arrivedAt || 0;
-          }
-        } else {
-          // Anonymous visitor fallback to sessionStorage (no localStorage)
-          revealed = sessionStorage.getItem(storageKey) === 'true';
-          arrivedAt = parseInt(sessionStorage.getItem(`${storageKey}_arrived`) || '0');
-        }
+        // Always use sessionStorage/localStorage for VSL delays (no DB sync needed to avoid polluting metrics)
+        revealed = localStorage.getItem(storageKey) === 'true' || sessionStorage.getItem(storageKey) === 'true';
+        arrivedAt = parseInt(localStorage.getItem(`${storageKey}_arrived`) || sessionStorage.getItem(`${storageKey}_arrived`) || '0');
 
         if (revealed) {
           if (!cancelled) {
@@ -85,11 +77,8 @@ export function useDelayedReveal(storageKey: string) {
         // First visit: record the timestamp when the user arrived
         if (!arrivedAt) {
           arrivedAt = Date.now();
-          if (isAuth) {
-            await saveActivityProgressDB(storageKey, { arrivedAt, contentRevealed: false }, false);
-          } else {
-            sessionStorage.setItem(`${storageKey}_arrived`, arrivedAt.toString());
-          }
+          sessionStorage.setItem(`${storageKey}_arrived`, arrivedAt.toString());
+          localStorage.setItem(`${storageKey}_arrived`, arrivedAt.toString());
         }
 
         if (cancelled) return;
@@ -108,11 +97,8 @@ export function useDelayedReveal(storageKey: string) {
             clearInterval(iv);
             
             // Save completion status
-            if (isAuth) {
-              saveActivityProgressDB(storageKey, { arrivedAt, contentRevealed: true }, false);
-            } else {
-              sessionStorage.setItem(storageKey, 'true');
-            }
+            sessionStorage.setItem(storageKey, 'true');
+            localStorage.setItem(storageKey, 'true');
           }
         };
 
