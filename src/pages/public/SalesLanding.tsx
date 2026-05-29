@@ -291,8 +291,10 @@ export default function SalesLanding() {
         </div>
       </section>
 
+      {contentRevealed && (<>
+
       {/* ══════════════════════════════════════════════════════════════════
-          THE SOLUTION — GENY LAB (always visible, outside contentRevealed)
+          THE SOLUTION — GENY LAB
           Technique: Gamification and Interactive Mockups
       ══════════════════════════════════════════════════════════════════ */}
       <section id="solucion" className="py-20 md:py-28 relative border-t border-white/5">
@@ -469,8 +471,6 @@ export default function SalesLanding() {
           </FadeIn>
         </div>
       </section>
-
-      {contentRevealed && (<>
 
       {/* ══════════════════════════════════════════════════════════════════
           AGITATION — Make them FEEL the pain (not just read it)
