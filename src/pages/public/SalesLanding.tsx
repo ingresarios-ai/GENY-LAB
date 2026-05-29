@@ -238,7 +238,7 @@ export default function SalesLanding() {
           HERO — Pattern Interrupt + Video
           Technique: Identity-based headline that makes them feel SEEN
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="relative pt-12 pb-16 md:pt-16 md:pb-24">
+      <section className={`relative pt-12 md:pt-16 transition-all duration-500 ${contentRevealed ? 'pb-4 md:pb-8' : 'pb-16 md:pb-24'}`}>
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-10 md:mb-12">
             <Logo imgClassName="w-56 md:w-72 object-contain drop-shadow-[0_0_20px_rgba(0,209,255,0.25)]" />
@@ -297,7 +297,7 @@ export default function SalesLanding() {
           THE SOLUTION — GENY LAB
           Technique: Gamification and Interactive Mockups
       ══════════════════════════════════════════════════════════════════ */}
-      <section id="solucion" className="py-20 md:py-28 relative border-t border-white/5">
+      <section id="solucion" className="pt-10 pb-20 md:pt-16 md:pb-28 relative border-t border-white/5">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E676]/[0.02] to-transparent pointer-events-none" />
         
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
