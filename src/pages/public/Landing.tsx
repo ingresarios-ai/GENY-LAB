@@ -325,7 +325,7 @@ export default function Landing() {
                       : 'text-white/60 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  Aún no opero (Finanzas e Inversiones)
+                  Aún no actúas (Finanzas e Inversiones)
                 </button>
                 <button
                   type="button"
@@ -336,7 +336,7 @@ export default function Landing() {
                       : 'text-white/60 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  Ya opero (Hago Trading)
+                  Ya actúas (Hago Trading)
                 </button>
               </div>
             </div>
