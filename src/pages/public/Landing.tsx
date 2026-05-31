@@ -358,9 +358,9 @@ export default function Landing() {
 
                   <p className="text-white/90 text-base md:text-lg leading-relaxed font-semibold">
                     {activeTab === 'personal' ? (
-                      "Operas desde la reactividad emocional. El dinero te genera estrés o culpa, lo que activa tu modo de supervivencia. No gestionas: evitas o gastas."
+                      "Actúas desde la reactividad emocional. El dinero te genera estrés o culpa, lo que activa tu modo de supervivencia. No gestionas: evitas o gastas."
                     ) : (
-                      "Operas desde el caos mental. Tu cerebro no está entrenado para sostener el riesgo, por lo que entra en modo de supervivencia. No piensas: reaccionas."
+                      "Actúas desde el caos mental. Tu cerebro no está entrenado para sostener el riesgo, por lo que entra en modo de supervivencia. No piensas: reaccionas."
                     )}
                   </p>
 
@@ -413,9 +413,9 @@ export default function Landing() {
 
                   <p className="text-white/90 text-base md:text-lg leading-relaxed font-semibold">
                     {activeTab === 'personal' ? (
-                      "Operas con una estrategia clara. Cononces tus emociones, mides tu termostato financiero y ejecutas tus hábitos sin dilemas mentales."
+                      "Actúas con una estrategia clara. Conoces tus emociones, mides tu termostato financiero y ejecutas tus hábitos sin dilemas mentales."
                     ) : (
-                      "Operas como una terminal matemática. Conoces tus emociones, sabes medir tu termostato financiero y ejecutas el plan sin drama ni dilemas mentales."
+                      "Actúas como una terminal matemática. Conoces tus emociones, sabes medir tu termostato financiero y ejecutas el plan sin drama ni dilemas mentales."
                     )}
                   </p>
 
