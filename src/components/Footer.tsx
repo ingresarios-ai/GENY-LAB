@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Logo } from './Logo';
 
 export const Footer = () => {
@@ -22,7 +23,7 @@ export const Footer = () => {
             <p className="text-[10px] text-white/20 font-mono tracking-widest uppercase">© 2026 GENY LAB</p>
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-mono text-white/30 tracking-wide">
               <a href="https://site.ingresarios.net/politicas-privacidad" target="_blank" rel="noopener noreferrer" className="hover:text-brand-green transition-colors">Privacidad</a>
-              <a href="https://site.ingresarios.net/terminos-de-uso-de-informacion" target="_blank" rel="noopener noreferrer" className="hover:text-brand-green transition-colors">Términos</a>
+              <Link to="/terminos-y-condiciones" className="hover:text-brand-green transition-colors">Términos</Link>
               <a href="https://site.ingresarios.net/politicas-tratamiento-de-datos-personales" target="_blank" rel="noopener noreferrer" className="hover:text-brand-green transition-colors">Datos Personales</a>
             </div>
           </div>
