@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Logo } from '../components/Logo';
+import { Footer } from '../components/Footer';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -45,12 +46,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm space-y-8"
-      >
+    <div className="min-h-screen bg-brand-bg flex flex-col relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-sm space-y-8 relative z-10"
+        >
         <div className="text-center space-y-3">
           <Logo imgClassName="w-36 md:w-44 object-contain" />
           <p className="text-brand-text-muted text-sm">{forgotMode ? 'Recupera tu contraseña' : 'Ingresa para continuar'}</p>
@@ -151,10 +153,12 @@ export default function Login() {
           </form>
         )}
 
-        <p className="text-center text-[9px] font-mono text-white/15 uppercase tracking-widest">
-          INGRESARIOS · GENY LAB
-        </p>
-      </motion.div>
+          <p className="text-center text-[9px] font-mono text-white/15 uppercase tracking-widest">
+            INGRESARIOS · GENY LAB
+          </p>
+        </motion.div>
+      </div>
+      <Footer />
     </div>
   );
 }
