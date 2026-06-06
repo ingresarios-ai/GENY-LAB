@@ -373,7 +373,7 @@ No dejes pasar esto.
 
 Es tu espacio para resolver dudas, revisar métricas y calibrar tu termostato financiero en grupo.
 
-🔗 Únete aquí: https://us06web.zoom.us/meeting/register/FLIyJ1NiSEuu-bDPXHSzHg
+🔗 Únete aquí: https://us02web.zoom.us/j/87949998005?pwd=czy7Zz12DNJTwUSssfDgt8yatSrkGl.1
 
 🔑 Si te pide clave: 612978
 

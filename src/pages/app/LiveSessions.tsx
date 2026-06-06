@@ -163,7 +163,7 @@ export default function LiveSessions() {
 
               <div>
                 <a 
-                  href="https://us06web.zoom.us/meeting/register/FLIyJ1NiSEuu-bDPXHSzHg" 
+                  href="https://us02web.zoom.us/j/87949998005?pwd=czy7Zz12DNJTwUSssfDgt8yatSrkGl.1" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 bg-[#00D1FF] hover:bg-[#00D1FF]/90 text-black px-8 py-4 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(0,209,255,0.3)] hover:shadow-[0_0_40px_rgba(0,209,255,0.5)]"
