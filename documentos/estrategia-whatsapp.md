@@ -375,8 +375,6 @@ Es tu espacio para resolver dudas, revisar métricas y calibrar tu termostato fi
 
 🔗 Únete aquí: https://us02web.zoom.us/j/87949998005?pwd=czy7Zz12DNJTwUSssfDgt8yatSrkGl.1
 
-🔑 Si te pide clave: 612978
-
 Te esperamos.
 ```
 

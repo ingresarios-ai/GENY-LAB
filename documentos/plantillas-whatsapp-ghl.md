@@ -454,8 +454,6 @@ Es tu espacio para resolver dudas y calibrar tu termostato financiero en grupo.
 🔗 Únete aquí:
 https://us02web.zoom.us/j/87949998005?pwd=czy7Zz12DNJTwUSssfDgt8yatSrkGl.1
 
-🔑 Si te pide clave: 612978
-
 Te esperamos.
 ```
 

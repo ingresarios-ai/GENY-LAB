@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Video, Calendar, Clock, Key, ArrowRight, Lock, Unlock, Zap } from 'lucide-react';
+import { Video, Calendar, Clock, ArrowRight, Lock, Unlock, Zap } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 export default function LiveSessions() {
@@ -155,11 +155,7 @@ export default function LiveSessions() {
 
           {!isExpired ? (
             <div className="bg-[#00D1FF]/5 rounded-2xl p-8 border border-[#00D1FF]/20 text-center space-y-6">
-              <div className="inline-flex items-center gap-2 bg-black/50 px-4 py-2 rounded-lg border border-white/5">
-                <Key className="w-4 h-4 text-brand-green" />
-                <span className="text-xs text-white/60 uppercase tracking-widest">Código de Acceso:</span>
-                <span className="text-sm font-bold text-brand-green font-mono">612978</span>
-              </div>
+
 
               <div>
                 <a 
