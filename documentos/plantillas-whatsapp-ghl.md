@@ -447,7 +447,7 @@ No dejes pasar esto.
 
 **Cuerpo:**
 ```
-{{1}}, mañana sábado a las 11am (hora Colombia) tenemos Sesión en Vivo 🔴
+{{1}}, mañana sábado a las 10am (hora Colombia) tenemos Sesión en Vivo 🔴
 
 Es tu espacio para resolver dudas y calibrar tu termostato financiero en grupo.
 

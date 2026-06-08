@@ -42,7 +42,7 @@ Más que un curso en video, es tu nueva **terminal de ejecución interactiva**. 
 Todo está conectado por **Nodos de Validación**: el sistema te obliga a aplicar lo aprendido en cada simulador para poder desbloquear el siguiente nivel. Es práctica pura.
 *Valor total de la Plataforma y sus 6 Laboratorios: $1,200 USD*
 
-**BONO #1: Trading Room Elite — Sesiones Estratégicas en Vivo (Sábados 11am)**
+**BONO #1: Trading Room Elite — Sesiones Estratégicas en Vivo (Sábados 10am)**
 Recibe acompañamiento en tiempo real, resuelve dudas directamente con traders activos y corrige errores de ejecución antes de volver a perder dinero innecesariamente.
 *Valor percibido: $800 USD*
 

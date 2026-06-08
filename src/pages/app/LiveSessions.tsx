@@ -148,7 +148,7 @@ export default function LiveSessions() {
               </div>
               <div>
                 <p className="text-[10px] uppercase font-bold tracking-widest text-white/40 mb-1">Hora</p>
-                <p className="text-lg font-bold text-white">11:00 AM <span className="text-sm font-normal text-white/60">(Hora Colombia)</span></p>
+                <p className="text-lg font-bold text-white">10:00 AM <span className="text-sm font-normal text-white/60">(Hora Colombia)</span></p>
               </div>
             </div>
           </div>

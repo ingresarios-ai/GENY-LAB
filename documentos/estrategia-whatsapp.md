@@ -369,7 +369,7 @@ No dejes pasar esto.
 **Tipo plantilla:** Marketing
 
 ```
-{{contact.first_name}}, mañana sábado a las 11am (hora Colombia) tenemos Sesión en Vivo 🔴
+{{contact.first_name}}, mañana sábado a las 10am (hora Colombia) tenemos Sesión en Vivo 🔴
 
 Es tu espacio para resolver dudas, revisar métricas y calibrar tu termostato financiero en grupo.
 

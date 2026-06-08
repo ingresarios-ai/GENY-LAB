@@ -877,7 +877,7 @@ export default function SalesLanding() {
                   {activeTab === 'personal' ? "3 Sesiones de Mentoría Elite" : "3 Sesiones de Trading Elite"}
                 </h3>
                 <p className="text-sm font-mono text-white/50 uppercase tracking-widest mb-4">
-                  {activeTab === 'personal' ? "Acompañamiento en Vivo — Sábados 11:00 AM EST" : "Acompañamiento en Vivo — Sábados 11:00 AM EST"}
+                  {activeTab === 'personal' ? "Acompañamiento en Vivo — Sábados 10:00 AM EST" : "Acompañamiento en Vivo — Sábados 10:00 AM EST"}
                 </p>
                 <p className="text-base text-white/80 leading-relaxed mb-6">
                   {activeTab === 'personal' ? (
