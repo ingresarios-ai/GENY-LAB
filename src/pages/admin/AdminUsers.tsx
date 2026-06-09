@@ -336,11 +336,20 @@ export default function AdminUsers() {
                   </div>
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <div className="text-base font-semibold text-white/80 truncate">{u.name}</div>
                       {u.payment_method === 'ghl' && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(0,209,255,0.1)', color: '#00D1FF', border: '1px solid rgba(0,209,255,0.2)' }}>
                           Alumno tribu
+                        </span>
+                      )}
+                      {u.accepted_terms ? (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(0,230,118,0.1)', color: '#00E676', border: '1px solid rgba(0,230,118,0.2)' }} title={u.accepted_terms_at ? `Aceptó términos: ${new Date(u.accepted_terms_at).toLocaleString('es-MX')}` : 'Términos aceptados'}>
+                          Términos OK
+                        </span>
+                      ) : (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(255,80,80,0.1)', color: '#ff6b6b', border: '1px solid rgba(255,80,80,0.2)' }}>
+                          Términos Pendiente
                         </span>
                       )}
                     </div>
@@ -443,6 +452,26 @@ export default function AdminUsers() {
                   </div>
                 </div>
               )}
+
+              <div className="rounded-lg p-3" style={{ 
+                background: selectedUser.accepted_terms ? 'rgba(0,230,118,0.02)' : 'rgba(255,80,80,0.02)', 
+                border: `1px solid ${selectedUser.accepted_terms ? 'rgba(0,230,118,0.1)' : 'rgba(255,80,80,0.1)'}` 
+              }}>
+                <div className="text-sm text-white/30 font-medium mb-1">Términos y Condiciones</div>
+                <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: selectedUser.accepted_terms ? '#00E676' : '#ff6b6b' }}>
+                  {selectedUser.accepted_terms ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      Aceptados el {selectedUser.accepted_terms_at ? new Date(selectedUser.accepted_terms_at).toLocaleDateString('es-MX') : '—'}
+                    </>
+                  ) : (
+                    <>
+                      <X className="w-3.5 h-3.5 shrink-0" />
+                      Pendiente de aceptar
+                    </>
+                  )}
+                </div>
+              </div>
 
               {selectedUser.notes && (
                 <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>

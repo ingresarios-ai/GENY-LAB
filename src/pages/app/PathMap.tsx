@@ -33,7 +33,6 @@ export default function PathMap() {
 
   const [userName, setUserName] = useState<string>('Trader');
   const [isTribu, setIsTribu] = useState(() => isAlumnoTribu());
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [dbActivities, setDbActivities] = useState<any[]>([]);
   const [pendingActivity, setPendingActivity] = useState<{
     id: string;
@@ -72,11 +71,6 @@ export default function PathMap() {
   useEffect(() => {
     async function loadPreferences() {
       try {
-        const welcomePref = await loadActivityProgressDB('welcome-modal-preference');
-        if (!welcomePref || welcomePref.metadata?.hide_welcome !== true) {
-          setShowWelcomeModal(true);
-        }
-        
         const bookingPref = await loadActivityProgressDB('visited-diagnostico');
         if (bookingPref && bookingPref.metadata?.visited === true) {
           setVisitedBooking(true);
@@ -240,12 +234,7 @@ export default function PathMap() {
     }
   }, [displayedText, isTyping, quoteIndex]);
 
-  const handleCloseWelcome = () => {
-    if (dontShowAgain) {
-      saveActivityProgressDB('welcome-modal-preference', { hide_welcome: true }, false);
-    }
-    setShowWelcomeModal(false);
-  };
+
 
   const checkScroll = () => {
     if (carouselRef.current) {
@@ -283,83 +272,7 @@ export default function PathMap() {
       
 
 
-      {/* Welcome Modal */}
-      <AnimatePresence>
-        {showWelcomeModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              onClick={handleCloseWelcome}
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg glass-panel rounded-3xl p-6 md:p-8 flex flex-col border border-[#00D1FF]/20 shadow-[0_0_50px_rgba(0,209,255,0.15)] overflow-hidden"
-            >
-              <button 
-                onClick={handleCloseWelcome}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white/50 hover:text-white transition-colors"
-              >
-                <X size={18} />
-              </button>
 
-              <div className="mb-6 mt-2">
-                <div className="flex items-center gap-2 text-[#00D1FF] font-mono text-xs mb-4 uppercase tracking-widest">
-                  <div className="w-2 h-2 bg-[#00D1FF] animate-pulse rounded-sm"></div>
-                  INICIALIZANDO SISTEMA
-                </div>
-                <h1 className="text-3xl font-bold uppercase tracking-tight text-white mb-4 leading-none">
-                  Conexión a<br /><span className="text-[#00D1FF] font-light">GENY LAB</span>
-                </h1>
-                <p className="text-white/60 text-sm md:text-base font-medium leading-relaxed">
-                  Sigue tu ruta paso a paso. Cada lección te acerca más a dominar tus finanzas.
-                </p>
-                <ul className="mt-6 space-y-4 text-sm text-white/60 font-mono">
-                  <li className="flex gap-3 items-start">
-                    <Play className="text-[#00D1FF] shrink-0 mt-0.5" size={16} />
-                    <span><strong className="text-white font-sans tracking-wide">MIRA EL VIDEO:</strong> Aprende el concepto clave de cada lección.</span>
-                  </li>
-                  <li className="flex gap-3 items-start">
-                    <Check className="text-[#00E676] shrink-0 mt-0.5" size={16} />
-                    <span><strong className="text-white font-sans tracking-wide">COMPLETA EL RETO:</strong> Pon en práctica lo aprendido con una actividad.</span>
-                  </li>
-                  <li className="flex gap-3 items-start">
-                    <Lock className="text-white/40 shrink-0 mt-0.5" size={16} />
-                    <span><strong className="text-white font-sans tracking-wide">DESBLOQUEA:</strong> Al avanzar se abren nuevas lecciones y herramientas.</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-auto pt-4 border-t border-white/10 flex flex-col gap-4">
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <div className="relative flex items-center justify-center w-5 h-5 rounded border border-white/20 bg-black/40 group-hover:border-[#00D1FF]/50 transition-colors">
-                    <input 
-                      type="checkbox" 
-                      className="peer sr-only"
-                      checked={dontShowAgain}
-                      onChange={(e) => setDontShowAgain(e.target.checked)}
-                    />
-                    <Check size={14} className="text-[#00D1FF] opacity-0 peer-checked:opacity-100 transition-opacity" />
-                  </div>
-                  <span className="text-sm text-white/50 group-hover:text-white/80 transition-colors font-mono">No volver a mostrar</span>
-                </label>
-                
-                <button 
-                  onClick={handleCloseWelcome}
-                  className="w-full py-4 rounded-lg font-mono tracking-widest uppercase text-[#00D1FF] bg-[#00D1FF]/10 border border-[#00D1FF]/30 hover:bg-[#00D1FF]/20 transition-colors flex items-center justify-center gap-2"
-                >
-                  <Zap size={16} /> INICIAR SECUENCIA
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* Pending Activity Reminder Modal */}
       <AnimatePresence>
