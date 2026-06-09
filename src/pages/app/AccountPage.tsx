@@ -121,11 +121,11 @@ export default function AccountPage() {
 
       const { error } = await supabase
         .from('enrolled_users')
-        .upsert({ 
-          email: user.email, 
+        .update({ 
           auth_user_id: user.id, 
           ...updates 
-        }, { onConflict: 'email' });
+        })
+        .eq('email', user.email);
 
       if (error) throw error;
 
