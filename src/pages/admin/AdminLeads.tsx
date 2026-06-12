@@ -32,24 +32,38 @@ export default function AdminLeads() {
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [totalMatchingCount, setTotalMatchingCount] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.ceil(totalMatchingCount / pageSize);
+
   const loadLeads = useCallback(async () => {
     setLoading(true);
     try {
-      const params: Record<string, string> = { status: 'lead' };
+      const params: Record<string, string> = { 
+        status: 'lead',
+        limit: String(pageSize),
+        offset: String((page - 1) * pageSize)
+      };
       if (search) params.search = search;
       const res = await getUsers(params);
       setLeads(res.data || []);
+      setTotalMatchingCount(res.count || 0);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, [page, search]);
 
   useEffect(() => {
     const t = setTimeout(loadLeads, 300);
     return () => clearTimeout(t);
   }, [loadLeads]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   const handlePromoteLead = async (lead: any) => {
     if (!confirm(`¿Aprobar pago y promover a ${lead.name} como usuario activo?`)) return;
@@ -87,7 +101,14 @@ export default function AdminLeads() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-white/90 tracking-wide">Leads Interesados</h1>
-          <p className="text-base text-white/30 mt-0.5">{leads.length} interesados registrados</p>
+          <p className="text-base text-white/30 mt-0.5">
+            {leads.length} {leads.length === 1 ? 'interesado registrado' : 'interesados registrados'}
+            {totalMatchingCount > 0 && (
+              <span className="text-white/20 ml-2 font-normal">
+                • {totalMatchingCount} en total en la plataforma
+              </span>
+            )}
+          </p>
         </div>
       </div>
 
@@ -124,51 +145,76 @@ export default function AdminLeads() {
               <p className="text-white/25 text-base">No hay interesados registrados</p>
             </div>
           ) : (
-            <div className="space-y-1">
-              {leads.map(l => (
-                <button
-                  key={l.id}
-                  onClick={() => setSelectedLead(l)}
-                  className="w-full text-left rounded-xl px-4 py-3.5 flex items-center gap-4 transition-all"
-                  style={{
-                    background: selectedLead?.id === l.id ? 'rgba(0,209,255,0.04)' : 'rgba(255,255,255,0.015)',
-                    border: `1px solid ${selectedLead?.id === l.id ? 'rgba(0,209,255,0.15)' : 'rgba(255,255,255,0.04)'}`,
-                  }}
-                  onMouseOver={e => {
-                    if (selectedLead?.id !== l.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                  }}
-                  onMouseOut={e => {
-                    if (selectedLead?.id !== l.id) e.currentTarget.style.background = 'rgba(255,255,255,0.015)';
-                  }}
-                >
-                  {/* Icon */}
-                  <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 bg-amber-500/10 text-amber-500"
+            <div className="space-y-4">
+              <div className="space-y-1">
+                {leads.map(l => (
+                  <button
+                    key={l.id}
+                    onClick={() => setSelectedLead(l)}
+                    className="w-full text-left rounded-xl px-4 py-3.5 flex items-center gap-4 transition-all"
+                    style={{
+                      background: selectedLead?.id === l.id ? 'rgba(0,209,255,0.04)' : 'rgba(255,255,255,0.015)',
+                      border: `1px solid ${selectedLead?.id === l.id ? 'rgba(0,209,255,0.15)' : 'rgba(255,255,255,0.04)'}`,
+                    }}
+                    onMouseOver={e => {
+                      if (selectedLead?.id !== l.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                    }}
+                    onMouseOut={e => {
+                      if (selectedLead?.id !== l.id) e.currentTarget.style.background = 'rgba(255,255,255,0.015)';
+                    }}
                   >
-                    {l.name?.charAt(0)?.toUpperCase() || '?'}
-                  </div>
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="text-base font-semibold text-white/80 truncate">{l.name}</div>
-                    <div className="text-sm text-white/35 font-mono truncate">{l.email}</div>
-                    {(l.phone || l.country_name) && (
-                      <div className="flex items-center gap-3 mt-0.5">
-                        {l.phone && (
-                          <span className="text-xs text-white/25 font-mono">📱 {l.phone}</span>
-                        )}
-                        {l.country_name && (
-                          <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(0,209,255,0.06)', color: 'rgba(0,209,255,0.5)', border: '1px solid rgba(0,209,255,0.1)' }}>🌎 {l.country_name}</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  {/* Date */}
-                  <div className="text-xs font-mono text-white/20 shrink-0">
-                    {new Date(l.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit' })}
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-white/15 shrink-0" />
-                </button>
-              ))}
+                    {/* Icon */}
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 bg-amber-500/10 text-amber-500"
+                    >
+                      {l.name?.charAt(0)?.toUpperCase() || '?'}
+                    </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-base font-semibold text-white/80 truncate">{l.name}</div>
+                      <div className="text-sm text-white/35 font-mono truncate">{l.email}</div>
+                      {(l.phone || l.country_name) && (
+                        <div className="flex items-center gap-3 mt-0.5">
+                          {l.phone && (
+                            <span className="text-xs text-white/25 font-mono">📱 {l.phone}</span>
+                          )}
+                          {l.country_name && (
+                            <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(0,209,255,0.06)', color: 'rgba(0,209,255,0.5)', border: '1px solid rgba(0,209,255,0.1)' }}>🌎 {l.country_name}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {/* Date */}
+                    <div className="text-xs font-mono text-white/20 shrink-0">
+                      {new Date(l.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-white/15 shrink-0" />
+                  </button>
+                ))}
+              </div>
+
+              {/* Pagination controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.01] border border-white/[0.04]">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white disabled:opacity-30 disabled:pointer-events-none"
+                  >
+                    Anterior
+                  </button>
+                  <span className="text-sm font-mono text-white/40">
+                    Página <span className="text-white/80 font-bold">{page}</span> de <span className="text-white/80 font-bold">{totalPages}</span> <span className="text-white/20 ml-1">({totalMatchingCount} filtrados)</span>
+                  </span>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white disabled:opacity-30 disabled:pointer-events-none"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

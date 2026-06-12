@@ -172,11 +172,21 @@ export default function AdminUsers() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [userActivities, setUserActivities] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  
+  const [page, setPage] = useState(1);
+  const [totalMatchingCount, setTotalMatchingCount] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.ceil(totalMatchingCount / pageSize);
 
   const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const params: Record<string, string> = {};
+      const params: Record<string, string> = {
+        limit: String(pageSize),
+        offset: String((page - 1) * pageSize)
+      };
       if (search) params.search = search;
       if (filterActivity) params.activity = filterActivity;
       if (filterPayment) params.payment_method = filterPayment;
@@ -184,21 +194,26 @@ export default function AdminUsers() {
       if (filterHot) params.hot = 'true';
       const res = await getUsers(params);
       setUsers(res.data || []);
+      setTotalMatchingCount(res.count || 0);
 
       if (!search && !filterActivity && !filterPayment && !filterStatus && !filterHot) {
-        setTotalCount(res.data?.length || 0);
+        setTotalCount(res.count || 0);
       }
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
-  }, [search, filterActivity, filterPayment, filterStatus, filterHot]);
+  }, [page, search, filterActivity, filterPayment, filterStatus, filterHot]);
 
   useEffect(() => {
     const t = setTimeout(loadUsers, 300);
     return () => clearTimeout(t);
   }, [loadUsers]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filterActivity, filterPayment, filterStatus, filterHot]);
 
   const handleSelectUser = async (user: any) => {
     setSelectedUser(user);
@@ -224,8 +239,34 @@ export default function AdminUsers() {
     loadUsers();
   };
 
-  const handleDownloadCSV = () => {
-    if (users.length === 0) {
+  const handleDownloadCSV = async (exportAll: boolean) => {
+    let usersToExport = users;
+    
+    if (exportAll) {
+      try {
+        setExporting(true);
+        const params: Record<string, string> = {
+          limit: '9999',
+          offset: '0'
+        };
+        if (search) params.search = search;
+        if (filterActivity) params.activity = filterActivity;
+        if (filterPayment) params.payment_method = filterPayment;
+        if (filterStatus) params.status = filterStatus;
+        if (filterHot) params.hot = 'true';
+        
+        const res = await getUsers(params);
+        usersToExport = res.data || [];
+      } catch (err) {
+        console.error('Error fetching all users for export:', err);
+        alert('Error al descargar todos los usuarios');
+        return;
+      } finally {
+        setExporting(false);
+      }
+    }
+
+    if (usersToExport.length === 0) {
       alert('No hay usuarios para descargar');
       return;
     }
@@ -259,7 +300,7 @@ export default function AdminUsers() {
       return `Automático (${paymentMethod})`;
     };
 
-    const rows = users.map(u => {
+    const rows = usersToExport.map(u => {
       const paymentMethodLabel = PAYMENT_LABELS[u.payment_method] || u.payment_method || '—';
       const registrationType = getRegistrationType(u.payment_method, u.payment_platform);
       
@@ -292,7 +333,8 @@ export default function AdminUsers() {
     link.setAttribute('href', url);
     
     const dateStr = new Date().toISOString().split('T')[0];
-    link.setAttribute('download', `usuarios_geny_lab_${dateStr}.csv`);
+    const fileNameSuffix = exportAll ? 'todos' : `pagina_${page}`;
+    link.setAttribute('download', `usuarios_geny_lab_${fileNameSuffix}_${dateStr}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -322,25 +364,51 @@ export default function AdminUsers() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleDownloadCSV}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-base font-bold transition-all"
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: 'rgba(255, 255, 255, 0.8)',
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            }}
-          >
-            <Download className="w-4 h-4 text-white/60" /> Descargar CSV
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              disabled={exporting}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-base font-bold transition-all disabled:opacity-50"
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: 'rgba(255, 255, 255, 0.8)',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+              }}
+            >
+              <Download className="w-4 h-4 text-white/60" /> {exporting ? 'Exportando...' : 'Descargar CSV'}
+            </button>
+            {showExportMenu && (
+              <div 
+                className="absolute right-0 mt-2 w-56 rounded-xl glass-panel shadow-2xl z-[110] p-1.5 space-y-1"
+                style={{
+                  background: 'rgba(10, 15, 25, 0.95)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(12px)',
+                }}
+              >
+                <button
+                  onClick={() => { setShowExportMenu(false); handleDownloadCSV(false); }}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold hover:bg-white/[0.04] text-white/80 hover:text-white transition-colors"
+                >
+                  Vista Actual ({users.length})
+                </button>
+                <button
+                  onClick={() => { setShowExportMenu(false); handleDownloadCSV(true); }}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold hover:bg-white/[0.04] text-white/80 hover:text-white transition-colors"
+                >
+                  Todos los filtrados ({totalMatchingCount})
+                </button>
+              </div>
+            )}
+          </div>
           <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-base font-bold transition-all"
@@ -427,88 +495,113 @@ export default function AdminUsers() {
               <p className="text-white/25 text-base">No se encontraron usuarios</p>
             </div>
           ) : (
-            <div className="space-y-1">
-              {users.map(u => (
-                <button
-                  key={u.id}
-                  onClick={() => handleSelectUser(u)}
-                  className="w-full text-left rounded-xl px-4 py-3.5 flex items-center gap-4 transition-all"
-                  style={{
-                    background: selectedUser?.id === u.id ? 'rgba(0,209,255,0.04)' : 'rgba(255,255,255,0.015)',
-                    border: `1px solid ${selectedUser?.id === u.id ? 'rgba(0,209,255,0.15)' : 'rgba(255,255,255,0.04)'}`,
-                  }}
-                  onMouseOver={e => {
-                    if (selectedUser?.id !== u.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                  }}
-                  onMouseOut={e => {
-                    if (selectedUser?.id !== u.id) e.currentTarget.style.background = 'rgba(255,255,255,0.015)';
-                  }}
-                >
-                  {/* Avatar */}
-                  <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
+            <div className="space-y-4">
+              <div className="space-y-1">
+                {users.map(u => (
+                  <button
+                    key={u.id}
+                    onClick={() => handleSelectUser(u)}
+                    className="w-full text-left rounded-xl px-4 py-3.5 flex items-center gap-4 transition-all"
                     style={{
-                      background: u.status === 'active' ? 'rgba(0,230,118,0.08)' : 'rgba(255,80,80,0.08)',
-                      color: u.status === 'active' ? '#00E676' : '#ff6b6b',
+                      background: selectedUser?.id === u.id ? 'rgba(0,209,255,0.04)' : 'rgba(255,255,255,0.015)',
+                      border: `1px solid ${selectedUser?.id === u.id ? 'rgba(0,209,255,0.15)' : 'rgba(255,255,255,0.04)'}`,
+                    }}
+                    onMouseOver={e => {
+                      if (selectedUser?.id !== u.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                    }}
+                    onMouseOut={e => {
+                      if (selectedUser?.id !== u.id) e.currentTarget.style.background = 'rgba(255,255,255,0.015)';
                     }}
                   >
-                    {u.name?.charAt(0)?.toUpperCase() || '?'}
-                  </div>
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <div className="text-base font-semibold text-white/80 truncate">{u.name}</div>
-                      {u.payment_method === 'ghl' && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(0,209,255,0.1)', color: '#00D1FF', border: '1px solid rgba(0,209,255,0.2)' }}>
-                          Alumno tribu
-                        </span>
-                      )}
-                      {u.accepted_terms ? (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(0,230,118,0.1)', color: '#00E676', border: '1px solid rgba(0,230,118,0.2)' }} title={u.accepted_terms_at ? `Aceptó términos: ${new Date(u.accepted_terms_at).toLocaleString('es-MX')}` : 'Términos aceptados'}>
-                          Términos OK
-                        </span>
-                      ) : (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(255,80,80,0.1)', color: '#ff6b6b', border: '1px solid rgba(255,80,80,0.2)' }}>
-                          Términos Pendiente
-                        </span>
-                      )}
+                    {/* Avatar */}
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
+                      style={{
+                        background: u.status === 'active' ? 'rgba(0,230,118,0.08)' : 'rgba(255,80,80,0.08)',
+                        color: u.status === 'active' ? '#00E676' : '#ff6b6b',
+                      }}
+                    >
+                      {u.name?.charAt(0)?.toUpperCase() || '?'}
                     </div>
-                    <div className="text-sm text-white/35 font-mono truncate">{u.email}</div>
-                    {(u.phone || u.country_name) && (
-                      <div className="flex items-center gap-3 mt-0.5">
-                        {u.phone && (
-                          <span className="text-xs text-white/25 font-mono">📱 {u.phone}</span>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="text-base font-semibold text-white/80 truncate">{u.name}</div>
+                        {u.payment_method === 'ghl' && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(0,209,255,0.1)', color: '#00D1FF', border: '1px solid rgba(0,209,255,0.2)' }}>
+                            Alumno tribu
+                          </span>
                         )}
-                        {u.country_name && (
-                          <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(0,209,255,0.06)', color: 'rgba(0,209,255,0.5)', border: '1px solid rgba(0,209,255,0.1)' }}>🌎 {u.country_name}</span>
+                        {u.accepted_terms ? (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(0,230,118,0.1)', color: '#00E676', border: '1px solid rgba(0,230,118,0.2)' }} title={u.accepted_terms_at ? `Aceptó términos: ${new Date(u.accepted_terms_at).toLocaleString('es-MX')}` : 'Términos aceptados'}>
+                            Términos OK
+                          </span>
+                        ) : (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0" style={{ background: 'rgba(255,80,80,0.1)', color: '#ff6b6b', border: '1px solid rgba(255,80,80,0.2)' }}>
+                            Términos Pendiente
+                          </span>
                         )}
                       </div>
-                    )}
-                  </div>
-                  {/* Badges */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    {u.is_hot && (
+                      <div className="text-sm text-white/35 font-mono truncate">{u.email}</div>
+                      {(u.phone || u.country_name) && (
+                        <div className="flex items-center gap-3 mt-0.5">
+                          {u.phone && (
+                            <span className="text-xs text-white/25 font-mono">📱 {u.phone}</span>
+                          )}
+                          {u.country_name && (
+                            <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(0,209,255,0.06)', color: 'rgba(0,209,255,0.5)', border: '1px solid rgba(0,209,255,0.1)' }}>🌎 {u.country_name}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {/* Badges */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {u.is_hot && (
+                        <span
+                          className="flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-lg"
+                          style={{
+                            background: 'rgba(249,115,22,0.1)',
+                            border: '1px solid rgba(249,115,22,0.2)',
+                            color: '#fb923c',
+                          }}
+                        >
+                          <Flame className="w-3 h-3" /> HOT
+                        </span>
+                      )}
                       <span
-                        className="flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-lg"
-                        style={{
-                          background: 'rgba(249,115,22,0.1)',
-                          border: '1px solid rgba(249,115,22,0.2)',
-                          color: '#fb923c',
-                        }}
+                        className="text-sm font-mono font-medium px-2 py-1 rounded-lg"
+                        style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.4)' }}
                       >
-                        <Flame className="w-3 h-3" /> HOT
+                        {u.activity_count || 0}/7
                       </span>
-                    )}
-                    <span
-                      className="text-sm font-mono font-medium px-2 py-1 rounded-lg"
-                      style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.4)' }}
-                    >
-                      {u.activity_count || 0}/7
-                    </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-white/15" />
-                  </div>
-                </button>
-              ))}
+                      <ChevronRight className="w-3.5 h-3.5 text-white/15" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Pagination controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.01] border border-white/[0.04]">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white disabled:opacity-30 disabled:pointer-events-none"
+                  >
+                    Anterior
+                  </button>
+                  <span className="text-sm font-mono text-white/40">
+                    Página <span className="text-white/80 font-bold">{page}</span> de <span className="text-white/80 font-bold">{totalPages}</span> <span className="text-white/20 ml-1">({totalMatchingCount} filtrados)</span>
+                  </span>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-white/[0.03] border border-white/[0.08] text-white/60 hover:text-white disabled:opacity-30 disabled:pointer-events-none"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

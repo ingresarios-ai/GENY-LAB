@@ -566,7 +566,7 @@ Deno.serve(async (req: Request) => {
       if (method === "GET" && segments.length === 1) {
         let query = supabase
           .from("enrolled_users")
-          .select("*")
+          .select("*", { count: "exact" })
           .order("created_at", { ascending: false });
 
         const status = url.searchParams.get("status");
@@ -640,7 +640,7 @@ Deno.serve(async (req: Request) => {
             ? enriched.filter((u: any) => u.is_hot)
             : enriched;
 
-        return json({ data: filtered, count: filtered.length });
+        return json({ data: filtered, count: count ?? filtered.length });
       }
 
       // GET /users/:id — retrieve single user details
