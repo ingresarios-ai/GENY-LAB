@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw, Edit } from 'lucide-react';
+import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw, Edit, Download } from 'lucide-react';
 import { getUsers, createUser, updateUser, deleteUser, getUserActivity, resendMagicLink } from '../../lib/adminApi';
 
 const ACTIVITIES = [
@@ -146,6 +146,18 @@ const COUNTRY_CODES = [
   { code: '+505', flag: '🇳🇮', name: 'Nicaragua' },
 ];
 
+const escapeCSV = (val: any) => {
+  if (val === null || val === undefined) return '';
+  let str = String(val);
+  // Replace double quotes with two double quotes
+  str = str.replace(/"/g, '""');
+  // If the string contains comma, semicolon, newline, or double quotes, wrap it in double quotes
+  if (str.includes(',') || str.includes(';') || str.includes('\n') || str.includes('\r') || str.includes('"')) {
+    return `"${str}"`;
+  }
+  return str;
+};
+
 export default function AdminUsers() {
   const navigate = useNavigate();
   const [users, setUsers] = useState<any[]>([]);
@@ -207,6 +219,81 @@ export default function AdminUsers() {
     loadUsers();
   };
 
+  const handleDownloadCSV = () => {
+    if (users.length === 0) {
+      alert('No hay usuarios para descargar');
+      return;
+    }
+
+    const headers = [
+      'Nombre',
+      'Email',
+      'Teléfono',
+      'País',
+      'Método de Pago',
+      'Plataforma de Pago',
+      'Monto',
+      'Origen de Registro',
+      'Términos Aceptados',
+      'Fecha Aceptación Términos',
+      'Estado',
+      'Código de Acceso',
+      'Fecha de Registro',
+      'Notas'
+    ];
+
+    const getRegistrationType = (paymentMethod: string, paymentPlatform: string) => {
+      if (!paymentMethod) return 'Manual';
+      const method = paymentMethod.toLowerCase();
+      if (['efectivo', 'deposito', 'transferencia', 'otro', 'manual_admin', 'generic'].includes(method)) {
+        return 'Manual';
+      }
+      if (method === 'whop') return 'Automático (Whop)';
+      if (method === 'hotmart') return 'Automático (Hotmart)';
+      if (method === 'ghl') return 'Automático (GHL / Tribu)';
+      return `Automático (${paymentMethod})`;
+    };
+
+    const rows = users.map(u => {
+      const paymentMethodLabel = PAYMENT_LABELS[u.payment_method] || u.payment_method || '—';
+      const registrationType = getRegistrationType(u.payment_method, u.payment_platform);
+      
+      return [
+        u.name || '',
+        u.email || '',
+        u.phone || '',
+        u.country_name || u.country || '',
+        paymentMethodLabel,
+        u.payment_platform || '',
+        u.payment_amount !== null && u.payment_amount !== undefined ? `$${u.payment_amount}` : '',
+        registrationType,
+        u.accepted_terms ? 'Sí' : 'No',
+        u.accepted_terms_at ? new Date(u.accepted_terms_at).toLocaleString('es-MX') : '',
+        u.status === 'active' ? 'Activo' : 'Suspendido',
+        u.access_code || '',
+        u.created_at ? new Date(u.created_at).toLocaleString('es-MX') : '',
+        u.notes || ''
+      ];
+    });
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(escapeCSV).join(','))
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    
+    const dateStr = new Date().toISOString().split('T')[0];
+    link.setAttribute('download', `usuarios_geny_lab_${dateStr}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   /* Shared styles for custom select replacement */
   const selectStyle = {
     background: 'rgba(255,255,255,0.03)',
@@ -222,15 +309,36 @@ export default function AdminUsers() {
           <h1 className="text-xl font-bold text-white/90 tracking-wide">Usuarios</h1>
           <p className="text-base text-white/30 mt-0.5">{users.length} registros</p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-base font-bold transition-all"
-          style={{ background: '#00D1FF', color: '#060910' }}
-          onMouseOver={e => (e.currentTarget.style.boxShadow = '0 0 20px rgba(0,209,255,0.3)')}
-          onMouseOut={e => (e.currentTarget.style.boxShadow = 'none')}
-        >
-          <Plus className="w-4 h-4" /> Agregar
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleDownloadCSV}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-base font-bold transition-all"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: 'rgba(255, 255, 255, 0.8)',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }}
+          >
+            <Download className="w-4 h-4 text-white/60" /> Descargar CSV
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-base font-bold transition-all"
+            style={{ background: '#00D1FF', color: '#060910' }}
+            onMouseOver={e => (e.currentTarget.style.boxShadow = '0 0 20px rgba(0,209,255,0.3)')}
+            onMouseOut={e => (e.currentTarget.style.boxShadow = 'none')}
+          >
+            <Plus className="w-4 h-4" /> Agregar
+          </button>
+        </div>
       </div>
 
       {/* Filters */}

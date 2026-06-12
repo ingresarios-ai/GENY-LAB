@@ -16,3 +16,4 @@ vsl-video/.thumbnails/
 venv/
 .venv/
 
+.vercel
