@@ -171,6 +171,7 @@ export default function AdminUsers() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [userActivities, setUserActivities] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
 
   const loadUsers = useCallback(async () => {
     setLoading(true);
@@ -183,6 +184,10 @@ export default function AdminUsers() {
       if (filterHot) params.hot = 'true';
       const res = await getUsers(params);
       setUsers(res.data || []);
+
+      if (!search && !filterActivity && !filterPayment && !filterStatus && !filterHot) {
+        setTotalCount(res.data?.length || 0);
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -307,7 +312,14 @@ export default function AdminUsers() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-white/90 tracking-wide">Usuarios</h1>
-          <p className="text-base text-white/30 mt-0.5">{users.length} registros</p>
+          <p className="text-base text-white/30 mt-0.5">
+            {users.length} {users.length === 1 ? 'registro' : 'registros'}
+            {totalCount !== null && (
+              <span className="text-white/20 ml-2 font-normal">
+                • {totalCount} en total en la plataforma
+              </span>
+            )}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
