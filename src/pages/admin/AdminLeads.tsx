@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, X, ChevronRight, Trash2, UserCheck, Edit, Calendar, Phone, Mail, Globe } from 'lucide-react';
+import { Search, X, ChevronRight, Trash2, UserCheck, Edit, Calendar, Phone, Mail, Globe, Download } from 'lucide-react';
 import { getUsers, updateUser, deleteUser } from '../../lib/adminApi';
 
 const COUNTRY_CODES = [
@@ -24,6 +24,16 @@ const COUNTRY_CODES = [
   { code: '+505', flag: '🇳🇮', name: 'Nicaragua' },
 ];
 
+const escapeCSV = (val: any) => {
+  if (val === null || val === undefined) return '';
+  let str = String(val);
+  str = str.replace(/"/g, '""');
+  if (str.includes(',') || str.includes(';') || str.includes('\n') || str.includes('\r') || str.includes('"')) {
+    return `"${str}"`;
+  }
+  return str;
+};
+
 export default function AdminLeads() {
   const navigate = useNavigate();
   const [leads, setLeads] = useState<any[]>([]);
@@ -31,6 +41,8 @@ export default function AdminLeads() {
   const [search, setSearch] = useState('');
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const [page, setPage] = useState(1);
   const [totalMatchingCount, setTotalMatchingCount] = useState(0);
@@ -89,6 +101,72 @@ export default function AdminLeads() {
     loadLeads();
   };
 
+  const handleDownloadCSV = async (exportAll: boolean) => {
+    let leadsToExport = leads;
+    
+    if (exportAll) {
+      try {
+        setExporting(true);
+        const params: Record<string, string> = {
+          status: 'lead',
+          limit: '9999',
+          offset: '0'
+        };
+        if (search) params.search = search;
+        
+        const res = await getUsers(params);
+        leadsToExport = res.data || [];
+      } catch (err) {
+        console.error('Error fetching all leads for export:', err);
+        alert('Error al descargar todos los interesados');
+        return;
+      } finally {
+        setExporting(false);
+      }
+    }
+
+    if (leadsToExport.length === 0) {
+      alert('No hay interesados para descargar');
+      return;
+    }
+
+    const headers = [
+      'Nombre',
+      'Email',
+      'Teléfono',
+      'País',
+      'Fecha de Registro',
+      'Notas'
+    ];
+
+    const rows = leadsToExport.map(l => [
+      l.name || '',
+      l.email || '',
+      l.phone || '',
+      l.country_name || l.country || '',
+      l.created_at ? new Date(l.created_at).toLocaleString('es-MX') : '',
+      l.notes || ''
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(escapeCSV).join(','))
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    
+    const dateStr = new Date().toISOString().split('T')[0];
+    const fileNameSuffix = exportAll ? 'todos' : `pagina_${page}`;
+    link.setAttribute('download', `leads_geny_lab_${fileNameSuffix}_${dateStr}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const selectStyle = {
     background: 'rgba(255,255,255,0.03)',
     border: '1px solid rgba(255,255,255,0.08)',
@@ -109,6 +187,51 @@ export default function AdminLeads() {
               </span>
             )}
           </p>
+        </div>
+        <div className="relative">
+          <button
+            onClick={() => setShowExportMenu(!showExportMenu)}
+            disabled={exporting}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-base font-bold transition-all disabled:opacity-50"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: 'rgba(255, 255, 255, 0.8)',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }}
+          >
+            <Download className="w-4 h-4 text-white/60" /> {exporting ? 'Exportando...' : 'Descargar CSV'}
+          </button>
+          {showExportMenu && (
+            <div 
+              className="absolute right-0 mt-2 w-56 rounded-xl glass-panel shadow-2xl z-[110] p-1.5 space-y-1"
+              style={{
+                background: 'rgba(10, 15, 25, 0.95)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(12px)',
+              }}
+            >
+              <button
+                onClick={() => { setShowExportMenu(false); handleDownloadCSV(false); }}
+                className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold hover:bg-white/[0.04] text-white/80 hover:text-white transition-colors"
+              >
+                Vista Actual ({leads.length})
+              </button>
+              <button
+                onClick={() => { setShowExportMenu(false); handleDownloadCSV(true); }}
+                className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold hover:bg-white/[0.04] text-white/80 hover:text-white transition-colors"
+              >
+                Todos los filtrados ({totalMatchingCount})
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
