@@ -770,6 +770,58 @@ Deno.serve(async (req: Request) => {
       }
 
 
+      // POST /users/:id/reset-password — Admin resets user password
+      if (
+        method === "POST" &&
+        segments.length === 3 &&
+        segments[2] === "reset-password"
+      ) {
+        const userId = segments[1];
+        const { data: user, error: userError } = await supabase
+          .from("enrolled_users")
+          .select("email, auth_user_id, name")
+          .eq("id", userId)
+          .single();
+
+        if (userError || !user) return json({ error: "User not found" }, 404);
+        if (!user.auth_user_id) return json({ error: "User has no auth account" }, 400);
+
+        // Generate a random temporary password (12 chars, alphanumeric)
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+        let tempPassword = '';
+        const randomBytes = new Uint8Array(12);
+        crypto.getRandomValues(randomBytes);
+        for (let i = 0; i < 12; i++) {
+          tempPassword += chars[randomBytes[i] % chars.length];
+        }
+
+        // Update password in Supabase Auth using admin API
+        const { error: updateError } = await supabase.auth.admin.updateUserById(
+          user.auth_user_id,
+          { password: tempPassword }
+        );
+
+        if (updateError) {
+          console.error("Error resetting password:", updateError);
+          return json({ error: updateError.message || "Failed to reset password" }, 500);
+        }
+
+        // Also clear the password_set flag so user is prompted to set a new one
+        await supabase.auth.admin.updateUserById(
+          user.auth_user_id,
+          { user_metadata: { password_set: false } }
+        );
+
+        console.log(`🔐 Password reset for ${user.email} by admin ${adminId}`);
+
+        return json({
+          success: true,
+          temp_password: tempPassword,
+          email: user.email,
+          name: user.name,
+        });
+      }
+
       // GET /users/:id/activity
       if (
         method === "GET" &&

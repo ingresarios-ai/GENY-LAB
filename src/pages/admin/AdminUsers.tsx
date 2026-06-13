@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw, Edit, Download } from 'lucide-react';
-import { getUsers, createUser, updateUser, deleteUser, getUserActivity, resendMagicLink } from '../../lib/adminApi';
+import { Search, Plus, X, ChevronRight, Trash2, UserCheck, UserX, CheckCircle2, Flame, Copy, Check, Link2, RefreshCw, Edit, Download, KeyRound } from 'lucide-react';
+import { getUsers, createUser, updateUser, deleteUser, getUserActivity, resendMagicLink, resetUserPassword } from '../../lib/adminApi';
 
 const ACTIVITIES = [
   { id: 'adn', label: '🧬 ADN Financiero' },
@@ -119,6 +119,121 @@ function MagicLinkSection({ user, onUpdated }: { user: any; onUpdated: (url: str
             <RefreshCw className={`w-3.5 h-3.5 ${regenerating ? 'animate-spin' : ''}`} />
             {regenerating ? 'Generando...' : 'Generar Magic Link'}
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Password Reset section for user detail panel
+function PasswordResetSection({ user }: { user: any }) {
+  const [resetting, setResetting] = useState(false);
+  const [tempPassword, setTempPassword] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleReset = async () => {
+    if (!confirm(`¿Resetear la contraseña de ${user.name || user.email}?\n\nSe generará una contraseña temporal que deberás compartir con el usuario.`)) return;
+    setResetting(true);
+    setError('');
+    setTempPassword(null);
+    try {
+      const res = await resetUserPassword(user.id);
+      if (res.temp_password) {
+        setTempPassword(res.temp_password);
+      } else {
+        setError('No se pudo generar la contraseña');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Error al resetear contraseña');
+    }
+    setResetting(false);
+  };
+
+  const handleCopy = () => {
+    if (tempPassword) {
+      const text = `Tu nueva contraseña temporal de GENY LAB:\n\n🔑 ${tempPassword}\n\nIngresa en: https://genylab.ingresarios.net/login\nUsa tu email: ${user.email}\n\nUna vez dentro, ve a Mi Cuenta para cambiarla.`;
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
+
+  const handleCopyPassword = () => {
+    if (tempPassword) {
+      navigator.clipboard.writeText(tempPassword);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div
+      className="rounded-lg p-3 space-y-2"
+      style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.1)' }}
+    >
+      <div className="flex items-center gap-2">
+        <KeyRound className="w-3.5 h-3.5" style={{ color: '#FFD700' }} />
+        <span className="text-sm font-semibold" style={{ color: '#FFD700' }}>Contraseña</span>
+      </div>
+
+      {tempPassword ? (
+        <div className="space-y-2">
+          <p className="text-xs text-green-400 font-semibold">✅ Contraseña reseteada exitosamente</p>
+          <div
+            className="text-sm font-mono text-white/90 bg-white/[0.06] rounded px-3 py-2 text-center tracking-widest select-all"
+            style={{ border: '1px solid rgba(255,215,0,0.15)' }}
+          >
+            {tempPassword}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleCopyPassword}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all"
+              style={{
+                background: copied ? 'rgba(0,230,118,0.08)' : 'rgba(255,215,0,0.06)',
+                border: `1px solid ${copied ? 'rgba(0,230,118,0.2)' : 'rgba(255,215,0,0.15)'}`,
+                color: copied ? '#00E676' : '#FFD700',
+              }}
+            >
+              {copied ? <><Check className="w-3.5 h-3.5" /> Copiado</> : <><Copy className="w-3.5 h-3.5" /> Copiar</>}
+            </button>
+            <button
+              onClick={handleCopy}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                color: 'rgba(255,255,255,0.5)',
+              }}
+              title="Copia un mensaje listo para enviar al usuario"
+            >
+              📩 Mensaje
+            </button>
+          </div>
+          <p className="text-[10px] text-white/25 leading-relaxed">
+            Comparte esta contraseña al usuario. Podrá cambiarla en Mi Cuenta → Cambiar Contraseña.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {error && <p className="text-xs text-red-400 font-semibold">{error}</p>}
+          <button
+            onClick={handleReset}
+            disabled={resetting}
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
+            style={{
+              background: 'rgba(255,215,0,0.06)',
+              border: '1px solid rgba(255,215,0,0.15)',
+              color: '#FFD700',
+            }}
+          >
+            <KeyRound className={`w-3.5 h-3.5 ${resetting ? 'animate-spin' : ''}`} />
+            {resetting ? 'Reseteando...' : 'Resetear Contraseña'}
+          </button>
+          <p className="text-[10px] text-white/20 leading-relaxed">
+            Genera una contraseña temporal para que el usuario pueda ingresar.
+          </p>
         </div>
       )}
     </div>
@@ -695,6 +810,9 @@ export default function AdminUsers() {
 
               {/* Magic Link */}
               <MagicLinkSection user={selectedUser} onUpdated={(url) => setSelectedUser({ ...selectedUser, magic_link_url: url })} />
+
+              {/* Password Reset */}
+              <PasswordResetSection user={selectedUser} />
 
               {/* consolidated results button */}
               <button
