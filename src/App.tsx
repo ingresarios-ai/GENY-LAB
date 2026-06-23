@@ -36,6 +36,7 @@ import AutoLogin from './pages/AutoLogin';
 import ResetPassword from './pages/ResetPassword';
 import InscripcionExitosa from './pages/public/InscripcionExitosa';
 import EstablecerContrasena from './pages/public/EstablecerContrasena';
+import RegistroConToken from './pages/public/RegistroConToken';
 import SalesLanding from './pages/public/SalesLanding';
 import Landing from './pages/public/Landing';
 import TerminosYCondiciones from './pages/public/TerminosYCondiciones';
@@ -64,6 +65,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/inscripcion-exitosa" element={<InscripcionExitosa />} />
         <Route path="/establecer-contrasena" element={<EstablecerContrasena />} />
+        <Route path="/registro" element={<RegistroConToken />} />
         <Route path="/resultados/:userId" element={<PublicResultsView />} />
         <Route path="/terminos-y-condiciones" element={<TerminosYCondiciones />} />
 
