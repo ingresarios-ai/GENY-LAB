@@ -58,7 +58,6 @@ export default function AppLayout() {
 
   const navItems = [
     { to: "/app", icon: Map, label: "Mi Ruta", end: true },
-    { to: "/app/en-vivo", icon: Video, label: "Sesiones", end: false },
     { 
       to: "/app/geny-opciones", 
       icon: Target, 

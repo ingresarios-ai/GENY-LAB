@@ -27,7 +27,7 @@ import TrampasDinero from './pages/app/TrampasDinero';
 import RetoSombra from './pages/app/RetoSombra';
 import RetoFlow from './pages/app/RetoFlow';
 import GenyOpciones from './pages/app/GenyOpciones';
-import LiveSessions from './pages/app/LiveSessions';
+
 import DiagnosticoBooking from './pages/app/DiagnosticoBooking';
 import MiPrimerPedem from './pages/app/pedem/MiPrimerPedem';
 import TermostatoFinanciero from './pages/app/termostato-financiero/TermostatoFinanciero';
@@ -85,7 +85,7 @@ function App() {
           <Route path="termostato" element={<TermostatoFinanciero />} />
           <Route path="pedem" element={<MiPrimerPedem />} />
           <Route path="geny-opciones" element={<GenyOpciones />} />
-          <Route path="en-vivo" element={<LiveSessions />} />
+
         </Route>
 
         {/* Standalone authenticated pages (no tab bar) */}
