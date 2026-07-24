@@ -51,7 +51,7 @@ serve(async (req) => {
         "Authorization": `Bearer ${DEEPSEEK_API_KEY}`
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: "deepseek-v4-flash",
         messages: [{ role: "system", content: "Eres Geny, coach de opciones financieras de INGRESARIOS. Responde en español, 3 oraciones concisas." }, { role: "user", content: prompt }],
         max_tokens: 150,
         temperature: 0.7
