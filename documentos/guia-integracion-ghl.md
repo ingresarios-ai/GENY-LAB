@@ -90,3 +90,42 @@ La app envía un POST con la siguiente estructura:
 * **Sin Expiración:** El enlace enviado al cliente es del tipo `https://genylab.ingresarios.net/acceso/[access_code]`. Este enlace es único y no expira.
 * **Inicio de Sesión Automático:** Al hacer clic en este enlace, el navegador del usuario invoca una petición segura al backend, genera dinámicamente un token de sesión temporal de Supabase de un solo uso y lo loguea en la aplicación redirigiéndolo de inmediato al panel de `/app`.
 * **Protección del Webhook:** El parámetro `?token=ghl_webhook_sec_8f93bead61f8a8470ac00` asegura que solo tus workflows autorizados de GHL puedan registrar nuevos usuarios.
+
+---
+
+## Paso 5: Desactivar Cuentas desde GHL
+
+Para revocar el acceso de un usuario a GENY LAB, puedes hacerlo automáticamente desde GHL usando una etiqueta de desactivación.
+
+### 1. Configurar el Workflow de Desactivación en GHL
+1. Ve a **Automation → Workflows** y crea un nuevo workflow (o edita uno existente).
+2. Agrega el **Trigger** (Disparador):
+   * Selecciona: **Contact Tag** (Etiqueta de contacto).
+   * Filtro: **Tag Added** → Selecciona la etiqueta: `GenyLab-Desactivar`.
+3. Agrega una **Action** (Acción):
+   * Selecciona: **Custom Webhook**.
+   * Configura con los siguientes datos:
+     * **Method:** `POST`
+     * **URL:** `https://tfwvvsvoimgnwjodfwlh.supabase.co/functions/v1/ghl-deactivate?token=ghl_webhook_sec_8f93bead61f8a8470ac00`
+     * **Cuerpo (JSON):**
+       ```json
+       {
+         "email": "{{contact.email}}"
+       }
+       ```
+4. Guarda y publica el Workflow.
+
+### 2. ¿Qué Sucede Cuando se Desactiva?
+* El status del usuario en la base de datos cambia a `inactive`.
+* Se invalidan **todas las sesiones activas** del usuario inmediatamente (la sesión actual se cierra).
+* El enlace de acceso permanente del usuario deja de funcionar.
+* Se registra la fecha de desactivación (`deactivated_at`).
+
+### 3. ¿Cómo Reactivar un Usuario?
+Si necesitas restaurar el acceso de un usuario desactivado, simplemente **vuelve a aplicar la etiqueta `GenyLab-Acceso`** en GHL. El workflow de activación original (Paso 1) se encargará automáticamente de:
+* Cambiar el status de vuelta a `active`.
+* Restaurar el acceso del usuario (desbanear la sesión).
+* El enlace de acceso permanente del usuario vuelve a funcionar.
+
+> ⚠️ **Importante:** Asegúrate de que en tu workflow de GHL, la etiqueta `GenyLab-Desactivar` se aplique **después** de remover la etiqueta `GenyLab-Acceso` (si la tiene), para evitar conflictos entre ambos workflows.
+

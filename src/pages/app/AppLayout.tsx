@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { NavLink, Outlet, Link } from 'react-router-dom';
-import { Map, Trophy, MessageCircle, Target, Lock, User, Video, Scale, Zap, Check } from 'lucide-react';
+import { NavLink, Outlet } from 'react-router-dom';
+import { Map, Trophy, Lock, User, Scale, Zap, Check } from 'lucide-react';
 import { Footer } from '../../components/Footer';
-import { getCompletedCount } from '../../lib/progressStore';
 import toast from 'react-hot-toast';
 import { supabase } from '../../lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function AppLayout() {
-  const completedCount = getCompletedCount();
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [agreeTermsChecked, setAgreeTermsChecked] = useState(false);
   const [acceptingTerms, setAcceptingTerms] = useState(false);
@@ -58,7 +56,7 @@ export default function AppLayout() {
 
   interface NavItem {
     to: string;
-    icon: any;
+    icon: React.ElementType;
     label: string;
     end?: boolean;
     locked?: boolean;

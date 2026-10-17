@@ -225,6 +225,18 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // 3b. Unban user in Supabase Auth if they were previously deactivated/banned
+    if (authUserId) {
+      try {
+        await supabase.auth.admin.updateUserById(authUserId, {
+          ban_duration: "none",
+        });
+      } catch (unbanErr) {
+        // Non-fatal: log but don't block enrollment
+        console.error("Error unbanning auth user:", unbanErr);
+      }
+    }
+
     // 4. Enviar datos de regreso a GHL (LeadConnector) con el magic_link_url permanente
     // Fire-and-forget: corre en segundo plano para responder rápido a GHL
     syncToLeadConnector(cleanName, cleanEmail, normalizedPhone, permanentUrl!).catch((err) =>
