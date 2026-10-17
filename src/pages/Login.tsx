@@ -19,7 +19,9 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+    const { error: authError } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: cleanPassword });
     if (authError) {
       setError('Credenciales incorrectas');
       setLoading(false);
@@ -30,10 +32,11 @@ export default function Login() {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) { setError('Ingresa tu email'); return; }
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail) { setError('Ingresa tu email'); return; }
     setLoading(true);
     setError('');
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (resetError) {

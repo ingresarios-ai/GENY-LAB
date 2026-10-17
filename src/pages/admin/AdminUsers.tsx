@@ -128,19 +128,31 @@ function MagicLinkSection({ user, onUpdated }: { user: any; onUpdated: (url: str
 // Password Reset section for user detail panel
 function PasswordResetSection({ user }: { user: any }) {
   const [resetting, setResetting] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
   const [tempPassword, setTempPassword] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copiedType, setCopiedType] = useState<string | null>(null);
   const [error, setError] = useState('');
 
-  const handleReset = async () => {
-    if (!confirm(`¿Resetear la contraseña de ${user.name || user.email}?\n\nSe generará una contraseña temporal que deberás compartir con el usuario.`)) return;
+  const generateRandomPassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    let res = '';
+    const bytes = new Uint8Array(10);
+    crypto.getRandomValues(bytes);
+    for (let i = 0; i < 10; i++) {
+      res += chars[bytes[i] % chars.length];
+    }
+    setPasswordInput(res);
+  };
+
+  const handleReset = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setResetting(true);
     setError('');
-    setTempPassword(null);
     try {
-      const res = await resetUserPassword(user.id);
+      const res = await resetUserPassword(user.id, passwordInput.trim() || undefined);
       if (res.temp_password) {
         setTempPassword(res.temp_password);
+        setPasswordInput('');
       } else {
         setError('No se pudo generar la contraseña');
       }
@@ -150,91 +162,141 @@ function PasswordResetSection({ user }: { user: any }) {
     setResetting(false);
   };
 
-  const handleCopy = () => {
-    if (tempPassword) {
-      const text = `Tu nueva contraseña temporal de GENY LAB:\n\n🔑 ${tempPassword}\n\nIngresa en: https://genylab.ingresarios.net/login\nUsa tu email: ${user.email}\n\nUna vez dentro, ve a Mi Cuenta para cambiarla.`;
-      navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    }
-  };
-
   const handleCopyPassword = () => {
     if (tempPassword) {
       navigator.clipboard.writeText(tempPassword);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedType('password');
+      setTimeout(() => setCopiedType(null), 2000);
+    }
+  };
+
+  const handleCopyMessage = () => {
+    if (tempPassword) {
+      const accessCode = user.access_code || '';
+      const directLink = accessCode ? `\n\nO si prefieres, entra directo con 1 clic sin contraseña:\n👉 https://genylab.ingresarios.net/acceso/${accessCode}` : '';
+      const text = `Hola ${user.name || 'Trader'}, aquí tienes tus datos de acceso a GENY LAB:\n\n🌐 Plataforma: https://genylab.ingresarios.net/login\n📧 Email: ${user.email}\n🔑 Contraseña: ${tempPassword}${directLink}\n\nUna vez dentro, podrás cambiarla en Mi Cuenta si lo deseas.`;
+      navigator.clipboard.writeText(text);
+      setCopiedType('message');
+      setTimeout(() => setCopiedType(null), 3000);
+    }
+  };
+
+  const handleCopyDirectLink = () => {
+    const accessCode = user.access_code;
+    if (accessCode) {
+      navigator.clipboard.writeText(`https://genylab.ingresarios.net/acceso/${accessCode}`);
+      setCopiedType('link');
+      setTimeout(() => setCopiedType(null), 2000);
     }
   };
 
   return (
     <div
-      className="rounded-lg p-3 space-y-2"
+      className="rounded-lg p-3 space-y-3"
       style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.1)' }}
     >
-      <div className="flex items-center gap-2">
-        <KeyRound className="w-3.5 h-3.5" style={{ color: '#FFD700' }} />
-        <span className="text-sm font-semibold" style={{ color: '#FFD700' }}>Contraseña</span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <KeyRound className="w-3.5 h-3.5" style={{ color: '#FFD700' }} />
+          <span className="text-sm font-semibold" style={{ color: '#FFD700' }}>Gestión de Contraseña</span>
+        </div>
+        {tempPassword && (
+          <button
+            onClick={() => setTempPassword(null)}
+            className="text-[10px] text-white/40 hover:text-white underline transition-colors"
+          >
+            Nueva contraseña
+          </button>
+        )}
       </div>
 
       {tempPassword ? (
-        <div className="space-y-2">
-          <p className="text-xs text-green-400 font-semibold">✅ Contraseña reseteada exitosamente</p>
+        <div className="space-y-2.5">
+          <div className="p-2.5 rounded-lg bg-green-500/10 border border-green-500/20">
+            <p className="text-xs text-green-400 font-semibold mb-1">✅ Contraseña actualizada correctamente</p>
+            <p className="text-[11px] text-white/60">
+              La usuaria ya puede ingresar en <span className="text-brand-blue font-mono">/login</span> con esta clave.
+            </p>
+          </div>
+
           <div
-            className="text-sm font-mono text-white/90 bg-white/[0.06] rounded px-3 py-2 text-center tracking-widest select-all"
-            style={{ border: '1px solid rgba(255,215,0,0.15)' }}
+            className="text-base font-mono text-white font-bold bg-white/[0.08] rounded-lg px-4 py-2.5 text-center tracking-widest select-all shadow-inner"
+            style={{ border: '1px solid rgba(255,215,0,0.3)' }}
           >
             {tempPassword}
           </div>
-          <div className="flex gap-2">
+
+          <div className="grid grid-cols-2 gap-2 pt-1">
             <button
               onClick={handleCopyPassword}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all"
+              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all"
               style={{
-                background: copied ? 'rgba(0,230,118,0.08)' : 'rgba(255,215,0,0.06)',
-                border: `1px solid ${copied ? 'rgba(0,230,118,0.2)' : 'rgba(255,215,0,0.15)'}`,
-                color: copied ? '#00E676' : '#FFD700',
+                background: copiedType === 'password' ? 'rgba(0,230,118,0.15)' : 'rgba(255,215,0,0.08)',
+                border: `1px solid ${copiedType === 'password' ? 'rgba(0,230,118,0.3)' : 'rgba(255,215,0,0.2)'}`,
+                color: copiedType === 'password' ? '#00E676' : '#FFD700',
               }}
             >
-              {copied ? <><Check className="w-3.5 h-3.5" /> Copiado</> : <><Copy className="w-3.5 h-3.5" /> Copiar</>}
+              {copiedType === 'password' ? <><Check className="w-3.5 h-3.5" /> Copiado</> : <><Copy className="w-3.5 h-3.5" /> Copiar Clave</>}
             </button>
             <button
-              onClick={handleCopy}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all"
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: 'rgba(255,255,255,0.5)',
-              }}
-              title="Copia un mensaje listo para enviar al usuario"
+              onClick={handleCopyMessage}
+              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all bg-white/5 hover:bg-white/10 border border-white/10 text-white"
+              title="Copia el mensaje completo con instrucciones y enlaces para WhatsApp"
             >
-              📩 Mensaje
+              {copiedType === 'message' ? <><Check className="w-3.5 h-3.5 text-green-400" /> ¡Copiado!</> : '💬 WhatsApp'}
             </button>
           </div>
-          <p className="text-[10px] text-white/25 leading-relaxed">
-            Comparte esta contraseña al usuario. Podrá cambiarla en Mi Cuenta → Cambiar Contraseña.
-          </p>
+
+          {user.access_code && (
+            <button
+              onClick={handleCopyDirectLink}
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-[11px] font-medium transition-all bg-white/[0.02] hover:bg-white/5 border border-white/5 text-white/50 hover:text-white"
+            >
+              <Link2 className="w-3 h-3" />
+              {copiedType === 'link' ? '¡Enlace directo copiado!' : 'Copiar link de acceso directo (1 clic)'}
+            </button>
+          )}
         </div>
       ) : (
-        <div className="space-y-2">
+        <form onSubmit={handleReset} className="space-y-2">
           {error && <p className="text-xs text-red-400 font-semibold">{error}</p>}
+          
+          <div className="flex gap-1.5">
+            <input
+              type="text"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Escribe clave o genera una..."
+              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-white/20 outline-none focus:border-brand-blue/50 font-mono"
+            />
+            <button
+              type="button"
+              onClick={generateRandomPassword}
+              title="Generar contraseña aleatoria legible"
+              className="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white text-xs flex items-center gap-1 transition-all"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span className="text-[10px]">Generar</span>
+            </button>
+          </div>
+
           <button
-            onClick={handleReset}
+            type="submit"
             disabled={resetting}
-            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
             style={{
-              background: 'rgba(255,215,0,0.06)',
-              border: '1px solid rgba(255,215,0,0.15)',
+              background: 'rgba(255,215,0,0.08)',
+              border: '1px solid rgba(255,215,0,0.2)',
               color: '#FFD700',
             }}
           >
             <KeyRound className={`w-3.5 h-3.5 ${resetting ? 'animate-spin' : ''}`} />
-            {resetting ? 'Reseteando...' : 'Resetear Contraseña'}
+            {resetting ? 'Guardando...' : passwordInput ? 'Guardar y Asignar Clave' : 'Generar y Asignar Automática'}
           </button>
-          <p className="text-[10px] text-white/20 leading-relaxed">
-            Genera una contraseña temporal para que el usuario pueda ingresar.
+          <p className="text-[10px] text-white/25 leading-relaxed">
+            Puedes escribir una contraseña fácil (ej: <code>Reto2026*</code>) o generar una automática. Luego cópiala y compártela.
           </p>
-        </div>
+        </form>
       )}
     </div>
   );

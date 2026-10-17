@@ -100,8 +100,11 @@ export const resendMagicLink = (userId: string) =>
   api(`users/${userId}/resend-magic-link`, { method: 'POST' });
 
 // Password Reset (Admin)
-export const resetUserPassword = (userId: string) =>
-  api(`users/${userId}/reset-password`, { method: 'POST' });
+export const resetUserPassword = (userId: string, password?: string) =>
+  api(`users/${userId}/reset-password`, {
+    method: 'POST',
+    body: JSON.stringify(password ? { password } : {})
+  });
 
 
 

@@ -312,7 +312,7 @@ Deno.serve(async (req: Request) => {
 
         // Generate secure session token with 24h expiration
         const token = generateSessionToken();
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
         await supabase
           .from("admin_users")
           .update({ session_token: token, session_expires_at: expiresAt })
@@ -335,9 +335,9 @@ Deno.serve(async (req: Request) => {
       }
 
       const adminUser = Array.isArray(admin) ? admin[0] : admin;
-      // Generate secure session token with 24h expiration
+      // Generate secure session token with 30-day expiration
       const token = generateSessionToken();
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
       await supabase
         .from("admin_users")
         .update({ session_token: token, session_expires_at: expiresAt })
@@ -777,48 +777,82 @@ Deno.serve(async (req: Request) => {
         segments[2] === "reset-password"
       ) {
         const userId = segments[1];
+        let body: any = {};
+        try {
+          body = await req.json();
+        } catch {
+          body = {};
+        }
+
+        const customPassword = body.password ? String(body.password).trim() : null;
+
         const { data: user, error: userError } = await supabase
           .from("enrolled_users")
-          .select("email, auth_user_id, name")
+          .select("id, email, auth_user_id, name, access_code")
           .eq("id", userId)
           .single();
 
-        if (userError || !user) return json({ error: "User not found" }, 404);
-        if (!user.auth_user_id) return json({ error: "User has no auth account" }, 400);
+        if (userError || !user) return json({ error: "Usuario no encontrado" }, 404);
 
-        // Generate a random temporary password (12 chars, alphanumeric)
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-        let tempPassword = '';
-        const randomBytes = new Uint8Array(12);
-        crypto.getRandomValues(randomBytes);
-        for (let i = 0; i < 12; i++) {
-          tempPassword += chars[randomBytes[i] % chars.length];
+        let authUserId = user.auth_user_id;
+
+        // If user has no auth_user_id in table, find or create it
+        if (!authUserId) {
+          authUserId = await findAuthUserByEmail(supabase, user.email);
+          if (!authUserId) {
+            const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+              email: user.email.toLowerCase().trim(),
+              email_confirm: true,
+              user_metadata: { name: user.name || "Usuario", password_set: true },
+            });
+            if (createError) {
+              return json({ error: createError.message || "Error al crear cuenta auth" }, 500);
+            }
+            authUserId = newUser.user.id;
+          }
+          await supabase
+            .from("enrolled_users")
+            .update({ auth_user_id: authUserId })
+            .eq("id", userId);
+        }
+
+        // Determine password to set
+        let targetPassword = customPassword;
+        if (!targetPassword || targetPassword.length < 6) {
+          const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+          let tempPassword = '';
+          const randomBytes = new Uint8Array(10);
+          crypto.getRandomValues(randomBytes);
+          for (let i = 0; i < 10; i++) {
+            tempPassword += chars[randomBytes[i] % chars.length];
+          }
+          targetPassword = tempPassword;
         }
 
         // Update password in Supabase Auth using admin API
         const { error: updateError } = await supabase.auth.admin.updateUserById(
-          user.auth_user_id,
-          { password: tempPassword }
+          authUserId,
+          {
+            password: targetPassword,
+            email_confirm: true,
+            ban_duration: "none",
+            user_metadata: { name: user.name || "Usuario", password_set: true }
+          }
         );
 
         if (updateError) {
           console.error("Error resetting password:", updateError);
-          return json({ error: updateError.message || "Failed to reset password" }, 500);
+          return json({ error: updateError.message || "Error al resetear contraseña" }, 500);
         }
 
-        // Also clear the password_set flag so user is prompted to set a new one
-        await supabase.auth.admin.updateUserById(
-          user.auth_user_id,
-          { user_metadata: { password_set: false } }
-        );
-
-        console.log(`🔐 Password reset for ${user.email} by admin ${adminId}`);
+        console.log(`🔐 Password updated for ${user.email} by admin ${adminId}`);
 
         return json({
           success: true,
-          temp_password: tempPassword,
+          temp_password: targetPassword,
           email: user.email,
           name: user.name,
+          access_code: user.access_code,
         });
       }
 
