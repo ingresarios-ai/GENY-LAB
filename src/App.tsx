@@ -26,7 +26,6 @@ import RetoADN from './pages/app/RetoADN';
 import TrampasDinero from './pages/app/TrampasDinero';
 import RetoSombra from './pages/app/RetoSombra';
 import RetoFlow from './pages/app/RetoFlow';
-import GenyOpciones from './pages/app/GenyOpciones';
 
 import DiagnosticoBooking from './pages/app/DiagnosticoBooking';
 import MiPrimerPedem from './pages/app/pedem/MiPrimerPedem';
@@ -84,7 +83,8 @@ function App() {
           <Route path="flow" element={<RetoFlow />} />
           <Route path="termostato" element={<TermostatoFinanciero />} />
           <Route path="pedem" element={<MiPrimerPedem />} />
-          <Route path="geny-opciones" element={<GenyOpciones />} />
+          <Route path="geny-opciones" element={<Navigate to="/app" replace />} />
+          <Route path="opciones" element={<Navigate to="/app" replace />} />
 
         </Route>
 
