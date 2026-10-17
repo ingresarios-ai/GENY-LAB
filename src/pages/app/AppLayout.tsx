@@ -56,39 +56,17 @@ export default function AppLayout() {
     }
   };
 
-  const navItems = [
+  interface NavItem {
+    to: string;
+    icon: any;
+    label: string;
+    end?: boolean;
+    locked?: boolean;
+    onClick?: (e: React.MouseEvent) => void;
+  }
+
+  const navItems: NavItem[] = [
     { to: "/app", icon: Map, label: "Mi Ruta", end: true },
-    { 
-      to: "/app/geny-opciones", 
-      icon: Target, 
-      label: "Geny Opciones", 
-      // locked: completedCount < 6,
-      locked: false, // Temporary bypass to enable Geny Opciones
-      onClick: (e: React.MouseEvent) => {
-        // const isLocked = completedCount < 6;
-        const isLocked = false; // Temporary bypass
-        if (isLocked) {
-          e.preventDefault();
-          toast.error("Supera la Fase 2 (Nodo 6) para desbloquear el simulador.", {
-            id: 'locked-toast',
-            icon: '🔒',
-            style: {
-              background: 'rgba(10, 11, 16, 0.85)',
-              backdropFilter: 'blur(12px)',
-              color: '#fff',
-              border: '1px solid rgba(255,255,255,0.2)',
-              fontSize: '1.1rem',
-              fontWeight: '500',
-              padding: '20px 30px',
-              maxWidth: '450px',
-              textAlign: 'center',
-              marginTop: '35vh',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
-            }
-          });
-        }
-      }
-    },
     { to: "/app/logros", icon: Trophy, label: "Logros" },
   ];
 
